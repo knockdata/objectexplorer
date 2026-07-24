@@ -8,7 +8,7 @@ import path from "node:path";
 import { extractTarToDir } from "../Tar.js";
 
 const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "tar-test-"));
-const packageDir = path.dirname(new URL(import.meta.resolve("objectexplorer/package.json")).pathname);
+const packageDir = path.dirname(new URL(import.meta.resolve("@knockdata/objectexplorer/package.json")).pathname);
 
 let failures = 0;
 await check("the real objectexplorer package", packageDir);

@@ -14,7 +14,10 @@ import { fetchUntar } from "./Tar.js";
 import { readJson, writeJson, fetchJson } from "./util.js";
 
 const registryUrl = "https://registry.npmjs.org";
-const appPackage = "objectexplorer";
+const npmPackage = "@knockdata/objectexplorer";
+// local OTA folders can't contain the npm package's "/" scope separator, so they're named
+// from this filesystem-safe prefix instead
+const localName = "objectexplorer";
 
 export default async function VersionManager({ userData, packageDir, logger }) {
 	const rootDir = path.join(userData, ".app");
@@ -45,7 +48,7 @@ export default async function VersionManager({ userData, packageDir, logger }) {
 	dropLegacyVersions(versions);
 	logger.log("VersionManager versions:", JSON.stringify(versions));
 
-	await scan("appVersion", appPackage);
+	await scan("appVersion", localName);
 
 	// set when checkUpdate downloads a genuinely newer bundle this session, so the shell can
 	// swap to it the next time the window goes to background
@@ -54,12 +57,12 @@ export default async function VersionManager({ userData, packageDir, logger }) {
 	// network path, run in the background after the server is already serving the local
 	// package. on a successful newer download, record the new bundle dir instead of blocking.
 	async function checkUpdate() {
-		const app = await fetchLatest(appPackage);
+		const app = await fetchLatest(npmPackage);
 		// the installed version wins over a stale download, so an installer upgrade never
 		// gets shadowed by an older OTA folder
 		const currentApp = newerVersion(shippedVersion, versions.appVersion);
 		if (app && isNewer(app.version, currentApp)) {
-			const downloaded = await download(appPackage, app);
+			const downloaded = await download(app);
 			if (downloaded) {
 				versions.appVersion = app.version;
 				await writeJson(versionsFile, versions);
@@ -71,7 +74,8 @@ export default async function VersionManager({ userData, packageDir, logger }) {
 	}
 
 	async function fetchLatest(packageName) {
-		const url = `${registryUrl}/${packageName}/latest`;
+		// npm registry API needs the scope's "/" percent-encoded: @scope%2Fname
+		const url = `${registryUrl}/${packageName.replace("/", "%2F")}/latest`;
 		logger.log("Fetching registry version from:", url);
 		const latest = await fetchJson(url);
 		if (latest && latest.version && latest.dist && latest.dist.tarball) {
@@ -82,8 +86,8 @@ export default async function VersionManager({ userData, packageDir, logger }) {
 		}
 	}
 
-	async function download(packageName, latest) {
-		const destDir = path.join(rootDir, `${packageName}-${latest.version}`);
+	async function download(latest) {
+		const destDir = path.join(rootDir, `${localName}-${latest.version}`);
 		const exists = await fsp.stat(destDir).catch(() => null);
 		if (exists) {
 			logger.log("Release already exists: " + destDir);
@@ -94,7 +98,7 @@ export default async function VersionManager({ userData, packageDir, logger }) {
 	}
 
 	function bundleDirFor(version) {
-		return path.join(rootDir, `${appPackage}-${version}`);
+		return path.join(rootDir, `${localName}-${version}`);
 	}
 
 	function getPendingBundleDir() {

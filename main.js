@@ -25,7 +25,7 @@ const appIcon = nativeImage.createFromPath(iconPath);
 const packageDir = resolvePackageDir();
 
 function resolvePackageDir() {
-	const resolved = path.dirname(require.resolve("objectexplorer/package.json"));
+	const resolved = path.dirname(require.resolve("@knockdata/objectexplorer/package.json"));
 	const packed = `${path.sep}app.asar${path.sep}`;
 	if (resolved.includes(packed)) {
 		return resolved.replace(packed, `${path.sep}app.asar.unpacked${path.sep}`);
@@ -249,7 +249,7 @@ app.whenReady().then(async function () {
 		return `http://localhost:${port}`;
 	}
 
-	async function startAppServer(bundleDir /* .../node_modules/objectexplorer */,
+	async function startAppServer(bundleDir /* .../node_modules/@knockdata/objectexplorer */,
 		appServerUrl /* https://staging.objectexplorer.com */) {
 		const appDir = path.join(bundleDir, "app");
 		const pathWebServer = path.join(bundleDir, "server", "WebServer.mjs");

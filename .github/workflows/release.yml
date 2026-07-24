@@ -83,9 +83,8 @@ jobs:
         shell: bash
         run: bash .github/set-version.sh "${{ inputs.version || github.ref_name }}"
       - run: npm install --no-audit --no-fund
-      # one installer per architecture, so an arm64 machine never downloads x64 payload
-      - run: npx electron-builder --win --x64 --publish never
-      - run: npx electron-builder --win --arm64 --publish never
+      # arch list comes from package.json's build.win.target config, so one call builds both
+      - run: npx electron-builder --win --publish never
       - uses: actions/upload-artifact@v4
         with:
           name: windows

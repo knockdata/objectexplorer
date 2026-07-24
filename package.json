@@ -26,10 +26,10 @@
 			"index.html",
 			"*.js",
 			"build/icon.png",
-			"node_modules/objectexplorer/**/*"
+			"node_modules/@knockdata/objectexplorer/**/*"
 		],
 		"asarUnpack": [
-			"node_modules/objectexplorer/**/*"
+			"node_modules/@knockdata/objectexplorer/**/*"
 		],
 		"electronLanguages": [
 			"en"
@@ -37,6 +37,10 @@
 		"compression": "maximum",
 		"publish": null,
 		"afterPack": "./scripts/afterPack.cjs",
+		"artifactName": "${productName}-${version}-${arch}.${ext}",
+		"nsis": {
+			"buildUniversalInstaller": false
+		},
 		"mac": {
 			"target": [
 				{
@@ -62,8 +66,7 @@
 						"arm64"
 					]
 				}
-			],
-			"artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
+			]
 		},
 		"linux": {
 			"target": [
