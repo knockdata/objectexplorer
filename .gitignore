@@ -1,0 +1,11 @@
+dist
+releases
+test.md
+demo/many
+cache
+.vscode
+.claude
+.DS_Store
+node_modules
+bundle
+*.map

@@ -1,0 +1,91 @@
+{
+	"name": "@knockdata/objectexplorer",
+	"version": "1.0.0",
+	"description": "The VSCode for Cloud Storage",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron main.js",
+		"start:dev": "electron main.js mode=dev",
+		"start:staging": "electron main.js mode=staging",
+		"test": "node test/Tar.test.js",
+		"build:dev": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dir",
+		"build:mac": "electron-builder --mac --x64 --arm64",
+		"build:win": "electron-builder --win --x64 --arm64",
+		"build:linux": "electron-builder --linux --x64 --arm64",
+		"clean": "rm -rf dist"
+	},
+	"build": {
+		"appId": "com.ObjectExplorer.app",
+		"productName": "ObjectExplorer",
+		"icon": "./build/icon.png",
+		"directories": {
+			"output": "dist"
+		},
+		"files": [
+			"index.html",
+			"*.js",
+			"build/icon.png",
+			"node_modules/objectexplorer/**/*"
+		],
+		"asarUnpack": [
+			"node_modules/objectexplorer/**/*"
+		],
+		"electronLanguages": [
+			"en"
+		],
+		"compression": "maximum",
+		"publish": null,
+		"afterPack": "./scripts/afterPack.cjs",
+		"mac": {
+			"target": [
+				{
+					"target": "dmg",
+					"arch": [
+						"x64",
+						"arm64"
+					]
+				}
+			],
+			"category": "public.app-category.utilities",
+			"hardenedRuntime": true,
+			"entitlements": "build/entitlements.mac.plist",
+			"entitlementsInherit": "build/entitlements.mac.plist",
+			"notarize": true
+		},
+		"win": {
+			"target": [
+				{
+					"target": "nsis",
+					"arch": [
+						"x64",
+						"arm64"
+					]
+				}
+			],
+			"artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
+		},
+		"linux": {
+			"target": [
+				{
+					"target": "AppImage",
+					"arch": [
+						"x64",
+						"arm64"
+					]
+				}
+			],
+			"category": "Utility"
+		}
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"dependencies": {
+		"@knockdata/objectexplorer": "latest"
+	},
+	"devDependencies": {
+		"electron": "40.6.1",
+		"electron-builder": "^26.8.1"
+	}
+}
