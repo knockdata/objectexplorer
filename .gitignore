@@ -1,0 +1,16 @@
+.DS_Store
+.claude
+.ms.md
+.vscode
+build
+bundle
+cache
+demo/many
+dist
+node_modules
+out
+reference
+release-*
+releases
+test.md
+*.map

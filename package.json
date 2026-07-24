@@ -1,0 +1,20 @@
+{
+	"name": "one",
+	"version": "0.3.7",
+	"description": "ObjectExplorer as a single native binary",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"addon": "node scripts/addon.mjs",
+		"bundle": "node scripts/npm-bundle.mjs",
+		"sea": "node scripts/sea.mjs",
+		"pack": "node scripts/pack.mjs",
+		"build": "npm run addon && npm run bundle && npm run sea && npm run pack",
+		"smoke": "node scripts/smoke.mjs"
+	},
+	"devDependencies": {
+		"esbuild": "^0.25.0",
+		"postject": "^1.0.0-alpha.6",
+		"resedit": "^3.0.2"
+	}
+}

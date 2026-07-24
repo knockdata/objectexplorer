@@ -1,0 +1,301 @@
+name: Release
+
+# Push a version tag (git tag v1.2.3 && git push origin v1.2.3) to build one signed binary per
+# platform and publish them as a GitHub Release. A manual run does the same thing and asks for
+# the version instead of reading it off the tag; either way the release is named v1.2.3, never
+# after the branch the run started from.
+#
+# Every job runs the same four steps — addon, bundle, sea, pack — because the native addon is
+# compiled per platform and the SEA is built on that platform's node binary. Only the signing
+# differs.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build, e.g. 1.2.3"
+        required: true
+
+jobs:
+  # One job decides what this run is called, and nothing else looks at github.ref_name. A
+  # manual run types "0.3.5" and a tag push arrives as "v0.3.5"; both become version 0.3.5 and
+  # tag v0.3.5. Reading ref_name directly is what published a release called "ObjectExplorer
+  # main", tagged main, on top of the real versions.
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.pick.outputs.version }}
+      tag: ${{ steps.pick.outputs.tag }}
+    steps:
+      - id: pick
+        # through env, not ${{ }} inside the script: an expression is pasted in as text before
+        # bash sees it, so a version typed with a quote in it would run as a command
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version="${INPUT_VERSION:-$REF_NAME}"
+          version="${version#v}"
+          if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "tag=v$version" >> "$GITHUB_OUTPUT"
+            echo "building $version, releasing as v$version" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::expected a version like 1.2.3, got '$version'"
+            exit 1
+          fi
+
+  # Both arches build on the Apple Silicon runner. macos-13 is the last x64 runner and it now
+  # sits in the queue for hours, and it is not needed: one Xcode targets both arm64 and x86_64,
+  # and codesign, hdiutil and notarytool do not care which arch they are handed.
+  mac:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-latest
+            arch: x64
+    needs: version
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    env:
+      TARGET_ARCH: ${{ matrix.arch }}
+      BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+      P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      # 0.3.5 died 15 minutes in because build/ is gitignored and the icons never left the
+      # dev machine. One ls says so in seconds, and the same applies to the native sources —
+      # native/build is gitignored, native/napi must not be.
+      - name: Check the build inputs are in the repo
+        shell: bash
+        run: |
+          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
+          ls -l native/webview.h native/webview_napi.c native/Makefile
+          ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
+          ls -l native/napi/node_api.h native/napi/node_api.def
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+      - run: npm install --no-audit --no-fund
+
+      # Without a certificate the build still produces a runnable ad-hoc signed app, which is
+      # what a fork or a dry run gets.
+      - name: Import signing certificate
+        if: env.BUILD_CERTIFICATE_BASE64 != ''
+        run: |
+          CERT_PATH=$RUNNER_TEMP/cert.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 -D -o "$CERT_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH" login.keychain
+          echo "CODESIGN_IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" | head -1 | awk '{print $2}')" >> "$GITHUB_ENV"
+
+      - name: Write App Store Connect API key
+        if: env.BUILD_CERTIFICATE_BASE64 != ''
+        run: |
+          echo "$PRIVATE_KEY" > "$RUNNER_TEMP/AuthKey.p8"
+          echo "APPLE_API_KEY=$RUNNER_TEMP/AuthKey.p8" >> "$GITHUB_ENV"
+        env:
+          PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+
+      # 0.3.2 failed at hdiutil with ENOSPC; this tells us whether the runner disk was actually
+      # the problem or whether hdiutil under-sized the image again
+      - run: df -h /
+      - run: npm run build
+
+      - name: Check the signature
+        run: |
+          codesign -dv --verbose=4 dist/ObjectExplorer.app
+          spctl -a -vv dist/ObjectExplorer.app || true
+
+      # the x64 build runs here only through Rosetta, which is not promised on an arm64 runner
+      - name: Smoke test
+        run: |
+          if arch -x86_64 /usr/bin/true 2> /dev/null || [ "${{ matrix.arch }}" = "arm64" ]; then
+            bash .github/smoke.sh dist/ObjectExplorer.app/Contents/MacOS/ObjectExplorer
+          else
+            echo "no rosetta on this runner, skipping the x64 smoke test"
+          fi
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: mac-${{ matrix.arch }}
+          path: dist/*.dmg
+
+      - name: Delete keychain
+        if: always()
+        run: security delete-keychain "$RUNNER_TEMP/build.keychain" || true
+
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    needs: version
+    runs-on: ${{ matrix.runner }}
+    # 0.3.2 sat here for hours. The build takes about a minute, so anything past 20 is a hang
+    # and should fail while the log is still worth reading.
+    timeout-minutes: 20
+    # a step's own env is not visible to that step's if, so the signing secrets live here
+    env:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check the build inputs are in the repo
+        shell: bash
+        run: |
+          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
+          ls -l native/webview.h native/webview_napi.c native/Makefile
+          ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
+          ls -l native/napi/node_api.h native/napi/node_api.def
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - shell: bash
+        run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+
+      # the binary is 134 MB and every step rewrites it; without this Defender re-scans the
+      # whole file each time
+      - name: Exclude the workspace from Defender
+        shell: powershell
+        run: Add-MpPreference -ExclusionPath "${{ github.workspace }}" -ErrorAction SilentlyContinue
+
+      - run: npm install --no-audit --no-fund
+
+      # This is what CMake used to do for us. scripts/addon-windows.mjs finds MSVC through
+      # vswhere and calls vcvarsall.bat itself, so a runner image without the C++ workload has
+      # to say so here rather than inside a .bat five minutes later.
+      - name: Check the C toolchain
+        shell: bash
+        run: |
+          vswhere="/c/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe"
+          installed=$("$vswhere" -latest -products '*' -property installationPath)
+          echo "MSVC: $installed"
+          ls -l "$installed/VC/Auxiliary/Build/vcvarsall.bat"
+
+      - run: npm run build
+      - shell: bash
+        run: ls -la dist
+
+      - name: Smoke test
+        shell: bash
+        run: bash .github/smoke.sh "$(ls dist/*.exe)"
+
+      # The single unsigned .exe is exactly what Defender quarantines — 0.2.1 installed a
+      # folder with no ObjectExplorer.exe in it. Signing is not optional here.
+      - name: Sign
+        if: env.AZURE_CLIENT_ID != ''
+        uses: azure/trusted-signing-action@v0
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: https://neu.codesigning.azure.net/
+          trusted-signing-account-name: knockdata
+          certificate-profile-name: KnockData
+          files-folder: ${{ github.workspace }}\dist
+          files-folder-filter: exe
+
+      # An unsigned build used to upload in silence. Defender holding a 107 MB unsigned exe is
+      # what a user sees as a double-click that does nothing at all, so say so out loud.
+      # ASCII only in here: Windows PowerShell 5.1 reads the generated .ps1 as ANSI, and an em
+      # dash ends up as three cp1252 characters whose last one is a curly quote. That closed the
+      # string early and failed the whole step with a parse error before anything ran.
+      - name: Check the signature
+        shell: powershell
+        run: |
+          $exe = (Get-ChildItem dist\*.exe)[0]
+          $signature = Get-AuthenticodeSignature $exe.FullName
+          Write-Output "$($exe.Name): $($signature.Status)"
+          if ($signature.Status -eq "Valid") {
+            Write-Output "signed: $($signature.SignerCertificate.Subject)" >> $env:GITHUB_STEP_SUMMARY
+          } else {
+            Write-Output "::warning::$($exe.Name) is unsigned ($($signature.Status)); Defender and SmartScreen will block it on a user machine. Set AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as repository secrets."
+            Write-Output "**$($exe.Name) is unsigned** - Defender and SmartScreen will block it." >> $env:GITHUB_STEP_SUMMARY
+          }
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: windows-${{ matrix.arch }}
+          path: dist/*.exe
+
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    needs: version
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check the build inputs are in the repo
+        run: |
+          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
+          ls -l native/webview.h native/webview_napi.c native/Makefile
+          ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
+          ls -l native/napi/node_api.h native/napi/node_api.def
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+      # no webkitgtk -dev package here on purpose: native/webview-linux.c opens gtk and webkit
+      # with dlopen, so the build has no dependency on them and the addon has no DT_NEEDED. A
+      # machine without webkit falls back to a browser instead of failing to load the addon.
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
+
+      # the whole point of the dlopen backend: nothing links webkit, so nothing requires it.
+      # Without this the dependency could come back and only a user without webkit would find out.
+      - name: Check the addon has no webkit dependency
+        run: |
+          ldd out/webview_napi-linux-*.node
+          ! ldd out/webview_napi-linux-*.node | grep -qi webkit
+
+      # runs the artifact the way a user does, through the runtime and AppRun.
+      # APPIMAGE_EXTRACT_AND_RUN because ubuntu-24.04 has no libfuse2 to mount an AppImage with.
+      - name: Smoke test
+        run: APPIMAGE_EXTRACT_AND_RUN=1 bash .github/smoke.sh "$(ls dist/*.AppImage)"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: linux-${{ matrix.arch }}
+          path: dist/*.AppImage
+
+  release:
+    needs: [version, mac, windows, linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.version.outputs.tag }}
+          name: ObjectExplorer ${{ needs.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          files: artifacts/**/*
