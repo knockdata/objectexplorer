@@ -17,6 +17,7 @@
 	"build": {
 		"appId": "com.ObjectExplorer.app",
 		"productName": "ObjectExplorer",
+		"executableName": "ObjectExplorer",
 		"icon": "./build/icon.png",
 		"directories": {
 			"output": "dist"
