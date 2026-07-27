@@ -227,7 +227,7 @@ app.whenReady().then(async function () {
 	}
 
 	async function startServer(WebServer, port, mode, options) {
-		const server = await WebServer({ ...options, port, mode, publicDir: options.appDir });
+		const server = await WebServer({ ...options, port, mode, publicDir: mode === "dev" ? undefined : options.appDir });
 		return { port: await server.start(), close: server.close };
 	}
 
@@ -236,9 +236,9 @@ app.whenReady().then(async function () {
 		const { port } = await startServer(WebServer, preferredPort, "dev", {
 			userData,
 			logger,
-			dir: "explorer",
+			appDir: path.join(repoRoot, "explorer"),
 			root: repoRoot,
-			demoPath: path.join(repoRoot, "server/sites/demo"),
+			demoPath: path.join(repoRoot, "objectexplorer/demo"),
 			// built maps live here; served at /maps/ for manual attach in DevTools
 			mapsDir: path.join(repoRoot, "server/sites/objectexplorer.com/maps"),
 			openFolder,
