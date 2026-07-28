@@ -12,6 +12,7 @@ Pushing the tag triggers `.github/workflows/release.yml`. `.github/set-version.s
 |---------|--------------------------------------------------|-------------------------------------------|
 | mac     | `dist/*.dmg` (x64, arm64)                        | signed + notarized when secrets present   |
 | windows | `dist/*.exe` (x64, arm64, nsis)                  |                                            |
+| windows | `dist/*.msix` (x64, arm64)                       | for the Microsoft Store, unsigned on purpose |
 | linux   | `dist/*.AppImage` (x64, arm64)                   |                                            |
 | release | GitHub Release "ObjectExplorer vX.Y.Z"           | bundles all artifacts, auto-generated notes |
 
@@ -37,7 +38,12 @@ spctl -a -vv /Applications/ObjectExplorer.app   # expect: accepted / source=Nota
 open /Applications/ObjectExplorer.app
 ```
 
-Windows: run `ObjectExplorer-Setup-X.Y.Z-x64.exe` (or `-arm64.exe`) directly.
+Windows: run `ObjectExplorer-X.Y.Z-x64.exe` (or `-arm64.exe`) directly.
+
+An `.msix` is a zip, so its manifest can be checked without a Windows machine:
+```
+unzip -p ObjectExplorer-X.Y.Z-x64.msix AppxManifest.xml
+```
 
 Linux:
 ```
@@ -51,6 +57,44 @@ git push --delete origin vX.Y.Z
 git tag -d vX.Y.Z
 gh release delete vX.Y.Z --repo knockdata/objectexplorer --yes
 ```
+
+## Microsoft Store
+
+The Store build is driven entirely by the `build.appx` block in `package.json`. Three of its
+values come from Partner Center and must be filled in before a Store build works — until then
+`identityName` and `publisher` hold `REPLACE_WITH_...` placeholders and the package will be
+rejected on upload.
+
+Sign in to [Partner Center](https://partner.microsoft.com/dashboard) → your product →
+**Product management** → **Product identity**, then copy:
+
+| Partner Center field                    | `build.appx` key            | Looks like                                |
+|-----------------------------------------|-----------------------------|-------------------------------------------|
+| Package/Identity/Name                   | `identityName`              | `12345KnockData.ObjectExplorer`           |
+| Package/Identity/Publisher              | `publisher`                 | `CN=1F2E3D4C-5B6A-7890-ABCD-EF1234567890` |
+| Package/Properties/PublisherDisplayName | `publisherDisplayName`      | `KnockData`                               |
+
+`displayName` must match the name reserved in Partner Center exactly, or certification rejects
+the submission.
+
+No signing certificate and no Azure/Entra credentials are needed: the CI job builds the `.msix`
+unsigned and Partner Center re-signs it with Microsoft's certificate on upload.
+
+### Submit
+1. `./release.sh` (or push a `vX.Y.Z` tag), wait for the release.
+2. `gh release download vX.Y.Z --repo knockdata/objectexplorer -p '*.msix' -D ./release-test`
+3. Partner Center → your product → **Packages** → upload both the x64 and the arm64 `.msix`
+   into the same submission → **Submit to the Store**.
+
+The manifest version is `X.Y.Z.0` (electron-builder appends the 4th component, which the Store
+requires to be `0`). Each submission must have a higher version than the last, which happens
+automatically because `.github/set-version.sh` stamps the tag into `package.json`.
+
+### Tile assets
+`build/appx/*.png` are the Store tiles, generated from `build/icon.png` by
+`scripts/make-appx-assets.sh` and committed. Regenerate and commit them whenever the icon
+changes — the Windows runner cannot generate them, and electron-builder silently substitutes
+Microsoft's placeholder tiles for any that are missing.
 
 ## Mac signing secrets
 `BUILD_CERTIFICATE_BASE64` must be a **"Developer ID Application"** certificate (not "Apple Distribution"/"Mac App Distribution" — those are for App Store submissions and fail notarization).

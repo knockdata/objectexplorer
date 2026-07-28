@@ -83,12 +83,16 @@ jobs:
         shell: bash
         run: bash .github/set-version.sh "${{ inputs.version || github.ref_name }}"
       - run: npm install --no-audit --no-fund
-      # arch list comes from package.json's build.win.target config, so one call builds both
+      # target + arch list comes from package.json's build.win.target config, so one call
+      # builds both the nsis installers and the Microsoft Store msix packages. The msix is
+      # left unsigned on purpose (CSC_IDENTITY_AUTO_DISCOVERY above) — Partner Center signs it.
       - run: npx electron-builder --win --publish never
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: dist/*.exe
+          path: |
+            dist/*.exe
+            dist/*.msix
 
   linux:
     strategy:

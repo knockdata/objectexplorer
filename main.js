@@ -239,8 +239,6 @@ app.whenReady().then(async function () {
 			appDir: path.join(repoRoot, "explorer"),
 			root: repoRoot,
 			demoPath: path.join(repoRoot, "objectexplorer/demo"),
-			// built maps live here; served at /maps/ for manual attach in DevTools
-			mapsDir: path.join(repoRoot, "server/sites/objectexplorer.com/maps"),
 			openFolder,
 			appMode: "electron",
 			portRetry: true,

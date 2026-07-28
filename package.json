@@ -65,8 +65,28 @@
 						"x64",
 						"arm64"
 					]
+				},
+				{
+					"target": "appx",
+					"arch": [
+						"x64",
+						"arm64"
+					]
 				}
 			]
+		},
+		"appx": {
+			"identityName": "REPLACE_WITH_PARTNER_CENTER_IDENTITY_NAME",
+			"publisher": "CN=REPLACE_WITH_PARTNER_CENTER_PUBLISHER_ID",
+			"publisherDisplayName": "KnockData",
+			"applicationId": "ObjectExplorer",
+			"displayName": "ObjectExplorer",
+			"backgroundColor": "#1f1f1f",
+			"languages": [
+				"en-US"
+			],
+			"setBuildNumber": false,
+			"artifactName": "${productName}-${version}-${arch}.msix"
 		},
 		"linux": {
 			"target": [
@@ -82,7 +102,10 @@
 		}
 	},
 	"keywords": [],
-	"author": "",
+	"author": {
+		"name": "KnockData",
+		"email": "rockie@knockdata.com"
+	},
 	"license": "ISC",
 	"type": "module",
 	"dependencies": {
