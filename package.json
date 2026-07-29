@@ -1,6 +1,6 @@
 {
 	"name": "ObjectExplorer",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"description": "The VSCode for Cloud Storage",
 	"main": "main.js",
 	"scripts": {

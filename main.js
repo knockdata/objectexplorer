@@ -9,7 +9,7 @@ import { createRequire } from "node:module";
 import VersionManager from "./VersionManager.js";
 import Logger from "./logger.js";
 import { diagnosticsUrl, diagnosticsText } from "./diagnostics.js";
-import { writeJson } from "./util.js";
+import { checkIntegrity } from "./integrity.js";
 
 app.setName("ObjectExplorer");
 
@@ -32,24 +32,49 @@ if (args.remoteDebuggingPort) {
 	app.commandLine.appendSwitch("remote-debugging-port", String(args.remoteDebuggingPort));
 }
 
-// GPU acceleration has to be decided before the app is ready, and whether this machine can
-// actually render is only knowable once something has tried and died. So the verdict is
-// written when a renderer or the GPU process crashes, and read back on the next launch: a
-// machine with no usable GPU repairs itself instead of showing a white window forever.
-const gpuFile = path.join(dataDir, "gpu.json");
-const gpuState = readGpuState();
-const gpuDisabled = args.disableGpu === "true" || gpuState.hardware === false;
+// Chromium switches, changeable on the machine that is failing. A packaged app started from
+// the Start menu takes no arguments, so switches.txt in the data folder is the only way to
+// reconfigure a VM without building a new installer. One switch per line, "name" or
+// "name=value", # for comments. The same list can be passed as switches=a,b=c on the command
+// line. Every applied switch is logged and shown in About — a switch that changes behaviour
+// must never be invisible.
+const switchesFile = path.join(dataDir, "switches.txt");
+const appliedSwitches = applySwitches();
+// hardware acceleration has its own Electron call rather than a switch
+const gpuDisabled = args.disableGpu === "true" || appliedSwitches.some((s) => s.name === "disable-gpu");
 if (gpuDisabled) {
 	app.disableHardwareAcceleration();
 }
 
-// must be synchronous: nothing may be awaited before disableHardwareAcceleration()
-function readGpuState() {
-	try {
-		return JSON.parse(fs.readFileSync(gpuFile, "utf8"));
-	} catch (error) {
-		return {};
+// must be synchronous: nothing may run before the switches are on the command line
+function applySwitches() {
+	const applied = [];
+	for (const { text, source } of switchSources()) {
+		for (const line of text.split(/[\n,]/)) {
+			const trimmed = line.trim();
+			if (trimmed && trimmed.startsWith("#") === false) {
+				const separator = trimmed.indexOf("=");
+				const name = separator === -1 ? trimmed : trimmed.slice(0, separator);
+				const value = separator === -1 ? "" : trimmed.slice(separator + 1);
+				app.commandLine.appendSwitch(name, value);
+				applied.push({ name, value, source });
+			}
+		}
 	}
+	return applied;
+}
+
+function switchSources() {
+	const sources = [];
+	try {
+		sources.push({ text: fs.readFileSync(switchesFile, "utf8"), source: "switches.txt" });
+	} catch (error) {
+		// no file is the normal case
+	}
+	if (args.switches) {
+		sources.push({ text: args.switches, source: "argv" });
+	}
+	return sources;
 }
 
 // native crashes leave a .dmp next to the log instead of vanishing
@@ -98,6 +123,8 @@ const startupInfo = {
 	webServerPath: null,
 	indexHtmlPath: null,
 	mode: null,
+	integrity: null,
+	switches: null,
 };
 
 // build and configure the single window, but don't load a url yet: the window is created in
@@ -151,12 +178,14 @@ function newWindow(logger) {
 		logger.log("[renderer]", details.level, `${details.sourceId}:${details.lineNumber}`, details.message);
 	});
 	win.webContents.on("render-process-gone", function (event, details) {
-		logger.error("[renderer] process gone:", details.reason, "exitCode:", details.exitCode);
-		// a renderer that dies on first paint is a machine with no usable rasteriser. drop to
-		// software rendering and come back once; if that was already the case, show the report
-		// rather than leaving the window white.
-		startupInfo.error = new Error(`renderer process ${details.reason} (exitCode ${details.exitCode})`);
-		fallbackToSoftwareRendering(logger, `renderer ${details.reason}`, win);
+		const status = describeExitCode(details.exitCode);
+		logger.error("[renderer] process gone:", details.reason, "exitCode:", status);
+		// quitting kills the renderer too; only a genuine failure earns the report
+		const failed = details.reason !== "clean-exit" && details.reason !== "killed";
+		if (failed) {
+			startupInfo.error = new Error(`renderer process ${details.reason} (exitCode ${status})`);
+			showDiagnostics(win, logger);
+		}
 	});
 	win.webContents.on("preload-error", function (event, preloadPath, error) {
 		logger.error("[renderer] preload failed:", preloadPath, error);
@@ -200,22 +229,29 @@ function toggleDevTools(win, logger, source) {
 	win.webContents.toggleDevTools();
 }
 
-// Record that this machine cannot render with hardware and restart into software rendering.
-// Only ever once per install: gpu.json keeps the verdict, so a machine that crashes for some
-// other reason can never end up in a restart loop.
-function fallbackToSoftwareRendering(logger, reason, win) {
-	if (gpuDisabled) {
-		logger.error("already running without hardware acceleration, not relaunching —", reason);
-		if (win) {
-			showDiagnostics(win, logger);
-		}
-	}
-	else {
-		logger.error("disabling hardware acceleration and relaunching —", reason);
-		writeJson(gpuFile, { hardware: false, reason, at: new Date().toISOString() }).then(function () {
-			app.relaunch();
-			app.exit(0);
-		});
+// A bare "exitCode: 1073741819" says nothing; the same number as 0xC0000005 names the fault
+// and points straight at the switch worth trying.
+const windowsStatus = {
+	0xC0000005: "STATUS_ACCESS_VIOLATION — a DLL injected into the process, or a missing/replaced binary. Try disable-features=RendererCodeIntegrity",
+	0xC000001D: "STATUS_ILLEGAL_INSTRUCTION — the CPU does not support an instruction the build uses",
+	0xC0000374: "STATUS_HEAP_CORRUPTION",
+	0xC0000409: "STATUS_STACK_BUFFER_OVERRUN",
+	0xC0000428: "STATUS_INVALID_IMAGE_HASH — code integrity refused an unsigned or altered binary",
+	0xC0000602: "STATUS_FAIL_FAST_EXCEPTION",
+};
+
+function describeExitCode(exitCode) {
+	// electron reports these signed, so 0xC0000005 arrives as -1073741819. read it back as
+	// unsigned, and also try the other sign in case a value was copied without its minus.
+	const unsigned = exitCode < 0 ? exitCode + 0x100000000 : exitCode;
+	const flipped = exitCode > 0 ? 0x100000000 - exitCode : unsigned;
+	const matched = windowsStatus[unsigned] ? unsigned : (windowsStatus[flipped] ? flipped : unsigned);
+	const hex = "0x" + matched.toString(16).toUpperCase().padStart(8, "0");
+	const name = windowsStatus[matched];
+	if (name) {
+		return `${exitCode} (${hex} ${name})`;
+	} else {
+		return `${exitCode} (${hex})`;
 	}
 }
 
@@ -252,12 +288,25 @@ function emulationWarning() {
 	}
 }
 
+// what the applied switches look like in About, the log and the diagnostics report
+function switchSummary() {
+	if (appliedSwitches.length === 0) {
+		return "none";
+	} else {
+		return appliedSwitches.map(function (s) {
+			const setting = s.value ? `${s.name}=${s.value}` : s.name;
+			return `${setting} (${s.source})`;
+		}).join(", ");
+	}
+}
+
 function aboutDetail() {
 	return [
 		`Architecture : ${process.arch} (${process.platform})`,
 		`Bundle       : @knockdata/objectexplorer ${bundleVersion()}`,
 		`Electron     : ${process.versions.electron}   Chromium: ${process.versions.chrome}   Node: ${process.versions.node}`,
 		`Rendering    : ${gpuDisabled ? "software (hardware acceleration off)" : "hardware accelerated"}`,
+		`Switches     : ${switchSummary()}`,
 		`Data folder  : ${dataDir}`,
 	].join("\n") + emulationWarning();
 }
@@ -384,6 +433,7 @@ app.whenReady().then(async function () {
 
 	startupInfo.logPath = logger.logPath;
 	startupInfo.mode = mode;
+	startupInfo.switches = switchSummary();
 
 	logger.log("App ready", process.versions);
 	logger.log("mode:", mode);
@@ -396,7 +446,16 @@ app.whenReady().then(async function () {
 	logger.log("exe:", process.execPath);
 	logger.log("cwd:", process.cwd());
 	logger.log("argv:", JSON.stringify(process.argv));
-	logger.log("gpu.json:", JSON.stringify(gpuState), "hardware acceleration:", gpuDisabled ? "off" : "on");
+	logger.log("switches file:", switchesFile, "applied:", switchSummary());
+
+	// Defender quarantining a binary after install is a documented failure for this app, and
+	// from inside it looks like a crash with no explanation. Name the missing files instead.
+	const integrity = checkIntegrity();
+	startupInfo.integrity = integrity;
+	logger.log("install integrity:", integrity.summary);
+	for (const problem of integrity.problems) {
+		logger.error("install integrity:", problem);
+	}
 
 	// browser-process shortcuts: unlike before-input-event these still fire when the renderer
 	// has crashed, which is exactly when DevTools is needed
@@ -413,11 +472,9 @@ app.whenReady().then(async function () {
 		}
 	});
 
-	// The GPU can only be inspected once the app is ready, so this is recorded for the log and
-	// nothing more. It deliberately does not decide anything: a perfectly healthy Mac also
-	// reports gpu_compositing=disabled_software, so treating that as "no GPU" would push every
-	// machine into software rendering forever. What actually distinguishes a machine that
-	// cannot render is that its renderer or GPU process dies — that is the trigger below.
+	// Recorded for the log and nothing more. It deliberately decides nothing: a perfectly
+	// healthy Mac also reports gpu_compositing=disabled_software, so treating that as "no GPU"
+	// would push every machine into software rendering forever.
 	logger.log("GPU feature status:", JSON.stringify(app.getGPUFeatureStatus()));
 	app.getGPUInfo("basic").then(function (info) {
 		logger.log("GPU info:", JSON.stringify(info));
@@ -425,12 +482,9 @@ app.whenReady().then(async function () {
 		logger.warn("GPU info unavailable:", error);
 	});
 
-	// the GPU process dying is the other way a machine tells us it has no usable hardware
 	app.on("child-process-gone", function (event, details) {
-		logger.error("[child-process] gone:", details.type, details.reason, "exitCode:", details.exitCode);
-		if (details.type === "GPU") {
-			fallbackToSoftwareRendering(logger, `GPU process ${details.reason}`, null);
-		}
+		logger.error("[child-process] gone:", details.type, details.reason,
+			"exitCode:", describeExitCode(details.exitCode));
 	});
 
 	let versionManager;

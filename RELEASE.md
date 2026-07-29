@@ -72,6 +72,54 @@ git tag -d vX.Y.Z
 gh release delete vX.Y.Z --repo knockdata/objectexplorer --yes
 ```
 
+## Troubleshooting a Windows install
+
+Run the diagnose script on the failing machine and read the output before changing anything:
+
+```
+powershell -ExecutionPolicy Bypass -File scripts\diagnose-windows.ps1
+```
+
+It prints the real vs emulated architecture, the install directory checked against
+`resources\package-files.json` (written at build time by `scripts/afterPack.cjs`), every
+binary's signature status, Defender's recent detections, and the tail of `app.log`. A missing
+`ObjectExplorer.exe`, or any file listed under **MISSING**, means something removed it after
+installation — normally Defender; see the signing section below.
+
+The app performs the same manifest check itself at startup and writes the result to
+`app.log`, so `install integrity:` there says the same thing without running anything.
+
+### Chromium switches without rebuilding
+
+A packaged app started from the Start menu takes no command-line arguments, so switches are
+read from `%USERPROFILE%\.objectexplorer\switches.txt` — one per line, `name` or
+`name=value`, `#` for comments. Everything applied is listed in `app.log` and in
+**Help → About ObjectExplorer**. The same list works as `switches=a,b=c` on the command line.
+
+When a renderer crashes, try these one at a time; the first that stops the crash names the
+cause:
+
+| switch                                   | what it tests                                                             |
+|------------------------------------------|---------------------------------------------------------------------------|
+| `disable-features=RendererCodeIntegrity`  | a DLL is being injected into the renderer — the classic `0xC0000005`      |
+| `no-sandbox`                              | the sandbox cannot start under this VM or security software              |
+| `disable-gpu`                             | the GPU path                                                              |
+| `disable-gpu-sandbox`                     | the GPU process sandbox specifically                                      |
+| `in-process-gpu`                          | removes the GPU process entirely                                          |
+| `disable-software-rasterizer`             | rules SwiftShader in or out                                               |
+
+`app.log` decodes crash codes, so `exitCode: 1073741819` reads as
+`0xC0000005 STATUS_ACCESS_VIOLATION` with the switch to try named alongside it.
+
+### The MSI is x64 only
+
+`msiWrapped` builds x64 and silently ignores `--arm64` — the release job asks for both and
+the build log shows one line, `building target=MSI arch=x64`. That is the target's
+limitation, not a misconfiguration. **On ARM take `ObjectExplorer-X.Y.Z-arm64.exe` or the
+`.msix`.** Both installers share an appId and install into the same directory, so a wrong-arch
+MSI silently replaces a correct arm64 install; **Help → About** states the architecture
+actually running and warns when an x64 build is running emulated on ARM.
+
 ## Windows signing
 
 Unsigned Electron binaries get quarantined by Windows Defender: 0.2.1 installed a folder holding

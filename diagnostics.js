@@ -36,7 +36,8 @@ function escapeHtml(text) {
 // the whole report as plain text: what the page shows, what the copy button copies, and
 // what gets written to the log
 export function diagnosticsText(details) {
-	const { error, logPath, packageDir, bundleDir, appDir, webServerPath, indexHtmlPath, mode } = details;
+	const { error, logPath, packageDir, bundleDir, appDir, webServerPath, indexHtmlPath, mode,
+		integrity, switches } = details;
 	const lines = [
 		`ObjectExplorer failed to start`,
 		``,
@@ -46,10 +47,14 @@ export function diagnosticsText(details) {
 		`mode        : ${mode}`,
 		`platform    : ${process.platform} ${process.arch}`,
 		`electron    : ${process.versions.electron}  node: ${process.versions.node}  chrome: ${process.versions.chrome}`,
+		`switches    : ${switches || "none"}`,
 		`log file    : ${logPath}`,
 		`exe         : ${process.execPath}`,
 		`cwd         : ${process.cwd()}`,
 		`argv        : ${JSON.stringify(process.argv)}`,
+		``,
+		`install     : ${integrity ? integrity.summary : "not checked"}`,
+		...(integrity ? integrity.problems.map((problem) => `              ${problem}`) : []),
 		``,
 		`packageDir  : ${packageDir}`,
 		`bundleDir   : ${bundleDir}`,

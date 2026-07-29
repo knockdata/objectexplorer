@@ -44,11 +44,55 @@ exports.default = async ({ appOutDir, packager }) => {
             remove(path.join(appOutDir, 'ffmpeg.dll'));
         }
     }
+
+    writeManifest(appOutDir, packager);
 };
 
 function remove(filePath) {
     if (fs.existsSync(filePath)) {
         fs.rmSync(filePath, { recursive: true });
         console.log(`[afterPack] removed: ${path.basename(filePath)}`);
+    }
+}
+
+// Record what actually shipped, so the app can tell at startup whether anything was removed
+// from the install directory afterwards — Defender has done exactly that to this app before
+// (see RELEASE.md). Paths are relative to the directory holding resources/, which the app
+// finds at runtime as path.dirname(process.resourcesPath) on every platform. Written last,
+// after the removals above, so it describes the real contents.
+function writeManifest(appOutDir, packager) {
+    const platform = packager.platform.name;
+    const root = platform === 'mac'
+        ? path.join(appOutDir, `${packager.appInfo.productName}.app`, 'Contents')
+        : appOutDir;
+    const resourcesDir = path.join(root, platform === 'mac' ? 'Resources' : 'resources');
+
+    const files = [];
+    collect(root, root, files);
+    const manifest = {
+        productName: packager.appInfo.productName,
+        version: packager.appInfo.version,
+        platform,
+        arch: process.env.npm_config_arch || 'unknown',
+        files,
+    };
+    fs.mkdirSync(resourcesDir, { recursive: true });
+    fs.writeFileSync(path.join(resourcesDir, 'package-files.json'), JSON.stringify(manifest, null, 1));
+    console.log(`[afterPack] manifest: ${files.length} files recorded for ${root}`);
+}
+
+function collect(dir, root, files) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            collect(full, root, files);
+        } else {
+            if (entry.isFile()) {
+                files.push({
+                    path: path.relative(root, full).split(path.sep).join('/'),
+                    size: fs.statSync(full).size,
+                });
+            }
+        }
     }
 }
