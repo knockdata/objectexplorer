@@ -77,14 +77,8 @@ Authentication uses Azure's `EnvironmentCredential`, which reads three repo secr
 needs the **Trusted Signing Certificate Profile Signer** role on the account, otherwise the build
 fails with an authorization error from `Invoke-TrustedSigning`.
 
-The four account values are not secret and are passed on the command line in `release.yml`:
-
-| `azureSignOptions` key   | value                                                             |
-|--------------------------|-------------------------------------------------------------------|
-| `endpoint`               | `https://neu.codesigning.azure.net/`                              |
-| `codeSigningAccountName` | `knockdata`                                                       |
-| `certificateProfileName` | `KnockData`                                                       |
-| `publisherName`          | `CN=KnockData, O=KnockData, STREET=..., L=Stockholm, C=SE, ...`   |
+The four account values are not secret and live in `electron-builder.cjs`: `endpoint`,
+`codeSigningAccountName`, `certificateProfileName` and the certificate's `publisherName`.
 
 `build.win.signExts` adds `.dll` to what gets signed — electron-builder signs only the main `.exe`
 by default, and Defender took the DLLs too.
@@ -92,11 +86,17 @@ by default, and Defender took the DLLs too.
 The windows job runs electron-builder **twice** on purpose. Setting `azureSignOptions` swaps in
 `WindowsSignAzureManager` for the whole run, and its `computePublisherName()` ignores
 `appx.publisher` and returns the Trusted Signing certificate subject — which would write the wrong
-`Identity/Publisher` into the Store manifest. The option cannot be turned back off from the CLI
-either (`-c.win.*` values are not coerced, so `-c.win.azureSignOptions=null` arrives as the string
-`"null"`). So the nsis/msiWrapped step gets the signing options and the appx step does not.
+`Identity/Publisher` into the Store manifest. So the nsis/msiWrapped step runs with
+`SIGN_WINDOWS=true` and the appx step runs without it.
 
-Local `npm run build:win` never signs, since the options only exist in the workflow.
+That switch needs `electron-builder.cjs` because neither alternative works: package.json cannot
+express a conditional, and repeated `-c.win.azureSignOptions.*` command-line arguments come back
+from yargs as a mix of objects and strings, with each string turned into an `extends` path that
+electron-builder then fails to open. Both Windows steps therefore pass
+`--config electron-builder.cjs`; every other job reads package.json, which `electron-builder.cjs`
+re-exports unchanged.
+
+Local `npm run build:win` never signs — it reads package.json, and `SIGN_WINDOWS` is unset anyway.
 
 ## Microsoft Store
 

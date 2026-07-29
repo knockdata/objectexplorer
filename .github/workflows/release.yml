@@ -86,19 +86,13 @@ jobs:
 
       # Every .exe and .dll we ship is signed with Azure Trusted Signing. Unsigned Electron
       # binaries get quarantined by Defender, which is how 0.2.1 installed a folder full of .pak
-      # files with no ObjectExplorer.exe in it. The three AZURE_* secrets are what Azure's
-      # EnvironmentCredential reads to authenticate; the four account values below are not secret.
-      #
-      # They live here rather than in package.json's build.win because setting azureSignOptions
-      # switches electron-builder to WindowsSignAzureManager for the whole run, and that manager's
-      # computePublisherName() ignores appx.publisher and returns the Trusted Signing subject —
-      # which would put the wrong Identity/Publisher in the Store manifest. There is no way to
-      # switch it back off from the CLI either: -c.win.* values are not coerced, so
-      # "-c.win.azureSignOptions=null" arrives as the *string* "null". Passing it only to the step
-      # that needs it keeps the appx build clean, and keeps local builds unsigned.
+      # files with no ObjectExplorer.exe in it. SIGN_WINDOWS is read by electron-builder.cjs, which
+      # explains there why signing has to be per-build rather than a package.json setting; the
+      # AZURE_* secrets are what Azure's EnvironmentCredential reads to authenticate.
       - name: Build signed installers
-        run: npx electron-builder --win nsis msiWrapped --x64 --arm64 --publish never -c.win.azureSignOptions.endpoint=https://neu.codesigning.azure.net/ -c.win.azureSignOptions.codeSigningAccountName=knockdata -c.win.azureSignOptions.certificateProfileName=KnockData "-c.win.azureSignOptions.publisherName=CN=KnockData, O=KnockData, STREET=Kammakargatan 44, L=Stockholm, S=Stockholm, C=SE, PostalCode=11160"
+        run: npx electron-builder --win nsis msiWrapped --x64 --arm64 --publish never --config electron-builder.cjs
         env:
+          SIGN_WINDOWS: "true"
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -106,7 +100,7 @@ jobs:
       # Partner Center re-signs the msix itself, so this one stays unsigned and keeps the
       # build.appx.publisher identity.
       - name: Build unsigned Store packages
-        run: npx electron-builder --win appx --x64 --arm64 --publish never
+        run: npx electron-builder --win appx --x64 --arm64 --publish never --config electron-builder.cjs
 
       - uses: actions/upload-artifact@v4
         with:
