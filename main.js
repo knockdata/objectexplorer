@@ -3,16 +3,24 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import VersionManager from "./VersionManager.js";
 import Logger from "./logger.js";
+import { diagnosticsUrl, diagnosticsText } from "./diagnostics.js";
 
 app.setName("ObjectExplorer");
 
 const require = createRequire(import.meta.url);
 const args = Object.fromEntries(process.argv.slice(2).map((arg) => arg.split("=")));
 const preferredPort = args.port ? +args.port : 9421;
+
+// when the in-window DevTools itself is unusable (a white window on a fresh Windows VM),
+// remoteDebuggingPort=9222 lets the renderer be inspected from Edge at edge://inspect.
+// the switch has to be set before the app is ready.
+if (args.remoteDebuggingPort) {
+	app.commandLine.appendSwitch("remote-debugging-port", String(args.remoteDebuggingPort));
+}
 const here = path.dirname(fileURLToPath(import.meta.url));
 // dev and staging build the product from the monorepo source next to this repo
 const repoRoot = path.join(here, "../rock2");
@@ -45,9 +53,22 @@ function resolvePackageDir() {
 
 
 
+// everything the diagnostics page needs to describe a failed start. filled in as startup
+// progresses so the page is useful no matter how early it fails.
+const startupInfo = {
+	error: null,
+	logPath: null,
+	packageDir,
+	bundleDir: null,
+	appDir: null,
+	webServerPath: null,
+	indexHtmlPath: null,
+	mode: null,
+};
+
 // build and configure the single window, but don't load a url yet: the window is created in
 // parallel with the server so it is ready to load the moment the server url resolves.
-function newWindow() {
+function newWindow(logger) {
 	const win = new BrowserWindow({
 		width: 1200,
 		height: 800,
@@ -68,13 +89,63 @@ function newWindow() {
 		win.webContents.openDevTools();
 	}
 
-	win.webContents.on("did-fail-load", function (event, errorCode, errorDescription) {
-		console.log("[main] Window failed to load:", errorCode, errorDescription);
+	// the menu bar can be hidden or unreachable on a packaged Windows build, so bind the
+	// usual shortcuts directly to the web contents as well
+	win.webContents.on("before-input-event", function (event, input) {
+		const isF12 = input.key === "F12";
+		const isInspect = input.control && input.shift && input.key.toLowerCase() === "i";
+		if (input.type === "keyDown" && (isF12 || isInspect)) {
+			win.webContents.toggleDevTools();
+			event.preventDefault();
+		}
+	});
+
+	// the renderer's own uncaught errors arrive here. on a white window with no DevTools
+	// this is the only place they can be seen at all.
+	// electron 35+ passes a details object with a named level; older builds pass positional
+	// args, so accept both
+	win.webContents.on("console-message", function (event, level, message, line, sourceId) {
+		const details = event && event.message ? event : { level, message, lineNumber: line, sourceId };
+		logger.log("[renderer]", details.level, `${details.sourceId}:${details.lineNumber}`, details.message);
+	});
+	win.webContents.on("render-process-gone", function (event, details) {
+		logger.error("[renderer] process gone:", details.reason, "exitCode:", details.exitCode);
+	});
+	win.webContents.on("preload-error", function (event, preloadPath, error) {
+		logger.error("[renderer] preload failed:", preloadPath, error);
+	});
+	win.webContents.on("unresponsive", function () {
+		logger.error("[renderer] unresponsive");
+	});
+	win.webContents.on("certificate-error", function (event, url, error) {
+		logger.error("[renderer] certificate error:", url, error);
+	});
+
+	win.webContents.on("did-fail-load", function (event, errorCode, errorDescription, validatedUrl, isMainFrame) {
+		logger.error("Window failed to load:", validatedUrl, errorCode, errorDescription, "mainFrame:", isMainFrame);
+		if (isMainFrame) {
+			startupInfo.error = new Error(`did-fail-load ${errorCode} ${errorDescription} (${validatedUrl})`);
+			showDiagnostics(win, logger);
+		}
 	});
 	win.webContents.on("did-finish-load", function () {
-		console.log("[main] Window loaded successfully");
+		logger.log("Window loaded successfully");
 	});
 	return win;
+}
+
+// replace a blank window with a readable report of why startup failed. shown once, so a
+// failure to load the report itself can never loop.
+let diagnosticsShown = false;
+function showDiagnostics(win, logger) {
+	if (diagnosticsShown) {
+	}
+	else {
+		diagnosticsShown = true;
+		logger.error("Showing diagnostics page\n" + diagnosticsText(startupInfo));
+		win.loadURL(diagnosticsUrl(startupInfo));
+		win.show();
+	}
 }
 
 // dev serves the explorer frontend live from source (vite middleware) + backend in-process;
@@ -127,11 +198,53 @@ app.whenReady().then(async function () {
 			{ role: "viewMenu" },
 			{ role: "windowMenu" },
 		]));
+	} else {
+		// windows and linux got no explicit menu, so a shipped build had no reliable way to
+		// open DevTools or find the log file. spell both out.
+		Menu.setApplicationMenu(Menu.buildFromTemplate([
+			{
+				label: "File",
+				submenu: [
+					{ role: "quit" },
+				],
+			},
+			{ role: "editMenu" },
+			{
+				label: "View",
+				submenu: [
+					{ role: "reload" },
+					{ role: "forceReload" },
+					{ role: "toggleDevTools" },
+					{ type: "separator" },
+					{ role: "resetZoom" },
+					{ role: "zoomIn" },
+					{ role: "zoomOut" },
+					{ type: "separator" },
+					{ role: "togglefullscreen" },
+				],
+			},
+			{
+				label: "Help",
+				submenu: [
+					{
+						label: "Open Log Folder",
+						click: function () {
+							shell.showItemInFolder(logger.logPath);
+						},
+					},
+				],
+			},
+		]));
 	}
+
+	startupInfo.logPath = logger.logPath;
+	startupInfo.mode = mode;
 
 	logger.log("App ready", process.versions);
 	logger.log("mode:", mode);
+	logger.log("platform:", process.platform, "arch:", process.arch);
 	logger.log("userData:", userData);
+	logger.log("logPath:", logger.logPath);
 	logger.log("resourcesPath:", process.resourcesPath);
 	logger.log("packageDir:", packageDir);
 	logger.log("exe:", process.execPath);
@@ -144,9 +257,9 @@ app.whenReady().then(async function () {
 	let swapping = false;
 
 	async function openFolder() {
-		console.log('[add-folder][main] openFolder: opening native directory dialog');
+		logger.log('[add-folder][main] openFolder: opening native directory dialog');
 		const result = await dialog.showOpenDialog({ properties: ["openDirectory"] });
-		console.log('[add-folder][main] openFolder: canceled=', result.canceled, 'paths=', result.filePaths);
+		logger.log('[add-folder][main] openFolder: canceled=', result.canceled, 'paths=', JSON.stringify(result.filePaths));
 		if (result.canceled) {
 			return null;
 		} else {
@@ -178,13 +291,20 @@ app.whenReady().then(async function () {
 			});
 			localServer = started.url;
 		} catch (err) {
-			logger.error("FATAL startup error:", err.message, err.stack);
+			logger.error("FATAL startup error:", err);
+			startupInfo.error = err;
 		}
 	}
 
-	const win = newWindow();
+	const win = newWindow(logger);
 	const bootUrl = await localServer;
-	win.loadURL(bootUrl);
+	// startup used to fall through here with bootUrl undefined, and loadURL(undefined) threw
+	// behind a window that stayed blank forever. show the report instead.
+	if (bootUrl) {
+		win.loadURL(bootUrl);
+	} else {
+		showDiagnostics(win, logger);
+	}
 
 	// a freshly downloaded newer bundle is swapped in only when the window goes to background,
 	// so the user never sees the reload; the download itself already happened in checkUpdate.
@@ -252,6 +372,10 @@ app.whenReady().then(async function () {
 		const appDir = path.join(bundleDir, "app");
 		const pathWebServer = path.join(bundleDir, "server", "WebServer.mjs");
 		const pathIndexHtml = path.join(appDir, "index.html");
+		startupInfo.bundleDir = bundleDir;
+		startupInfo.appDir = appDir;
+		startupInfo.webServerPath = pathWebServer;
+		startupInfo.indexHtmlPath = pathIndexHtml;
 		logger.log("bundleDir:", bundleDir);
 		logger.log("appDir:", appDir);
 		logger.log(`${pathWebServer} exists:`, fs.existsSync(pathWebServer));
@@ -280,8 +404,11 @@ app.whenReady().then(async function () {
 	}
 
 	async function getWebServer(pathWebServer) {
-		logger.log("Loading bundled WebServer from:", pathWebServer);
-		const bundleModule = await import("file://" + pathWebServer);
+		// pathToFileURL, not "file://" + path: a Windows path has a drive letter, backslashes
+		// and often a space ("Program Files"), none of which survive naive concatenation
+		const url = pathToFileURL(pathWebServer).href;
+		logger.log("Loading bundled WebServer from:", pathWebServer, "as", url);
+		const bundleModule = await import(url);
 		return bundleModule.WebServer;
 	}
 });
