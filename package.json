@@ -1,6 +1,6 @@
 {
-	"name": "@knockdata/objectexplorer",
-	"version": "0.2.1",
+	"name": "ObjectExplorer",
+	"version": "0.2.2",
 	"description": "The VSCode for Cloud Storage",
 	"main": "main.js",
 	"scripts": {
@@ -34,7 +34,7 @@
 		"electronLanguages": [
 			"en"
 		],
-		"compression": "maximum",
+		"compression": "normal",
 		"publish": null,
 		"afterPack": "./scripts/afterPack.cjs",
 		"artifactName": "${productName}-${version}-${arch}.${ext}",
@@ -72,12 +72,24 @@
 						"x64",
 						"arm64"
 					]
+				},
+				{
+					"target": "msiWrapped",
+					"arch": [
+						"x64",
+						"arm64"
+					]
 				}
+			],
+			"signExts": [
+				".dll",
+				"!.appx",
+				"!.msix"
 			]
 		},
 		"appx": {
-			"identityName": "REPLACE_WITH_PARTNER_CENTER_IDENTITY_NAME",
-			"publisher": "CN=REPLACE_WITH_PARTNER_CENTER_PUBLISHER_ID",
+			"identityName": "KnockData.ObjectExplorer",
+			"publisher": "CN=C5C9E62A-2A26-4C2C-989D-46433B73DFC8",
 			"publisherDisplayName": "KnockData",
 			"applicationId": "ObjectExplorer",
 			"displayName": "ObjectExplorer",

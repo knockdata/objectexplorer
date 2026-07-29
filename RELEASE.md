@@ -11,7 +11,8 @@ Pushing the tag triggers `.github/workflows/release.yml`. `.github/set-version.s
 | job     | output                                          | notes                                    |
 |---------|--------------------------------------------------|-------------------------------------------|
 | mac     | `dist/*.dmg` (x64, arm64)                        | signed + notarized when secrets present   |
-| windows | `dist/*.exe` (x64, arm64, nsis)                  |                                            |
+| windows | `dist/*.exe` (x64, arm64, nsis)                  | signed with Azure Trusted Signing         |
+| windows | `dist/*.msi` (x64, arm64, msiWrapped)            | signed with Azure Trusted Signing         |
 | windows | `dist/*.msix` (x64, arm64)                       | for the Microsoft Store, unsigned on purpose |
 | linux   | `dist/*.AppImage` (x64, arm64)                   |                                            |
 | release | GitHub Release "ObjectExplorer vX.Y.Z"           | bundles all artifacts, auto-generated notes |
@@ -38,7 +39,13 @@ spctl -a -vv /Applications/ObjectExplorer.app   # expect: accepted / source=Nota
 open /Applications/ObjectExplorer.app
 ```
 
-Windows: run `ObjectExplorer-X.Y.Z-x64.exe` (or `-arm64.exe`) directly.
+Windows: run `ObjectExplorer-X.Y.Z-x64.exe` (or `-arm64.exe`) directly. It installs per-user into
+`%LOCALAPPDATA%\Programs\ObjectExplorer`. Confirm the signature survived:
+```
+Get-AuthenticodeSignature "$env:LOCALAPPDATA\Programs\ObjectExplorer\ObjectExplorer.exe"
+```
+`Status` must be `Valid`. If binaries are missing from that folder, Defender ate them —
+`Get-MpThreatDetection | Select-Object -Last 10` shows what it quarantined.
 
 An `.msix` is a zip, so its manifest can be checked without a Windows machine:
 ```
@@ -58,15 +65,45 @@ git tag -d vX.Y.Z
 gh release delete vX.Y.Z --repo knockdata/objectexplorer --yes
 ```
 
+## Windows signing
+
+Unsigned Electron binaries get quarantined by Windows Defender: 0.2.1 installed a folder holding
+every `.pak`, `.bin` and `.dat` file but not one `.exe` or `.dll`, leaving a Start-menu shortcut
+pointing at a missing `ObjectExplorer.exe`. Everything shipped as an executable is therefore signed
+with [Azure Trusted Signing](https://learn.microsoft.com/en-us/azure/trusted-signing/).
+
+Authentication uses Azure's `EnvironmentCredential`, which reads three repo secrets:
+`AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`. The service principal behind them
+needs the **Trusted Signing Certificate Profile Signer** role on the account, otherwise the build
+fails with an authorization error from `Invoke-TrustedSigning`.
+
+The four account values are not secret and are passed on the command line in `release.yml`:
+
+| `azureSignOptions` key   | value                                                             |
+|--------------------------|-------------------------------------------------------------------|
+| `endpoint`               | `https://neu.codesigning.azure.net/`                              |
+| `codeSigningAccountName` | `knockdata`                                                       |
+| `certificateProfileName` | `KnockData`                                                       |
+| `publisherName`          | `CN=KnockData, O=KnockData, STREET=..., L=Stockholm, C=SE, ...`   |
+
+`build.win.signExts` adds `.dll` to what gets signed — electron-builder signs only the main `.exe`
+by default, and Defender took the DLLs too.
+
+The windows job runs electron-builder **twice** on purpose. Setting `azureSignOptions` swaps in
+`WindowsSignAzureManager` for the whole run, and its `computePublisherName()` ignores
+`appx.publisher` and returns the Trusted Signing certificate subject — which would write the wrong
+`Identity/Publisher` into the Store manifest. The option cannot be turned back off from the CLI
+either (`-c.win.*` values are not coerced, so `-c.win.azureSignOptions=null` arrives as the string
+`"null"`). So the nsis/msiWrapped step gets the signing options and the appx step does not.
+
+Local `npm run build:win` never signs, since the options only exist in the workflow.
+
 ## Microsoft Store
 
 The Store build is driven entirely by the `build.appx` block in `package.json`. Three of its
-values come from Partner Center and must be filled in before a Store build works — until then
-`identityName` and `publisher` hold `REPLACE_WITH_...` placeholders and the package will be
-rejected on upload.
-
-Sign in to [Partner Center](https://partner.microsoft.com/dashboard) → your product →
-**Product management** → **Product identity**, then copy:
+values come from Partner Center; they are filled in already, and if a Store submission is ever
+rejected on identity, re-check them at [Partner Center](https://partner.microsoft.com/dashboard) →
+your product → **Product management** → **Product identity**:
 
 | Partner Center field                    | `build.appx` key            | Looks like                                |
 |-----------------------------------------|-----------------------------|-------------------------------------------|
