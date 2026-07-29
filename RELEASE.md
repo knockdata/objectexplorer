@@ -12,7 +12,7 @@ Pushing the tag triggers `.github/workflows/release.yml`. `.github/set-version.s
 |---------|--------------------------------------------------|-------------------------------------------|
 | mac     | `dist/*.dmg` (x64, arm64)                        | signed + notarized when secrets present   |
 | windows | `dist/*.exe` (x64, arm64, nsis)                  | signed with Azure Trusted Signing         |
-| windows | `dist/*.msi` (x64, arm64, msiWrapped)            | signed with Azure Trusted Signing         |
+| windows | `dist/*.msi` (x64, msiWrapped)                   | signed; arm64 may be skipped — see below  |
 | windows | `dist/*.msix` (x64, arm64)                       | for the Microsoft Store, unsigned on purpose |
 | linux   | `dist/*.AppImage` (x64, arm64)                   |                                            |
 | release | GitHub Release "ObjectExplorer vX.Y.Z"           | bundles all artifacts, auto-generated notes |
@@ -39,7 +39,14 @@ spctl -a -vv /Applications/ObjectExplorer.app   # expect: accepted / source=Nota
 open /Applications/ObjectExplorer.app
 ```
 
-Windows: run `ObjectExplorer-X.Y.Z-x64.exe` (or `-arm64.exe`) directly. It installs per-user into
+Windows: **install the file whose arch matches the machine.** Both installers use the same
+appId and the same `%LOCALAPPDATA%\Programs\ObjectExplorer` directory, so one silently
+replaces the other and nothing warns you. v0.2.4 produced no `-arm64.msi` at all — an ARM
+machine reaching for the only MSI got the x64 build and ran it under emulation. Open
+**Help → About ObjectExplorer** first: the Architecture line states what is actually running,
+and says so explicitly when an x64 build is running emulated on ARM.
+
+Run `ObjectExplorer-X.Y.Z-x64.exe` (or `-arm64.exe`) directly. It installs per-user into
 `%LOCALAPPDATA%\Programs\ObjectExplorer`. Confirm the signature survived:
 ```
 Get-AuthenticodeSignature "$env:LOCALAPPDATA\Programs\ObjectExplorer\ObjectExplorer.exe"

@@ -1,13 +1,15 @@
-import { app, BrowserWindow, Menu, shell, dialog, nativeImage, nativeTheme } from "electron";
+import { app, BrowserWindow, Menu, shell, dialog, nativeImage, nativeTheme, globalShortcut, crashReporter } from "electron";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import VersionManager from "./VersionManager.js";
 import Logger from "./logger.js";
 import { diagnosticsUrl, diagnosticsText } from "./diagnostics.js";
+import { writeJson } from "./util.js";
 
 app.setName("ObjectExplorer");
 
@@ -15,12 +17,44 @@ const require = createRequire(import.meta.url);
 const args = Object.fromEntries(process.argv.slice(2).map((arg) => arg.split("=")));
 const preferredPort = args.port ? +args.port : 9421;
 
+// one folder holds everything the product owns — app.log, folders.json, provider caches, the
+// OTA .app bundles — and it is the same folder the CLI uses (objectexplorer/cli.js), so the
+// desktop app and the CLI share folders and favourites. setting it here means every later
+// app.getPath("userData") follows, including Chromium's own state.
+const dataDir = path.join(os.homedir(), ".objectexplorer");
+fs.mkdirSync(dataDir, { recursive: true });
+app.setPath("userData", dataDir);
+
 // when the in-window DevTools itself is unusable (a white window on a fresh Windows VM),
 // remoteDebuggingPort=9222 lets the renderer be inspected from Edge at edge://inspect.
 // the switch has to be set before the app is ready.
 if (args.remoteDebuggingPort) {
 	app.commandLine.appendSwitch("remote-debugging-port", String(args.remoteDebuggingPort));
 }
+
+// GPU acceleration has to be decided before the app is ready, and whether this machine can
+// actually render is only knowable once something has tried and died. So the verdict is
+// written when a renderer or the GPU process crashes, and read back on the next launch: a
+// machine with no usable GPU repairs itself instead of showing a white window forever.
+const gpuFile = path.join(dataDir, "gpu.json");
+const gpuState = readGpuState();
+const gpuDisabled = args.disableGpu === "true" || gpuState.hardware === false;
+if (gpuDisabled) {
+	app.disableHardwareAcceleration();
+}
+
+// must be synchronous: nothing may be awaited before disableHardwareAcceleration()
+function readGpuState() {
+	try {
+		return JSON.parse(fs.readFileSync(gpuFile, "utf8"));
+	} catch (error) {
+		return {};
+	}
+}
+
+// native crashes leave a .dmp next to the log instead of vanishing
+crashReporter.start({ uploadToServer: false });
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 // dev and staging build the product from the monorepo source next to this repo
 const repoRoot = path.join(here, "../rock2");
@@ -89,13 +123,21 @@ function newWindow(logger) {
 		win.webContents.openDevTools();
 	}
 
+	// a devtools marker file opens the tools without any command line, which is the only
+	// practical way to do it for an app launched from the Start menu
+	if (fs.existsSync(path.join(dataDir, "devtools"))) {
+		logger.log("devtools marker file present, opening DevTools");
+		win.webContents.openDevTools({ mode: "detach" });
+	}
+
 	// the menu bar can be hidden or unreachable on a packaged Windows build, so bind the
-	// usual shortcuts directly to the web contents as well
+	// usual shortcuts directly to the web contents as well. this path needs a live renderer,
+	// so the globalShortcut registration below is what covers a crashed one.
 	win.webContents.on("before-input-event", function (event, input) {
 		const isF12 = input.key === "F12";
 		const isInspect = input.control && input.shift && input.key.toLowerCase() === "i";
 		if (input.type === "keyDown" && (isF12 || isInspect)) {
-			win.webContents.toggleDevTools();
+			toggleDevTools(win, logger, "before-input-event");
 			event.preventDefault();
 		}
 	});
@@ -110,6 +152,11 @@ function newWindow(logger) {
 	});
 	win.webContents.on("render-process-gone", function (event, details) {
 		logger.error("[renderer] process gone:", details.reason, "exitCode:", details.exitCode);
+		// a renderer that dies on first paint is a machine with no usable rasteriser. drop to
+		// software rendering and come back once; if that was already the case, show the report
+		// rather than leaving the window white.
+		startupInfo.error = new Error(`renderer process ${details.reason} (exitCode ${details.exitCode})`);
+		fallbackToSoftwareRendering(logger, `renderer ${details.reason}`, win);
 	});
 	win.webContents.on("preload-error", function (event, preloadPath, error) {
 		logger.error("[renderer] preload failed:", preloadPath, error);
@@ -148,6 +195,83 @@ function showDiagnostics(win, logger) {
 	}
 }
 
+function toggleDevTools(win, logger, source) {
+	logger.log("toggleDevTools from", source);
+	win.webContents.toggleDevTools();
+}
+
+// Record that this machine cannot render with hardware and restart into software rendering.
+// Only ever once per install: gpu.json keeps the verdict, so a machine that crashes for some
+// other reason can never end up in a restart loop.
+function fallbackToSoftwareRendering(logger, reason, win) {
+	if (gpuDisabled) {
+		logger.error("already running without hardware acceleration, not relaunching —", reason);
+		if (win) {
+			showDiagnostics(win, logger);
+		}
+	}
+	else {
+		logger.error("disabling hardware acceleration and relaunching —", reason);
+		writeJson(gpuFile, { hardware: false, reason, at: new Date().toISOString() }).then(function () {
+			app.relaunch();
+			app.exit(0);
+		});
+	}
+}
+
+// app.getVersion() answers with Electron's own version when the app runs unpackaged, which
+// makes About lie in exactly the situation where it is being read. Take it from our
+// package.json, which is inside the asar when packaged and next to main.js when not.
+function appVersion() {
+	try {
+		return JSON.parse(fs.readFileSync(path.join(here, "package.json"), "utf8")).version;
+	} catch (error) {
+		return app.getVersion();
+	}
+}
+
+// The product ships as the objectexplorer npm package and updates over the air, so the app
+// version and the bundle version drift apart. Both belong in About.
+function bundleVersion() {
+	try {
+		return JSON.parse(fs.readFileSync(path.join(packageDir, "package.json"), "utf8")).version;
+	} catch (error) {
+		return "unknown";
+	}
+}
+
+// Windows reports the emulated architecture to an x64 process, and PROCESSOR_ARCHITEW6432
+// keeps the real one. This is how an x64 build installed on an ARM machine gives itself away
+// — the case that cost a whole debugging round on 0.2.4.
+function emulationWarning() {
+	const emulated = process.arch === "x64" && process.env.PROCESSOR_ARCHITEW6432 === "ARM64";
+	if (emulated) {
+		return "\n\nWARNING: this is the x64 build running under emulation on an ARM machine.\nInstall the arm64 build instead.";
+	} else {
+		return "";
+	}
+}
+
+function aboutDetail() {
+	return [
+		`Architecture : ${process.arch} (${process.platform})`,
+		`Bundle       : @knockdata/objectexplorer ${bundleVersion()}`,
+		`Electron     : ${process.versions.electron}   Chromium: ${process.versions.chrome}   Node: ${process.versions.node}`,
+		`Rendering    : ${gpuDisabled ? "software (hardware acceleration off)" : "hardware accelerated"}`,
+		`Data folder  : ${dataDir}`,
+	].join("\n") + emulationWarning();
+}
+
+function showAbout() {
+	dialog.showMessageBox({
+		icon: appIcon,
+		title: "About ObjectExplorer",
+		message: `ObjectExplorer ${appVersion()}\nThe VSCode for Cloud Storage\nKnockData`,
+		detail: aboutDetail(),
+		buttons: ["OK"],
+	});
+}
+
 // dev serves the explorer frontend live from source (vite middleware) + backend in-process;
 // prod and staging both run the packaged web server in-process and differ only by which host
 // the demo folder is proxied from.
@@ -180,12 +304,21 @@ app.whenReady().then(async function () {
 		app.dock.setIcon(appIcon);
 	}
 
+	// the native About panel on macOS shows the same facts as the cross-platform dialog
+	app.setAboutPanelOptions({
+		applicationName: "ObjectExplorer",
+		applicationVersion: appVersion(),
+		version: `${process.arch} (${process.platform})`,
+		copyright: `KnockData — The VSCode for Cloud Storage\n\n${aboutDetail()}`,
+		iconPath,
+	});
+
 	if (process.platform === "darwin") {
 		Menu.setApplicationMenu(Menu.buildFromTemplate([
 			{
 				label: "ObjectExplorer",
 				submenu: [
-					{ role: "about" },
+					{ label: "About ObjectExplorer", click: showAbout },
 					{ type: "separator" },
 					{ role: "hide" },
 					{ role: "hideOthers" },
@@ -197,6 +330,17 @@ app.whenReady().then(async function () {
 			{ role: "editMenu" },
 			{ role: "viewMenu" },
 			{ role: "windowMenu" },
+			{
+				label: "Help",
+				submenu: [
+					{
+						label: "Open Log Folder",
+						click: function () {
+							shell.showItemInFolder(logger.logPath);
+						},
+					},
+				],
+			},
 		]));
 	} else {
 		// windows and linux got no explicit menu, so a shipped build had no reliable way to
@@ -226,6 +370,7 @@ app.whenReady().then(async function () {
 			{
 				label: "Help",
 				submenu: [
+					{ label: "About ObjectExplorer", click: showAbout },
 					{
 						label: "Open Log Folder",
 						click: function () {
@@ -242,14 +387,51 @@ app.whenReady().then(async function () {
 
 	logger.log("App ready", process.versions);
 	logger.log("mode:", mode);
-	logger.log("platform:", process.platform, "arch:", process.arch);
+	logger.log("About:\n" + `ObjectExplorer ${appVersion()}\n` + aboutDetail());
 	logger.log("userData:", userData);
 	logger.log("logPath:", logger.logPath);
+	logger.log("crashDumps:", app.getPath("crashDumps"));
 	logger.log("resourcesPath:", process.resourcesPath);
 	logger.log("packageDir:", packageDir);
 	logger.log("exe:", process.execPath);
 	logger.log("cwd:", process.cwd());
 	logger.log("argv:", JSON.stringify(process.argv));
+	logger.log("gpu.json:", JSON.stringify(gpuState), "hardware acceleration:", gpuDisabled ? "off" : "on");
+
+	// browser-process shortcuts: unlike before-input-event these still fire when the renderer
+	// has crashed, which is exactly when DevTools is needed
+	globalShortcut.register("F12", function () {
+		const win = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+		if (win) {
+			toggleDevTools(win, logger, "globalShortcut F12");
+		}
+	});
+	globalShortcut.register("CommandOrControl+Shift+I", function () {
+		const win = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+		if (win) {
+			toggleDevTools(win, logger, "globalShortcut Ctrl+Shift+I");
+		}
+	});
+
+	// The GPU can only be inspected once the app is ready, so this is recorded for the log and
+	// nothing more. It deliberately does not decide anything: a perfectly healthy Mac also
+	// reports gpu_compositing=disabled_software, so treating that as "no GPU" would push every
+	// machine into software rendering forever. What actually distinguishes a machine that
+	// cannot render is that its renderer or GPU process dies — that is the trigger below.
+	logger.log("GPU feature status:", JSON.stringify(app.getGPUFeatureStatus()));
+	app.getGPUInfo("basic").then(function (info) {
+		logger.log("GPU info:", JSON.stringify(info));
+	}).catch(function (error) {
+		logger.warn("GPU info unavailable:", error);
+	});
+
+	// the GPU process dying is the other way a machine tells us it has no usable hardware
+	app.on("child-process-gone", function (event, details) {
+		logger.error("[child-process] gone:", details.type, details.reason, "exitCode:", details.exitCode);
+		if (details.type === "GPU") {
+			fallbackToSoftwareRendering(logger, `GPU process ${details.reason}`, null);
+		}
+	});
 
 	let versionManager;
 	let bootBundleDir = null;
@@ -415,4 +597,8 @@ app.whenReady().then(async function () {
 
 app.on("window-all-closed", function () {
 	app.quit();
+});
+
+app.on("will-quit", function () {
+	globalShortcut.unregisterAll();
 });
