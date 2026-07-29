@@ -14,7 +14,16 @@ import { checkIntegrity } from "./integrity.js";
 app.setName("ObjectExplorer");
 
 const require = createRequire(import.meta.url);
-const args = Object.fromEntries(process.argv.slice(2).map((arg) => arg.split("=")));
+// split each arg on the first "=" only, so a value may itself contain "=" —
+// switches=disable-features=RendererCodeIntegrity must keep its full value
+const args = Object.fromEntries(process.argv.slice(2).map(function (arg) {
+	const separator = arg.indexOf("=");
+	if (separator === -1) {
+		return [arg, ""];
+	} else {
+		return [arg.slice(0, separator), arg.slice(separator + 1)];
+	}
+}));
 const preferredPort = args.port ? +args.port : 9421;
 
 // one folder holds everything the product owns — app.log, folders.json, provider caches, the

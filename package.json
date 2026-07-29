@@ -1,6 +1,6 @@
 {
 	"name": "ObjectExplorer",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"description": "The VSCode for Cloud Storage",
 	"main": "main.js",
 	"scripts": {
@@ -26,6 +26,7 @@
 			"index.html",
 			"*.js",
 			"build/icon.png",
+			"scripts/*",
 			"node_modules/@knockdata/objectexplorer/**/*"
 		],
 		"asarUnpack": [

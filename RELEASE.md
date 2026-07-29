@@ -91,25 +91,54 @@ The app performs the same manifest check itself at startup and writes the result
 
 ### Chromium switches without rebuilding
 
-A packaged app started from the Start menu takes no command-line arguments, so switches are
-read from `%USERPROFILE%\.objectexplorer\switches.txt` — one per line, `name` or
-`name=value`, `#` for comments. Everything applied is listed in `app.log` and in
-**Help → About ObjectExplorer**. The same list works as `switches=a,b=c` on the command line.
+Chromium reads native `--flags` straight off the process command line, so an installed build
+can be tested from PowerShell without touching anything. When a renderer crashes, run these
+one at a time; the first that starts cleanly names the cause:
 
-When a renderer crashes, try these one at a time; the first that stops the crash names the
-cause:
+```powershell
+$exe = "$env:LOCALAPPDATA\Programs\ObjectExplorer\ObjectExplorer.exe"
+& $exe --disable-features=RendererCodeIntegrity   # try first — a DLL injected into the renderer, the classic 0xC0000005 on VMs
+& $exe --no-sandbox                               # the sandbox cannot start under this VM or security software
+& $exe --disable-gpu                              # the GPU path
+& $exe --disable-gpu-sandbox                      # the GPU process sandbox specifically
+& $exe --in-process-gpu                           # removes the GPU process entirely
+& $exe --disable-software-rasterizer              # rules SwiftShader in or out
+```
 
-| switch                                   | what it tests                                                             |
-|------------------------------------------|---------------------------------------------------------------------------|
-| `disable-features=RendererCodeIntegrity`  | a DLL is being injected into the renderer — the classic `0xC0000005`      |
-| `no-sandbox`                              | the sandbox cannot start under this VM or security software              |
-| `disable-gpu`                             | the GPU path                                                              |
-| `disable-gpu-sandbox`                     | the GPU process sandbox specifically                                      |
-| `in-process-gpu`                          | removes the GPU process entirely                                          |
-| `disable-software-rasterizer`             | rules SwiftShader in or out                                               |
+Native flags are invisible to the app (About and `app.log` list them under argv only), and a
+Start-menu launch takes no arguments at all. To make the winning switch permanent, write it to
+`%USERPROFILE%\.objectexplorer\switches.txt` — one per line, `name` or `name=value`, `#` for
+comments:
+
+```powershell
+Set-Content "$env:USERPROFILE\.objectexplorer\switches.txt" "disable-features=RendererCodeIntegrity"
+```
+
+Everything applied from switches.txt is listed in `app.log` and in
+**Help → About ObjectExplorer**. The same list also works as `switches=a,b=c` on the command
+line.
 
 `app.log` decodes crash codes, so `exitCode: 1073741819` reads as
 `0xC0000005 STATUS_ACCESS_VIOLATION` with the switch to try named alongside it.
+
+### Exe files removed on a test machine
+
+If binaries disappear from the install directory even though the release is signed, Defender
+took them on a heuristic. Name the detection first:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\diagnose-windows.ps1
+```
+
+The **Windows Defender** section lists recent detections. To keep testing on that machine:
+
+```powershell
+Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Programs\ObjectExplorer"
+```
+
+The real fix is reporting the false positive: submit the flagged installer or exe at
+<https://www.microsoft.com/wdsi/filesubmission> as a software developer. Files signed with
+Azure Trusted Signing are normally cleared quickly.
 
 ### The MSI is x64 only
 

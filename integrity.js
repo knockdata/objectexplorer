@@ -55,10 +55,15 @@ export function checkIntegrity() {
 		} catch (error) {
 			stat = null;
 		}
+		// .exe and .dll sizes are compared against nothing useful: the manifest is written in
+		// afterPack, and Azure Trusted Signing then grows every one of them by a few KB. Their
+		// content is already integrity-protected by the Authenticode signature, so for them
+		// only presence matters.
+		const signable = entry.path.endsWith(".exe") || entry.path.endsWith(".dll");
 		if (stat === null) {
 			problems.push(`MISSING ${entry.path} (${entry.size} bytes at build time)`);
 		} else {
-			if (stat.size !== entry.size) {
+			if (stat.size !== entry.size && signable === false) {
 				problems.push(`CHANGED ${entry.path} — ${entry.size} bytes at build time, ${stat.size} now`);
 			}
 		}

@@ -45,14 +45,17 @@ if (Test-Path $manifestPath) {
 	foreach ($entry in $manifest.files) {
 		$full = Join-Path $installDir ($entry.path -replace '/', '\')
 		$item = Get-Item -LiteralPath $full -ErrorAction SilentlyContinue
+		# .exe/.dll sizes are recorded before Azure Trusted Signing grows them, so only their
+		# presence is meaningful; Authenticode already protects their content
+		$signable = $entry.path -match '\.(exe|dll)$'
 		if ($null -eq $item) {
 			$missing += $entry.path
-		} elseif ($item.Length -ne $entry.size) {
+		} elseif ($item.Length -ne $entry.size -and -not $signable) {
 			$changed += "$($entry.path)  built $($entry.size) bytes, now $($item.Length)"
 		}
 	}
 	if ($missing.Count -eq 0 -and $changed.Count -eq 0) {
-		Write-Output "OK — every packaged file is present at its original size"
+		Write-Output "OK — every packaged file is present"
 	} else {
 		Write-Output "MISSING ($($missing.Count)):"
 		$missing | ForEach-Object { Write-Output "  $_" }
