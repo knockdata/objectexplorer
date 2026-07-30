@@ -162,6 +162,9 @@ jobs:
 
       # An unsigned build used to upload in silence. Defender holding a 107 MB unsigned exe is
       # what a user sees as a double-click that does nothing at all, so say so out loud.
+      # ASCII only in here: Windows PowerShell 5.1 reads the generated .ps1 as ANSI, and an em
+      # dash ends up as three cp1252 characters whose last one is a curly quote. That closed the
+      # string early and failed the whole step with a parse error before anything ran.
       - name: Check the signature
         shell: powershell
         run: |
@@ -172,7 +175,7 @@ jobs:
             Write-Output "signed: $($signature.SignerCertificate.Subject)" >> $env:GITHUB_STEP_SUMMARY
           } else {
             Write-Output "::warning::$($exe.Name) is unsigned ($($signature.Status)); Defender and SmartScreen will block it on a user machine. Set AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as repository secrets."
-            Write-Output "**$($exe.Name) is unsigned** — Defender and SmartScreen will block it." >> $env:GITHUB_STEP_SUMMARY
+            Write-Output "**$($exe.Name) is unsigned** - Defender and SmartScreen will block it." >> $env:GITHUB_STEP_SUMMARY
           }
 
       - uses: actions/upload-artifact@v5
