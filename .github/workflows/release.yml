@@ -71,7 +71,18 @@ jobs:
         run: security delete-keychain "$RUNNER_TEMP/build.keychain" || true
 
   windows:
-    runs-on: windows-latest
+    # Each arch is built on a runner of that arch, the same way the linux job below does it.
+    # Cross building arm64 on the x64 runner produced an installer whose binaries did not match
+    # the machine and were removed during installation.
+    strategy:
+      fail-fast: false          # an arm64 failure must not sink the x64 release
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: false
     steps:
@@ -89,23 +100,22 @@ jobs:
       # files with no ObjectExplorer.exe in it. SIGN_WINDOWS is read by electron-builder.cjs, which
       # explains there why signing has to be per-build rather than a package.json setting; the
       # AZURE_* secrets are what Azure's EnvironmentCredential reads to authenticate.
-      # nsis and msiWrapped are split because msiWrapped silently produced x64 only when both
-      # targets and both arches were passed in one invocation — v0.2.4 shipped an arm64 .exe
-      # but no arm64 .msi, so an ARM machine that reached for the MSI installed the x64 build
-      # and ran it under emulation. Kept separate so a missing arch is visible in the log.
+      # nsis and msiWrapped stay separate invocations so a target that fails or silently skips
+      # is visible as its own step in the log.
       - name: Build signed installers
-        run: npx electron-builder --win nsis --x64 --arm64 --publish never --config electron-builder.cjs
+        run: npx electron-builder --win nsis --${{ matrix.arch }} --publish never --config electron-builder.cjs
         env:
           SIGN_WINDOWS: "true"
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # Both arches are asked for explicitly. If the log shows only "building target=MSI
-      # arch=x64" then msiWrapped cannot do arm64 in this electron-builder and RELEASE.md's
-      # note stands: ARM users take the .exe or the .msix.
+      # msiWrapped used to produce x64 only when both arches were passed in one invocation on
+      # the x64 runner. Now each runner asks for its own arch: the arm64 leg must log
+      # "building target=MSI arch=arm64". If it still says x64, msiWrapped cannot do arm64 at
+      # all and RELEASE.md's note stands — ARM users take the .exe or the .msix.
       - name: Build signed MSI
-        run: npx electron-builder --win msiWrapped --x64 --arm64 --publish never --config electron-builder.cjs
+        run: npx electron-builder --win msiWrapped --${{ matrix.arch }} --publish never --config electron-builder.cjs
         env:
           SIGN_WINDOWS: "true"
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -115,11 +125,11 @@ jobs:
       # Partner Center re-signs the msix itself, so this one stays unsigned and keeps the
       # build.appx.publisher identity.
       - name: Build unsigned Store packages
-        run: npx electron-builder --win appx --x64 --arm64 --publish never --config electron-builder.cjs
+        run: npx electron-builder --win appx --${{ matrix.arch }} --publish never --config electron-builder.cjs
 
       - uses: actions/upload-artifact@v5
         with:
-          name: windows
+          name: windows-${{ matrix.arch }}
           path: |
             dist/*.exe
             dist/*.msi

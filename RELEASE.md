@@ -7,12 +7,20 @@ git push origin vX.Y.Z
 ```
 Pushing the tag triggers `.github/workflows/release.yml`. `.github/set-version.sh` stamps `X.Y.Z` into `package.json` before each platform builds. (Manual alternative: `gh workflow run release.yml -f version=X.Y.Z`.)
 
+Windows and Linux each build on a runner of the arch they target — `windows-latest` /
+`windows-11-arm`, `ubuntu-latest` / `ubuntu-24.04-arm`. Nothing is cross built. An arm64
+Windows installer built on the x64 runner shipped binaries that did not match the machine and
+were removed during installation, so if the `windows-11-arm` runner is ever unavailable the
+answer is to drop arm64 and ship x64 only, never to cross build it again. Local
+`npm run build:win` still passes `--x64 --arm64` on one machine; that is for convenience and
+its output is not shippable.
+
 ## What gets built
 | job     | output                                          | notes                                    |
 |---------|--------------------------------------------------|-------------------------------------------|
 | mac     | `dist/*.dmg` (x64, arm64)                        | signed + notarized when secrets present   |
 | windows | `dist/*.exe` (x64, arm64, nsis)                  | signed with Azure Trusted Signing         |
-| windows | `dist/*.msi` (x64, msiWrapped)                   | signed; arm64 may be skipped — see below  |
+| windows | `dist/*.msi` (x64, arm64, msiWrapped)            | signed; arm64 may be skipped — see below  |
 | windows | `dist/*.msix` (x64, arm64)                       | for the Microsoft Store, unsigned on purpose |
 | linux   | `dist/*.AppImage` (x64, arm64)                   |                                            |
 | release | GitHub Release "ObjectExplorer vX.Y.Z"           | bundles all artifacts, auto-generated notes |
@@ -89,6 +97,34 @@ installation — normally Defender; see the signing section below.
 The app performs the same manifest check itself at startup and writes the result to
 `app.log`, so `install integrity:` there says the same thing without running anything.
 
+### The GPU decides itself
+
+A VM with no real GPU used to give a white window on every launch until someone found
+`disable-gpu` by hand. The app now answers the question before Chromium starts, in `gpu.js`:
+
+1. `Get-CimInstance Win32_VideoController` names the display adapters. If **every** adapter is
+   a software one — `Microsoft Basic Render Driver`, `VMware SVGA`, `Hyper-V`, and the rest of
+   the list in `gpu.js` — hardware acceleration is switched off before the app is ready. A
+   machine that shows a real GPU next to an RDP or Citrix mirror adapter stays accelerated.
+2. A marker is written just before the window is created and cleared the moment it paints. Any
+   launch that dies in between leaves the marker behind, and **every launch after that one is
+   software rendered**, whatever the adapter said.
+
+Both the decision and its reason are in `app.log` (`gpu: disabled - ...`) and on the
+**Rendering** line of **Help → About**. The state lives in
+`%USERPROFILE%\.objectexplorer\gpu-state.json`:
+
+```powershell
+type "$env:USERPROFILE\.objectexplorer\gpu-state.json"
+del  "$env:USERPROFILE\.objectexplorer\gpu-state.json"   # re-probe: the VM got a GPU, or the crash is fixed
+```
+
+To override without deleting anything: `gpu=on` forces hardware acceleration back on,
+`disableGpu=true` (or `disable-gpu` in `switches.txt`) forces it off. Both beat the probe.
+
+Software rendering needs `vk_swiftshader.dll` shipped, which is why
+`REMOVE_SWIFTSHADER` in `scripts/afterPack.cjs` must stay `false`.
+
 ### Chromium switches without rebuilding
 
 Chromium reads native `--flags` straight off the process command line, so an installed build
@@ -140,14 +176,16 @@ The real fix is reporting the false positive: submit the flagged installer or ex
 <https://www.microsoft.com/wdsi/filesubmission> as a software developer. Files signed with
 Azure Trusted Signing are normally cleared quickly.
 
-### The MSI is x64 only
+### The arm64 MSI
 
-`msiWrapped` builds x64 and silently ignores `--arm64` — the release job asks for both and
-the build log shows one line, `building target=MSI arch=x64`. That is the target's
-limitation, not a misconfiguration. **On ARM take `ObjectExplorer-X.Y.Z-arm64.exe` or the
-`.msix`.** Both installers share an appId and install into the same directory, so a wrong-arch
-MSI silently replaces a correct arm64 install; **Help → About** states the architecture
-actually running and warns when an x64 build is running emulated on ARM.
+`msiWrapped` used to build x64 only, because the x64 runner was asked for both arches in one
+invocation and silently ignored `--arm64`. Each arch now builds on its own runner, so the
+arm64 leg must log `building target=MSI arch=arm64`. **Check that line after every release.**
+If it still says `arch=x64`, the target genuinely cannot do arm64 and **on ARM take
+`ObjectExplorer-X.Y.Z-arm64.exe` or the `.msix`.** Both installers share an appId and install
+into the same directory, so a wrong-arch MSI silently replaces a correct arm64 install;
+**Help → About** states the architecture actually running and warns when an x64 build is
+running emulated on ARM.
 
 ## Windows signing
 

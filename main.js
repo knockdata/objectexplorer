@@ -10,6 +10,7 @@ import VersionManager from "./VersionManager.js";
 import Logger from "./logger.js";
 import { diagnosticsUrl, diagnosticsText } from "./diagnostics.js";
 import { checkIntegrity } from "./integrity.js";
+import resolveGpu, { markStart, markPainted } from "./gpu.js";
 
 app.setName("ObjectExplorer");
 
@@ -49,9 +50,19 @@ if (args.remoteDebuggingPort) {
 // must never be invisible.
 const switchesFile = path.join(dataDir, "switches.txt");
 const appliedSwitches = applySwitches();
-// hardware acceleration has its own Electron call rather than a switch
-const gpuDisabled = args.disableGpu === "true" || appliedSwitches.some((s) => s.name === "disable-gpu");
-if (gpuDisabled) {
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+// dev and staging build the product from the monorepo source next to this repo
+const repoRoot = path.join(here, "../rock2");
+const iconPath = path.join(here, "build/icon.png");
+const appIcon = nativeImage.createFromPath(iconPath);
+
+// hardware acceleration has its own Electron call rather than a switch, and it only counts
+// before the app is ready — which is why gpu.js asks the operating system for the display
+// adapter instead of asking Chromium, whose GPU process is the thing that crashes on a
+// GPU-less VM. See gpu.js for the full decision order.
+const gpu = resolveGpu({ dataDir, args, appliedSwitches, appVersion: appVersion() });
+if (gpu.disabled) {
 	app.disableHardwareAcceleration();
 }
 
@@ -88,12 +99,6 @@ function switchSources() {
 
 // native crashes leave a .dmp next to the log instead of vanishing
 crashReporter.start({ uploadToServer: false });
-
-const here = path.dirname(fileURLToPath(import.meta.url));
-// dev and staging build the product from the monorepo source next to this repo
-const repoRoot = path.join(here, "../rock2");
-const iconPath = path.join(here, "build/icon.png");
-const appIcon = nativeImage.createFromPath(iconPath);
 
 // the whole product — backend bundle, built frontend, sqlite wasm — is the objectexplorer
 // npm package. electron-builder unpacks it out of the asar so the backend can be imported
@@ -151,6 +156,9 @@ function newWindow(logger) {
 	});
 
 	win.once("ready-to-show", function () {
+		// the first frame exists, so this launch did not die on the GPU. clearing the marker is
+		// what stops the next launch from falling back to software rendering.
+		markPainted(dataDir);
 		win.maximize();
 		win.show();
 	});
@@ -214,6 +222,9 @@ function newWindow(logger) {
 		}
 	});
 	win.webContents.on("did-finish-load", function () {
+		// ready-to-show never fires when the renderer dies on first paint, and the diagnostics
+		// page reaches this event without it, so clear the marker here too
+		markPainted(dataDir);
 		logger.log("Window loaded successfully");
 	});
 	return win;
@@ -314,7 +325,7 @@ function aboutDetail() {
 		`Architecture : ${process.arch} (${process.platform})`,
 		`Bundle       : @knockdata/objectexplorer ${bundleVersion()}`,
 		`Electron     : ${process.versions.electron}   Chromium: ${process.versions.chrome}   Node: ${process.versions.node}`,
-		`Rendering    : ${gpuDisabled ? "software (hardware acceleration off)" : "hardware accelerated"}`,
+		`Rendering    : ${gpu.disabled ? "software" : "hardware accelerated"} (${gpu.reason})`,
 		`Switches     : ${switchSummary()}`,
 		`Data folder  : ${dataDir}`,
 	].join("\n") + emulationWarning();
@@ -456,6 +467,8 @@ app.whenReady().then(async function () {
 	logger.log("cwd:", process.cwd());
 	logger.log("argv:", JSON.stringify(process.argv));
 	logger.log("switches file:", switchesFile, "applied:", switchSummary());
+	logger.log("gpu:", gpu.disabled ? "disabled" : "enabled", "-", gpu.reason,
+		"adapters:", JSON.stringify(gpu.adapters));
 
 	// Defender quarantining a binary after install is a documented failure for this app, and
 	// from inside it looks like a crash with no explanation. Name the missing files instead.
@@ -541,6 +554,9 @@ app.whenReady().then(async function () {
 		}
 	}
 
+	// from here until the window paints, a crash is attributed to the GPU and the next launch
+	// starts in software rendering
+	markStart(dataDir);
 	const win = newWindow(logger);
 	const bootUrl = await localServer;
 	// startup used to fall through here with bootUrl undefined, and loadURL(undefined) threw
