@@ -73,6 +73,12 @@ static napi_value setTitle(napi_env env, napi_callback_info info) {
 	return checkError(env, webview_set_title(readHandle(env, args[0]), title), "webview_set_title");
 }
 
+// webview 0.12.0's GTK backend resizes the window and then returns "Invalid hint" whatever hint
+// it was handed — its set_size_impl has no return of its own and falls through to the error.
+// Upstream fixed it after the tag; 0.12.0 is still the newest release. The window is created,
+// shown and sized by the time this comes back, so on linux the error is a false alarm, and
+// treating it as fatal is what sent every linux user to a browser tab instead of the window.
+// The hint here is a constant, so a genuine "invalid hint" cannot happen on any platform.
 static napi_value setSize(napi_env env, napi_callback_info info) {
 	size_t count = 3;
 	napi_value args[3];
@@ -81,7 +87,12 @@ static napi_value setSize(napi_env env, napi_callback_info info) {
 	int width = readNumber(env, args[1]);
 	int height = readNumber(env, args[2]);
 	webview_error_t error = webview_set_size(readHandle(env, args[0]), width, height, WEBVIEW_HINT_NONE);
-	return checkError(env, error, "webview_set_size");
+	if (error == WEBVIEW_ERROR_INVALID_ARGUMENT) {
+		// the gtk false alarm; the window already has the size
+		return NULL;
+	} else {
+		return checkError(env, error, "webview_set_size");
+	}
 }
 
 static napi_value navigate(napi_env env, napi_callback_info info) {
