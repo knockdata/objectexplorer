@@ -40,6 +40,11 @@ jobs:
       APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
     steps:
       - uses: actions/checkout@v5
+      # 0.3.5 died 15 minutes in because build/ is gitignored and the icons never left the
+      # dev machine. One ls says so in seconds.
+      - name: Check the packaging assets are in the repo
+        shell: bash
+        run: ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -116,6 +121,9 @@ jobs:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
     steps:
       - uses: actions/checkout@v5
+      - name: Check the packaging assets are in the repo
+        shell: bash
+        run: ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -185,6 +193,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
+      - name: Check the packaging assets are in the repo
+        shell: bash
+        run: ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
       - uses: actions/setup-node@v5
         with:
           node-version: 24

@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url"
 import { Data, NtExecutable, NtExecutableResource, Resource } from "resedit"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
-const buildDir = path.join(root, "build")
+const assetsDir = path.join(root, "assets")
 const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version
 
 // 1033 is en-US, 1200 is the Unicode codepage — the pair every Windows tool expects
@@ -27,7 +27,7 @@ export function writeWindowsResources(exePath) {
 	const exe = NtExecutable.from(fs.readFileSync(exePath), { ignoreCert: true })
 	const resource = NtExecutableResource.from(exe)
 
-	const icons = Data.IconFile.from(fs.readFileSync(path.join(buildDir, "icon.ico"))).icons
+	const icons = Data.IconFile.from(fs.readFileSync(path.join(assetsDir, "icon.ico"))).icons
 	Resource.IconGroupEntry.replaceIconsForResource(resource.entries, 1, lang, icons.map((icon) => icon.data))
 
 	versionInfo().outputToResourceEntries(resource.entries)

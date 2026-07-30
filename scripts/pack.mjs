@@ -17,7 +17,9 @@ import { targetArch, targetPlatform } from "./target.mjs"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const distDir = path.join(root, "dist")
-const buildDir = path.join(root, "build")
+// assets/, not build/: build is output and is gitignored, so an icon living there never
+// reaches a CI runner — which is exactly how 0.3.5 failed on mac and windows
+const assetsDir = path.join(root, "assets")
 const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version
 const appName = "ObjectExplorer"
 const appId = "com.knockdata.objectexplorer"
@@ -73,7 +75,7 @@ function buildApp() {
 
 	fs.copyFileSync(exePath, path.join(macosDir, appName))
 	fs.chmodSync(path.join(macosDir, appName), 0o755)
-	fs.copyFileSync(path.join(buildDir, "icon.icns"), path.join(resourcesDir, "icon.icns"))
+	fs.copyFileSync(path.join(assetsDir, "icon.icns"), path.join(resourcesDir, "icon.icns"))
 	fs.writeFileSync(path.join(appPath, "Contents", "Info.plist"), infoPlist())
 
 	// an identity means a real Developer ID build; "-" is the ad-hoc signature an Apple
@@ -83,7 +85,7 @@ function buildApp() {
 		"--force",
 		"--timestamp",
 		"--options", "runtime",
-		"--entitlements", path.join(buildDir, "entitlements.plist"),
+		"--entitlements", path.join(assetsDir, "entitlements.plist"),
 		"--sign", identity,
 		appPath,
 	], { stdio: "inherit" })
@@ -131,7 +133,7 @@ function packLinux() {
 
 	fs.copyFileSync(exePath, path.join(stageDir, appName))
 	fs.chmodSync(path.join(stageDir, appName), 0o755)
-	fs.copyFileSync(path.join(buildDir, "icon.png"), path.join(stageDir, "icon.png"))
+	fs.copyFileSync(path.join(assetsDir, "icon.png"), path.join(stageDir, "icon.png"))
 	fs.writeFileSync(path.join(stageDir, `${appName}.desktop`), desktopEntry())
 
 	const archive = `${stageDir}.tar.gz`
