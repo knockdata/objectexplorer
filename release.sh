@@ -39,10 +39,12 @@ fi
 
 git add -A
 git commit -m "release $tag"
-git push origin main
+# refs/heads/main, not main: a tag of the same name makes plain "main" ambiguous and git
+# refuses the push. One such tag exists because a workflow run named a release after the branch.
+git push origin refs/heads/main:refs/heads/main
 
 git tag "$tag"
-git push origin "$tag"
+git push origin "refs/tags/$tag"
 
 # The run does not exist the instant the tag lands, so poll for its id.
 run=""
