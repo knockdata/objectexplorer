@@ -1,8 +1,12 @@
-#!/bin/bash
-# Stamp the installer version from the release tag, so v1.2.3 ships as 1.2.3.
-set -e
-cd "$(dirname "$0")/.."
+#!/usr/bin/env bash
+# Stamps the tag into package.json before a build. "v1.2.3" and "1.2.3" both work.
+set -euo pipefail
 
 version="${1#v}"
-npm version "$version" --no-git-tag-version --allow-same-version
-echo "Building version $version"
+node -e '
+	const fs = require("fs")
+	const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
+	pkg.version = process.argv[1]
+	fs.writeFileSync("package.json", JSON.stringify(pkg, null, "\t") + "\n")
+	console.log("version:", pkg.version)
+' "$version"
