@@ -20,7 +20,7 @@ its output is not shippable.
 |---------|--------------------------------------------------|-------------------------------------------|
 | mac     | `dist/*.dmg` (x64, arm64)                        | signed + notarized when secrets present   |
 | windows | `dist/*.exe` (x64, arm64, nsis)                  | signed with Azure Trusted Signing         |
-| windows | `dist/*.msi` (x64, arm64, msiWrapped)            | signed; arm64 may be skipped — see below  |
+| windows | `dist/*.msi` (x64 only, msiWrapped)              | signed; arm64 impossible — see below      |
 | windows | `dist/*.msix` (x64, arm64)                       | for the Microsoft Store, unsigned on purpose |
 | linux   | `dist/*.AppImage` (x64, arm64)                   |                                            |
 | release | GitHub Release "ObjectExplorer vX.Y.Z"           | bundles all artifacts, auto-generated notes |
@@ -176,16 +176,30 @@ The real fix is reporting the false positive: submit the flagged installer or ex
 <https://www.microsoft.com/wdsi/filesubmission> as a software developer. Files signed with
 Azure Trusted Signing are normally cleared quickly.
 
-### The arm64 MSI
+### There is no arm64 MSI, and there cannot be one
 
-`msiWrapped` used to build x64 only, because the x64 runner was asked for both arches in one
-invocation and silently ignored `--arm64`. Each arch now builds on its own runner, so the
-arm64 leg must log `building target=MSI arch=arm64`. **Check that line after every release.**
-If it still says `arch=x64`, the target genuinely cannot do arm64 and **on ARM take
-`ObjectExplorer-X.Y.Z-arm64.exe` or the `.msix`.** Both installers share an appId and install
-into the same directory, so a wrong-arch MSI silently replaces a correct arm64 install;
-**Help → About** states the architecture actually running and warns when an x64 build is
-running emulated on ARM.
+**On ARM take `ObjectExplorer-X.Y.Z-arm64.exe` or the `.msix`.** `build.win.target` lists
+`msiWrapped` as x64 only and the release job skips the MSI step on the arm64 runner. This is
+not a configuration choice — it is an electron-builder bug, and the shape of it matters
+because the broken output looks correct:
+
+- `MsiTarget` rewrites `arm64` to `x64` before generating the wxs, because the bundled wix 4
+  cannot target arm64 ([electron-builder#6077](https://github.com/electron-userland/electron-builder/issues/6077)).
+  For a plain MSI that only picks `ProgramFiles64Folder`, which is harmless.
+- `MsiWrappedTarget` inherits that rewritten arch and uses it to resolve **which NSIS exe to
+  wrap**, so an arm64 MSI asks for `ObjectExplorer-X.Y.Z-x64.exe`.
+
+When both arches were built in one invocation on the x64 runner, that file existed — so the
+arm64 MSI quietly wrapped the **x64** installer and named itself `-arm64.msi`. On a native
+arm64 runner the x64 exe is absent and wix fails loudly with
+`LGHT0103 : The system cannot find the file ...-x64.exe`. The error is the honest outcome; the
+earlier success was the bug. If a future electron-builder passes the real arch to
+`MsiWrappedTarget.writeManifest`, add `arm64` back and check that the wxs references
+`-arm64.exe`.
+
+Every Windows installer shares an appId and install directory, so a wrong-arch one silently
+replaces a correct install with no warning. **Help → About** states the architecture actually
+running and says so explicitly when an x64 build is running emulated on ARM.
 
 ## Windows signing
 

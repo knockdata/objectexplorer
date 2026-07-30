@@ -1,6 +1,6 @@
 {
 	"name": "ObjectExplorer",
-	"version": "0.2.8",
+	"version": "0.2.9",
 	"description": "The VSCode for Cloud Storage",
 	"main": "main.js",
 	"scripts": {
@@ -77,8 +77,7 @@
 				{
 					"target": "msiWrapped",
 					"arch": [
-						"x64",
-						"arm64"
+						"x64"
 					]
 				}
 			],

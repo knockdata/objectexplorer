@@ -110,11 +110,13 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # msiWrapped used to produce x64 only when both arches were passed in one invocation on
-      # the x64 runner. Now each runner asks for its own arch: the arm64 leg must log
-      # "building target=MSI arch=arm64". If it still says x64, msiWrapped cannot do arm64 at
-      # all and RELEASE.md's note stands — ARM users take the .exe or the .msix.
+      # x64 only, and not by choice: MsiTarget rewrites arm64 to x64 before building the wxs
+      # (a wix 4 limitation, electron-builder issue 6077), and MsiWrappedTarget uses that same
+      # rewritten arch to pick the NSIS exe it wraps. An arm64 MSI therefore wraps the *x64*
+      # installer — the wrong-arch artifact this job exists to prevent. ARM users take the .exe
+      # or the .msix; see RELEASE.md.
       - name: Build signed MSI
+        if: matrix.arch == 'x64'
         run: npx electron-builder --win msiWrapped --${{ matrix.arch }} --publish never --config electron-builder.cjs
         env:
           SIGN_WINDOWS: "true"
