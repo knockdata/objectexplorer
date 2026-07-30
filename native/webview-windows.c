@@ -8,8 +8,10 @@
 // both have arrived. That keeps the contract in webview.h true on this platform too: by the
 // time create returns non-NULL the window is ready, and a machine with no WebView2 runtime
 // returns NULL rather than failing somewhere later.
-// Windows 10 1809. SetProcessDpiAwarenessContext and the per-monitor-v2 constant are both
-// behind this, and without them the window is blurry on any scaled display.
+//
+// The version defines are Windows 10 1809: SetProcessDpiAwarenessContext and the
+// per-monitor-v2 constant are both behind them, and without those the window is blurry on any
+// scaled display.
 #define _WIN32_WINNT 0x0A00
 #define NTDDI_VERSION 0x0A000006
 #define COBJMACROS

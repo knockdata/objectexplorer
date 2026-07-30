@@ -45,7 +45,11 @@ function writeNodeLibDef(nativeDir, buildDir) {
 
 function batch({ nativeDir, arch, buildDir, sdk, nodeLib, target }) {
 	const machine = arch === "arm64" ? "ARM64" : "X64"
-	const objects = `${buildDir}${path.sep}`
+	// /Fo means "put the .obj files here" only when the path ends in a separator, and a
+	// backslash right before the closing quote would escape that quote — cl then reads the rest
+	// of the line as part of this one argument and reports D8003, missing source filename.
+	// Forward slashes are what cl wants anyway and cannot escape anything.
+	const objects = `${buildDir.replaceAll("\\", "/")}/`
 	// /MT because WebView2LoaderStatic.lib needs the static CRT, which also means a user machine
 	// needs no Visual C++ redistributable
 	const compile = [
@@ -60,8 +64,9 @@ function batch({ nativeDir, arch, buildDir, sdk, nodeLib, target }) {
 		"ole32.lib oleaut32.lib user32.lib shell32.lib version.lib advapi32.lib shlwapi.lib",
 	].join(" ")
 
+	// no @echo off: this only ever runs in CI, and the command that failed is the first thing
+	// anyone wants out of the log
 	return [
-		"@echo off",
 		`call "${vcvarsall()}" ${arch} || exit /b 1`,
 		`lib /nologo /def:"${path.join(buildDir, "node_api.def")}" /machine:${machine} /out:"${nodeLib}" || exit /b 1`,
 		`${compile} || exit /b 1`,
