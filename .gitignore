@@ -11,3 +11,6 @@ bundle
 *.map
 release-*
 .*
+out
+build
+reference

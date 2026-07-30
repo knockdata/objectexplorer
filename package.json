@@ -1,130 +1,21 @@
 {
-	"name": "ObjectExplorer",
-	"version": "0.2.9",
-	"description": "The VSCode for Cloud Storage",
-	"main": "main.js",
-	"scripts": {
-		"start": "electron main.js",
-		"start:dev": "electron main.js mode=dev",
-		"start:staging": "electron main.js mode=staging",
-		"test": "node test/Tar.test.js",
-		"build:dev": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dir",
-		"build:mac": "electron-builder --mac --x64 --arm64",
-		"build:win": "electron-builder --win --x64 --arm64",
-		"build:linux": "electron-builder --linux --x64 --arm64",
-		"clean": "rm -rf dist"
-	},
-	"build": {
-		"appId": "com.ObjectExplorer.app",
-		"productName": "ObjectExplorer",
-		"executableName": "ObjectExplorer",
-		"icon": "./build/icon.png",
-		"directories": {
-			"output": "dist"
-		},
-		"files": [
-			"index.html",
-			"*.js",
-			"build/icon.png",
-			"scripts/*",
-			"node_modules/@knockdata/objectexplorer/**/*"
-		],
-		"asarUnpack": [
-			"node_modules/@knockdata/objectexplorer/**/*"
-		],
-		"electronLanguages": [
-			"en"
-		],
-		"compression": "normal",
-		"publish": null,
-		"afterPack": "./scripts/afterPack.cjs",
-		"artifactName": "${productName}-${version}-${arch}.${ext}",
-		"nsis": {
-			"buildUniversalInstaller": false
-		},
-		"mac": {
-			"target": [
-				{
-					"target": "dmg",
-					"arch": [
-						"x64",
-						"arm64"
-					]
-				}
-			],
-			"category": "public.app-category.utilities",
-			"hardenedRuntime": true,
-			"entitlements": "build/entitlements.mac.plist",
-			"entitlementsInherit": "build/entitlements.mac.plist",
-			"notarize": true
-		},
-		"win": {
-			"target": [
-				{
-					"target": "nsis",
-					"arch": [
-						"x64",
-						"arm64"
-					]
-				},
-				{
-					"target": "appx",
-					"arch": [
-						"x64",
-						"arm64"
-					]
-				},
-				{
-					"target": "msiWrapped",
-					"arch": [
-						"x64"
-					]
-				}
-			],
-			"signExts": [
-				".dll",
-				"!.appx",
-				"!.msix"
-			]
-		},
-		"appx": {
-			"identityName": "KnockData.ObjectExplorer",
-			"publisher": "CN=C5C9E62A-2A26-4C2C-989D-46433B73DFC8",
-			"publisherDisplayName": "KnockData",
-			"applicationId": "ObjectExplorer",
-			"displayName": "ObjectExplorer",
-			"backgroundColor": "#1f1f1f",
-			"languages": [
-				"en-US"
-			],
-			"setBuildNumber": false,
-			"artifactName": "${productName}-${version}-${arch}.msix"
-		},
-		"linux": {
-			"target": [
-				{
-					"target": "AppImage",
-					"arch": [
-						"x64",
-						"arm64"
-					]
-				}
-			],
-			"category": "Utility"
-		}
-	},
-	"keywords": [],
-	"author": {
-		"name": "KnockData",
-		"email": "rockie@knockdata.com"
-	},
-	"license": "ISC",
+	"name": "one",
+	"version": "0.3.3",
+	"description": "ObjectExplorer as a single native binary",
+	"private": true,
 	"type": "module",
-	"dependencies": {
-		"@knockdata/objectexplorer": "latest"
+	"scripts": {
+		"addon": "node scripts/addon.mjs",
+		"bundle": "node scripts/npm-bundle.mjs",
+		"sea": "node scripts/sea.mjs",
+		"pack": "node scripts/pack.mjs",
+		"build": "npm run addon && npm run bundle && npm run sea && npm run pack",
+		"smoke": "node scripts/smoke.mjs"
 	},
 	"devDependencies": {
-		"electron": "40.6.1",
-		"electron-builder": "^26.8.1"
+		"cmake-js": "^7.3.1",
+		"esbuild": "^0.25.0",
+		"postject": "^1.0.0-alpha.6",
+		"resedit": "^3.0.2"
 	}
 }

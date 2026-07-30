@@ -1,23 +1,69 @@
 #!/usr/bin/env bash
-# Tag the current commit with the version in package.json and push it,
-# which triggers .github/workflows/release.yml
+# Tags a version and pushes it, which is what .github/workflows/release.yml waits for.
+#
+#   ./release.sh          patch bump from package.json  0.3.0 -> 0.3.1
+#   ./release.sh 0.4.0    explicit version
+#   ./release.sh v0.4.0   leading v is fine
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
-version=$(node -p "require('./package.json').version")
+if [ $# -gt 0 ]; then
+	version="${1#v}"
+else
+	version=$(node -e '
+		const fs = require("fs")
+		const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
+		const part = pkg.version.split(".")
+		part[2] = Number(part[2]) + 1
+		console.log(part.join("."))
+	')
+fi
+
 tag="v$version"
 
-if [ -n "$(git status --porcelain)" ]; then
-	echo "working tree is dirty, commit or stash first"
-	exit 1
+if [ -z "$(git status --porcelain)" ]; then
+	echo "releasing $tag"
 else
-	if git rev-parse "$tag" >/dev/null 2>&1; then
-		echo "tag $tag already exists"
-		exit 1
-	else
-		git tag "$tag"
-		git push origin "$tag"
-		echo "pushed $tag"
+	echo "working tree is dirty; commit or stash first" >&2
+	git status --short >&2
+	exit 1
+fi
+
+if [ -z "$(git tag -l "$tag")" ]; then
+	bash .github/set-version.sh "$version"
+else
+	echo "$tag already exists" >&2
+	exit 1
+fi
+
+git add -A
+git commit -m "release $tag"
+git push origin main
+
+git tag "$tag"
+git push origin "$tag"
+
+# The run does not exist the instant the tag lands, so poll for its id.
+run=""
+for attempt in 1 2 3 4 5; do
+	if [ -z "$run" ]; then
+		sleep 3
+		run=$(gh run list --workflow release.yml -L 1 --json databaseId --jq '.[0].databaseId // ""')
 	fi
+done
+
+if [ -n "$run" ]; then
+	# watch can drop on a network blip, so the verdict comes from a second call, not from its
+	# exit code. --exit-status is no good here either: it returns 0 for a cancelled run.
+	gh run watch "$run" --exit-status || true
+	conclusion=$(gh run view "$run" --json conclusion --jq '.conclusion')
+	if [ "$conclusion" = "success" ]; then
+		echo "$tag released"
+	else
+		echo "$tag did not release: $conclusion" >&2
+		exit 1
+	fi
+else
+	echo "no run picked up $tag yet; check with: gh run list"
 fi

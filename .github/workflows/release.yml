@@ -72,8 +72,10 @@ jobs:
 
   windows:
     # Each arch is built on a runner of that arch, the same way the linux job below does it.
-    # Cross building arm64 on the x64 runner produced an installer whose binaries did not match
-    # the machine and were removed during installation.
+    # Nothing here compiles — the shipped package has no native code, so electron-builder only
+    # downloads the prebuilt Electron for the target arch. A native runner therefore does not
+    # make the binaries any more correct. What it does buy: one arch per dist/, which is what
+    # caught msiWrapped wrapping the x64 installer into an -arm64.msi (see the MSI step below).
     strategy:
       fail-fast: false          # an arm64 failure must not sink the x64 release
       matrix:
