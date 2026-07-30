@@ -1,7 +1,9 @@
 name: Release
 
 # Push a version tag (git tag v1.2.3 && git push origin v1.2.3) to build one signed binary per
-# platform and publish them as a GitHub Release.
+# platform and publish them as a GitHub Release. A manual run does the same thing and asks for
+# the version instead of reading it off the tag; either way the release is named v1.2.3, never
+# after the branch the run started from.
 #
 # Every job runs the same four steps — addon, bundle, sea, pack — because the native addon is
 # compiled per platform and the SEA is built on that platform's node binary. Only the signing
@@ -17,6 +19,34 @@ on:
         required: true
 
 jobs:
+  # One job decides what this run is called, and nothing else looks at github.ref_name. A
+  # manual run types "0.3.5" and a tag push arrives as "v0.3.5"; both become version 0.3.5 and
+  # tag v0.3.5. Reading ref_name directly is what published a release called "ObjectExplorer
+  # main", tagged main, on top of the real versions.
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.pick.outputs.version }}
+      tag: ${{ steps.pick.outputs.tag }}
+    steps:
+      - id: pick
+        # through env, not ${{ }} inside the script: an expression is pasted in as text before
+        # bash sees it, so a version typed with a quote in it would run as a command
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version="${INPUT_VERSION:-$REF_NAME}"
+          version="${version#v}"
+          if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "tag=v$version" >> "$GITHUB_OUTPUT"
+            echo "building $version, releasing as v$version" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::expected a version like 1.2.3, got '$version'"
+            exit 1
+          fi
+
   # Both arches build on the Apple Silicon runner. macos-13 is the last x64 runner and it now
   # sits in the queue for hours, and it is not needed: one Xcode targets both arm64 and x86_64,
   # and codesign, hdiutil and notarytool do not care which arch they are handed.
@@ -29,6 +59,7 @@ jobs:
             arch: arm64
           - runner: macos-latest
             arch: x64
+    needs: version
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     env:
@@ -48,7 +79,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-      - run: bash .github/set-version.sh "${{ inputs.version || github.ref_name }}"
+      - run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
       - run: npm install --no-audit --no-fund
 
       # Without a certificate the build still produces a runnable ad-hoc signed app, which is
@@ -112,6 +143,7 @@ jobs:
             arch: x64
           - runner: windows-11-arm
             arch: arm64
+    needs: version
     runs-on: ${{ matrix.runner }}
     # 0.3.2 sat here for hours. The build takes about a minute, so anything past 20 is a hang
     # and should fail while the log is still worth reading.
@@ -128,7 +160,7 @@ jobs:
         with:
           node-version: 24
       - shell: bash
-        run: bash .github/set-version.sh "${{ inputs.version || github.ref_name }}"
+        run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
 
       # the binary is 134 MB and every step rewrites it; without this Defender re-scans the
       # whole file each time
@@ -192,6 +224,7 @@ jobs:
             arch: x64
           - runner: ubuntu-24.04-arm
             arch: arm64
+    needs: version
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     steps:
@@ -202,7 +235,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-      - run: bash .github/set-version.sh "${{ inputs.version || github.ref_name }}"
+      - run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
       # webview links against webkitgtk; the runtime package must also be present on the
       # machine that runs the binary
       - run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev
@@ -220,7 +253,7 @@ jobs:
           path: dist/*.tar.gz
 
   release:
-    needs: [mac, windows, linux]
+    needs: [version, mac, windows, linux]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -230,7 +263,8 @@ jobs:
           path: artifacts
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ObjectExplorer ${{ github.ref_name }}
+          tag_name: ${{ needs.version.outputs.tag }}
+          name: ObjectExplorer ${{ needs.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: artifacts/**/*
