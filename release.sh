@@ -1,25 +1,13 @@
 #!/usr/bin/env bash
-# Tags a version and pushes it, which is what .github/workflows/release.yml waits for.
+# Tags the version already in package.json and pushes the tag, which is what
+# .github/workflows/release.yml waits for. Bump the version and commit it yourself first.
 #
-#   ./release.sh          patch bump from package.json  0.3.0 -> 0.3.1
-#   ./release.sh 0.4.0    explicit version
-#   ./release.sh v0.4.0   leading v is fine
+#   ./release.sh
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
-if [ $# -gt 0 ]; then
-	version="${1#v}"
-else
-	version=$(node -e '
-		const fs = require("fs")
-		const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
-		const part = pkg.version.split(".")
-		part[2] = Number(part[2]) + 1
-		console.log(part.join("."))
-	')
-fi
-
+version=$(node -p 'require("./package.json").version')
 tag="v$version"
 
 if [ -z "$(git status --porcelain)" ]; then
@@ -31,20 +19,12 @@ else
 fi
 
 if [ -z "$(git tag -l "$tag")" ]; then
-	bash .github/set-version.sh "$version"
+	git tag "$tag"
+	git push origin "refs/tags/$tag"
 else
 	echo "$tag already exists" >&2
 	exit 1
 fi
-
-git add -A
-git commit -m "release $tag"
-# refs/heads/main, not main: a tag of the same name makes plain "main" ambiguous and git
-# refuses the push. One such tag exists because a workflow run named a release after the branch.
-git push origin refs/heads/main:refs/heads/main
-
-git tag "$tag"
-git push origin "refs/tags/$tag"
 
 # The run does not exist the instant the tag lands, so poll for its id.
 run=""
