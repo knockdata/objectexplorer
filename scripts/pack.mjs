@@ -94,12 +94,7 @@ function buildApp() {
 	console.log("signed with:", identity)
 
 	const dmg = path.join(distDir, `${appName}-${version}-${targetArch}.dmg`)
-	// hdiutil sizes the volume from -srcfolder on its own, and its estimate leaves no room for
-	// filesystem overhead — the copy into /Volumes/ObjectExplorer then fails with ENOSPC on a
-	// runner that has plenty of disk. 200 MB of slack costs nothing; UDZO compresses the empty
-	// space away.
-	const megabytes = Math.ceil(dirSize(appPath) / 1e6) + 200
-	execFileSync("hdiutil", ["create", "-volname", appName, "-srcfolder", appPath, "-ov", "-format", "UDZO", "-size", `${megabytes}m`, dmg], { stdio: "inherit" })
+	buildDmg(appPath, dmg)
 
 	if (process.env.APPLE_API_KEY) {
 		notarize(dmg)
@@ -107,6 +102,109 @@ function buildApp() {
 		console.log("no APPLE_API_KEY, skipping notarization")
 	}
 	console.log("dist:", dmg)
+}
+
+// What a person sees when they double-click the download: one window holding the app and an
+// alias to /Applications, so installing is a drag from left to right. hdiutil cannot lay that
+// window out, so the image is built read-write, mounted, arranged by Finder over AppleScript
+// (which writes the .DS_Store that remembers the layout), and only then compressed to the
+// read-only UDZO that ships.
+function buildDmg(appPath, dmg) {
+	const stageDir = path.join(distDir, "dmg")
+	fs.mkdirSync(stageDir, { recursive: true })
+	// ditto, not cp: it keeps the code signature and the bundle's extended attributes intact
+	execFileSync("ditto", [appPath, path.join(stageDir, `${appName}.app`)], { stdio: "inherit" })
+	fs.symlinkSync("/Applications", path.join(stageDir, "Applications"))
+
+	// hdiutil sizes the volume from -srcfolder on its own, and its estimate leaves no room for
+	// filesystem overhead — the copy into /Volumes/ObjectExplorer then fails with ENOSPC on a
+	// runner that has plenty of disk. 200 MB of slack costs nothing; UDZO compresses the empty
+	// space away.
+	const megabytes = Math.ceil(dirSize(stageDir) / 1e6) + 200
+	const writableDmg = path.join(distDir, "writable.dmg")
+	execFileSync("hdiutil", ["create", "-volname", appName, "-srcfolder", stageDir, "-ov", "-format", "UDRW", "-size", `${megabytes}m`, writableDmg], { stdio: "inherit" })
+
+	// mounted here rather than at /Volumes/ObjectExplorer: another ObjectExplorer volume may
+	// already be mounted — the name then becomes "ObjectExplorer 1" — and a Finder that still
+	// remembers a window for that path reuses it and never writes the .DS_Store this needs
+	const mountPoint = path.join(distDir, "mount")
+	fs.mkdirSync(mountPoint, { recursive: true })
+	execFileSync("hdiutil", ["attach", writableDmg, "-noautoopen", "-mountpoint", mountPoint], { stdio: "inherit" })
+	layout(mountPoint)
+	volumeIcon(mountPoint)
+	detach(mountPoint)
+	fs.rmSync(mountPoint, { recursive: true, force: true })
+
+	fs.rmSync(dmg, { force: true })
+	execFileSync("hdiutil", ["convert", writableDmg, "-format", "UDZO", "-o", dmg], { stdio: "inherit" })
+	fs.rmSync(writableDmg)
+	fs.rmSync(stageDir, { recursive: true, force: true })
+}
+
+// Without an icon of its own the volume gets the system's generic disk-image icon — the down
+// arrow that reads as "a download" — in the window title, the sidebar and on the desktop. Finder
+// uses .VolumeIcon.icns instead, but only once the custom-icon flag is set: byte 8 of the 32-byte
+// FinderInfo attribute, which is what `SetFile -a C` writes and xattr can write without Xcode.
+// This runs after the layout, not before: Finder's "update" deletes the icns it has already read.
+function volumeIcon(mountPoint) {
+	const customIcon = "0000000000000000040000000000000000000000000000000000000000000000"
+	fs.copyFileSync(path.join(assetsDir, "icon.icns"), path.join(mountPoint, ".VolumeIcon.icns"))
+	execFileSync("xattr", ["-wx", "com.apple.FinderInfo", customIcon, mountPoint], { stdio: "inherit" })
+}
+
+// Finder scripting needs a logged-in GUI session, which a CI runner may not have. A dmg with a
+// default window is still a working dmg — the /Applications alias is in it either way — so a
+// failure here is a warning, not a broken release.
+function layout(mountPoint) {
+	try {
+		execFileSync("osascript", ["-e", finderLayout(mountPoint)], { stdio: ["ignore", "inherit", "pipe"] })
+		console.log("dmg window arranged for drag-to-Applications")
+	} catch (error) {
+		console.log("no Finder available, dmg keeps the default window layout:", String(error.stderr).trim())
+	}
+}
+
+// Finder holds the volume for a moment after writing .DS_Store, and a busy volume refuses to
+// detach; it lets go within a second or two.
+function detach(mountPoint) {
+	// Finder writes .DS_Store lazily; sync makes sure it is on the image before it is unmounted
+	execFileSync("sync", [], { stdio: "inherit" })
+	let detached = false
+	for (let attempt = 0; attempt < 5 && detached === false; attempt++) {
+		try {
+			execFileSync("hdiutil", ["detach", mountPoint], { stdio: "inherit" })
+			detached = true
+		} catch (error) {
+			execFileSync("sleep", ["2"])
+		}
+	}
+	if (detached === false) {
+		execFileSync("hdiutil", ["detach", mountPoint, "-force"], { stdio: "inherit" })
+	}
+}
+
+// toolbar and statusbar off: the window opens as plain icons on a plain background, with no
+// Finder chrome — the back arrows, the view switcher and the share/download button — above them.
+function finderLayout(mountPoint) {
+	return `tell application "Finder"
+	tell folder (POSIX file "${mountPoint}" as alias)
+		open
+		set current view of container window to icon view
+		set toolbar visible of container window to false
+		set statusbar visible of container window to false
+		set bounds of container window to {200, 150, 800, 550}
+		set viewOptions to icon view options of container window
+		set arrangement of viewOptions to not arranged
+		set icon size of viewOptions to 128
+		set text size of viewOptions to 13
+		set position of item "${appName}.app" of container window to {150, 170}
+		set position of item "Applications" of container window to {450, 170}
+		close
+		open
+		update without registering applications
+		delay 2
+	end tell
+end tell`
 }
 
 function notarize(dmg) {
