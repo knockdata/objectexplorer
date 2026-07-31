@@ -299,3 +299,36 @@ jobs:
           target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: artifacts/**/*
+
+      # The version is in every filename, so no download link can be written down once and
+      # keep working. These copies drop it: ObjectExplorer-mac-arm64.dmg, always the newest
+      # build, which is what the README links to. The artifact directory is already
+      # <platform>-<arch>, so nothing has to be parsed out of the filename.
+      - name: Name a copy of each build without the version
+        run: |
+          mkdir latest
+          for file in artifacts/*/*; do
+            dir=$(basename "$(dirname "$file")")
+            cp "$file" "latest/ObjectExplorer-$dir.${file##*.}"
+          done
+          ls -l latest
+
+      # One extra release, replaced every build, so the aliases cost one copy in total rather
+      # than one per version. Deleted and recreated rather than updated: GitHub orders the
+      # releases page by creation date, and this is the one a visitor should land on.
+      - name: Drop the previous latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release delete latest --yes --cleanup-tag || true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: ObjectExplorer ${{ needs.version.outputs.tag }} (latest)
+          body: |
+            The newest build, under names that never change — this is what the README links to.
+            Release notes live on [${{ needs.version.outputs.tag }}](https://github.com/${{ github.repository }}/releases/tag/${{ needs.version.outputs.tag }}).
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          files: latest/*

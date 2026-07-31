@@ -129,10 +129,11 @@ function buildDmg(appPath, dmg) {
 	// remembers a window for that path reuses it and never writes the .DS_Store this needs
 	const mountPoint = path.join(distDir, "mount")
 	fs.mkdirSync(mountPoint, { recursive: true })
-	execFileSync("hdiutil", ["attach", writableDmg, "-noautoopen", "-mountpoint", mountPoint], { stdio: "inherit" })
+	const attached = execFileSync("hdiutil", ["attach", writableDmg, "-noautoopen", "-mountpoint", mountPoint], { encoding: "utf8" })
+	console.log(attached.trim())
 	layout(mountPoint)
 	volumeIcon(mountPoint)
-	detach(mountPoint)
+	detach(mountPoint, deviceOf(attached))
 	fs.rmSync(mountPoint, { recursive: true, force: true })
 
 	fs.rmSync(dmg, { force: true })
@@ -164,22 +165,48 @@ function layout(mountPoint) {
 	}
 }
 
+// `hdiutil attach` prints "/dev/disk4  \tGUID_partition_scheme" and one line per slice. The
+// whole-disk device on the first line is what detaches the image; a mountpoint only detaches
+// while it is still mounted, which is exactly what a busy volume is not sure about.
+function deviceOf(attachOutput) {
+	const match = attachOutput.match(/^\/dev\/disk\d+/m)
+	if (match) {
+		return match[0]
+	} else {
+		return ""
+	}
+}
+
+function isMounted(mountPoint) {
+	const mounted = execFileSync("mount", { encoding: "utf8" })
+	return mounted.includes(` on ${mountPoint} `)
+}
+
 // Finder holds the volume for a moment after writing .DS_Store, and a busy volume refuses to
-// detach; it lets go within a second or two.
-function detach(mountPoint) {
+// detach. Two things made this fail a whole mac build: it can hold on for longer than the ten
+// seconds this used to wait, and once it lets go every further `hdiutil detach` fails too —
+// with "no such file or directory", because the volume is already gone. So each attempt asks
+// whether the volume is still mounted before deciding anything, and the device node is tried
+// once the mountpoint stops resolving.
+function detach(mountPoint, device) {
 	// Finder writes .DS_Store lazily; sync makes sure it is on the image before it is unmounted
 	execFileSync("sync", [], { stdio: "inherit" })
-	let detached = false
-	for (let attempt = 0; attempt < 5 && detached === false; attempt++) {
+
+	for (let attempt = 0; attempt < 15 && isMounted(mountPoint); attempt++) {
+		const target = attempt < 5 ? mountPoint : device || mountPoint
 		try {
-			execFileSync("hdiutil", ["detach", mountPoint], { stdio: "inherit" })
-			detached = true
+			execFileSync("hdiutil", ["detach", target], { stdio: "inherit" })
 		} catch (error) {
+			console.log(`detach attempt ${attempt + 1} failed, volume still busy`)
 			execFileSync("sleep", ["2"])
 		}
 	}
-	if (detached === false) {
-		execFileSync("hdiutil", ["detach", mountPoint, "-force"], { stdio: "inherit" })
+
+	if (isMounted(mountPoint)) {
+		console.log("volume never let go, forcing the detach")
+		execFileSync("hdiutil", ["detach", device || mountPoint, "-force"], { stdio: "inherit" })
+	} else {
+		console.log("volume detached")
 	}
 }
 
