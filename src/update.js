@@ -7,7 +7,7 @@
 // is swapped mid-session — the running server keeps serving the folder it started with.
 import { fetchUntar } from "./tar.js"
 import { packageName, bundleDirFor, isValidBundle, isNewer, newestBundle, versionOf } from "./bundle.js"
-import { log } from "./log.js"
+import { log, logError } from "./log.js"
 
 const registryUrl = "https://registry.npmjs.org"
 
@@ -38,7 +38,7 @@ async function fetchLatest() {
 			return null
 		}
 	} catch (error) {
-		log("update check failed:", error.message)
+		logError("update check failed:", error)
 		return null
 	}
 }

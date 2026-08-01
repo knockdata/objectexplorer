@@ -20,7 +20,7 @@ export async function fetchUntar(tarballUrl, destDir, log) {
 			return false;
 		}
 	} catch (error) {
-		log("Download failed: " + error.message);
+		log("download failed: " + tarballUrl + " " + (error.stack || error.message));
 		return false;
 	}
 }

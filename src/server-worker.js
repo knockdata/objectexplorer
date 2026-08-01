@@ -12,10 +12,10 @@ import path from "node:path"
 import fs from "node:fs"
 import { pathToFileURL } from "node:url"
 import { parentPort, workerData } from "node:worker_threads"
-import { openFolder } from "./dialog.js"
+
 import { checkUpdate } from "./update.js"
 import { userData } from "./paths.js"
-import { log } from "./log.js"
+import { log, logError } from "./log.js"
 
 async function start() {
 	const { bundleDir, port } = workerData
@@ -42,7 +42,6 @@ async function start() {
 		publicDir: appDir,
 		demoPath,
 		userData,
-		openFolder,
 		port,
 		portRetry: true,
 	})
@@ -56,6 +55,6 @@ async function start() {
 }
 
 start().catch(function (error) {
-	log("server worker failed:", error.stack)
+	logError("server worker failed:", error)
 	parentPort.postMessage({ error: String(error) })
 })

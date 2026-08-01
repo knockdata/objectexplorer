@@ -162,6 +162,7 @@ jobs:
         shell: bash
         run: |
           ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
+          ls -l assets/icon-44x44.png assets/icon-150x150.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
@@ -236,6 +237,44 @@ jobs:
           name: windows-${{ matrix.arch }}
           path: dist/*.exe
 
+      # After Sign, so the .exe inside the package keeps its Authenticode signature. The package
+      # itself is unsigned - Partner Center re-signs with the Store certificate, and that is what
+      # makes a Store install skip SmartScreen entirely.
+      - name: Pack the msix
+        run: npm run msix
+
+      # A separate artifact, and never a release asset: an unsigned package on the releases page
+      # is the one thing nobody should download. The release job filters these out by name.
+      - uses: actions/upload-artifact@v5
+        with:
+          name: msix-${{ matrix.arch }}
+          path: dist/*.msix
+
+  # One bundle from both arches, so a single Store submission serves x64 and arm64 and an arm64
+  # machine installs the native build instead of emulating. Not in the windows matrix because
+  # makeappx bundle needs both packages in one place, which only exists after both legs finish.
+  msixbundle:
+    needs: [version, windows]
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - shell: bash
+        run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: msix-*
+          merge-multiple: true
+          path: dist
+      - run: npm run msix:bundle
+      - uses: actions/upload-artifact@v5
+        with:
+          name: msixbundle
+          path: dist/*.msixbundle
+
   linux:
     strategy:
       fail-fast: false
@@ -289,8 +328,12 @@ jobs:
     permissions:
       contents: write
     steps:
+      # pattern, not everything: the msix-* and msixbundle artifacts are unsigned until the Store
+      # signs them, and `files: artifacts/**/*` below would publish them on the releases page.
+      # They are downloaded by hand instead - see RELEASE.md.
       - uses: actions/download-artifact@v5
         with:
+          pattern: "{mac,windows,linux}-*"
           path: artifacts
 
       # The version is in every filename, so no download link can be written down once and

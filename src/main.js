@@ -21,7 +21,7 @@ import { createWindow, applyWindowsArgs } from "./webview.js"
 import { openBrowser } from "./browser.js"
 import { resolveBundleDir } from "./bundle.js"
 import { userData } from "./paths.js"
-import { log } from "./log.js"
+import { log, logError } from "./log.js"
 import { version, bundleVersion } from "./version.js"
 
 // split each arg on the first "=" only, so a value may itself contain "="
@@ -105,7 +105,7 @@ function openWindow(url) {
 		log("window closed")
 		process.exit(0)
 	} catch (error) {
-		log("native window unavailable, falling back to the browser:", error.message)
+		logError("native window unavailable, falling back to the browser:", error)
 		openBrowser(url)
 	}
 }
@@ -119,6 +119,6 @@ function readFileOrNull(file) {
 }
 
 main().catch(function (error) {
-	log("startup failed:", error.stack)
+	logError("startup failed:", error)
 	process.exit(1)
 })

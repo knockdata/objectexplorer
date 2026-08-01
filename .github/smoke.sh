@@ -10,7 +10,7 @@ set -uo pipefail
 
 binary="$1"
 port=9421
-log="$HOME/.objectexplorer/one.log"
+log="$HOME/.objectexplorer/app.log"
 
 serving() {
 	curl -sf "http://127.0.0.1:$port" > /dev/null

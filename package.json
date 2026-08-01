@@ -1,6 +1,6 @@
 {
 	"name": "one",
-	"version": "0.3.10",
+	"version": "0.3.11",
 	"description": "ObjectExplorer as a single native binary",
 	"private": true,
 	"type": "module",
@@ -10,6 +10,8 @@
 		"sea": "node scripts/sea.mjs",
 		"pack": "node scripts/pack.mjs",
 		"build": "npm run addon && npm run bundle && npm run sea && npm run pack",
+		"msix": "node scripts/msix.mjs",
+		"msix:bundle": "node scripts/msix-bundle.mjs",
 		"smoke": "node scripts/smoke.mjs"
 	},
 	"devDependencies": {

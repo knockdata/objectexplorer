@@ -8,7 +8,8 @@ import path from "node:path"
 export const userData = path.join(os.homedir(), ".objectexplorer")
 export const appDir = path.join(userData, ".app")
 export const binDir = path.join(userData, ".bin")
-export const logFile = path.join(userData, "one.log")
+// the same file server/src/logger.js writes, so the launcher and the server it starts share one log
+export const logFile = path.join(userData, "app.log")
 
 fs.mkdirSync(appDir, { recursive: true })
 fs.mkdirSync(binDir, { recursive: true })

@@ -30,7 +30,7 @@ export function writeWindowsResources(exePath) {
 	// node.exe is a console binary, so double-clicking the packaged exe opens a black console
 	// window that lives as long as the process — the main thread never leaves the window loop.
 	// 2 is IMAGE_SUBSYSTEM_WINDOWS_GUI: no console is created at all, so nothing even flashes.
-	// stdout goes nowhere on Windows from here on; ~/.objectexplorer/one.log is the record.
+	// stdout goes nowhere on Windows from here on; ~/.objectexplorer/app.log is the record.
 	exe.newHeader.optionalHeader.subsystem = 2
 
 	const icons = Data.IconFile.from(fs.readFileSync(path.join(assetsDir, "icon.ico"))).icons
