@@ -27,13 +27,19 @@ export function writeWindowsResources(exePath) {
 	const exe = NtExecutable.from(fs.readFileSync(exePath), { ignoreCert: true })
 	const resource = NtExecutableResource.from(exe)
 
+	// node.exe is a console binary, so double-clicking the packaged exe opens a black console
+	// window that lives as long as the process — the main thread never leaves the window loop.
+	// 2 is IMAGE_SUBSYSTEM_WINDOWS_GUI: no console is created at all, so nothing even flashes.
+	// stdout goes nowhere on Windows from here on; ~/.objectexplorer/one.log is the record.
+	exe.newHeader.optionalHeader.subsystem = 2
+
 	const icons = Data.IconFile.from(fs.readFileSync(path.join(assetsDir, "icon.ico"))).icons
 	Resource.IconGroupEntry.replaceIconsForResource(resource.entries, 1, lang, icons.map((icon) => icon.data))
 
 	versionInfo().outputToResourceEntries(resource.entries)
 	resource.outputResource(exe)
 	fs.writeFileSync(exePath, Buffer.from(exe.generate()))
-	console.log("windows resources:", exePath, "icon +", version)
+	console.log("windows resources:", exePath, "icon + gui subsystem +", version)
 }
 
 function versionInfo() {

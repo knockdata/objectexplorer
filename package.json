@@ -1,6 +1,6 @@
 {
 	"name": "one",
-	"version": "0.3.8",
+	"version": "0.3.9",
 	"description": "ObjectExplorer as a single native binary",
 	"private": true,
 	"type": "module",

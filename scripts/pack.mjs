@@ -136,8 +136,8 @@ function buildDmg(appPath, dmg) {
 	detach(mountPoint, deviceOf(attached))
 	fs.rmSync(mountPoint, { recursive: true, force: true })
 
-	fs.rmSync(dmg, { force: true })
-	execFileSync("hdiutil", ["convert", writableDmg, "-format", "UDZO", "-o", dmg], { stdio: "inherit" })
+	waitForRelease(writableDmg)
+	convert(writableDmg, dmg)
 	fs.rmSync(writableDmg)
 	fs.rmSync(stageDir, { recursive: true, force: true })
 }
@@ -207,6 +207,52 @@ function detach(mountPoint, device) {
 		execFileSync("hdiutil", ["detach", device || mountPoint, "-force"], { stdio: "inherit" })
 	} else {
 		console.log("volume detached")
+	}
+}
+
+// hdiutil detach returns as soon as the volume is unmounted, but the disk image framework keeps
+// the backing file open for a moment longer while it tears the device down. A convert started in
+// that window fails with "Resource temporarily unavailable" — which is what killed the 0.3.9 mac
+// x64 build, right after the log had said "volume detached". The image leaves `hdiutil info` only
+// when it is truly released, so that is what we wait on.
+function waitForRelease(writableDmg) {
+	for (let attempt = 0; attempt < 30 && stillAttached(writableDmg); attempt++) {
+		execFileSync("sleep", ["1"])
+	}
+
+	if (stillAttached(writableDmg)) {
+		console.log("the image is still attached after 30s, converting anyway")
+	} else {
+		console.log("image released")
+	}
+}
+
+function stillAttached(writableDmg) {
+	const info = execFileSync("hdiutil", ["info"], { encoding: "utf8" })
+	return info.includes(writableDmg)
+}
+
+// Even a released image can lose the race on a loaded runner, and the next attempt a few seconds
+// later succeeds — so this retries instead of taking the whole release down with it. Each attempt
+// starts from no output file, because hdiutil refuses to overwrite one.
+function convert(writableDmg, dmg) {
+	let converted = false
+
+	for (let attempt = 0; attempt < 5 && converted === false; attempt++) {
+		fs.rmSync(dmg, { force: true })
+		try {
+			execFileSync("hdiutil", ["convert", writableDmg, "-format", "UDZO", "-o", dmg], { stdio: "inherit" })
+			converted = true
+		} catch (error) {
+			console.log(`convert attempt ${attempt + 1} failed, waiting for the image to be released`)
+			execFileSync("sleep", ["5"])
+		}
+	}
+
+	if (converted) {
+		console.log("converted:", dmg)
+	} else {
+		throw new Error(`hdiutil convert failed 5 times: ${dmg}`)
 	}
 }
 

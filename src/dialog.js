@@ -15,7 +15,9 @@ export function openFolder() {
 			})
 		} else if (process.platform === "win32") {
 			const script = 'Add-Type -AssemblyName System.Windows.Forms; $dialog = New-Object System.Windows.Forms.FolderBrowserDialog; if ($dialog.ShowDialog() -eq "OK") { $dialog.SelectedPath }'
-			execFile("powershell", ["-NoProfile", "-Command", script], function (error, stdout) {
+			// the exe is a gui-subsystem binary with no console of its own, so without
+			// windowsHide powershell allocates one and flashes it on every click
+			execFile("powershell", ["-NoProfile", "-Command", script], { windowsHide: true }, function (error, stdout) {
 				resolve(pick(error, stdout))
 			})
 		} else {

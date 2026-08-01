@@ -149,7 +149,7 @@ format is not recognized and the first 64 bytes decide what it is.
 
 ### Sprite sheets
 
-<img src="./assets/screenshot/sprite-sheet.png" width="900">
+<img src="./assets/screenshot/sprite-sheet.png" width="600">
 
 Open a TextureAtlas or SpriteSheet XML and ObjectExplorer draws it: the atlas image with every
 sprite's bounding box overlaid and named, aligned to the real pixels however the image is scaled.

@@ -9,7 +9,8 @@ export function openBrowser(url) {
 	if (process.platform === "darwin") {
 		spawn("open", [url], { stdio: "ignore", detached: true }).unref()
 	} else if (process.platform === "win32") {
-		spawn(process.env.COMSPEC || "cmd.exe", ["/c", "start", "", url], { stdio: "ignore", detached: true }).unref()
+		// windowsHide keeps cmd from flashing a console: the exe itself is gui-subsystem and has none
+		spawn(process.env.COMSPEC || "cmd.exe", ["/c", "start", "", url], { stdio: "ignore", detached: true, windowsHide: true }).unref()
 	} else {
 		spawn("xdg-open", [url], { stdio: "ignore", detached: true }).unref()
 	}
