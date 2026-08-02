@@ -1,8 +1,11 @@
 @echo off
 REM Signs dist\ObjectExplorer-<version>.msixbundle with a throwaway certificate and installs it,
-REM so the package can be launched before it is submitted.
+REM so the STORE package can be launched before it is submitted.
 REM
 REM   scripts\self-sign-msix.bat
+REM
+REM Only the store package needs this. The msix on the releases page is signed by Azure Trusted
+REM Signing and installs with a double click; there is nothing to self-sign there.
 REM
 REM FOR LOCAL TESTING ONLY. The file uploaded to Partner Center is the UNSIGNED one that
 REM scripts\download-msix.bat fetched - the Store strips any signature and applies its own. This
@@ -10,13 +13,16 @@ REM writes dist\selfsign.* and a signed copy, and never touches the original.
 REM
 REM Run this from an elevated prompt: certutil writes to the machine's TrustedPeople store, and
 REM without that entry Windows refuses to install a package it does not trust.
+REM
+REM The publisher below is the Partner Center one, so this installs alongside a release-page
+REM msix rather than over it - the package family name differs when the publisher differs.
 setlocal
 cd /d "%~dp0.."
 
 REM the publisher, the version and the signtool path all come out of scripts/msix.mjs, so the
 REM certificate subject cannot drift from the manifest - signtool rejects the package the moment
 REM they differ, with an error that says nothing about which one is wrong
-for /f "usebackq delims=" %%i in (`node --input-type=module -e "import { publisher } from './scripts/msix.mjs'; console.log(publisher)"`) do set PUBLISHER=%%i
+for /f "usebackq delims=" %%i in (`node --input-type=module -e "import { storePublisher } from './scripts/msix.mjs'; console.log(storePublisher)"`) do set PUBLISHER=%%i
 for /f "usebackq delims=" %%i in (`node --input-type=module -e "import { packageVersion } from './scripts/msix.mjs'; console.log(packageVersion)"`) do set PACKAGE_VERSION=%%i
 for /f "usebackq delims=" %%i in (`node --input-type=module -e "import { findSdkTool } from './scripts/msix.mjs'; console.log(findSdkTool('signtool.exe'))"`) do set SIGNTOOL=%%i
 

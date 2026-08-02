@@ -1,12 +1,16 @@
 @echo off
-REM Fetches the msixbundle the release workflow built, so it can be tested and submitted.
+REM Fetches the msixbundle the release workflow built for the Microsoft Store.
 REM
 REM   scripts\download-msix.bat            the newest successful Release run
 REM   scripts\download-msix.bat 12345678   a specific run id
 REM
-REM The bundle is a workflow artifact and not a release asset, on purpose: it is unsigned until
-REM the Store signs it, and an unsigned package on the releases page is the one thing nobody
-REM should ever download. Artifacts are not public URLs either, so this goes through gh.
+REM This is the STORE package. It is a workflow artifact and not a release asset, on purpose: it
+REM is unsigned until Partner Center signs it, and an unsigned package on the releases page is
+REM the one thing nobody should ever download. Artifacts are not public URLs either, so this
+REM goes through gh.
+REM
+REM The msix people download directly is a different file - signed in CI, published on the
+REM releases page as ObjectExplorer-windows-<arch>.msix. Nothing here touches that one.
 setlocal
 cd /d "%~dp0.."
 

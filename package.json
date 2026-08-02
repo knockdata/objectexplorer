@@ -11,6 +11,7 @@
 		"pack": "node scripts/pack.mjs",
 		"build": "npm run addon && npm run bundle && npm run sea && npm run pack",
 		"msix": "node scripts/msix.mjs",
+		"msix:store": "node scripts/msix.mjs store",
 		"msix:bundle": "node scripts/msix-bundle.mjs",
 		"smoke": "node scripts/smoke.mjs"
 	},

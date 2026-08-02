@@ -213,12 +213,19 @@ jobs:
           certificate-profile-name: KnockData
           files-folder: ${{ github.workspace }}\dist
           files-folder-filter: exe
+          # false is the default, but here it is load-bearing: the store package sits in
+          # dist\store and has to stay unsigned, because Partner Center signs that one
+          files-folder-recurse: false
 
       # An unsigned build used to upload in silence. Defender holding a 107 MB unsigned exe is
       # what a user sees as a double-click that does nothing at all, so say so out loud.
       # ASCII only in here: Windows PowerShell 5.1 reads the generated .ps1 as ANSI, and an em
       # dash ends up as three cp1252 characters whose last one is a curly quote. That closed the
       # string early and failed the whole step with a parse error before anything ran.
+      #
+      # This is also where the direct msix gets its publisher. The certificate subject is what
+      # signtool compares the manifest against, character for character, so it is read off the
+      # exe that was just signed rather than written down anywhere.
       - name: Check the signature
         shell: powershell
         run: |
@@ -227,32 +234,77 @@ jobs:
           Write-Output "$($exe.Name): $($signature.Status)"
           if ($signature.Status -eq "Valid") {
             Write-Output "signed: $($signature.SignerCertificate.Subject)" >> $env:GITHUB_STEP_SUMMARY
+            Write-Output "MSIX_PUBLISHER=$($signature.SignerCertificate.Subject)" >> $env:GITHUB_ENV
           } else {
             Write-Output "::warning::$($exe.Name) is unsigned ($($signature.Status)); Defender and SmartScreen will block it on a user machine. Set AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as repository secrets."
             Write-Output "**$($exe.Name) is unsigned** - Defender and SmartScreen will block it." >> $env:GITHUB_STEP_SUMMARY
           }
 
+      # Both packs run after Sign, so the .exe inside each package carries its Authenticode
+      # signature. Skipped without a certificate: a direct package whose publisher does not match
+      # a real cert cannot be signed and cannot be installed, so there would be nothing to ship.
+      - name: Pack the direct msix
+        if: env.MSIX_PUBLISHER != ''
+        run: npm run msix
+
+      # Always: the store package is unsigned by design, so it builds on a fork too.
+      - name: Pack the store msix
+        run: npm run msix:store
+
+      # Same certificate as the exe. This is what makes the msix on the releases page install
+      # with a double click - App Installer refuses a package it cannot chain to a trusted root.
+      - name: Sign the msix
+        if: env.AZURE_CLIENT_ID != ''
+        uses: azure/trusted-signing-action@v0
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: https://neu.codesigning.azure.net/
+          trusted-signing-account-name: knockdata
+          certificate-profile-name: KnockData
+          files-folder: ${{ github.workspace }}\dist
+          files-folder-filter: msix
+          files-folder-recurse: false
+
+      # A publisher mismatch is the failure to expect here, and signtool reports it as a bare
+      # 0x8007000B with no mention of which side is wrong - so print both.
+      - name: Check the msix signature
+        shell: powershell
+        run: |
+          $msix = Get-ChildItem dist\*.msix -ErrorAction SilentlyContinue
+          if ($msix) {
+            $signature = Get-AuthenticodeSignature $msix[0].FullName
+            Write-Output "$($msix[0].Name): $($signature.Status)"
+            if ($signature.Status -eq "Valid") {
+              Write-Output "msix signed: $($signature.SignerCertificate.Subject)" >> $env:GITHUB_STEP_SUMMARY
+            } else {
+              Write-Output "::warning::$($msix[0].Name) is unsigned ($($signature.Status)); the manifest Publisher must equal the certificate subject exactly."
+            }
+          } else {
+            Write-Output "no direct msix in dist, the build was unsigned"
+          }
+
+      # The exe and the direct msix both go on the releases page: one portable file, or a real
+      # install with a Start menu entry and an uninstall.
       - uses: actions/upload-artifact@v5
         with:
           name: windows-${{ matrix.arch }}
-          path: dist/*.exe
+          path: |
+            dist/*.exe
+            dist/*.msix
 
-      # After Sign, so the .exe inside the package keeps its Authenticode signature. The package
-      # itself is unsigned - Partner Center re-signs with the Store certificate, and that is what
-      # makes a Store install skip SmartScreen entirely.
-      - name: Pack the msix
-        run: npm run msix
-
-      # A separate artifact, and never a release asset: an unsigned package on the releases page
-      # is the one thing nobody should download. The release job filters these out by name.
+      # A separate artifact, and never a release asset: this one is unsigned until Partner Center
+      # signs it. The release job filters it out by name.
       - uses: actions/upload-artifact@v5
         with:
-          name: msix-${{ matrix.arch }}
-          path: dist/*.msix
+          name: store-msix-${{ matrix.arch }}
+          path: dist/store/*.msix
 
   # One bundle from both arches, so a single Store submission serves x64 and arm64 and an arm64
   # machine installs the native build instead of emulating. Not in the windows matrix because
   # makeappx bundle needs both packages in one place, which only exists after both legs finish.
+  # This is the store variant only; the direct packages ship per arch on the releases page.
   msixbundle:
     needs: [version, windows]
     runs-on: windows-latest
@@ -266,9 +318,9 @@ jobs:
         run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
       - uses: actions/download-artifact@v5
         with:
-          pattern: msix-*
+          pattern: store-msix-*
           merge-multiple: true
-          path: dist
+          path: dist/store
       - run: npm run msix:bundle
       - uses: actions/upload-artifact@v5
         with:
@@ -328,9 +380,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      # pattern, not everything: the msix-* and msixbundle artifacts are unsigned until the Store
-      # signs them, and `files: artifacts/**/*` below would publish them on the releases page.
-      # They are downloaded by hand instead - see RELEASE.md.
+      # pattern, not everything: the store-msix-* and msixbundle artifacts are unsigned until the
+      # Store signs them, and `files: artifacts/**/*` below would publish them on the releases
+      # page. They are downloaded by hand instead - see RELEASE.md. The signed direct msix does
+      # ship, and arrives inside windows-<arch> next to the exe.
       - uses: actions/download-artifact@v5
         with:
           pattern: "{mac,windows,linux}-*"
