@@ -112,6 +112,10 @@ export function findSdkTool(tool) {
 // runFullTrust is a restricted capability: it is what makes a plain win32 .exe run unchanged
 // inside a package, and the Store reviews it. A desktop app is exactly the case it exists for.
 // MinVersion 10.0.17763.0 is Windows 10 1809, the oldest release WebView2 supports.
+//
+// BackgroundColor is the icon's own dark, not "transparent": the App Installer dialog fills a
+// transparent logo with the system accent, which paints a blue square around the icon. The
+// logos are full-bleed on the same colour, so nothing shows through either way.
 function manifest(publisher) {
 	return `<?xml version="1.0" encoding="utf-8"?>
 <Package
@@ -145,7 +149,7 @@ function manifest(publisher) {
 			<uap:VisualElements
 				DisplayName="${appName}"
 				Description="The VSCode for Cloud Storage"
-				BackgroundColor="transparent"
+				BackgroundColor="#1E1F24"
 				Square150x150Logo="Assets\\Square150x150Logo.png"
 				Square44x44Logo="Assets\\Square44x44Logo.png" />
 		</Application>
