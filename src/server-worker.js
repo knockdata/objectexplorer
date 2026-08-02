@@ -18,7 +18,7 @@ import { userData } from "./paths.js"
 import { log, logError } from "./log.js"
 
 async function start() {
-	const { bundleDir, port } = workerData
+	const { bundleDir, ffmpegDir, port } = workerData
 	const appDir = path.join(bundleDir, "app")
 	const serverPath = path.join(bundleDir, "server", "WebServer.mjs")
 
@@ -42,6 +42,7 @@ async function start() {
 		publicDir: appDir,
 		demoPath,
 		userData,
+		ffmpegDir,
 		port,
 		portRetry: true,
 	})
