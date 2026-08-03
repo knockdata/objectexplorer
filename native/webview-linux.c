@@ -35,6 +35,13 @@ struct Webview {
 	void *(*viewGetSettings)(void *view);
 	void (*settingsSetDeveloperExtras)(void *settings, int enabled);
 
+	void *pixbufLibrary;
+	void (*windowSetIcon)(void *window, void *pixbuf);
+	void *(*loaderNew)(void);
+	int (*loaderWrite)(void *loader, const unsigned char *data, unsigned long count, void **error);
+	int (*loaderClose)(void *loader, void **error);
+	void *(*loaderGetPixbuf)(void *loader);
+
 	void *window;
 	void *view;
 };
@@ -59,6 +66,27 @@ static void *openWebkit(void) {
 	return library;
 }
 
+// The icon is the one optional part: a machine without gdk-pixbuf still gets a window, it just
+// keeps the generic icon. That is why these symbols never touch the caller's ok flag.
+static void loadIconSymbols(Webview *webview) {
+	int ok = 1;
+	webview->pixbufLibrary = dlopen("libgdk_pixbuf-2.0.so.0", RTLD_LAZY | RTLD_GLOBAL);
+	if (webview->pixbufLibrary) {
+		webview->windowSetIcon = symbol(webview->gtkLibrary, "gtk_window_set_icon", &ok);
+		webview->loaderNew = symbol(webview->pixbufLibrary, "gdk_pixbuf_loader_new", &ok);
+		webview->loaderWrite = symbol(webview->pixbufLibrary, "gdk_pixbuf_loader_write", &ok);
+		webview->loaderClose = symbol(webview->pixbufLibrary, "gdk_pixbuf_loader_close", &ok);
+		webview->loaderGetPixbuf = symbol(webview->pixbufLibrary, "gdk_pixbuf_loader_get_pixbuf", &ok);
+	} else {
+		ok = 0;
+	}
+	if (ok) {
+	} else {
+		// one missing symbol is the whole feature missing; webviewSetIcon checks this one
+		webview->windowSetIcon = NULL;
+	}
+}
+
 static void loadSymbols(Webview *webview, int *ok) {
 	void *gtk = webview->gtkLibrary;
 	void *gobject = webview->gobjectLibrary;
@@ -77,6 +105,7 @@ static void loadSymbols(Webview *webview, int *ok) {
 	webview->viewLoadUri = symbol(webkit, "webkit_web_view_load_uri", ok);
 	webview->viewGetSettings = symbol(webkit, "webkit_web_view_get_settings", ok);
 	webview->settingsSetDeveloperExtras = symbol(webkit, "webkit_settings_set_enable_developer_extras", ok);
+	loadIconSymbols(webview);
 }
 
 static void buildWindow(Webview *webview, int debug) {
@@ -93,6 +122,10 @@ static void buildWindow(Webview *webview, int debug) {
 }
 
 static void closeLibraries(Webview *webview) {
+	if (webview->pixbufLibrary) {
+		dlclose(webview->pixbufLibrary);
+	} else {
+	}
 	if (webview->webkitLibrary) {
 		dlclose(webview->webkitLibrary);
 	} else {
@@ -140,6 +173,22 @@ Webview *webviewCreate(int debug) {
 
 void webviewSetTitle(Webview *webview, const char *title) {
 	webview->windowSetTitle(webview->window, title);
+}
+
+// The loader keeps the only reference to the pixbuf, and both live as long as the window does,
+// so there is nothing to unref here.
+void webviewSetIcon(Webview *webview, const unsigned char *png, int length) {
+	if (webview->windowSetIcon) {
+		void *loader = webview->loaderNew();
+		webview->loaderWrite(loader, png, (unsigned long)length, NULL);
+		webview->loaderClose(loader, NULL);
+		void *pixbuf = webview->loaderGetPixbuf(loader);
+		if (pixbuf) {
+			webview->windowSetIcon(webview->window, pixbuf);
+		} else {
+		}
+	} else {
+	}
 }
 
 // the window is not shown until webviewRun, so the default size is the size it opens at

@@ -12,7 +12,7 @@
 // browser for the default browser, server for neither. See README.
 //
 // No JS bridge between the two: the UI reaches the backend over http://127.0.0.1 exactly as
-// it does in a browser. That is why the native binding needs only seven calls.
+// it does in a browser. That is why the native binding needs only eight calls.
 import fs from "node:fs"
 import path from "node:path"
 import sea from "node:sea"
@@ -94,7 +94,8 @@ function openWindow(url) {
 	applyWindowsArgs(path.join(userData, "webview2-args.txt"), readFileOrNull)
 	try {
 		const window = createWindow({
-			title: "ObjectExplorer",
+			title: "ObjectExplorer - The VSCode for Cloud Storage",
+			icon: readIcon(),
 			width: 1400,
 			height: 900,
 			debug: args.debug === "true",
@@ -108,6 +109,18 @@ function openWindow(url) {
 	} catch (error) {
 		logError("native window unavailable, falling back to the browser:", error)
 		openBrowser(url)
+	}
+}
+
+// null rather than a throw: an icon that cannot be read is a window with the platform's default
+// icon, not a window that never opens. Reading it inside the createWindow arguments is what
+// turned a missing asset into "native window unavailable" and a browser tab.
+function readIcon() {
+	try {
+		return Buffer.from(readAsset("64.png"))
+	} catch (error) {
+		logError("no window icon:", error)
+		return null
 	}
 }
 

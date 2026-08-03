@@ -1,15 +1,19 @@
 // The native window. Thin closure over native/webview_napi.c — see native/webview.h for why
-// the binding has only six calls and no error codes.
+// the binding has only seven calls and no error codes.
 //
 // run() blocks this thread until the window closes, so nothing else on the main thread runs
 // after it. The HTTP server lives in a worker for exactly that reason.
 import { loadAddon } from "./addon.js"
 import { log } from "./log.js"
 
-export function createWindow({ title, width, height, debug, readAsset }) {
+export function createWindow({ title, icon, width, height, debug, readAsset }) {
 	const addon = loadAddon("webview_napi", readAsset)
 	const handle = addon.create(debug)
 	addon.setTitle(handle, title)
+	if (icon) {
+		addon.setIcon(handle, icon)
+	} else {
+	}
 	addon.setSize(handle, width, height)
 	log("window created", width, "x", height)
 

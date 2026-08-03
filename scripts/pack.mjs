@@ -25,6 +25,9 @@ const assetsDir = path.join(root, "assets")
 const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version
 const appName = "ObjectExplorer"
 const appId = "com.knockdata.objectexplorer"
+// the mounted volume's name, which is what the dmg window's title bar and path bar read. The
+// app, the item positions in the window and the .dmg filename all stay appName.
+const volumeName = "ObjectExplorer - The VSCode for Cloud Storage"
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
 	await pack()
@@ -105,16 +108,22 @@ function buildApp() {
 }
 
 // What a person sees when they double-click the download: one window holding the app and an
-// alias to /Applications, so installing is a drag from left to right. hdiutil cannot lay that
-// window out, so the image is built read-write, mounted, arranged by Finder over AppleScript
-// (which writes the .DS_Store that remembers the layout), and only then compressed to the
-// read-only UDZO that ships.
+// alias to /Applications, so installing is a drag from left to right. The layout comes from the
+// .DS_Store copied in below. The image is still built read-write and mounted first, because the
+// volume icon has to be written onto a mounted volume, and only then compressed to the read-only
+// UDZO that ships.
 function buildDmg(appPath, dmg) {
 	const stageDir = path.join(distDir, "dmg")
 	fs.mkdirSync(stageDir, { recursive: true })
 	// ditto, not cp: it keeps the code signature and the bundle's extended attributes intact
 	execFileSync("ditto", [appPath, path.join(stageDir, `${appName}.app`)], { stdio: "inherit" })
 	fs.symlinkSync("/Applications", path.join(stageDir, "Applications"))
+	// The window layout, ready-made. It is the .DS_Store Finder wrote for this exact pair of
+	// items — 600x400 window, 128px icons, the app on the left and the Applications alias on the
+	// right — so the image carries the layout instead of asking Finder to arrange one at build
+	// time. Scripting Finder needs a GUI session and the Automation permission the terminal may
+	// not have; when it was missing the dmg quietly shipped with Finder's default small icons.
+	fs.copyFileSync(path.join(assetsDir, "dmg.DS_Store"), path.join(stageDir, ".DS_Store"))
 
 	// hdiutil sizes the volume from -srcfolder on its own, and its estimate leaves no room for
 	// filesystem overhead — the copy into /Volumes/ObjectExplorer then fails with ENOSPC on a
@@ -122,16 +131,14 @@ function buildDmg(appPath, dmg) {
 	// space away.
 	const megabytes = Math.ceil(dirSize(stageDir) / 1e6) + 200
 	const writableDmg = path.join(distDir, "writable.dmg")
-	execFileSync("hdiutil", ["create", "-volname", appName, "-srcfolder", stageDir, "-ov", "-format", "UDRW", "-size", `${megabytes}m`, writableDmg], { stdio: "inherit" })
+	execFileSync("hdiutil", ["create", "-volname", volumeName, "-srcfolder", stageDir, "-ov", "-format", "UDRW", "-size", `${megabytes}m`, writableDmg], { stdio: "inherit" })
 
-	// mounted here rather than at /Volumes/ObjectExplorer: another ObjectExplorer volume may
-	// already be mounted — the name then becomes "ObjectExplorer 1" — and a Finder that still
-	// remembers a window for that path reuses it and never writes the .DS_Store this needs
+	// mounted here rather than under /Volumes: an ObjectExplorer volume may already be mounted
+	// from an earlier build, and the second one is then renamed with a trailing " 1"
 	const mountPoint = path.join(distDir, "mount")
 	fs.mkdirSync(mountPoint, { recursive: true })
 	const attached = execFileSync("hdiutil", ["attach", writableDmg, "-noautoopen", "-mountpoint", mountPoint], { encoding: "utf8" })
 	console.log(attached.trim())
-	layout(mountPoint)
 	volumeIcon(mountPoint)
 	detach(mountPoint, deviceOf(attached))
 	fs.rmSync(mountPoint, { recursive: true, force: true })
@@ -146,23 +153,27 @@ function buildDmg(appPath, dmg) {
 // arrow that reads as "a download" — in the window title, the sidebar and on the desktop. Finder
 // uses .VolumeIcon.icns instead, but only once the custom-icon flag is set: byte 8 of the 32-byte
 // FinderInfo attribute, which is what `SetFile -a C` writes and xattr can write without Xcode.
-// This runs after the layout, not before: Finder's "update" deletes the icns it has already read.
 function volumeIcon(mountPoint) {
 	const customIcon = "0000000000000000040000000000000000000000000000000000000000000000"
-	fs.copyFileSync(path.join(assetsDir, "icon.icns"), path.join(mountPoint, ".VolumeIcon.icns"))
+	buildVolumeIcns(path.join(mountPoint, ".VolumeIcon.icns"))
 	execFileSync("xattr", ["-wx", "com.apple.FinderInfo", customIcon, mountPoint], { stdio: "inherit" })
 }
 
-// Finder scripting needs a logged-in GUI session, which a CI runner may not have. A dmg with a
-// default window is still a working dmg — the /Applications alias is in it either way — so a
-// failure here is a warning, not a broken release.
-function layout(mountPoint) {
-	try {
-		execFileSync("osascript", ["-e", finderLayout(mountPoint)], { stdio: ["ignore", "inherit", "pipe"] })
-		console.log("dmg window arranged for drag-to-Applications")
-	} catch (error) {
-		console.log("no Finder available, dmg keeps the default window layout:", String(error.stderr).trim())
+// 64.png, not icon.icns: the volume icon is drawn at 16 points in the title bar and the path
+// bar, where icon.icns' dark rounded square disappears into the dark window. The transparent
+// png reads at that size. sips and iconutil both ship with macOS, which a mac pack already needs.
+function buildVolumeIcns(icns) {
+	const iconset = path.join(distDir, "volume.iconset")
+	fs.rmSync(iconset, { recursive: true, force: true })
+	fs.mkdirSync(iconset, { recursive: true })
+
+	const sizes = [["icon_16x16.png", 16], ["icon_16x16@2x.png", 32], ["icon_32x32.png", 32], ["icon_32x32@2x.png", 64], ["icon_128x128.png", 128]]
+	for (const [name, pixels] of sizes) {
+		execFileSync("sips", ["-z", String(pixels), String(pixels), path.join(assetsDir, "64.png"), "--out", path.join(iconset, name)], { stdio: "ignore" })
 	}
+
+	execFileSync("iconutil", ["-c", "icns", iconset, "-o", icns], { stdio: "inherit" })
+	fs.rmSync(iconset, { recursive: true, force: true })
 }
 
 // `hdiutil attach` prints "/dev/disk4  \tGUID_partition_scheme" and one line per slice. The
@@ -182,14 +193,14 @@ function isMounted(mountPoint) {
 	return mounted.includes(` on ${mountPoint} `)
 }
 
-// Finder holds the volume for a moment after writing .DS_Store, and a busy volume refuses to
+// A volume can stay busy for a moment after the last write, and a busy volume refuses to
 // detach. Two things made this fail a whole mac build: it can hold on for longer than the ten
 // seconds this used to wait, and once it lets go every further `hdiutil detach` fails too —
 // with "no such file or directory", because the volume is already gone. So each attempt asks
 // whether the volume is still mounted before deciding anything, and the device node is tried
 // once the mountpoint stops resolving.
 function detach(mountPoint, device) {
-	// Finder writes .DS_Store lazily; sync makes sure it is on the image before it is unmounted
+	// sync makes sure the volume icon is on the image before it is unmounted
 	execFileSync("sync", [], { stdio: "inherit" })
 
 	for (let attempt = 0; attempt < 15 && isMounted(mountPoint); attempt++) {
@@ -254,30 +265,6 @@ function convert(writableDmg, dmg) {
 	} else {
 		throw new Error(`hdiutil convert failed 5 times: ${dmg}`)
 	}
-}
-
-// toolbar and statusbar off: the window opens as plain icons on a plain background, with no
-// Finder chrome — the back arrows, the view switcher and the share/download button — above them.
-function finderLayout(mountPoint) {
-	return `tell application "Finder"
-	tell folder (POSIX file "${mountPoint}" as alias)
-		open
-		set current view of container window to icon view
-		set toolbar visible of container window to false
-		set statusbar visible of container window to false
-		set bounds of container window to {200, 150, 800, 550}
-		set viewOptions to icon view options of container window
-		set arrangement of viewOptions to not arranged
-		set icon size of viewOptions to 128
-		set text size of viewOptions to 13
-		set position of item "${appName}.app" of container window to {150, 170}
-		set position of item "Applications" of container window to {450, 170}
-		close
-		open
-		update without registering applications
-		delay 2
-	end tell
-end tell`
 }
 
 function notarize(dmg) {

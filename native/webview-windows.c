@@ -225,6 +225,14 @@ void webviewSetTitle(Webview *webview, const char *title) {
 	free(wide);
 }
 
+// The title bar icon is already there: the window class takes it from the exe's icon resource,
+// written by scripts/win-resources.mjs. Nothing to do with the png.
+void webviewSetIcon(Webview *webview, const unsigned char *png, int length) {
+	(void)webview;
+	(void)png;
+	(void)length;
+}
+
 void webviewSetSize(Webview *webview, int width, int height) {
 	// the caller means the drawable area, so grow the request by whatever the frame costs
 	RECT frame = { 0, 0, width, height };
