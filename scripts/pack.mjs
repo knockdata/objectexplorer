@@ -140,6 +140,7 @@ function buildDmg(appPath, dmg) {
 	const attached = execFileSync("hdiutil", ["attach", writableDmg, "-noautoopen", "-mountpoint", mountPoint], { encoding: "utf8" })
 	console.log(attached.trim())
 	volumeIcon(mountPoint)
+	removeSystemMetadata(mountPoint)
 	detach(mountPoint, deviceOf(attached))
 	fs.rmSync(mountPoint, { recursive: true, force: true })
 
@@ -157,6 +158,25 @@ function volumeIcon(mountPoint) {
 	const customIcon = "0000000000000000040000000000000000000000000000000000000000000000"
 	buildVolumeIcns(path.join(mountPoint, ".VolumeIcon.icns"))
 	execFileSync("xattr", ["-wx", "com.apple.FinderInfo", customIcon, mountPoint], { stdio: "inherit" })
+}
+
+// The image has to be mounted read-write to write the volume icon, and macOS puts its own
+// housekeeping on any mounted volume — .fseventsd from the fsevents daemon, .Spotlight-V100 from
+// the indexer. hdiutil convert then freezes whatever is there into the read-only image that ships,
+// so a user with hidden files shown sees build residue sitting next to the app.
+//
+// .metadata_never_index goes on first and comes off last: while it is there the daemons leave the
+// volume alone, so nothing is recreated between the delete and the unmount, and removing it means
+// the marker does not become the very stray file this is here to get rid of. What survives is the
+// app, the Applications alias and .VolumeIcon.icns, which has to stay for the volume's icon.
+function removeSystemMetadata(mountPoint) {
+	const marker = path.join(mountPoint, ".metadata_never_index")
+	fs.writeFileSync(marker, "")
+	for (const name of [".fseventsd", ".Spotlight-V100", ".Trashes", ".TemporaryItems"]) {
+		fs.rmSync(path.join(mountPoint, name), { recursive: true, force: true })
+	}
+	fs.rmSync(marker, { force: true })
+	console.log("volume cleaned:", fs.readdirSync(mountPoint).join(" "))
 }
 
 // 64.png, not icon.icns: the volume icon is drawn at 16 points in the title bar and the path
