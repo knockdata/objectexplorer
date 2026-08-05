@@ -1,11 +1,17 @@
 name: Release
 
-# Push a version tag (git tag v1.2.3 && git push origin v1.2.3) to build one signed binary per
-# platform and publish them as a GitHub Release. A manual run does the same thing and asks for
-# the version instead of reading it off the tag; either way the release is named v1.2.3, never
-# after the branch the run started from.
+# The whole product ships from this one run: the @knockdata/objectexplorer npm package and the
+# desktop binaries that embed it, under one version number that comes from the package itself.
 #
-# Every job runs the same four steps — addon, bundle, sea, pack — because the native addon is
+# rock2/objectexplorer/publish.sh uploads a candidate to objectexplorer.com and dispatches this.
+# Every binary is built from that candidate, so nothing ever waits for a publish — the package is
+# tested on six platforms, the binaries are built and smoke-tested, and only then does npm publish
+# and the GitHub release happen, together, from the same bytes.
+#
+# A tag push is the other door: it rebuilds and re-releases the binaries for a version that is
+# already on npm, and publishes nothing.
+#
+# Every build job runs the same four steps — addon, bundle, sea, pack — because the native addon is
 # compiled per platform and the SEA is built on that platform's node binary. Only the signing
 # differs.
 on:
@@ -14,38 +20,182 @@ on:
       - "v*"
   workflow_dispatch:
     inputs:
-      version:
-        description: "Version to build, e.g. 1.2.3"
-        required: true
+      promote:
+        description: "Publish to npm and cut the release when every leg passes"
+        type: boolean
+        default: true
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  # One job decides what this run is called, and nothing else looks at github.ref_name. A
-  # manual run types "0.3.5" and a tag push arrives as "v0.3.5"; both become version 0.3.5 and
-  # tag v0.3.5. Reading ref_name directly is what published a release called "ObjectExplorer
-  # main", tagged main, on top of the real versions.
-  version:
+  # What is being shipped, decided once — nothing else looks at github.ref_name. Reading it
+  # directly is what published a release called "ObjectExplorer main", tagged main, on top of the
+  # real versions.
+  #
+  # The version is never invented here: it is read out of the package.json inside the tarball, so
+  # the binaries, the npm publish and the release name cannot disagree about what this run is.
+  source:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.pick.outputs.version }}
       tag: ${{ steps.pick.outputs.tag }}
+      publish: ${{ steps.pick.outputs.publish }}
+      release: ${{ steps.pick.outputs.release }}
     steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
       - id: pick
         # through env, not ${{ }} inside the script: an expression is pasted in as text before
-        # bash sees it, so a version typed with a quote in it would run as a command
+        # bash sees it, so a value typed with a quote in it would run as a command
         env:
-          INPUT_VERSION: ${{ inputs.version }}
           REF_NAME: ${{ github.ref_name }}
+          EVENT: ${{ github.event_name }}
+          PROMOTE: ${{ inputs.promote }}
         run: |
-          version="${INPUT_VERSION:-$REF_NAME}"
-          version="${version#v}"
+          if [ "$EVENT" = "push" ]; then
+            tagged="${REF_NAME#v}"
+            npm pack "@knockdata/objectexplorer@$tagged"
+            mv knockdata-objectexplorer-*.tgz objectexplorer.tgz
+            publish=false
+            release=true
+          else
+            tagged=""
+            curl -fsSL -o objectexplorer.tgz https://objectexplorer.com/releases/objectexplorer.tgz
+            if [ "$PROMOTE" = "false" ]; then
+              publish=false
+              release=false
+            else
+              publish=true
+              release=true
+            fi
+          fi
+          # the test suite never ships inside the package, so it travels beside it
+          curl -fsSL -o objectexplorer-test.tgz https://objectexplorer.com/releases/objectexplorer-test.tgz
+
+          tar xzf objectexplorer.tgz package/package.json
+          version=$(node -p 'require("./package/package.json").version')
+
+          # win-resources.mjs splits this into exactly three numbers and msix.mjs appends a fourth,
+          # so a prerelease version would reach the PE version block as NaN
           if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "version=$version" >> "$GITHUB_OUTPUT"
-            echo "tag=v$version" >> "$GITHUB_OUTPUT"
-            echo "building $version, releasing as v$version" >> "$GITHUB_STEP_SUMMARY"
+            echo "shipping $version (publish=$publish release=$release)" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "::error::expected a version like 1.2.3, got '$version'"
             exit 1
           fi
+
+          # a tag can name a version the package is not; better to stop than to release the wrong one
+          if [ -n "$tagged" ] && [ "$tagged" != "$version" ]; then
+            echo "::error::tag v$tagged does not match the package version $version"
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+          echo "release=$release" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: candidate
+          path: |
+            objectexplorer.tgz
+            objectexplorer-test.tgz
+
+  # The package itself, driven through its own UI in a real headless browser on every platform it
+  # claims to run on: local folder, all three clouds, navigating and viewing files.
+  test:
+    needs: source
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-latest
+            arch: x64
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      # x64 node on the Apple Silicon runner, so the x64 duckdb and sqlite addons are the ones
+      # loaded. macos-13 is the last native x64 runner and it queues for hours without ever
+      # starting, so this is how x64 mac gets covered at all. Rosetta is not promised on an arm
+      # runner: without it the leg says so and stops rather than testing arm64 twice.
+      - name: rosetta
+        if: matrix.arch == 'x64' && runner.os == 'macOS'
+        run: |
+          if arch -x86_64 /usr/bin/true 2> /dev/null; then
+            echo "rosetta is available, running x64"
+          else
+            echo "no rosetta on this runner, skipping the x64 mac leg" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "SKIP=1" >> "$GITHUB_ENV"
+          fi
+
+      - if: env.SKIP != '1'
+        uses: actions/checkout@v5
+      - if: env.SKIP != '1'
+        uses: actions/download-artifact@v5
+        with:
+          name: candidate
+      - if: env.SKIP != '1'
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          architecture: ${{ matrix.arch }}
+
+      # Google ships no arm64 Chrome for linux, so that leg needs chromium from the distro. Every
+      # other runner already has Chrome (macOS, ubuntu x64) or Edge (windows), and browser.js
+      # finds whichever is there.
+      - name: browser
+        if: env.SKIP != '1'
+        run: bash .github/browser.sh
+
+      - name: install the candidate
+        if: env.SKIP != '1'
+        run: |
+          mkdir work
+          cd work
+          npm init -y > /dev/null
+          npm install ../objectexplorer.tgz
+          tar xzf ../objectexplorer-test.tgz
+          node -e "console.log('OBJECTEXPLORER_CLI=' + require('path').resolve('node_modules/@knockdata/objectexplorer/cli.js'))" >> "$GITHUB_ENV"
+
+      # A native absolute path, written by node: a bash path like /d/a/... is not something node on
+      # windows can open.
+      - name: cloud credentials
+        if: env.SKIP != '1'
+        env:
+          GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+        run: |
+          cd work
+          node -e "const fs=require('fs'),path=require('path');const file=path.resolve('gcp-service-account.json');fs.writeFileSync(file,process.env.GCP_SERVICE_ACCOUNT_JSON||'');console.log('GOOGLE_APPLICATION_CREDENTIALS='+file)" >> "$GITHUB_ENV"
+
+      - name: end to end
+        if: env.SKIP != '1'
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          OBJECTEXPLORER_TEST_PORT: 9421
+        run: |
+          cd work
+          node test/e2e.js
+
+      - if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: failure-${{ matrix.runner }}-${{ matrix.arch }}
+          path: work/test/*.png
+          if-no-files-found: ignore
 
   # Both arches build on the Apple Silicon runner. macos-13 is the last x64 runner and it now
   # sits in the queue for hours, and it is not needed: one Xcode targets both arm64 and x86_64,
@@ -59,7 +209,7 @@ jobs:
             arch: arm64
           - runner: macos-latest
             arch: x64
-    needs: version
+    needs: [source, test]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     env:
@@ -84,7 +234,11 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-      - run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+      - run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
+      - uses: actions/download-artifact@v5
+        with:
+          name: candidate
+          path: candidate
       - run: npm install --no-audit --no-fund
 
       # Without a certificate the build still produces a runnable ad-hoc signed app, which is
@@ -115,6 +269,8 @@ jobs:
       # the problem or whether hdiutil under-sized the image again
       - run: df -h /
       - run: npm run build
+        env:
+          OBJECTEXPLORER_TARBALL: ${{ github.workspace }}/candidate/objectexplorer.tgz
 
       - name: Check the signature
         run: |
@@ -122,7 +278,7 @@ jobs:
           spctl -a -vv dist/ObjectExplorer.app || true
 
       - name: Fetch the test driver
-        run: bash .github/test-driver.sh
+        run: bash .github/test-driver.sh candidate/objectexplorer-test.tgz
 
       # the x64 build runs here only through Rosetta, which is not promised on an arm64 runner
       - name: Smoke test
@@ -151,7 +307,7 @@ jobs:
             arch: x64
           - runner: windows-11-arm
             arch: arm64
-    needs: version
+    needs: [source, test]
     runs-on: ${{ matrix.runner }}
     # 0.3.2 sat here for hours. The build takes about a minute, so anything past 20 is a hang
     # and should fail while the log is still worth reading.
@@ -173,7 +329,11 @@ jobs:
         with:
           node-version: 24
       - shell: bash
-        run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+        run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
+      - uses: actions/download-artifact@v5
+        with:
+          name: candidate
+          path: candidate
 
       # the binary is 134 MB and every step rewrites it; without this Defender re-scans the
       # whole file each time
@@ -195,12 +355,14 @@ jobs:
           ls -l "$installed/VC/Auxiliary/Build/vcvarsall.bat"
 
       - run: npm run build
+        env:
+          OBJECTEXPLORER_TARBALL: ${{ github.workspace }}/candidate/objectexplorer.tgz
       - shell: bash
         run: ls -la dist
 
       - name: Fetch the test driver
         shell: bash
-        run: bash .github/test-driver.sh
+        run: bash .github/test-driver.sh candidate/objectexplorer-test.tgz
 
       - name: Smoke test
         shell: bash
@@ -313,7 +475,7 @@ jobs:
   # makeappx bundle needs both packages in one place, which only exists after both legs finish.
   # This is the store variant only; the direct packages ship per arch on the releases page.
   msixbundle:
-    needs: [version, windows]
+    needs: [source, windows]
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
@@ -322,7 +484,7 @@ jobs:
         with:
           node-version: 24
       - shell: bash
-        run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+        run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
       - uses: actions/download-artifact@v5
         with:
           pattern: store-msix-*
@@ -343,7 +505,7 @@ jobs:
             arch: x64
           - runner: ubuntu-24.04-arm
             arch: arm64
-    needs: version
+    needs: [source, test]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     steps:
@@ -357,12 +519,18 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-      - run: bash .github/set-version.sh "${{ needs.version.outputs.version }}"
+      - run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
+      - uses: actions/download-artifact@v5
+        with:
+          name: candidate
+          path: candidate
       # no webkitgtk -dev package here on purpose: native/webview-linux.c opens gtk and webkit
       # with dlopen, so the build has no dependency on them and the addon has no DT_NEEDED. A
       # machine without webkit falls back to a browser instead of failing to load the addon.
       - run: npm install --no-audit --no-fund
       - run: npm run build
+        env:
+          OBJECTEXPLORER_TARBALL: ${{ github.workspace }}/candidate/objectexplorer.tgz
 
       # the whole point of the dlopen backend: nothing links webkit, so nothing requires it.
       # Without this the dependency could come back and only a user without webkit would find out.
@@ -374,7 +542,7 @@ jobs:
       # runs the artifact the way a user does, through the runtime and AppRun.
       # APPIMAGE_EXTRACT_AND_RUN because ubuntu-24.04 has no libfuse2 to mount an AppImage with.
       - name: Fetch the test driver
-        run: bash .github/test-driver.sh
+        run: bash .github/test-driver.sh candidate/objectexplorer-test.tgz
 
       - name: Smoke test
         run: APPIMAGE_EXTRACT_AND_RUN=1 bash .github/smoke.sh "$(ls dist/*.AppImage)" smoke/test
@@ -384,8 +552,54 @@ jobs:
           name: linux-${{ matrix.arch }}
           path: dist/*.AppImage
 
+  # The npm half of the release, and the last point of no return. Everything above has already
+  # passed: the package on six platforms, the binaries built from this very tarball and smoke
+  # tested. A tag push skips this — that version is already on npm.
+  promote:
+    needs: [source, test, mac, windows, linux]
+    if: needs.source.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    # npm trusted publishing: the registry trusts this repo and this workflow file by name, and
+    # GitHub only mints the OIDC token the exchange needs when id-token: write is asked for. Without
+    # it npm falls back to a token and a 2FA account answers "EOTP: requires a one-time password",
+    # which no CI can answer. No NPM_TOKEN here on purpose — a token in the environment is used in
+    # preference to OIDC and puts that error straight back.
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: candidate
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      # trusted publishing needs npm 11.5.1 or newer; whatever node ships with is not a promise
+      - run: npm install -g npm@latest
+      - name: publish
+        run: npm publish objectexplorer.tgz --access public
+      # the registry is the only thing that can confirm a publish landed
+      - name: verify
+        run: |
+          version=${{ needs.source.outputs.version }}
+          for attempt in $(seq 1 10); do
+            published=$(npm view @knockdata/objectexplorer version 2>/dev/null || echo "")
+            if [ "$published" = "$version" ]; then
+              echo "published $version" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::npm still reports $published, not $version"
+          exit 1
+
   release:
-    needs: [version, mac, windows, linux]
+    needs: [source, mac, windows, linux, promote]
+    # promote is skipped on a tag push, and a skipped need skips its dependents — without this the
+    # release would silently never happen. !cancelled() keeps the skip from counting as a reason to
+    # stop; the failure check keeps it from releasing binaries a failed job never produced.
+    if: ${{ !cancelled() && !contains(needs.*.result, 'failure') && needs.source.outputs.release == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -429,10 +643,10 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: ObjectExplorer ${{ needs.version.outputs.tag }} (latest)
+          name: ObjectExplorer ${{ needs.source.outputs.tag }} (latest)
           body: |
             The newest build, under names that never change — this is what the README links to.
-            Release notes live on [${{ needs.version.outputs.tag }}](https://github.com/${{ github.repository }}/releases/tag/${{ needs.version.outputs.tag }}).
+            Release notes live on [${{ needs.source.outputs.tag }}](https://github.com/${{ github.repository }}/releases/tag/${{ needs.source.outputs.tag }}).
           target_commitish: ${{ github.sha }}
           make_latest: true
           files: latest/*
@@ -441,8 +655,8 @@ jobs:
       # and with it /releases/latest/download, which is the whole point of the aliases.
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ needs.version.outputs.tag }}
-          name: ObjectExplorer ${{ needs.version.outputs.tag }}
+          tag_name: ${{ needs.source.outputs.tag }}
+          name: ObjectExplorer ${{ needs.source.outputs.tag }}
           target_commitish: ${{ github.sha }}
           generate_release_notes: true
           make_latest: false

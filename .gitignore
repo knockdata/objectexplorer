@@ -13,6 +13,7 @@ out
 reference
 release-*
 releases
+smoke
 test.md
 *.map
 RELEASE.md

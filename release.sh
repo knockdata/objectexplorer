@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
-# Tags the version already in package.json and pushes the tag, which is what
-# .github/workflows/release.yml waits for. Bump the version and commit it yourself first.
+# Rebuilds and re-releases the desktop binaries for the version already on npm.
 #
-# Retagging is the normal way to retry: a run that failed published nothing, so the same version
+# This is the second door. The first one is rock2/objectexplorer/publish.sh, which ships a new
+# version: it uploads a candidate, and the workflow tests it, builds the binaries, publishes npm and
+# cuts the release. Use this one when only the binaries need to be rebuilt — the npm package is
+# untouched and nothing is published to it.
+#
+# The version is not this repo's to choose: it is whatever @knockdata/objectexplorer says is latest,
+# because that is what the binaries will embed. package.json's version is a placeholder that CI
+# overwrites.
+#
+# Retagging is the normal way to retry: a run that failed released nothing, so the same version
 # gets deleted and pushed again rather than burning a version number per attempt.
 #
 #   ./release.sh
@@ -10,7 +18,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-version=$(node -p 'require("./package.json").version')
+version=$(npm view @knockdata/objectexplorer version)
 tag="v$version"
 
 if [ -z "$(git status --porcelain)" ]; then

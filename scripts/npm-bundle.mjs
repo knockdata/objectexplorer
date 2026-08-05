@@ -1,15 +1,25 @@
-// Downloads the latest @knockdata/objectexplorer tarball into out/objectexplorer.tgz so
-// scripts/sea.mjs can embed it. The version is written to out/bundle.json and baked into the
-// binary as BUNDLE_VERSION, which is how the first run knows what it just unpacked.
+// Puts the @knockdata/objectexplorer tarball into out/objectexplorer.tgz so scripts/sea.mjs can
+// embed it. The version is written to out/bundle.json and baked into the binary as BUNDLE_VERSION,
+// which is how the first run knows what it just unpacked.
 //
-// @ffmpeg/core, @knockdata/duckdb and @knockdata/sqlite are downloaded the same way, into
-// out/ffmpeg-core.tgz, out/<engine>.tgz and out/<engine>-native.tgz. They are dependencies of
-// the package rather than files inside it (that 32 MB wasm used to be two thirds of the
-// tarball), and the binary has no npm to install dependencies with, so the build fetches them.
+// Three ways to say which package:
+//   node scripts/npm-bundle.mjs                    the registry's latest — local development
+//   node scripts/npm-bundle.mjs --tarball <path>   a candidate that is not published yet
+//   node scripts/npm-bundle.mjs --version 1.2.3    an exact published version
+// A release builds from the candidate, so no binary ever waits for a publish: everything is built
+// and tested first, and npm and the GitHub release go out together at the end of the same run.
+//
+// @ffmpeg/core, @knockdata/duckdb and @knockdata/sqlite are downloaded from the registry either
+// way, into out/ffmpeg-core.tgz, out/<engine>.tgz and out/<engine>-native.tgz. They are
+// dependencies of the package rather than files inside it (that 32 MB wasm used to be two thirds
+// of the tarball), and the binary has no npm to install dependencies with, so the build fetches
+// them — pinned to the exact versions the package itself names.
 import fs from "node:fs"
+import os from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { targetPlatform, targetArch } from "./target.mjs"
+import { extractTarToDir } from "../src/tar.js"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const outDir = path.join(root, "out")
@@ -24,7 +34,30 @@ function registryUrl(name, tag) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-	await downloadBundle()
+	await downloadBundle(readSource(process.argv.slice(2)))
+}
+
+// --tarball <path> | --version <x.y.z> | nothing for the registry's latest. The same two through
+// the environment, because `npm run build` chains four scripts and command-line arguments only
+// ever reach the last one.
+export function readSource(args) {
+	const tarballAt = args.indexOf("--tarball")
+	const versionAt = args.indexOf("--version")
+	if (tarballAt >= 0) {
+		return { tarball: args[tarballAt + 1] }
+	}
+	else if (versionAt >= 0) {
+		return { version: args[versionAt + 1] }
+	}
+	else if (process.env.OBJECTEXPLORER_TARBALL) {
+		return { tarball: process.env.OBJECTEXPLORER_TARBALL }
+	}
+	else if (process.env.OBJECTEXPLORER_VERSION) {
+		return { version: process.env.OBJECTEXPLORER_VERSION }
+	}
+	else {
+		return {}
+	}
 }
 
 // A registry request on a CI runner can stall forever, so every one of them gets a timeout and
@@ -56,28 +89,47 @@ async function fetchRetry(url, read) {
 	}
 }
 
-export async function downloadBundle() {
+export async function downloadBundle(source = {}) {
 	fs.mkdirSync(outDir, { recursive: true })
 
-	const latest = await fetchRetry(registryUrl(packageName, "latest"), response => response.json())
-	console.log("latest", packageName, latest.version)
+	const { manifest, tarball } = await readPackage(source)
+	console.log("bundle:", packageName, manifest.version, tarball.length, "bytes")
 
-	const tarball = Buffer.from(await fetchRetry(latest.dist.tarball, response => response.arrayBuffer()))
 	fs.writeFileSync(path.join(outDir, "objectexplorer.tgz"), tarball)
-	console.log("bundle:", tarball.length, "bytes")
 
-	const ffmpegVersion = await downloadFfmpeg(latest)
-	const duckdbVersion = await downloadEngine(latest, duckdbName, "duckdb")
-	const sqliteVersion = await downloadEngine(latest, sqliteName, "sqlite")
-	fs.writeFileSync(path.join(outDir, "bundle.json"), JSON.stringify({ version: latest.version, ffmpegVersion, duckdbVersion, sqliteVersion }, null, "\t"))
-	return latest.version
+	const ffmpegVersion = await downloadFfmpeg(manifest)
+	const duckdbVersion = await downloadEngine(manifest, duckdbName, "duckdb")
+	const sqliteVersion = await downloadEngine(manifest, sqliteName, "sqlite")
+	fs.writeFileSync(path.join(outDir, "bundle.json"), JSON.stringify({ version: manifest.version, ffmpegVersion, duckdbVersion, sqliteVersion }, null, "\t"))
+	return manifest.version
+}
+
+// The package under build, as its own package.json plus its bytes. A candidate is not in the
+// registry yet, so the tarball itself is the only place its version and dependencies exist —
+// which is exactly why a release build reads it there and not from a dist-tag.
+async function readPackage(source) {
+	if (source.tarball) {
+		const tarball = fs.readFileSync(source.tarball)
+		const unpacked = fs.mkdtempSync(path.join(os.tmpdir(), "objectexplorer-manifest-"))
+		await extractTarToDir(tarball, unpacked)
+		const manifest = JSON.parse(fs.readFileSync(path.join(unpacked, "package.json"), "utf8"))
+		fs.rmSync(unpacked, { recursive: true, force: true })
+		console.log("source: candidate", source.tarball)
+		return { manifest, tarball }
+	}
+	else {
+		const tag = source.version || "latest"
+		console.log("source: registry", packageName, tag)
+		const manifest = await fetchRetry(registryUrl(packageName, tag), response => response.json())
+		const tarball = Buffer.from(await fetchRetry(manifest.dist.tarball, response => response.arrayBuffer()))
+		return { manifest, tarball }
+	}
 }
 
 // The version comes from the package's own dependencies, so the binary always carries the
-// exact core the app was built against. The registry document already holds them, so nothing
-// has to be untarred to read it. The pin is exact; a range prefix would be stripped here.
-async function downloadFfmpeg(latest) {
-	const dependencies = latest.dependencies ?? {}
+// exact core the app was built against. The pin is exact; a range prefix would be stripped here.
+async function downloadFfmpeg(manifest) {
+	const dependencies = manifest.dependencies ?? {}
 	const version = String(dependencies[ffmpegName] ?? "").replace(/^[^0-9]*/, "")
 	if (version) {
 		const core = await fetchRetry(registryUrl(ffmpegName, version), response => response.json())
@@ -87,7 +139,7 @@ async function downloadFfmpeg(latest) {
 		return version
 	}
 	else {
-		throw new Error(`${packageName}@${latest.version} does not depend on ${ffmpegName}`)
+		throw new Error(`${packageName}@${manifest.version} does not depend on ${ffmpegName}`)
 	}
 }
 
@@ -97,8 +149,8 @@ async function downloadFfmpeg(latest) {
 // single folder at runtime, since the tar reader drops the leading "package/" segment.
 // Nothing is compiled here: the engines are built in knockdata/duckdb and knockdata/sqlite,
 // and only when upstream is bumped.
-async function downloadEngine(latest, name, localName) {
-	const dependencies = latest.dependencies ?? {}
+async function downloadEngine(manifest, name, localName) {
+	const dependencies = manifest.dependencies ?? {}
 	const version = String(dependencies[name] ?? "").replace(/^[^0-9]*/, "")
 	if (version) {
 		const universal = await fetchRetry(registryUrl(name, version), response => response.json())
@@ -122,7 +174,7 @@ async function downloadEngine(latest, name, localName) {
 		return version
 	}
 	else {
-		throw new Error(`${packageName}@${latest.version} does not depend on ${name}`)
+		throw new Error(`${packageName}@${manifest.version} does not depend on ${name}`)
 	}
 }
 
