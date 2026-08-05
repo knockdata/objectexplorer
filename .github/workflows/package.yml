@@ -53,7 +53,7 @@ jobs:
             arch: arm64
           - runner: macos-latest
             arch: arm64
-          - runner: macos-13
+          - runner: macos-latest
             arch: x64
           - runner: windows-latest
             arch: x64
@@ -61,17 +61,35 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/download-artifact@v4
+      # x64 node on the Apple Silicon runner, so the x64 duckdb and sqlite addons are the ones
+      # loaded. macos-13 is the last native x64 runner and it queues for hours without ever
+      # starting, so this is how x64 mac gets covered at all. Rosetta is not promised on an arm
+      # runner: without it the leg says so and stops rather than testing arm64 twice.
+      - name: rosetta
+        if: matrix.arch == 'x64' && runner.os == 'macOS'
+        run: |
+          if arch -x86_64 /usr/bin/true 2> /dev/null; then
+            echo "rosetta is available, running x64"
+          else
+            echo "no rosetta on this runner, skipping the x64 mac leg" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "SKIP=1" >> "$GITHUB_ENV"
+          fi
+
+      - if: env.SKIP != '1'
+        uses: actions/download-artifact@v4
         with:
           name: candidate
-      - uses: actions/setup-node@v4
+      - if: env.SKIP != '1'
+        uses: actions/setup-node@v4
         with:
           node-version: 24
+          architecture: ${{ matrix.arch }}
 
       # Google ships no arm64 Chrome for linux, so that leg needs chromium from the distro. Every
       # other runner already has Chrome (macOS, ubuntu x64) or Edge (windows), and browser.js
       # finds whichever is there.
       - name: browser
+        if: env.SKIP != '1'
         run: |
           if [ "${{ runner.os }}" = "Linux" ]; then
             if [ -x /usr/bin/google-chrome ]; then
@@ -85,6 +103,7 @@ jobs:
           fi
 
       - name: install the candidate
+        if: env.SKIP != '1'
         run: |
           mkdir work
           cd work
@@ -96,6 +115,7 @@ jobs:
       # A native absolute path, written by node: a bash path like /d/a/... is not something node on
       # windows can open.
       - name: cloud credentials
+        if: env.SKIP != '1'
         env:
           GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
         run: |
@@ -103,6 +123,7 @@ jobs:
           node -e "const fs=require('fs'),path=require('path');const file=path.resolve('gcp-service-account.json');fs.writeFileSync(file,process.env.GCP_SERVICE_ACCOUNT_JSON||'');console.log('GOOGLE_APPLICATION_CREDENTIALS='+file)" >> "$GITHUB_ENV"
 
       - name: end to end
+        if: env.SKIP != '1'
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
