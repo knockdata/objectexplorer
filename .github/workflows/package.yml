@@ -145,6 +145,14 @@ jobs:
     needs: [candidate, test]
     if: inputs.promote
     runs-on: ubuntu-latest
+    # npm trusted publishing: the registry trusts this repo and this workflow file by name, and
+    # GitHub only mints the OIDC token the exchange needs when id-token: write is asked for. Without
+    # it npm falls back to a token and a 2FA account answers "EOTP: requires a one-time password",
+    # which no CI can answer. No NPM_TOKEN here on purpose — a token in the environment is used in
+    # preference to OIDC and puts that error straight back.
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/download-artifact@v5
         with:
@@ -153,9 +161,9 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+      # trusted publishing needs npm 11.5.1 or newer; whatever node ships with is not a promise
+      - run: npm install -g npm@latest
       - name: publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish objectexplorer.tgz --access public
       # the registry is the only thing that can confirm a publish landed
       - name: verify
