@@ -25,10 +25,6 @@ on:
         type: boolean
         default: true
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   # What is being shipped, decided once — nothing else looks at github.ref_name. Reading it
   # directly is what published a release called "ObjectExplorer main", tagged main, on top of the
@@ -109,6 +105,12 @@ jobs:
   test:
     needs: source
     timeout-minutes: 30
+    # bash on the windows runners too, so one set of steps covers all six legs. Kept to this job:
+    # a workflow-wide default also moves the build jobs off powershell, and Git Bash's GNU tar
+    # reads "C:\..." as a host to connect to, which is how the webview2 SDK unzip started failing.
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
