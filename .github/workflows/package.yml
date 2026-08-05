@@ -33,7 +33,7 @@ jobs:
           version=$(node -p 'require("./package/package.json").version')
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "testing candidate $version" >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: candidate
           path: |
@@ -76,11 +76,11 @@ jobs:
           fi
 
       - if: env.SKIP != '1'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: candidate
       - if: env.SKIP != '1'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           architecture: ${{ matrix.arch }}
@@ -133,7 +133,7 @@ jobs:
           node test/e2e.js
 
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: failure-${{ matrix.runner }}-${{ matrix.arch }}
           path: work/test/*.png
@@ -146,10 +146,10 @@ jobs:
     if: inputs.promote
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: candidate
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
