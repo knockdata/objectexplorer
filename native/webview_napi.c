@@ -3,7 +3,7 @@
 // Two headers, no node-addon-api, no bindings package: the SEA loads this file with
 // process.dlopen, so nothing may go looking for a build folder at runtime.
 //
-// Seven calls, one per function in webview.h. Only create can fail, and it fails by returning
+// Eight calls, one per function in webview.h. Only create can fail, and it fails by returning
 // NULL — see that file.
 //
 // webviewRun blocks the calling thread until the window closes. That is the whole reason the
@@ -114,6 +114,20 @@ static napi_value destroy(napi_env env, napi_callback_info info) {
 	return NULL;
 }
 
+// takes no handle: this is what the caller reaches for when there is no handle to be had
+static napi_value alert(napi_env env, napi_callback_info info) {
+	size_t count = 2;
+	napi_value args[2];
+	napi_get_cb_info(env, info, &count, args, NULL, NULL);
+
+	char title[TEXT_SIZE];
+	char text[TEXT_SIZE];
+	readText(env, args[0], title);
+	readText(env, args[1], text);
+	webviewAlert(title, text);
+	return NULL;
+}
+
 static void addFunction(napi_env env, napi_value exports, const char *name, napi_callback callback) {
 	napi_value function = NULL;
 	napi_create_function(env, name, NAPI_AUTO_LENGTH, callback, NULL, &function);
@@ -128,5 +142,6 @@ NAPI_MODULE_INIT() {
 	addFunction(env, exports, "navigate", navigate);
 	addFunction(env, exports, "run", run);
 	addFunction(env, exports, "destroy", destroy);
+	addFunction(env, exports, "alert", alert);
 	return exports;
 }

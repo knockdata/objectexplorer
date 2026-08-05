@@ -22,7 +22,11 @@
 #include "WebView2.h"
 #include "webview.h"
 
-#define READY_TIMEOUT 15000
+// A cold first launch on a slow machine — a Windows ARM VM with no GPU — spends a long time in
+// WebView2's own unpacking before the environment handler is called. There is no browser fallback
+// behind this any more, so the wait has to be generous enough that a slow start is a slow start
+// and not a dead app.
+#define READY_TIMEOUT 60000
 #define CLASS_NAME L"ObjectExplorerWebview"
 
 struct Webview {
@@ -262,4 +266,12 @@ void webviewDestroy(Webview *webview) {
 	ICoreWebView2Controller_Close(webview->controller);
 	ICoreWebView2Controller_Release(webview->controller);
 	free(webview);
+}
+
+void webviewAlert(const char *title, const char *text) {
+	wchar_t *wideTitle = toWide(title);
+	wchar_t *wideText = toWide(text);
+	MessageBoxW(NULL, wideText, wideTitle, MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+	free(wideText);
+	free(wideTitle);
 }

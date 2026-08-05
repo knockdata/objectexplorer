@@ -1,10 +1,10 @@
 // The native window. Thin closure over native/webview_napi.c — see native/webview.h for why
-// the binding has only seven calls and no error codes.
+// the binding has only eight calls and no error codes.
 //
 // run() blocks this thread until the window closes, so nothing else on the main thread runs
 // after it. The HTTP server lives in a worker for exactly that reason.
 import { loadAddon } from "./addon.js"
-import { log } from "./log.js"
+import { log, logError } from "./log.js"
 
 export function createWindow({ title, icon, width, height, debug, readAsset }) {
 	const addon = loadAddon("webview_napi", readAsset)
@@ -25,6 +25,18 @@ export function createWindow({ title, icon, width, height, debug, readAsset }) {
 			addon.run(handle)
 			addon.destroy(handle)
 		},
+	}
+}
+
+// The one message a user gets when there is no window to show it in. Loading the addon can itself
+// fail — a machine whose native binding will not dlopen has nothing to alert with either — so a
+// failure here is swallowed and the caller's log line stays the record.
+export function showAlert({ title, text, readAsset }) {
+	try {
+		const addon = loadAddon("webview_napi", readAsset)
+		addon.alert(title, text)
+	} catch (error) {
+		logError("could not show the alert:", error)
 	}
 }
 

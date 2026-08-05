@@ -17,10 +17,10 @@ import fs from "node:fs"
 import path from "node:path"
 import sea from "node:sea"
 import { Worker } from "node:worker_threads"
-import { createWindow, applyWindowsArgs } from "./webview.js"
+import { createWindow, applyWindowsArgs, showAlert } from "./webview.js"
 import { openBrowser } from "./browser.js"
 import { resolveBundleDir, resolveFfmpegDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
-import { userData } from "./paths.js"
+import { userData, logFile } from "./paths.js"
 import { log, logError } from "./log.js"
 import { version, bundleVersion } from "./version.js"
 
@@ -90,12 +90,16 @@ function startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir) {
 }
 
 // The native window is the only part that can fail on a machine-specific basis — a Windows VM
-// with no WebView2 runtime, a linux box with no webkitgtk. Falling back to the browser keeps
-// the binary useful there instead of dead.
+// with no WebView2 runtime, a linux box with no webkitgtk. Only creating it is allowed to fail
+// here: navigate and run used to sit inside this try as well, which turned a hiccup anywhere in
+// the session — including at window close — into a browser tab nobody asked for. A desktop app
+// that opens a tab by itself is a bug, so the failure is now told to the user and that is all.
 function openWindow(url) {
 	applyWindowsArgs(path.join(userData, "webview2-args.txt"), readFileOrNull)
+
+	let window = null
 	try {
-		const window = createWindow({
+		window = createWindow({
 			title: "ObjectExplorer - The VSCode for Cloud Storage",
 			icon: readIcon(),
 			width: 1400,
@@ -103,14 +107,29 @@ function openWindow(url) {
 			debug: args.debug === "true",
 			readAsset,
 		})
+	} catch (error) {
+		logError("native window unavailable:", error)
+	}
+
+	if (window) {
 		window.navigate(url)
 		log("entering the window loop, this thread blocks until the window closes")
 		window.run()
 		log("window closed")
 		process.exit(0)
-	} catch (error) {
-		logError("native window unavailable, falling back to the browser:", error)
-		openBrowser(url)
+	} else {
+		showAlert({ title: "ObjectExplorer cannot open its window", text: noWindowMessage(url), readAsset })
+		process.exit(1)
+	}
+}
+
+// The url is in here because the server did start: a user who installs the runtime, or who just
+// wants at the app right now, can paste this into a browser and everything works.
+function noWindowMessage(url) {
+	if (process.platform === "win32") {
+		return `The Microsoft Edge WebView2 Runtime is missing or could not start.\n\nInstall it from https://go.microsoft.com/fwlink/p/?LinkId=2124703 and start ObjectExplorer again.\n\nObjectExplorer is running at ${url} in the meantime.\n\nThe details are in ${logFile}.`
+	} else {
+		return `The system webview could not start.\n\nObjectExplorer is running at ${url} in the meantime.\n\nThe details are in ${logFile}.`
 	}
 }
 

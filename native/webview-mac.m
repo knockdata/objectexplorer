@@ -136,3 +136,14 @@ void webviewDestroy(Webview *webview) {
 	[webview->window close];
 	free(webview);
 }
+
+// Reached only when there was no window to make, which on macOS means WebKit itself is broken.
+// An NSAlert still works there, and it is the only thing a user who launched from Finder can see.
+void webviewAlert(const char *title, const char *text) {
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert setAlertStyle:NSAlertStyleCritical];
+	[alert setMessageText:[NSString stringWithUTF8String:title]];
+	[alert setInformativeText:[NSString stringWithUTF8String:text]];
+	[alert runModal];
+	[alert release];
+}

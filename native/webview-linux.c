@@ -8,6 +8,7 @@
 // The handles are void *: GtkWidget, GtkWindow and WebKitWebView are opaque pointers, and this
 // file never looks inside one.
 #include <dlfcn.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "webview.h"
 
@@ -209,4 +210,11 @@ void webviewRun(Webview *webview) {
 // registered types is a known way to crash on exit. Only the struct is ours to release.
 void webviewDestroy(Webview *webview) {
 	free(webview);
+}
+
+// GTK is only ever reached through a Webview's own dlopened handles, and there is no Webview here
+// — this is called precisely because one could not be made. stderr is the whole implementation:
+// a linux user runs the binary from a terminal, and the app.log has the same line.
+void webviewAlert(const char *title, const char *text) {
+	fprintf(stderr, "%s\n%s\n", title, text);
 }

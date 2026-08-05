@@ -5,10 +5,10 @@
 //   webview-windows.c   Win32 + WebView2
 //
 // There is no error code anywhere. The one failure a caller can act on is "this machine has no
-// webview", and webviewCreate says that by returning NULL — src/main.js turns it into the
-// browser fallback. Everything after a successful create is a call that cannot fail.
+// webview", and webviewCreate says that by returning NULL — src/main.js turns it into an alert
+// and exits. Everything after a successful create is a call that cannot fail.
 //
-// Seven calls, nothing more. The explorer UI talks to the Node backend over HTTP on localhost,
+// Eight calls, nothing more. The explorer UI talks to the Node backend over HTTP on localhost,
 // so there is no JS bridge to build: no bind, no eval, no init, no dispatch.
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
@@ -26,5 +26,8 @@ void webviewNavigate(Webview *webview, const char *url);
 // blocks until the window closes
 void webviewRun(Webview *webview);
 void webviewDestroy(Webview *webview);
+// A message the user has to see when there is no window to put it in: the machine has no webview,
+// so the app is about to exit and stdout goes nowhere in a packaged build. Needs no Webview.
+void webviewAlert(const char *title, const char *text);
 
 #endif
