@@ -12,11 +12,13 @@ import path from "node:path"
 import { extractTarToDir } from "./tar.js"
 import { appDir } from "./paths.js"
 import { log } from "./log.js"
-import { bundleVersion, ffmpegVersion } from "./version.js"
+import { bundleVersion, ffmpegVersion, duckdbVersion } from "./version.js"
 
 export const packageName = "@knockdata/objectexplorer"
 export const ffmpegName = "@ffmpeg/core"
 export const ffmpegLocalName = "ffmpeg-core"
+export const duckdbName = "@knockdata/duckdb"
+export const duckdbLocalName = "duckdb"
 // folder names cannot hold the npm scope's "/", so bundles are named from this prefix
 export const localName = "objectexplorer"
 
@@ -97,6 +99,41 @@ export async function resolveFfmpegDir(readAsset) {
 	}
 
 	return ffmpegCoreDir(embedded)
+}
+
+// DuckDB arrives as two npm packages: the universal one holding wasm/duckdb.wasm, and the
+// per-platform one holding duckdb_napi.node. Both unpack into the SAME folder — the tar
+// reader drops each tarball's leading "package/" segment — so the backend gets one duckdbDir
+// with the addon at its root and the wasm under wasm/. Keyed by the duckdb version, not the
+// app version, so an OTA update reuses what is already on disk.
+//
+// A build for a platform with no published addon simply has no duckdb-native.tgz asset; the
+// backend then runs the wasm, which is why readAsset is allowed to fail here.
+export function duckdbDirFor(version) {
+	return path.join(appDir, `${duckdbLocalName}-${version}`)
+}
+
+export function isValidDuckdb(dir) {
+	return fs.existsSync(path.join(dir, "wasm", "duckdb.wasm"))
+}
+
+export async function resolveDuckdbDir(readAsset) {
+	const embedded = duckdbDirFor(duckdbVersion)
+
+	if (isValidDuckdb(embedded)) {
+		log("embedded duckdb already unpacked:", embedded)
+	} else {
+		log("unpacking embedded duckdb to:", embedded)
+		await extractTarToDir(readAsset("duckdb.tgz"), embedded)
+		try {
+			await extractTarToDir(readAsset("duckdb-native.tgz"), embedded)
+			log("duckdb native addon unpacked")
+		} catch (error) {
+			log("no duckdb native addon in this build, the wasm will be used:", String(error))
+		}
+	}
+
+	return embedded
 }
 
 // npm versions are numeric dotted triples; "0.10.0" must beat "0.9.0", which a string

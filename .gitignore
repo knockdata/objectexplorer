@@ -2,6 +2,7 @@
 .claude
 .ms.md
 .vscode
+.*
 build
 bundle
 cache
