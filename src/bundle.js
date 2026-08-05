@@ -12,13 +12,15 @@ import path from "node:path"
 import { extractTarToDir } from "./tar.js"
 import { appDir } from "./paths.js"
 import { log } from "./log.js"
-import { bundleVersion, ffmpegVersion, duckdbVersion } from "./version.js"
+import { bundleVersion, ffmpegVersion, duckdbVersion, sqliteVersion } from "./version.js"
 
 export const packageName = "@knockdata/objectexplorer"
 export const ffmpegName = "@ffmpeg/core"
 export const ffmpegLocalName = "ffmpeg-core"
 export const duckdbName = "@knockdata/duckdb"
 export const duckdbLocalName = "duckdb"
+export const sqliteName = "@knockdata/sqlite"
+export const sqliteLocalName = "sqlite"
 // folder names cannot hold the npm scope's "/", so bundles are named from this prefix
 export const localName = "objectexplorer"
 
@@ -130,6 +132,35 @@ export async function resolveDuckdbDir(readAsset) {
 			log("duckdb native addon unpacked")
 		} catch (error) {
 			log("no duckdb native addon in this build, the wasm will be used:", String(error))
+		}
+	}
+
+	return embedded
+}
+
+// SQLite arrives the same two ways as duckdb: the universal package holding wasm/sqlite.wasm,
+// and the per-platform one holding sqlite_napi.node, both unpacked into one folder.
+export function sqliteDirFor(version) {
+	return path.join(appDir, `${sqliteLocalName}-${version}`)
+}
+
+export function isValidSqlite(dir) {
+	return fs.existsSync(path.join(dir, "wasm", "sqlite.wasm"))
+}
+
+export async function resolveSqliteDir(readAsset) {
+	const embedded = sqliteDirFor(sqliteVersion)
+
+	if (isValidSqlite(embedded)) {
+		log("embedded sqlite already unpacked:", embedded)
+	} else {
+		log("unpacking embedded sqlite to:", embedded)
+		await extractTarToDir(readAsset("sqlite.tgz"), embedded)
+		try {
+			await extractTarToDir(readAsset("sqlite-native.tgz"), embedded)
+			log("sqlite native addon unpacked")
+		} catch (error) {
+			log("no sqlite native addon in this build, the wasm will be used:", String(error))
 		}
 	}
 

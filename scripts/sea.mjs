@@ -14,7 +14,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { buildSync } from "esbuild"
-import { bundleVersion, ffmpegVersion, duckdbVersion, hasDuckdbAddon } from "./npm-bundle.mjs"
+import { bundleVersion, ffmpegVersion, duckdbVersion, hasDuckdbAddon, sqliteVersion, hasSqliteAddon } from "./npm-bundle.mjs"
 import { addonName } from "./addon.mjs"
 import { fetchNodeBinary } from "./node-binary.mjs"
 import { targetPlatform } from "./target.mjs"
@@ -71,6 +71,7 @@ function bundle(entry, outFile) {
 			BUNDLE_VERSION: `"${bundleVersion()}"`,
 			FFMPEG_VERSION: `"${ffmpegVersion()}"`,
 			DUCKDB_VERSION: `"${duckdbVersion()}"`,
+			SQLITE_VERSION: `"${sqliteVersion()}"`,
 		},
 		outfile: path.join(outDir, outFile),
 	})
@@ -90,13 +91,17 @@ function writeConfig() {
 			"objectexplorer.tgz": path.join(outDir, "objectexplorer.tgz"),
 			"ffmpeg-core.tgz": path.join(outDir, "ffmpeg-core.tgz"),
 			"duckdb.tgz": path.join(outDir, "duckdb.tgz"),
+			"sqlite.tgz": path.join(outDir, "sqlite.tgz"),
 			"64.png": path.join(outDir, "64.png"),
 			[addonName]: path.join(outDir, addonName),
 		},
 	}
-	// only when a platform package exists for this target; without it duckdb runs as wasm
+	// only when a platform package exists for this target; without it the engine runs as wasm
 	if (hasDuckdbAddon()) {
 		config.assets["duckdb-native.tgz"] = path.join(outDir, "duckdb-native.tgz")
+	}
+	if (hasSqliteAddon()) {
+		config.assets["sqlite-native.tgz"] = path.join(outDir, "sqlite-native.tgz")
 	}
 	fs.writeFileSync(path.join(outDir, "sea-config.json"), JSON.stringify(config, null, "\t"))
 }

@@ -121,11 +121,14 @@ jobs:
           codesign -dv --verbose=4 dist/ObjectExplorer.app
           spctl -a -vv dist/ObjectExplorer.app || true
 
+      - name: Fetch the test driver
+        run: bash .github/test-driver.sh
+
       # the x64 build runs here only through Rosetta, which is not promised on an arm64 runner
       - name: Smoke test
         run: |
           if arch -x86_64 /usr/bin/true 2> /dev/null || [ "${{ matrix.arch }}" = "arm64" ]; then
-            bash .github/smoke.sh dist/ObjectExplorer.app/Contents/MacOS/ObjectExplorer
+            bash .github/smoke.sh dist/ObjectExplorer.app/Contents/MacOS/ObjectExplorer smoke/test
           else
             echo "no rosetta on this runner, skipping the x64 smoke test"
           fi
@@ -195,9 +198,13 @@ jobs:
       - shell: bash
         run: ls -la dist
 
+      - name: Fetch the test driver
+        shell: bash
+        run: bash .github/test-driver.sh
+
       - name: Smoke test
         shell: bash
-        run: bash .github/smoke.sh "$(ls dist/*.exe)"
+        run: bash .github/smoke.sh "$(ls dist/*.exe)" smoke/test
 
       # The single unsigned .exe is exactly what Defender quarantines — 0.2.1 installed a
       # folder with no ObjectExplorer.exe in it. Signing is not optional here.
@@ -366,8 +373,11 @@ jobs:
 
       # runs the artifact the way a user does, through the runtime and AppRun.
       # APPIMAGE_EXTRACT_AND_RUN because ubuntu-24.04 has no libfuse2 to mount an AppImage with.
+      - name: Fetch the test driver
+        run: bash .github/test-driver.sh
+
       - name: Smoke test
-        run: APPIMAGE_EXTRACT_AND_RUN=1 bash .github/smoke.sh "$(ls dist/*.AppImage)"
+        run: APPIMAGE_EXTRACT_AND_RUN=1 bash .github/smoke.sh "$(ls dist/*.AppImage)" smoke/test
 
       - uses: actions/upload-artifact@v5
         with:

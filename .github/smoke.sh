@@ -5,10 +5,15 @@
 # never got as far as running a line of JavaScript, and every job was green — because nothing
 # here ever executed it.
 #
-#   bash .github/smoke.sh <path to the binary>
+#   bash .github/smoke.sh <path to the binary> [test dir]
+#
+# With a test dir — the unpacked objectexplorer-test tarball — it goes further and drives the app's
+# own UI in a headless browser: a root lists, a file opens, the viewer renders it. A binary that
+# serves HTML but ships a broken app passes the curl and fails this.
 set -uo pipefail
 
 binary="$1"
+testDir="${2:-}"
 port=9421
 log="$HOME/.objectexplorer/app.log"
 
@@ -25,6 +30,17 @@ report() {
 	fi
 }
 
+# The UI half. Without a test dir there is no driver to run it with, and serving is all this can
+# claim — say so rather than passing quietly on a weaker check than the other runners made.
+drive() {
+	if [ -n "$testDir" ] && [ -d "$testDir" ]; then
+		node "$(dirname "$0")/smoke-browser.mjs" "$testDir" "http://127.0.0.1:$port"
+	else
+		echo "smoke: no test dir given, checked serving only"
+		return 0
+	fi
+}
+
 run() {
 	rm -f "$log"
 	"$binary" mode=server "port=$port" &
@@ -34,7 +50,8 @@ run() {
 	for attempt in $(seq 1 60); do
 		if serving; then
 			echo "smoke: served on http://127.0.0.1:$port after ${attempt}s"
-			result=0
+			drive
+			result=$?
 			break
 		fi
 		# a binary that cannot start is the case this whole script exists for, so notice it

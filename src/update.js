@@ -6,7 +6,7 @@
 // A newer bundle is downloaded to its own folder and picked up on the next launch. Nothing
 // is swapped mid-session — the running server keeps serving the folder it started with.
 import { fetchUntar } from "./tar.js"
-import { packageName, ffmpegName, duckdbName, bundleDirFor, isValidBundle, isNewer, newestBundle, versionOf, ffmpegDirFor, isValidFfmpeg, duckdbDirFor, isValidDuckdb } from "./bundle.js"
+import { packageName, ffmpegName, duckdbName, sqliteName, bundleDirFor, isValidBundle, isNewer, newestBundle, versionOf, ffmpegDirFor, isValidFfmpeg, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
 import { log, logError } from "./log.js"
 
 const registryUrl = "https://registry.npmjs.org"
@@ -22,6 +22,7 @@ export async function checkUpdate() {
 		log("update ready, will be used on next launch:", isValidBundle(destDir))
 		await fetchFfmpeg(latest.ffmpegVersion)
 		await fetchDuckdb(latest.duckdbVersion)
+		await fetchSqlite(latest.sqliteVersion)
 	} else {
 		log("no update: current", current, "latest", latest && latest.version)
 	}
@@ -61,13 +62,29 @@ async function fetchDuckdb(version) {
 	}
 }
 
+// and the same for sqlite
+async function fetchSqlite(version) {
+	const destDir = version ? sqliteDirFor(version) : null
+	if (destDir && !isValidSqlite(destDir)) {
+		log("bundle wants a different sqlite:", version, "->", destDir)
+		const sqlite = await fetchPackage(sqliteName, version)
+		if (sqlite) {
+			await fetchUntar(sqlite.tarball, destDir, log)
+			log("sqlite ready:", isValidSqlite(destDir))
+		}
+	} else {
+		log("no sqlite update:", version)
+	}
+}
+
 async function fetchLatest() {
 	const latest = await fetchPackage(packageName, "latest")
 	if (latest) {
 		// the pin is exact; a range prefix ("^0.12.10") would be stripped here
 		const ffmpegVersion = String(latest.dependencies[ffmpegName] ?? "").replace(/^[^0-9]*/, "")
 		const duckdbVersion = String(latest.dependencies[duckdbName] ?? "").replace(/^[^0-9]*/, "")
-		return { ...latest, ffmpegVersion, duckdbVersion }
+		const sqliteVersion = String(latest.dependencies[sqliteName] ?? "").replace(/^[^0-9]*/, "")
+		return { ...latest, ffmpegVersion, duckdbVersion, sqliteVersion }
 	} else {
 		return null
 	}

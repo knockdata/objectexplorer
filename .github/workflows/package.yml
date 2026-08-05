@@ -1,0 +1,144 @@
+name: Package
+
+# Stage two of publishing @knockdata/objectexplorer. rock2/objectexplorer/publish.sh builds the
+# package, uploads it to objectexplorer.com as a candidate and dispatches this workflow.
+#
+# Nothing is rebuilt here. The candidate tarball is downloaded once, tested on all six
+# platform/arch combinations, and the very same file is what `npm publish` uploads — so the bytes
+# users install are the bytes that passed. A cloud that will not connect is a red run and nothing
+# is published.
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.fetch.outputs.version }}
+    steps:
+      - id: fetch
+        run: |
+          curl -fsSL -o objectexplorer.tgz https://objectexplorer.com/releases/objectexplorer.tgz
+          curl -fsSL -o objectexplorer-test.tgz https://objectexplorer.com/releases/objectexplorer-test.tgz
+          tar xzf objectexplorer.tgz package/package.json
+          version=$(node -p 'require("./package/package.json").version')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "testing candidate $version" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candidate
+          path: |
+            objectexplorer.tgz
+            objectexplorer-test.tgz
+
+  test:
+    needs: candidate
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-13
+            arch: x64
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Google ships no arm64 Chrome for linux, so that leg needs chromium from the distro. Every
+      # other runner already has Chrome (macOS, ubuntu x64) or Edge (windows), and browser.js
+      # finds whichever is there.
+      - name: browser
+        run: |
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            if [ -x /usr/bin/google-chrome ]; then
+              echo "google-chrome is installed"
+            else
+              sudo apt-get update
+              sudo apt-get install -y chromium-browser || sudo snap install chromium
+            fi
+          else
+            echo "${{ runner.os }} ships a browser"
+          fi
+
+      - name: install the candidate
+        run: |
+          mkdir work
+          cd work
+          npm init -y > /dev/null
+          npm install ../objectexplorer.tgz
+          tar xzf ../objectexplorer-test.tgz
+          node -e "console.log('OBJECTEXPLORER_CLI=' + require('path').resolve('node_modules/@knockdata/objectexplorer/cli.js'))" >> "$GITHUB_ENV"
+
+      # A native absolute path, written by node: a bash path like /d/a/... is not something node on
+      # windows can open.
+      - name: cloud credentials
+        env:
+          GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+        run: |
+          cd work
+          node -e "const fs=require('fs'),path=require('path');const file=path.resolve('gcp-service-account.json');fs.writeFileSync(file,process.env.GCP_SERVICE_ACCOUNT_JSON||'');console.log('GOOGLE_APPLICATION_CREDENTIALS='+file)" >> "$GITHUB_ENV"
+
+      - name: end to end
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          OBJECTEXPLORER_TEST_PORT: 9421
+        run: |
+          cd work
+          node test/e2e.js
+
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-${{ matrix.runner }}-${{ matrix.arch }}
+          path: work/test/*.png
+          if-no-files-found: ignore
+
+  promote:
+    needs: [candidate, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish objectexplorer.tgz --access public
+      # the registry is the only thing that can confirm a publish landed
+      - name: verify
+        run: |
+          version=${{ needs.candidate.outputs.version }}
+          for attempt in $(seq 1 10); do
+            published=$(npm view @knockdata/objectexplorer version 2>/dev/null || echo "")
+            if [ "$published" = "$version" ]; then
+              echo "published $version" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::npm still reports $published, not $version"
+          exit 1

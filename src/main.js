@@ -19,7 +19,7 @@ import sea from "node:sea"
 import { Worker } from "node:worker_threads"
 import { createWindow, applyWindowsArgs } from "./webview.js"
 import { openBrowser } from "./browser.js"
-import { resolveBundleDir, resolveFfmpegDir, resolveDuckdbDir } from "./bundle.js"
+import { resolveBundleDir, resolveFfmpegDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
 import { userData } from "./paths.js"
 import { log, logError } from "./log.js"
 import { version, bundleVersion } from "./version.js"
@@ -43,7 +43,8 @@ async function main() {
 	const bundleDir = await resolveBundleDir(readAsset)
 	const ffmpegDir = await resolveFfmpegDir(readAsset)
 	const duckdbDir = await resolveDuckdbDir(readAsset)
-	const port = await startServer(bundleDir, ffmpegDir, duckdbDir)
+	const sqliteDir = await resolveSqliteDir(readAsset)
+	const port = await startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir)
 	const url = `http://127.0.0.1:${port}`
 	log("app url:", url)
 
@@ -68,11 +69,11 @@ function readAsset(name) {
 	}
 }
 
-function startServer(bundleDir, ffmpegDir, duckdbDir) {
+function startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir) {
 	const source = Buffer.from(readAsset("worker.js")).toString("utf8")
 	const worker = new Worker(source, {
 		eval: true,
-		workerData: { bundleDir, ffmpegDir, duckdbDir, port: preferredPort },
+		workerData: { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port: preferredPort },
 	})
 	// a worker that outlives the main thread's blocking run() keeps the process alive on its
 	// own, so nothing here needs to hold a reference
