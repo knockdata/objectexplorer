@@ -9,6 +9,11 @@ name: Package
 # is published.
 on:
   workflow_dispatch:
+    inputs:
+      promote:
+        description: "Publish to npm when every leg passes"
+        type: boolean
+        default: true
 
 defaults:
   run:
@@ -113,8 +118,11 @@ jobs:
           path: work/test/*.png
           if-no-files-found: ignore
 
+  # promote: false runs the whole matrix against a real candidate and stops there — how a change to
+  # this workflow gets checked without a version being spent on it.
   promote:
     needs: [candidate, test]
+    if: inputs.promote
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
