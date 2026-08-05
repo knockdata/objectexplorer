@@ -558,7 +558,7 @@ jobs:
   # passed: the package on six platforms, the binaries built from this very tarball and smoke
   # tested. A tag push skips this — that version is already on npm.
   promote:
-    needs: [source, test, mac, windows, linux]
+    needs: [source, test, mac, windows, linux, msixbundle]
     if: needs.source.outputs.publish == 'true'
     runs-on: ubuntu-latest
     # npm trusted publishing: the registry trusts this repo and this workflow file by name, and
