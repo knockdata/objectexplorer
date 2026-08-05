@@ -573,14 +573,18 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           name: candidate
+      # deliberately no registry-url: it writes an .npmrc saying _authToken=${NODE_AUTH_TOKEN}, and
+      # with no such variable npm sends an empty credential instead of reaching for OIDC — an
+      # authenticated request with nothing in it, which the registry answers 404 on a publish
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
       # trusted publishing needs npm 11.5.1 or newer; whatever node ships with is not a promise
       - run: npm install -g npm@latest
       - name: publish
-        run: npm publish objectexplorer.tgz --access public
+        run: |
+          echo "npm $(npm --version), OIDC token endpoint ${ACTIONS_ID_TOKEN_REQUEST_URL:+available}"
+          npm publish objectexplorer.tgz --access public
       # the registry is the only thing that can confirm a publish landed
       - name: verify
         run: |
