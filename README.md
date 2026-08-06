@@ -13,8 +13,8 @@ Every link below always points at the newest build. Click the one for your machi
 |---|---|
 | macOS, Apple Silicon | [ObjectExplorer-mac-arm64.dmg](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-mac-arm64.dmg) |
 | macOS, Intel | [ObjectExplorer-mac-x64.dmg](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-mac-x64.dmg) |
-| Windows, x64 | [ObjectExplorer-windows-x64.exe](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-windows-x64.exe) or [.msix](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-windows-x64.msix) |
-| Windows, ARM | [ObjectExplorer-windows-arm64.exe](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-windows-arm64.exe) or [.msix](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-windows-arm64.msix) |
+| Windows, x64 | [ObjectExplorer-windows-x64.msix](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-windows-x64.msix) 
+| Windows, ARM | [ObjectExplorer-windows-arm64.msix](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-windows-arm64.msix) |
 | Linux, x64 | [ObjectExplorer-linux-x64.AppImage](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-linux-x64.AppImage) |
 | Linux, ARM | [ObjectExplorer-linux-arm64.AppImage](https://github.com/knockdata/objectexplorer/releases/latest/download/ObjectExplorer-linux-arm64.AppImage) |
 
@@ -24,15 +24,13 @@ Older versions, and the release notes for each one, are on the
 **macOS** — open the `.dmg` and drag ObjectExplorer to Applications. The app is signed with a
 Developer ID and notarized, so it opens on the first double-click.
 
-**Windows** — two ways, both signed with the same certificate, so take whichever suits you:
+**Windows** — It is signed with company's certificate. While you might see Smart Screen when you open the app.
 
-- the **`.exe`** is one portable file. There is no installer and no folder of loose `.dll`
-  files: run it where it lands, and delete it when you are done.
-- the **`.msix`** installs properly. Double-click it and Windows does the rest — a Start menu
+Double-click it and Windows does the rest — a Start menu
   entry, an icon, and an entry in Add or remove programs that uninstalls cleanly. Choose this
   one if you would rather not keep track of where a binary lives.
 
-ObjectExplorer is also on the
+ObjectExplorer will also be published later on the
 [Microsoft Store](https://apps.microsoft.com/detail/9PMCD8HJPCXH).
 
 **Linux** — one AppImage:
@@ -71,6 +69,7 @@ npx @knockdata/objectexplorer ~/data port=9421
 ```
 
 <details>
+If you meet an error when running on windows.
 <summary>Windows: "npx.ps1 cannot be loaded because running scripts is disabled on this system"</summary>
 
 - Right click PowerShell and choose **Run as administrator**

@@ -1,5 +1,9 @@
 name: Release
 
+# The Actions list shows one row per run and nothing else, so the row has to say which version it
+# is. A tag push already carries it in ref_name; a dispatch is told by publish.sh.
+run-name: ObjectExplorer ${{ inputs.version && format('v{0}', inputs.version) || github.ref_name }}
+
 # The whole product ships from this one run: the @knockdata/objectexplorer npm package and the
 # desktop binaries that embed it, under one version number that comes from the package itself.
 #
@@ -20,6 +24,10 @@ on:
       - "v*"
   workflow_dispatch:
     inputs:
+      version:
+        description: "Version being shipped, for the run name only — the real one is read from the candidate. Leave empty to dispatch by hand."
+        type: string
+        default: ""
       promote:
         description: "Publish to npm and cut the release when every leg passes"
         type: boolean
@@ -50,6 +58,7 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           EVENT: ${{ github.event_name }}
           PROMOTE: ${{ inputs.promote }}
+          CLAIMED: ${{ inputs.version }}
         run: |
           if [ "$EVENT" = "push" ]; then
             tagged="${REF_NAME#v}"
@@ -86,6 +95,13 @@ jobs:
           # a tag can name a version the package is not; better to stop than to release the wrong one
           if [ -n "$tagged" ] && [ "$tagged" != "$version" ]; then
             echo "::error::tag v$tagged does not match the package version $version"
+            exit 1
+          fi
+
+          # the run is already named after the dispatched version, so a run named one thing and
+          # shipping another is worse than no run at all
+          if [ -n "$CLAIMED" ] && [ "$CLAIMED" != "$version" ]; then
+            echo "::error::this run is named v$CLAIMED but the candidate is $version — the upload and the dispatch disagree"
             exit 1
           fi
 
