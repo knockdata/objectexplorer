@@ -10,8 +10,9 @@
 # because that is what the binaries will embed. package.json's version is a placeholder that CI
 # overwrites.
 #
-# Retagging is the normal way to retry: a run that failed released nothing, so the same version
-# gets deleted and pushed again rather than burning a version number per attempt.
+# A dispatch, not a tag push: pushing v<version> is how publish.sh ships a new version, and doing it
+# from here would tell CI to publish a package that is already on npm. The dispatch says the opposite
+# — take the version off npm, rebuild the binaries around it, publish nothing.
 #
 #   ./release.sh
 set -euo pipefail
@@ -21,27 +22,10 @@ cd "$(dirname "$0")"
 version=$(npm view @knockdata/objectexplorer version)
 tag="v$version"
 
-if [ -z "$(git status --porcelain)" ]; then
-	echo "releasing $tag"
-else
-	echo "working tree is dirty; commit or stash first" >&2
-	git status --short >&2
-	exit 1
-fi
+echo "rebuilding the binaries for $tag"
 
-# A previous attempt left the tag behind, locally and on the remote. Deleting the remote one
-# first is what makes the re-push count as a new tag push and start a new run.
-if [ -n "$(git tag -l "$tag")" ]; then
-	git tag -d "$tag"
-fi
-
-if [ -n "$(git ls-remote --tags origin "refs/tags/$tag")" ]; then
-	echo "deleting the old $tag"
-	git push origin ":refs/tags/$tag"
-fi
-
-# Only a run that got all the way through publishes a release, so there is normally none to
-# clean up. If one is there anyway, it holds the old assets and has to go.
+# The release for this version already exists — this is a version that shipped. It holds the old
+# assets, and the run replaces it rather than adding to it.
 if gh release view "$tag" >/dev/null 2>&1; then
 	echo "deleting the old release $tag"
 	gh release delete "$tag" --yes
@@ -49,10 +33,9 @@ fi
 
 previous=$(gh run list --workflow release.yml -L 1 --json databaseId --jq '.[0].databaseId // ""')
 
-git tag "$tag"
-git push origin "refs/tags/$tag"
+gh workflow run release.yml -f version="$version"
 
-# The run does not exist the instant the tag lands, so poll until one shows up that is not the
+# The run does not exist the instant the dispatch lands, so poll until one shows up that is not the
 # run from the previous attempt.
 run=""
 for attempt in 1 2 3 4 5 6 7 8 9 10; do

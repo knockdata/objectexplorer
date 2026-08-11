@@ -1,18 +1,21 @@
 name: Release
 
 # The Actions list shows one row per run and nothing else, so the row has to say which version it
-# is. A tag push already carries it in ref_name; a dispatch is told by publish.sh.
+# is. A ship carries it in ref_name, because it is a tag push; a rebuild is told by release.sh.
 run-name: ObjectExplorer ${{ inputs.version && format('v{0}', inputs.version) || github.ref_name }}
 
 # The whole product ships from this one run: the @knockdata/objectexplorer npm package and the
 # desktop binaries that embed it, under one version number that comes from the package itself.
 #
-# rock2/objectexplorer/publish.sh uploads a candidate to objectexplorer.com and dispatches this.
-# Every binary is built from that candidate, so nothing ever waits for a publish — the package is
-# tested on six platforms, the binaries are built and smoke-tested, and only then does npm publish
-# and the GitHub release happen, together, from the same bytes.
+# Pushing the tag v<version> is what ships it. rock2/objectexplorer/publish.sh uploads a candidate
+# to objectexplorer.com and pushes that tag; the run picks the candidate up, so nothing ever waits
+# for a publish — the package is tested on six platforms, the binaries are built and smoke-tested,
+# and only then does npm publish and the GitHub release happen, together, from the same bytes.
 #
-# A tag push is the other door: it rebuilds and re-releases the binaries for a version that is
+# The tag is also what the Actions list shows against the run. A dispatch runs on a branch, so every
+# ship used to be a row labelled "main"; shipping by tag is what makes the row say v0.4.3.
+#
+# A dispatch is the other door: it rebuilds and re-releases the binaries for a version that is
 # already on npm, and publishes nothing.
 #
 # Every build job runs the same four steps — addon, bundle, sea, pack — because the native addon is
@@ -25,11 +28,11 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version being shipped, for the run name only — the real one is read from the candidate. Leave empty to dispatch by hand."
+        description: "Version on npm to rebuild the binaries for. Empty means whatever npm calls latest."
         type: string
         default: ""
       promote:
-        description: "Publish to npm and cut the release when every leg passes"
+        description: "Cut the GitHub release when every leg passes. Nothing is ever published to npm from here — push the tag for that."
         type: boolean
         default: true
 
@@ -61,19 +64,26 @@ jobs:
           CLAIMED: ${{ inputs.version }}
         run: |
           if [ "$EVENT" = "push" ]; then
+            # Shipping. The tag names the version and publish.sh has already uploaded the bytes, so
+            # they come from the candidate — nothing here waits for a publish that has not happened.
             tagged="${REF_NAME#v}"
-            npm pack "@knockdata/objectexplorer@$tagged"
-            mv knockdata-objectexplorer-*.tgz objectexplorer.tgz
-            publish=false
+            curl -fsSL -o objectexplorer.tgz https://objectexplorer.com/releases/objectexplorer.tgz
+            publish=true
             release=true
           else
+            # Rebuilding the binaries for a version that is already on npm, which is where its bytes
+            # are. Nothing is published: the package on npm is exactly the one being rebuilt around.
             tagged=""
-            curl -fsSL -o objectexplorer.tgz https://objectexplorer.com/releases/objectexplorer.tgz
+            wanted="$CLAIMED"
+            if [ -z "$wanted" ]; then
+              wanted=$(npm view @knockdata/objectexplorer version)
+            fi
+            npm pack "@knockdata/objectexplorer@$wanted"
+            mv knockdata-objectexplorer-*.tgz objectexplorer.tgz
+            publish=false
             if [ "$PROMOTE" = "false" ]; then
-              publish=false
               release=false
             else
-              publish=true
               release=true
             fi
           fi
@@ -92,16 +102,18 @@ jobs:
             exit 1
           fi
 
-          # a tag can name a version the package is not; better to stop than to release the wrong one
+          # This is the whole reason the tag is trusted with nothing but naming the run: it can name a
+          # version the candidate is not, and that is a publish of the wrong bytes under the right
+          # name. It happens whenever the tag is pushed before the upload it belongs to.
           if [ -n "$tagged" ] && [ "$tagged" != "$version" ]; then
-            echo "::error::tag v$tagged does not match the package version $version"
+            echo "::error::tag v$tagged does not match the candidate's version $version — the upload and the tag disagree"
             exit 1
           fi
 
-          # the run is already named after the dispatched version, so a run named one thing and
-          # shipping another is worse than no run at all
+          # the run is already named after the version that was asked for, so a run named one thing
+          # and rebuilding another is worse than no run at all
           if [ -n "$CLAIMED" ] && [ "$CLAIMED" != "$version" ]; then
-            echo "::error::this run is named v$CLAIMED but the candidate is $version — the upload and the dispatch disagree"
+            echo "::error::this run is named v$CLAIMED but the package is $version"
             exit 1
           fi
 
@@ -572,7 +584,7 @@ jobs:
 
   # The npm half of the release, and the last point of no return. Everything above has already
   # passed: the package on six platforms, the binaries built from this very tarball and smoke
-  # tested. A tag push skips this — that version is already on npm.
+  # tested. A dispatch skips this — that version is already on npm.
   promote:
     needs: [source, test, mac, windows, linux, msixbundle]
     if: needs.source.outputs.publish == 'true'
@@ -618,7 +630,7 @@ jobs:
 
   release:
     needs: [source, mac, windows, linux, promote]
-    # promote is skipped on a tag push, and a skipped need skips its dependents — without this the
+    # promote is skipped on a dispatch, and a skipped need skips its dependents — without this the
     # release would silently never happen. !cancelled() keeps the skip from counting as a reason to
     # stop; the failure check keeps it from releasing binaries a failed job never produced.
     if: ${{ !cancelled() && !contains(needs.*.result, 'failure') && needs.source.outputs.release == 'true' }}

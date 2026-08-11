@@ -163,6 +163,34 @@ sprite's bounding box overlaid and named, aligned to the real pixels however the
 Hover a box to read the frame name — no importing the sheet into an engine to find out which tile is
 `medievalTile_04`.
 
+### Ebook reader
+
+Open an `.epub`, `.mobi`, `.azw3`, `.fb2` or a `.cbz` comic and it opens as a book: a cover, a page
+that is one screenful, and the side arrows or the arrow keys to turn it. The text reflows to the
+window, so a chapter reads the same whether the file came from a bucket or from a zip on your disk —
+no Kindle, no Calibre, no converting it first.
+
+### Cloud Logging
+
+A Google Cloud project can be switched live, and ObjectExplorer tails Cloud Logging into a local
+store: the tail belongs to the app, not to the window, so it keeps collecting while you are
+elsewhere and is still there after a restart. The tree under the project is the one the logs
+describe — resource type, resource, then the single service.
+
+Log files that a sink already exported to a bucket open the same way. Point at one NDJSON object, or
+at the whole `YYYY/MM/DD` prefix, and the viewer walks it newest first. Cloud Logging entries and
+OpenTelemetry records both read as the same rows.
+
+The viewer itself:
+
+- **A timeline you can grab** — one bar per slot, grey for ordinary lines, orange for warnings, red
+  for errors, so a burst of errors is a red block. Drag to pick a range, click a bar for that slot,
+  zoom and step window by window.
+- **Two trees over the same lines** — *source* answers "which service wrote this", *trace* answers
+  "what happened during this request", drawn as a waterfall of spans by duration.
+- **Filter as you read** — severity chips and text search narrow the rows, never the shape of the
+  timeline you are aiming at.
+
 ### Inside archives, without extracting
 
 Step into a `.zip`, a `.dmg`, or an office file — `.pptx` and `.xlsx` are zips too — and browse the
@@ -179,6 +207,8 @@ inside a bucket is still just a table.
 | <img src="./assets/format/powerpoint.svg" width="18"> | Presentations | `pptx` `potx` `ppsx` `ppt` `pot` `pps` `key` |
 | <img src="./assets/format/excel.svg" width="18"> | Spreadsheets | `xlsx` `xltx` |
 | <img src="./assets/format/word.svg" width="18"> | Documents | `docx` `dotx` `pdf` `evernote` |
+| <img src="./assets/format/book.svg" width="18"> | Ebooks | `epub` `mobi` `prc` `azw` `azw3` `fb2` `fbz` `cbz` `cbt` — read as a book |
+| <img src="./assets/format/log.svg" width="18"> | Logs | Cloud Logging and OpenTelemetry, live or exported |
 | <img src="./assets/format/text.svg" width="18"> | Text and code | `md` `markdown` `txt` `html` `xml` `xsl` `js` `py`, syntax highlighted |
 | <img src="./assets/format/jupyter.svg" width="18"> | Notebooks | `ipynb` — cells with their outputs |
 | <img src="./assets/format/image.svg" width="18"> | Images | `png` `jpg` `jpeg` `webp` `svg` `ico` — with EXIF, GPS and embedded text |
