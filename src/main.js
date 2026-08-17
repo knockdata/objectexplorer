@@ -16,7 +16,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import sea from "node:sea"
-import { Worker } from "node:worker_threads"
+import { Worker, SHARE_ENV } from "node:worker_threads"
 import { createWindow, applyWindowsArgs, showAlert } from "./webview.js"
 import { openBrowser } from "./browser.js"
 import { resolveBundleDir, resolveFfmpegDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
@@ -71,8 +71,16 @@ function readAsset(name) {
 
 function startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir) {
 	const source = Buffer.from(readAsset("worker.js")).toString("utf8")
+	// SHARE_ENV, because the backend publishes OBJECTFS_SERVER into the environment once it knows
+	// which port it settled on (server/WebServer.js startAndPublishAddress), and duckdb's objectfs
+	// extension reads that with the C getenv. Without SHARE_ENV a worker writes to a private copy
+	// of process.env: the C side keeps seeing nothing, objectfs falls back to 127.0.0.1:8080, and
+	// every path only this server can resolve — a folder root, an s3:// object, a .sav — fails with
+	// "No files found that match the pattern". The port is never passed from here for the same
+	// reason: preferredPort is a wish, and portRetry may settle on another one.
 	const worker = new Worker(source, {
 		eval: true,
+		env: SHARE_ENV,
 		workerData: { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port: preferredPort },
 	})
 	// a worker that outlives the main thread's blocking run() keeps the process alive on its

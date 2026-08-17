@@ -23,6 +23,29 @@ else {
 	throw new Error(`smoke: expected appMode "package", got "${meta.appMode}"`)
 }
 
+// A query naming a folder root, which is the one thing only this server can resolve: duckdb's
+// objectfs extension has to call back into it over localhost to turn `demo/…` into a real path.
+//
+// That channel is the reason this check exists. The backend runs in a worker thread here and nowhere
+// else — not under `npx objectexplorer`, not in dev — and a worker that cannot publish the callback
+// address into the environment leaves duckdb resolving every folder root against the process working
+// directory instead. v0.4.4 shipped exactly that: delta, iceberg and every hive parquet folder in the
+// desktop app answered "No files found that match the pattern" for files that were plainly there,
+// while the same build under npx read them all. The package suite runs on the main thread and can
+// never see it, so it is caught here or not at all.
+const query = "SELECT * FROM 'demo/nl_train_stations.parquet' LIMIT 1"
+const answer = await (await fetch(`${url}/api/duckdb/query`, {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({ sql: query }),
+})).json()
+if (answer.payload && answer.payload.rows.length === 1) {
+	console.log(`smoke: duckdb answered ${query} with ${answer.payload.columns.length} columns`)
+}
+else {
+	throw new Error(`smoke: duckdb could not resolve a folder root — ${query} answered ${JSON.stringify(answer)}`)
+}
+
 const browser = await launch()
 console.log(`smoke: driving ${browser.browserPath}`)
 const socket = await openPage(url)
