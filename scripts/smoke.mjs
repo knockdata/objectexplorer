@@ -12,6 +12,9 @@ import { fileURLToPath } from "node:url"
 import { Worker } from "node:worker_threads"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+const logDir = path.join(root, "out")
+fs.mkdirSync(logDir, {recursive: true})
+
 const logFile = path.join(root, "out", "smoke.log")
 fs.writeFileSync(logFile, "")
 
