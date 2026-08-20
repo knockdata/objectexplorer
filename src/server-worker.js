@@ -35,9 +35,12 @@ async function start() {
 	log("loading backend:", serverPath)
 	const { WebServer } = await import(pathToFileURL(serverPath).href)
 
+	// `desktop`, not `package`: the CLI serves the same bundle into a real browser, and only
+	// this host runs inside the native webview — where window.open has nowhere to go, so the
+	// UI has to hand an external url back to the server to open in the default browser.
 	const server = await WebServer({
 		mode: "prod",
-		appMode: "package",
+		appMode: "desktop",
 		appDir,
 		publicDir: appDir,
 		demoPath,
