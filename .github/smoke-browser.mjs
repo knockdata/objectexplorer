@@ -31,11 +31,11 @@ let socket
 
 try {
 	const meta = await (await fetch(`${url}/api/meta`)).json()
-	if (meta.appMode === "package") {
+	if (meta.appMode === "desktop") {
 		console.log(`smoke: /api/meta says appMode=${meta.appMode}, ${(meta.providers || []).length} providers`)
 	}
 	else {
-		throw new Error(`smoke: expected appMode "package", got "${meta.appMode}"`)
+		throw new Error(`smoke: expected appMode "desktop", got "${meta.appMode}"`)
 	}
 
 	// A query naming a folder root, which is the one thing only this server can resolve: duckdb's
