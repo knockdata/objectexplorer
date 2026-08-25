@@ -33,7 +33,6 @@ struct Webview {
 	HWND window;
 	ICoreWebView2Controller *controller;
 	ICoreWebView2 *view;
-	int debug;
 	int failed;
 };
 
@@ -112,7 +111,9 @@ static HRESULT STDMETHODCALLTYPE controllerInvoke(ICoreWebView2CreateCoreWebView
 
 		ICoreWebView2Settings *settings = NULL;
 		ICoreWebView2_get_Settings(webview->view, &settings);
-		ICoreWebView2Settings_put_AreDevToolsEnabled(settings, webview->debug ? TRUE : FALSE);
+		// always on: F12 then opens devtools, which is the only way a user can show what their
+		// machine did. Nothing else was ever behind the old debug flag.
+		ICoreWebView2Settings_put_AreDevToolsEnabled(settings, TRUE);
 
 		RECT bounds;
 		GetClientRect(webview->window, &bounds);
@@ -188,12 +189,11 @@ static void pumpUntilReady(Webview *webview) {
 	}
 }
 
-Webview *webviewCreate(int debug) {
+Webview *webviewCreate(void) {
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
 	SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	Webview *webview = calloc(1, sizeof(Webview));
-	webview->debug = debug;
 	webview->window = createWindow();
 	SetWindowLongPtrW(webview->window, GWLP_USERDATA, (LONG_PTR)webview);
 

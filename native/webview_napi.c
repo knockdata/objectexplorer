@@ -33,15 +33,10 @@ static int readNumber(napi_env env, napi_value value) {
 }
 
 static napi_value create(napi_env env, napi_callback_info info) {
-	size_t count = 1;
-	napi_value args[1];
-	napi_get_cb_info(env, info, &count, args, NULL, NULL);
-
-	bool debug = false;
-	napi_get_value_bool(env, args[0], &debug);
+	(void)info;
 
 	napi_value result = NULL;
-	Webview *webview = webviewCreate(debug ? 1 : 0);
+	Webview *webview = webviewCreate();
 	if (webview) {
 		napi_create_external(env, webview, NULL, NULL, &result);
 	} else {

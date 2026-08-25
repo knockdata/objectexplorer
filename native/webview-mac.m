@@ -36,9 +36,48 @@ struct Webview {
 }
 @end
 
+// The one thing the page can ask the window for: show the web inspector.
+//
+// WKWebView has no key of its own for it and no public API to open it, so this object is both
+// halves of the answer — the target of the Develop menu's item, and the handler behind
+// window.webkit.messageHandlers.objectexplorer, which is what the command palette posts to.
+// Everything else the UI needs it gets over http from the backend, exactly as in a browser.
+//
+// -[WKWebView _inspector] and -[_WKInspector show] are private, so both are reached by name and
+// only after respondsToSelector: a future macOS that renames them leaves the menu item inert
+// rather than crashing the app.
+@interface Bridge : NSObject <WKScriptMessageHandler>
+@property (assign) WKWebView *view;
+- (void)showInspector:(id)sender;
+@end
+
+@implementation Bridge
+- (void)showInspector:(id)sender {
+	(void)sender;
+	SEL inspectorSelector = NSSelectorFromString(@"_inspector");
+	if ([self.view respondsToSelector:inspectorSelector]) {
+		id inspector = [self.view performSelector:inspectorSelector];
+		SEL showSelector = NSSelectorFromString(@"show");
+		if ([inspector respondsToSelector:showSelector]) {
+			[inspector performSelector:showSelector];
+		} else {
+		}
+	} else {
+	}
+}
+
+- (void)userContentController:(WKUserContentController *)controller didReceiveScriptMessage:(WKScriptMessage *)message {
+	(void)controller;
+	if ([[message body] isEqual:@"devtools"]) {
+		[self showInspector:nil];
+	} else {
+	}
+}
+@end
+
 // Without a main menu the standard key equivalents do not exist, so Cmd+C in the explorer does
 // nothing at all. These items act on the first responder, which is the web view.
-static void buildMenu(void) {
+static void buildMenu(Bridge *bridge) {
 	NSMenu *bar = [[NSMenu alloc] init];
 	[NSApp setMainMenu:bar];
 
@@ -59,14 +98,25 @@ static void buildMenu(void) {
 	[editMenu addItemWithTitle:@"Copy" action:@selector(copy:) keyEquivalent:@"c"];
 	[editMenu addItemWithTitle:@"Paste" action:@selector(paste:) keyEquivalent:@"v"];
 	[editMenu addItemWithTitle:@"Select All" action:@selector(selectAll:) keyEquivalent:@"a"];
+
+	// Safari's own key for the inspector, on a menu of its own so it is findable without it.
+	// The target is the bridge rather than the responder chain, because the responder here is the
+	// web view and the selector is ours.
+	NSMenuItem *developItem = [[NSMenuItem alloc] init];
+	[bar addItem:developItem];
+	NSMenu *developMenu = [[NSMenu alloc] initWithTitle:@"Develop"];
+	[developItem setSubmenu:developMenu];
+	NSMenuItem *inspectorItem = [developMenu addItemWithTitle:@"Show Web Inspector"
+		action:@selector(showInspector:) keyEquivalent:@"i"];
+	[inspectorItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand | NSEventModifierFlagOption];
+	[inspectorItem setTarget:bridge];
 }
 
-Webview *webviewCreate(int debug) {
+Webview *webviewCreate(void) {
 	NSApplication *app = [NSApplication sharedApplication];
 	// Regular is what gives the process a Dock icon and a menu bar; the default for a plain
 	// binary is Prohibited, which shows no window at all
 	[app setActivationPolicy:NSApplicationActivationPolicyRegular];
-	buildMenu();
 
 	NSRect frame = NSMakeRect(0, 0, 800, 600);
 	NSWindowStyleMask style = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable
@@ -78,16 +128,21 @@ Webview *webviewCreate(int debug) {
 	[window setDelegate:[[WindowDelegate alloc] init]];
 	[window center];
 
+	// Always on, and no longer behind a debug flag: the inspector is how a user reports what went
+	// wrong on their machine, and a build where it can only be turned on by relaunching from a
+	// terminal is a build where nobody turns it on. The documented property is macOS 13.3+; the key
+	// has worked since WKWebView shipped.
 	WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
-	if (debug) {
-		// the documented property is macOS 13.3+; the key has worked since WKWebView shipped
-		[[configuration preferences] setValue:@YES forKey:@"developerExtrasEnabled"];
-	} else {
-	}
+	[[configuration preferences] setValue:@YES forKey:@"developerExtrasEnabled"];
+
+	Bridge *bridge = [[Bridge alloc] init];
+	[[configuration userContentController] addScriptMessageHandler:bridge name:@"objectexplorer"];
 
 	WKWebView *view = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
 	[view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 	[window setContentView:view];
+	[bridge setView:view];
+	buildMenu(bridge);
 
 	Webview *webview = (Webview *)calloc(1, sizeof(Webview));
 	webview->window = window;

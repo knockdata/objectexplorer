@@ -10,13 +10,18 @@
 //
 // Eight calls, nothing more. The explorer UI talks to the Node backend over HTTP on localhost,
 // so there is no JS bridge to build: no bind, no eval, no init, no dispatch.
+//
+// The one exception is the web inspector, which is not something a backend can do: on mac the page
+// posts "devtools" to a script message handler, because WKWebView has neither a key for it nor a
+// public API. Windows (F12) and linux (Ctrl+Shift+I) have a key already and get no handler. It is
+// not part of this contract — nothing here is called for it.
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 
 typedef struct Webview Webview;
 
 // NULL when the platform webview is unavailable
-Webview *webviewCreate(int debug);
+Webview *webviewCreate(void);
 void webviewSetTitle(Webview *webview, const char *title);
 // the title bar icon, as png bytes. Windows ignores it: its title bar takes the icon from the
 // exe resource that scripts/win-resources.mjs writes.

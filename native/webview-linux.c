@@ -109,17 +109,16 @@ static void loadSymbols(Webview *webview, int *ok) {
 	loadIconSymbols(webview);
 }
 
-static void buildWindow(Webview *webview, int debug) {
+static void buildWindow(Webview *webview) {
 	webview->window = webview->windowNew(TOPLEVEL);
 	webview->view = webview->viewNew();
 	webview->containerAdd(webview->window, webview->view);
 	// closing the window ends the run loop, which is what unblocks the calling thread
 	webview->signalConnect(webview->window, "destroy", (Callback)webview->mainQuit, NULL, NULL, 0);
 
-	if (debug) {
-		webview->settingsSetDeveloperExtras(webview->viewGetSettings(webview->view), 1);
-	} else {
-	}
+	// always on: Ctrl+Shift+I then opens the inspector, which is the only way a user can show what
+	// their machine did. Nothing else was ever behind the old debug flag.
+	webview->settingsSetDeveloperExtras(webview->viewGetSettings(webview->view), 1);
 }
 
 static void closeLibraries(Webview *webview) {
@@ -141,7 +140,7 @@ static void closeLibraries(Webview *webview) {
 	}
 }
 
-Webview *webviewCreate(int debug) {
+Webview *webviewCreate(void) {
 	Webview *webview = calloc(1, sizeof(Webview));
 	webview->gtkLibrary = dlopen("libgtk-3.so.0", RTLD_LAZY | RTLD_GLOBAL);
 	webview->gobjectLibrary = dlopen("libgobject-2.0.so.0", RTLD_LAZY | RTLD_GLOBAL);
@@ -157,7 +156,7 @@ Webview *webviewCreate(int debug) {
 	// gtk_init_check is the one that says whether there is a display to draw on; over ssh with
 	// no X11 or Wayland it returns false, and that is a browser fallback rather than a crash
 	if (ok && webview->initCheck(NULL, NULL)) {
-		buildWindow(webview, debug);
+		buildWindow(webview);
 	} else {
 		ok = 0;
 	}

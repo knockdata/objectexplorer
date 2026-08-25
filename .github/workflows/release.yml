@@ -638,6 +638,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      # First, and only first: checkout cleans the workspace, so anything downloaded before it
+      # would be deleted. It is here for CHANGELOG.md, which is what the version release says.
+      - uses: actions/checkout@v5
+
       # pattern, not everything: the store-msix-* and msixbundle artifacts are unsigned until the
       # Store signs them, and `files: artifacts/**/*` below would publish them on the releases
       # page. They are downloaded by hand instead - see RELEASE.md. The signed direct msix does
@@ -685,13 +689,27 @@ jobs:
           make_latest: true
           files: latest/*
 
+      # What this version says about itself, taken out of CHANGELOG.md by its own heading —
+      # `## v0.5.1` down to the next `## `. A version with no section there leaves an empty file,
+      # and the release is then the generated notes alone, exactly as it was before.
+      - name: Take this version's section out of CHANGELOG.md
+        run: |
+          awk -v heading="## ${{ needs.source.outputs.tag }}" '
+            index($0, heading) == 1 { taking = 1; next }
+            taking && /^## / { exit }
+            taking { print }
+          ' CHANGELOG.md > notes.md
+          cat notes.md
+
       # make_latest: false, or this would take the Latest badge back off the rolling release —
       # and with it /releases/latest/download, which is the whole point of the aliases.
+      # body_path first, then the generated commit list underneath it.
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.source.outputs.tag }}
           name: ObjectExplorer ${{ needs.source.outputs.tag }}
           target_commitish: ${{ github.sha }}
+          body_path: notes.md
           generate_release_notes: true
           make_latest: false
           files: artifacts/**/*

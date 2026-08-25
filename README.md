@@ -1,13 +1,15 @@
 # ObjectExplorer
 
-**The VSCode for Cloud Storage.** Browse, preview and search S3, Google Cloud Storage, Azure Blob
-and local folders in one window — and every byte stays on your machine.
+**The VSCode for Cloud Storage.** Browse, preview, query and search S3, Google Cloud Storage,
+Azure Blob and local folders in one window — and every byte stays on your machine.
 
-<img src="./assets/screenshot/objectexplorer.png" width="800">
+<img src="./assets/oe.png" width="800">
 
 ## Install
 
-Every link below always points at the newest build. Click the one for your machine.
+Access instantly [https://objectexplorer.com/app](https://objectexplorer.com/app) 
+
+Or download the latest version. Click the one for your machine.
 
 | Platform | Download |
 |---|---|
@@ -95,6 +97,8 @@ ObjectExplorer collapses that loop:
 - **Preview instead of download.** Formats render in place — including the ones no console will ever
   open, like Parquet, SPSS and SAS.
 - **Search across buckets.** One query over local folders and cloud prefixes at the same time.
+- **Query, chart and model in place.** A table opens as a notebook: SQL over the object, a chart of
+  what came back, and a gradient boosting model over the rows — all on your machine.
 
 ## Your data never leaves your machine
 
@@ -141,6 +145,73 @@ answers "is this the file I want?" without a line of pandas — computed locally
 file you are looking at.
 
 Works on Parquet, CSV, SPSS `.sav` and SAS `.xpt`.
+
+### Notebook
+
+Open a table and it opens as a notebook: a column of cells, each one a few lines of code over its
+own output. The first two are already written — a `SELECT *` over the object you clicked, and a
+chart of what that query returned — so the file is queried and plotted before you have typed
+anything.
+
+```sql
+SELECT * FROM 'gs://sales-eu/orders/2026-08-24.parquet' LIMIT 10000
+```
+
+The query runs on your machine, against the object where it lives. Nothing is staged into a
+temporary folder first: DuckDB reads the bucket directly, so a `WHERE` over a multi-gigabyte
+Parquet file touches the row groups it needs and no more.
+
+Cells are piped rather than shared. Each one reads the rows produced by the nearest cell above it
+that produced any, so a query narrows the data and everything under it — the chart, the model, the
+next query — sees what came back. Nothing re-runs on its own: a cell runs from its run button or
+Shift+Enter, so what is on screen is always something you asked for.
+
+| Cell | What it is |
+|---|---|
+| **Table** | SQL, with the rows as a virtualized grid — column summaries and all |
+| **Chart** | a plot of the rows above, as source you can edit |
+| **Model** | gradient boosting over the rows above |
+| **Code** | JavaScript over the same rows, with a pandas-style dataframe already in scope |
+| **Text** | markdown, rendered when you click away |
+
+A chart cell writes its own first draft. The column statistics say which column is a date, which is
+a category, which is a measure and which is an id that counts up once per row — and the strip under
+the code offers the charts those columns actually support, named in plain words. Click one and its
+source is written into the editor and drawn. After that it is source, and it is yours.
+
+A folder is a table too: Delta, Iceberg and Hudi tables, Hive-partitioned exports and `YYYY/MM/DD`
+date prefixes are read as one table rather than as a pile of files.
+
+Notebooks are kept per object. Reopen the file next week — in another window, or after a restart —
+and your cells are still there.
+
+Queryable: `parquet` `csv` `tsv` `json` `jsonl` `xlsx` `avro`, plus SPSS `.sav` and SAS
+`.sas7bdat` `.xpt`. ORC, Arrow and HDF5 open as grids and charts too; only SQL over them is
+missing, and the cell says so.
+
+### Train a model on it
+
+A model cell is gradient boosting — LightGBM, compiled to WebAssembly and running inside the app —
+over the rows the cell above produced.
+
+Pick the label, the column you want predicted, and the rest comes from the same statistics the grid
+already drew: whether the question is *which one* or *how much*, which columns are worth training
+on, and which are row numbers, ids or coordinates that would teach the model the order the file was
+written in and nothing else.
+
+The controls hide nothing. Leaves, learning rate and iterations are three sliders, and moving one
+prints the JavaScript underneath it — that printed source is what trains, so a slider and a hand
+edit end in the same place.
+
+Two plots come out of it. Training draws what the model learned: the features ranked by their share
+of the total gain. Prediction answers the other question — pick a row, and a waterfall walks from
+what the model says on average to what it said about that one row, feature by feature. Those
+contributions are TreeSHAP, exact and additive, so the steps add up to the prediction rather than
+approximating it. Both plots show the same features in the same order, so the pair reads across:
+what a column is worth over the whole file, and what it did to this row.
+
+It all runs where the data already is. A model over a bucket you are not allowed to copy out of is
+still just a local read.
 
 ### Search
 
@@ -202,6 +273,7 @@ inside a bucket is still just a table.
 | | Kind | Formats |
 |---|---|---|
 | <img src="./assets/format/parquet.svg" width="18"> | Parquet | `parquet` — schema, rows, column summaries |
+| <img src="./assets/format/table.svg" width="18"> | Data lake | `delta` `iceberg` `hudi`, Hive and date partitions — a folder read as one table |
 | <img src="./assets/format/table.svg" width="18"> | Tabular | `csv` `json` `jsonl` `yaml` `yml` |
 | <img src="./assets/format/sas.svg" width="18"> | Statistics | `xpt` (SAS transport), `sav` (SPSS) |
 | <img src="./assets/format/powerpoint.svg" width="18"> | Presentations | `pptx` `potx` `ppsx` `ppt` `pot` `pps` `key` |
@@ -224,6 +296,7 @@ inside a bucket is still just a table.
 
 - [objectexplorer.com](https://objectexplorer.com) — screenshots and the full tour
 - [@knockdata/objectexplorer](https://www.npmjs.com/package/@knockdata/objectexplorer) — the npm package behind `npx`
+- [Changelog](https://github.com/knockdata/objectexplorer/blob/main/CHANGELOG.md) — what changed in each version
 - [Releases](https://github.com/knockdata/objectexplorer/releases) — every version, every platform
 
 Under the hood it is a single native binary: no Electron, no Chromium, just the OS webview (WebKit

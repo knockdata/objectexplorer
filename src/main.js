@@ -152,7 +152,6 @@ function openWindow(url) {
 			icon: readIcon(),
 			width: 1400,
 			height: 900,
-			debug: args.debug === "true",
 			readAsset,
 		})
 	} catch (error) {

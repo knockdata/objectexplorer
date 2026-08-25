@@ -6,9 +6,9 @@
 import { loadAddon } from "./addon.js"
 import { log, logError } from "./log.js"
 
-export function createWindow({ title, icon, width, height, debug, readAsset }) {
+export function createWindow({ title, icon, width, height, readAsset }) {
 	const addon = loadAddon("webview_napi", readAsset)
-	const handle = addon.create(debug)
+	const handle = addon.create()
 	addon.setTitle(handle, title)
 	if (icon) {
 		addon.setIcon(handle, icon)
