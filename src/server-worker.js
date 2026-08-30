@@ -13,7 +13,7 @@ import fs from "node:fs"
 import { pathToFileURL } from "node:url"
 import { parentPort, workerData } from "node:worker_threads"
 
-import { checkUpdate } from "./update.js"
+import VersionManager from "./VersionManager.js"
 import { userData } from "./paths.js"
 import { log, logError } from "./log.js"
 
@@ -38,6 +38,10 @@ async function start() {
 	// `desktop`, not `package`: the CLI serves the same bundle into a real browser, and only
 	// this host runs inside the native webview — where window.open has nowhere to go, so the
 	// UI has to hand an external url back to the server to open in the default browser.
+	// The backend serves the Check for Updates dialog out of this, and the launch check below
+	// is the same call the dialog's Upgrade button makes.
+	const versionManager = VersionManager({ bundleDir })
+
 	const server = await WebServer({
 		mode: "prod",
 		appMode: "desktop",
@@ -50,6 +54,7 @@ async function start() {
 		sqliteDir,
 		port,
 		portRetry: true,
+		versionManager,
 	})
 
 	const listenPort = await server.start()
@@ -57,7 +62,7 @@ async function start() {
 	parentPort.postMessage({ port: listenPort })
 
 	// the window is up by now, so a slow registry call costs the user nothing
-	await checkUpdate()
+	await versionManager.upgrade()
 }
 
 start().catch(function (error) {

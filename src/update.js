@@ -5,27 +5,26 @@
 //
 // A newer bundle is downloaded to its own folder and picked up on the next launch. Nothing
 // is swapped mid-session — the running server keeps serving the folder it started with.
+//
+// The two halves are separate because the Check for Updates dialog drives them separately:
+// it asks the registry when it opens, and downloads only when the user says so. The launch
+// does both in a row, through VersionManager.upgrade().
 import { fetchUntar } from "./tar.js"
-import { packageName, ffmpegName, duckdbName, sqliteName, bundleDirFor, isValidBundle, isNewer, newestBundle, versionOf, ffmpegDirFor, isValidFfmpeg, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
+import { packageName, ffmpegName, duckdbName, sqliteName, bundleDirFor, isValidBundle, ffmpegDirFor, isValidFfmpeg, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
 import { log, logError } from "./log.js"
 
 const registryUrl = "https://registry.npmjs.org"
 
-export async function checkUpdate() {
-	const latest = await fetchLatest()
-	const current = versionOf(newestBundle())
-
-	if (latest && isNewer(latest.version, current)) {
-		const destDir = bundleDirFor(latest.version)
-		log("newer bundle available:", latest.version, "->", destDir)
-		await fetchUntar(latest.tarball, destDir, log)
-		log("update ready, will be used on next launch:", isValidBundle(destDir))
-		await fetchFfmpeg(latest.ffmpegVersion)
-		await fetchDuckdb(latest.duckdbVersion)
-		await fetchSqlite(latest.sqliteVersion)
-	} else {
-		log("no update: current", current, "latest", latest && latest.version)
-	}
+// Downloads the bundle and whatever engines it wants. The caller has already decided this
+// version is newer than what is on disk.
+export async function downloadUpdate(latest) {
+	const destDir = bundleDirFor(latest.version)
+	log("newer bundle available:", latest.version, "->", destDir)
+	await fetchUntar(latest.tarball, destDir, log)
+	log("update ready, will be used on next launch:", isValidBundle(destDir))
+	await fetchFfmpeg(latest.ffmpegVersion)
+	await fetchDuckdb(latest.duckdbVersion)
+	await fetchSqlite(latest.sqliteVersion)
 }
 
 // A newer bundle can want a different @ffmpeg/core than the one embedded in the binary. It is
@@ -77,7 +76,7 @@ async function fetchSqlite(version) {
 	}
 }
 
-async function fetchLatest() {
+export async function fetchLatest() {
 	const latest = await fetchPackage(packageName, "latest")
 	if (latest) {
 		// the pin is exact; a range prefix ("^0.12.10") would be stripped here
