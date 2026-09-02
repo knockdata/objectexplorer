@@ -14,7 +14,8 @@ set -uo pipefail
 
 binary="$1"
 testDir="${2:-}"
-port=9421
+# overridable so a release can be cut on a machine already running ObjectExplorer on 9421
+port=${SMOKE_PORT:-9421}
 log="$HOME/.objectexplorer/app.log"
 
 serving() {
