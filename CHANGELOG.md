@@ -4,6 +4,107 @@ What changed in each version, and why. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.5.3 — 2026-09-02
+
+**The explorer can change what it lists.** Copy, cut, paste, drag between roots, rename, delete —
+across local disks and all three clouds, with one Undo that means it. And where a listing used to
+only show what a provider said, it now says what a folder weighs, how often you read it, and what
+holding a local copy has spared you.
+
+### Copy, move, rename, delete
+
+- **⌘C / ⌘X / ⌘V, and drag.** Drop a row on a folder in the same root and it moves; drop it in
+  another root and it copies; ⌥ forces a copy and ⌘ forces a move. Dropping a folder on itself,
+  or a row back into the folder it already sits in, is refused before you let go, so the row never
+  lights up for a drop that would do nothing.
+- **Delete is a move to `.trash`, never an unlink.** `<root>/.trash/<opId>/<original path>`, plus a
+  manifest naming what went in — the same layout in a local folder and in a bucket, so Undo is a
+  move back rather than a hope. Listings never show it. Anything older than 30 days is emptied at
+  startup.
+- **⌘Z takes back the last operation.** A copy is deleted, a move is moved back, and whatever an
+  overwrite wrote over comes back with it. One step, not a stack: a second undo over a folder that
+  has been listed and changed since is a promise nothing can keep.
+- **Rename**, on F2 or the context menu, in the tree, the list and the grid. The dialog opens with
+  the base name selected and the extension left alone. A name that is already taken is refused and
+  said out loud — you typed that name, so being taken is an answer — while pasting into a folder
+  something already sits in walks " copy", " copy 2" silently, because nobody typed those.
+- **A clash in another folder asks once**, before a byte moves: Keep both, Replace, Skip, Cancel.
+  Every destination is settled first, so the count the footer counts down from is the number of
+  objects really going to move.
+- **Between two providers the bytes stream through**, and the destination's size is read back
+  before a move deletes its source. Within one provider they never touch this machine at all —
+  GCS `rewriteTo`, S3 `x-amz-copy-source`, Azure `x-ms-copy-source`, `fsp.cp` on disk. A transfer
+  answers with its id as soon as it has one and reports progress in the side footer, so an
+  hour-long copy is not an hour-long fetch.
+- **An edit says which folders it touched**, and every listing and tree node showing one of them
+  reads itself again. A rename typed in the tree lands in the pane, and a delete made in the pane
+  lands in the tree.
+
+### Selecting
+
+- **Shift for a range, ⌘ for one more, ⌘A for all** — one selection for the whole app, with a
+  cursor the keyboard sits on and an anchor a shift-range stretches from.
+- **Drag a band across the empty space** of a list or a grid and it picks everything it covers.
+- **An action runs on what you meant.** A right click on a row inside the selection acts on the
+  whole selection; on a row outside it, on that row alone. The footer says which — `2 selected ·
+  2 files` — before you press Delete.
+- **Copy name**, a button that appears on hovering any row or card, puts the leaf name on the real
+  clipboard. The click never reaches the listing underneath, so copying a name does not select,
+  open, or start a drag.
+
+### What a folder weighs, and what it cost
+
+- **Σ in the SIZE cell counts a folder.** Nothing is walked until you ask, and one ask counts every
+  folder underneath — the walk had to visit them anyway — so clicking a root fills in the tree
+  and the rows below stop offering. The answer is kept in `meta.db` and goes stale on a TTL you set
+  (a minute by default); a refused walk leaves a red `–` that is itself the offer to try again.
+- **On S3, GCS and Azure the number is what the prefix costs to keep**, not what it would weigh on
+  a disk: the walk records the breakdown by storage class, and Glacier's 40 KiB-per-object minimum
+  is priced in. Past 100000 keys the total reads as a lower bound rather than pretending.
+- **Sorting by SIZE is one comparison for everything**, so a 4 GB folder sorts above a 2 GB file.
+- **The ACTIVITY sparkline works on cloud rows again.** A refresh, a second page, or a listing past
+  its TTL used to empty it — the provider's own items came back with no record attached. Now every
+  child of every listing carries one, and a lone measurement is drawn as the arrival it is instead
+  of a flat line.
+- **A visit is one point, not a mountain range.** Measurements are collapsed into five-minute
+  slots, so opening a folder and stepping back out no longer draws a range out of the two different
+  sizes a folder has. Opening a bucket no longer counts as reading a file, either — one Azure
+  container here had accrued 38430 seconds of "dwell" that way.
+- **Show Cache Savings**, in the palette, is every bucket at once: reads, how many the local copy
+  answered, what was pulled over the wire, what that spared you in egress and requests, and what it
+  is worth at the published rates. The same figures for one object are in its info dialog. A cache
+  hit is the absence of work and used to leave nothing behind; now it is a row.
+
+### One Settings dialog
+
+- **Everything that used to be its own modal is a pane in it** — Add a Favorite, the three cloud
+  sign-ins, About, Check for Updates — picked from the list on the left. A pane never opens a
+  dialog, so nothing stacks on top of anything, and a sign-in that fails while Settings is open
+  moves the selection rather than opening a second window.
+- **The nav says what is connected**: a spinner while a cloud is being probed, a tick once
+  something answered, nothing at all when nobody is signed in. A pane you come back to shows what
+  it was showing instead of probing and listing all over again, and one still waiting on a browser
+  tab is called off when you leave it.
+
+### The grid
+
+- **Zoom**, five steps from 64 to 256 px, on the toolbar magnifiers or ⌘⇧= / ⌘⇧-, per folder.
+- **Previews are documents, scaled** — a markdown, an html page or a notebook is laid out on a
+  page and painted at the tile size, and a short one is scaled up until it reaches the bottom
+  rather than stopping half way. A table preview carries 12 sampled rows and a text preview 20
+  lines, so the bottom of a tile is never empty unless the file is.
+- **Drag a card and the folder keeps that arrangement**; either sort arrow is also the tidy-up,
+  dropping the custom positions and reflowing aligned. A folder nobody dragged, zoomed or sorted
+  writes nothing to storage at all.
+
+### Refresh
+
+- **A refresh that changes nothing now shows that it happened.** The pane is emptied while the
+  request is out and the answer is rendered when it lands, held to a 300 ms floor so a 30 ms reply
+  still reads as a reply. The icon stops turning and the new view appears together.
+- **A build with no version of its own says so** in Check for Updates, instead of claiming an
+  upgrade is waiting.
+
 ## v0.5.2 — 2026-08-30
 
 **Everything the app can do, in one list.** Press ⇧⌘P and the whole app answers: turn a cloud on,
