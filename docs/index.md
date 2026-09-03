@@ -2,9 +2,8 @@
 layout: home
 
 hero:
-  name: ObjectExplorer
   text: Stop downloading files just to look inside
-  tagline: The VS Code for cloud storage. Browse, preview, query and search S3, Google Cloud Storage, Azure Blob and local folders in one window — and every byte stays on your machine.
+  tagline: The VS Code for cloud storage. Explorer, Analyze, Machine Learning all in one app, GCS, Azure Blob, S3, Local folder - and every byte stays on your machine.
   actions:
     - theme: brand
       text: Open it in the browser
