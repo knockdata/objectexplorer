@@ -1,7 +1,7 @@
 {
 	"name": "one",
-	"version": "0.5.4",
-	"description": "ObjectExplorer: VSCode for cloud storage, explore, analytics, plot and machine learning",
+	"version": "0.5.6",
+	"description": "ObjectExplorer: VSCode for cloud storage, explore, analytics and machine learning",
 	"private": true,
 	"type": "module",
 	"scripts": {

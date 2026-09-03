@@ -57,10 +57,8 @@ your browser. **Expand** gives it the whole screen.
 
 ## Where to start
 
-| | |
-|---|---|
-| Never seen it | [What is ObjectExplorer?](/what-is-objectexplorer) |
-| Want it running | [Getting started](/getting-started) |
-| Have a bucket to connect | [Connecting storage](/storage/connect) |
-| Have a table to query | [The notebook](/analyze/notebook) |
-| Wondering what leaves the machine | [Your data stays here](/privacy) |
+- **Never seen it** — [What is ObjectExplorer?](/what-is-objectexplorer)
+- **Want it running** — [Getting started](/getting-started)
+- **Have a bucket to connect** — [Connecting storage](/storage/connect)
+- **Have a table to query** — [The notebook](/analyze/notebook)
+- **Wondering what leaves the machine** — [Your data stays here](/privacy)
