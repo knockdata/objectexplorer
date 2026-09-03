@@ -1,11 +1,16 @@
+<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/assets/icon.png" width="96" alt="ObjectExplorer">
+
 # ObjectExplorer
 
 **The VSCode for Cloud Storage.** Explorer, Analyze and Machine Learning all in one App. 
 GCS, Azure Blob, S3 and local folders in one window — and every byte stays on your machine.
 
-<video src="https://github.com/knockdata/objectexplorer/raw/main/docs/public/video/objectexplorer.mp4" controls></video>
+[<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/video/poster.jpg" width="800" alt="Forty seconds of ObjectExplorer">](https://objectexplorer.com)
+
+🎬 *[Watch the 40-second tour](https://objectexplorer.com)* — it plays on the home page, with sound.
 
 📖 **[Documentation](https://objectexplorer.com)** · 🚀 [Try it in a browser](https://objectexplorer.com/app)
+
 ## What it solves
 
 A cloud console can list your objects and little else. To find out what is actually inside a
@@ -66,18 +71,18 @@ snags are in [troubleshooting](https://objectexplorer.com/reference/troubleshoot
 
 ## Features
 
-| | |
-|---|---|
-| [Connect storage](https://objectexplorer.com/storage/connect) | S3, GCS, Azure Blob, MinIO, local folders — added one root at a time |
-| [Preview anything](https://objectexplorer.com/explore/preview) | parquet, csv, json, SPSS, SAS, pdf, office, images, audio, video, ebooks, sprite sheets, hex |
-| [Column summaries](https://objectexplorer.com/explore/column-summary) | a histogram, a box plot or a split bar under every column header |
-| [Notebook](https://objectexplorer.com/analyze/notebook) | SQL, charts, models and JavaScript over the object you clicked |
-| [Data lake tables](https://objectexplorer.com/analyze/lake) | Delta, Iceberg, Hudi and partitioned exports, read as one table |
-| [Models](https://objectexplorer.com/analyze/model) | LightGBM in WebAssembly, with exact TreeSHAP explanations |
-| [Search](https://objectexplorer.com/explore/search) | local folders and cloud prefixes in the same run |
-| [File management](https://objectexplorer.com/explore/file-management) | copy, move, rename, delete across providers, with a trash and an undo |
-| [Sharing](https://objectexplorer.com/explore/share) | a link to a table, masked or hashed column by column, with an expiry |
-| [Cloud Logging](https://objectexplorer.com/analyze/logging) | a live tail with a timeline, a source tree and a trace waterfall |
+| | | |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/cloud.svg" width="18"> | [Connect storage](https://objectexplorer.com/storage/connect) | S3, GCS, Azure Blob, MinIO, local folders — added one root at a time |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/eye.svg" width="18"> | [Preview anything](https://objectexplorer.com/explore/preview) | parquet, csv, json, SPSS, SAS, pdf, office, images, audio, video, ebooks, sprite sheets, hex |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/chart.svg" width="18"> | [Column summaries](https://objectexplorer.com/explore/column-summary) | a histogram, a box plot or a split bar under every column header |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/notebook.svg" width="18"> | [Notebook](https://objectexplorer.com/analyze/notebook) | SQL, charts, models and JavaScript over the object you clicked |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/layers.svg" width="18"> | [Data lake tables](https://objectexplorer.com/analyze/lake) | Delta, Iceberg, Hudi and partitioned exports, read as one table |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/model.svg" width="18"> | [Models](https://objectexplorer.com/analyze/model) | LightGBM in WebAssembly, with exact TreeSHAP explanations |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/search.svg" width="18"> | [Search](https://objectexplorer.com/explore/search) | local folders and cloud prefixes in the same run |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/files.svg" width="18"> | [File management](https://objectexplorer.com/explore/file-management) | copy, move, rename, delete across providers, with a trash and an undo |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/share.svg" width="18"> | [Sharing](https://objectexplorer.com/explore/share) | a link to a table, masked or hashed column by column, with an expiry |
+| <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/icon/log.svg" width="18"> | [Cloud Logging](https://objectexplorer.com/analyze/logging) | a live tail with a timeline, a source tree and a trace waterfall |
 
 The whole list of formats is on [every format](https://objectexplorer.com/formats/).
 
