@@ -210,11 +210,8 @@ async function record() {
 		fs.copyFileSync(silent, mp4)
 	}
 
-	// the hero on the docs page autoplays, which browsers only allow muted
-	ffmpeg(["-i", silent, "-an", "-c:v", "libvpx-vp9", "-b:v", "1200k", "-crf", "34",
-		path.join(outDir, "objectexplorer-muted.webm")])
-	ffmpeg(["-i", silent, "-an", "-c:v", "libx264", "-preset", "slow", "-crf", "26",
-		"-pix_fmt", "yuv420p", path.join(outDir, "objectexplorer-muted.mp4")])
+	// One encode, with its music. The page plays it behind controls rather than autoplaying, so
+	// there is no silent copy to keep: a reader who wants it quiet uses the mute button.
 	ffmpeg(["-i", path.join(frameDir, `${String(Math.round(11.6 * FPS)).padStart(5, "0")}.jpg`),
 		"-q:v", "3", path.join(outDir, "poster.jpg")])
 

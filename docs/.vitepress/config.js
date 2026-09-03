@@ -30,6 +30,9 @@ export default defineConfig({
 			{ text: "Formats", link: "/formats/" },
 			{ text: "Changelog", link: "/changelog" },
 			{ text: "Download", link: "/getting-started#download" },
+			// the running app, on the same origin once this site is objectexplorer.com. Absolute
+			// so it still reaches the app from the GitHub Pages copy of these pages.
+			{ text: "Open app", link: "https://objectexplorer.com/app" },
 		],
 		sidebar: [
 			{

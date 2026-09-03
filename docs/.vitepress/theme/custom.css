@@ -5,6 +5,32 @@
 	--vp-c-brand-2: #6cb0ff;
 	--vp-c-brand-3: #2b7fe0;
 	--vp-c-brand-soft: rgba(74, 158, 255, 0.14);
+	/* an extension in backticks is a name, not a link. VitePress paints inline code with the
+	   brand colour, which turns a table of formats into twenty blue words that lead nowhere. */
+	--vp-code-color: var(--vp-c-text-1);
+}
+
+/* The app's own slim scrollbar (ooxml/utils.js getSlimScrollbarCSS): 6px, no track, a thumb the
+   colour of a divider — so the site scrolls the way the product does. */
+* {
+	scrollbar-color: var(--vp-c-divider) transparent;
+	scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+	height: 6px;
+	width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-clip: content-box;
+	background-color: var(--vp-c-divider);
+	border: 2px solid transparent;
+	border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
 }
 
 .dark {

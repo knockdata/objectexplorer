@@ -10,6 +10,9 @@ hero:
     alt: ObjectExplorer listing a folder of parquet, delta, SPSS and SAS files
   actions:
     - theme: brand
+      text: Open it in the browser
+      link: https://objectexplorer.com/app
+    - theme: alt
       text: Get started
       link: /getting-started
     - theme: alt
@@ -42,12 +45,9 @@ features:
 
 ## Forty seconds of it
 
-<video class="promo-video" controls muted playsinline loop poster="/video/poster.jpg">
-	<source src="/video/objectexplorer-muted.webm" type="video/webm">
-	<source src="/video/objectexplorer-muted.mp4" type="video/mp4">
+<video class="promo-video" controls playsinline loop poster="/video/poster.jpg">
+	<source src="/video/objectexplorer.mp4" type="video/mp4">
 </video>
-
-There is [a version with sound](/video/objectexplorer.mp4) too.
 
 ## Where to start
 
