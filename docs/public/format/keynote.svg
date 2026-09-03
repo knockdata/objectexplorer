@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Screen group with perspective (top narrower, bottom wider) -->
+  <g>
+    <!-- Board/Pod as trapezoid -->
+    <path d="M18 12 L82 12 L88 52 L12 52 Z" fill="#12a8ff"/>
+
+    <!-- Pie chart -->
+    <!-- <circle cx="50" cy="30" r="13" fill="#4CD964"/> -->
+    <path d="M50 30 L50 17 A13 13 0 0 1 61 24 Z" fill="#FF9500"/>
+    <path d="M50 30 L61 24 A13 13 0 0 1 57 41 Z" fill="#FF3B30"/>
+    <path d="M50 30 L57 41 A13 13 0 0 1 43 41 Z" fill="#5856D6"/>
+    <path d="M50 30 L43 41 A13 13 0 0 1 39 24 Z" fill="#007AFF"/>
+    <path d="M50 30 L39 24 A13 14 0 0 1 50 17 Z" fill="#FFCC00"/>
+
+    <!-- Blue line -->
+    <rect x="18" y="46" width="64" height="4" rx="2" fill="white"/>
+  </g>
+
+  <!-- Stand pole -->
+  <rect x="46" y="56" width="8" height="30" fill="#2493ff"/>
+
+  <!-- Stand base -->
+  <rect x="30" y="86" width="40" height="6" rx="3" fill="#2493ff"/>
+</svg>

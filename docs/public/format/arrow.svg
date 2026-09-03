@@ -1,0 +1,7 @@
+<!-- Apache Arrow chevrons, from arrow.apache.org/img/arrow-logo_chevrons (Apache-2.0).
+     Monochrome like the original, following the editor foreground so it reads in both themes. -->
+<svg viewBox="-3 -3 29 29" xmlns="http://www.w3.org/2000/svg" fill="var(--vscode-editor-foreground)">
+	<path d="M0.25 2.2 10.04 11.99 0.25 21.79 0.25 17.87 6.13 11.99 0.25 6.12z"/>
+	<path d="M7.11 2.2 16.89 11.99 7.11 21.79 7.11 17.87 12.99 11.99 7.11 6.12z"/>
+	<path d="M13.96 2.2 23.75 11.99 13.96 21.79 13.96 17.87 19.84 11.99 13.96 6.12z"/>
+</svg>
