@@ -92,8 +92,75 @@
 	width: 100%;
 }
 
+/* The hero picture is the film. It sits under the poster frame until a click plays it full screen,
+   so the first thing on the page is the product moving rather than a still of it. */
+.hero-video-frame {
+	cursor: pointer;
+	display: block;
+	position: relative;
+}
+
+.hero-video {
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 12px;
+	display: block;
+	width: 100%;
+}
+
+.hero-video-play {
+	align-items: center;
+	background: rgba(20, 20, 24, 0.72);
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 50%;
+	color: #fff;
+	display: flex;
+	height: 64px;
+	justify-content: center;
+	left: 50%;
+	padding-left: 4px;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	transition: background 0.2s;
+	width: 64px;
+}
+
+.hero-video-frame:hover .hero-video-play {
+	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
 /* the app embedded on the home page — the landing's own frame, which gave it the height of a real
    window rather than of a figure */
+.live-app-frame {
+	position: relative;
+}
+
+/* above the frame rather than over it: floated on top, the button sat under the sticky nav bar
+   for as long as the page was scrolled to the embed */
+.live-app-bar {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 16px;
+}
+
+.live-app-expand {
+	align-items: center;
+	background: var(--vp-c-bg-elv);
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 8px;
+	color: var(--vp-c-text-1);
+	cursor: pointer;
+	display: flex;
+	font-size: 13px;
+	gap: 6px;
+	padding: 6px 12px;
+}
+
+.live-app-expand:hover {
+	border-color: var(--vp-c-brand-1);
+	color: var(--vp-c-brand-1);
+}
+
 .live-app {
 	/* the app paints its own dark ground once it boots; without this the empty frame is a sheet
 	   of white on a dark page for as long as the load takes */
@@ -102,14 +169,12 @@
 	border-radius: 16px;
 	display: block;
 	height: 80vh;
-	margin: 24px 0;
+	margin: 8px 0 24px;
 	width: 100%;
 }
 
-.promo-video {
+.live-app-away {
 	border: 1px solid var(--vp-c-divider);
 	border-radius: 10px;
-	display: block;
-	margin: 24px 0;
-	width: 100%;
+	padding: 16px;
 }

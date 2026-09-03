@@ -32,8 +32,9 @@ export default defineConfig({
 			{ text: "Changelog", link: "/changelog" },
 			{ text: "Download", link: "/getting-started#download" },
 			// the running app, on the same origin once this site is objectexplorer.com. Absolute
-			// so it still reaches the app from the GitHub Pages copy of these pages.
-			{ text: "Open app", link: "https://objectexplorer.com/app" },
+			// so it still reaches the app from the GitHub Pages copy of these pages, and in this
+			// tab — a reader who wants a second one right-clicks, which no site can take away.
+			{ text: "Open app", link: "https://objectexplorer.com/app", target: "_self", noIcon: true },
 		],
 		sidebar: [
 			{
