@@ -11,17 +11,20 @@
 // constant, and a downloaded newer one is only ever "ready", never live.
 import { versionOf, newestBundle, isNewer, ffmpegDirFor, isValidFfmpeg, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
 import { fetchLatest, downloadUpdate } from "./update.js"
+import { spawn } from "node:child_process"
+import fs from "node:fs"
+import { launchGuardFile } from "./paths.js"
 import { ffmpegVersion, duckdbVersion, sqliteVersion } from "./version.js"
 import { log, logError } from "./log.js"
 
-export default function VersionManager({ bundleDir }) {
+export default function VersionManager({ bundleDir, launchArgs = [] }) {
 	// the folder this session is actually serving, not the newest one on disk
 	const running = versionOf(bundleDir)
 	let latest = null
 	let checkedAt = null
 	let error = ""
 
-	return { getStatus, check, upgrade }
+	return { getStatus, check, upgrade, restart }
 
 	// Never touches the network: the dialog opens on this, then calls check.
 	function getStatus() {
@@ -74,6 +77,29 @@ export default function VersionManager({ bundleDir }) {
 			log("nothing to upgrade: running", running, "ready", readyBundle(), "latest", latest && latest.version)
 		}
 		return getStatus()
+	}
+
+	// Starts the bundle upgrade() downloaded, which is the only way it ever runs: bundle.js picks
+	// the newest folder at launch and this session is serving the one it picked at its own.
+	//
+	// The whole process has to go, not just this thread. The main thread is blocked inside the
+	// native window loop and cannot be asked to leave it, so a signal to our own pid is what
+	// closes the window — process.exit() here would end the worker and leave the window open.
+	//
+	// The launch guard goes first, or main.js reads the replacement as Windows' install-time
+	// double launch and exits it again three seconds later.
+	function restart() {
+		log("restarting:", process.execPath, launchArgs.join(" "))
+		try {
+			fs.rmSync(launchGuardFile, { force: true })
+		} catch (error) {
+			logError("could not clear the launch guard:", error)
+		}
+		spawn(process.execPath, launchArgs, { detached: true, stdio: "ignore", windowsHide: true }).unref()
+		// after the answer this request is still writing, so the dialog knows the window it is
+		// in is about to close
+		setTimeout(function () { process.kill(process.pid) }, 300)
+		return { restarting: true }
 	}
 
 	// A bundle downloaded by an earlier session or by the button below, waiting for a restart.

@@ -4,6 +4,57 @@ What changed in each version, and why. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.5.4 — 2026-09-03
+
+**A table can leave the machine now.** One share icon, one dialog, and a link that opens the rows —
+or a model you just trained — in the app at objectexplorer.com/app, on a machine with none of your
+storage, none of your accounts and nothing installed. What you hand over is decided column by
+column before anything is sent.
+
+### Sharing
+
+- **The share icon is where the thing is**: in the side toolbar of anything showing rows, and in a
+  cell's own toolbar, before Remove. A folder listing has none — a list of names is not something
+  to hand somebody, and the object under it is.
+- **Every column goes as it is until you say otherwise.** Beside each one: Mask, Hash or FPE.
+  *Mask* covers a range of characters with `*` — one slider, a handle at each end, and the range
+  names what is hidden, so dragging over a name covers what you drag over. *Hash* is SHA-1, so
+  equal values stay equal and a hashed column still joins and still counts. *FPE* is
+  format-preserving: a digit becomes a digit and a letter a letter of the same case, so a phone
+  number still reads as a phone number and still validates. Its key is made when the dialog opens
+  and never enters the link — `Copy key` is the only way it leaves your browser.
+- **The preview is the app's own grid**, showing three rows sampled from the start, the middle and
+  the end of the table — each one as it is and then as it goes, so what you are about to send is
+  read rather than imagined.
+- **A link lives for 1D, 1W, 1M, 3M or 1Y**, and *Read and burn* deletes it the moment somebody
+  opens it. Small shares travel whole inside the link's fragment, which no server ever sees; bigger
+  ones — and every burn — are stored under a name made of their expiry and their own digest, and
+  swept when that expiry passes.
+- **Copy URL, or Email**, which opens your own mail app with the link in it. Nothing pretends to
+  know whether Teams or Slack is installed, because a page cannot.
+- **A trained model shares as a model.** The payload carries LightGBM's own text format, so the
+  receiver can predict with it here, or load it in Python with
+  `lgb.Booster(model_str=…)` — without a single training row going with it.
+
+### The grid
+
+- **A column's name sits over its own values.** A column of numbers reads down its right edge, and
+  its header is on that edge now; the space every header used to reserve for a sort arrow it was
+  not drawing is gone.
+- **A coordinate column no longer takes the grid down with it** when it holds text rather than a
+  number — a masked latitude, or a csv whose latitudes read as text.
+
+### Updating
+
+- **Update and Restart are one button that changes as it goes**, and the app comes back on the
+  version it just installed rather than the one it was started from.
+
+### Fixed
+
+- **The caret sits on the character it is on.** In the editor and the SQL cell above it, the drawn
+  text and the text you type into are laid out by the same rules — tabs, and the characters html
+  spells its own way, included.
+
 ## v0.5.3 — 2026-09-02
 
 **The explorer can change what it lists.** Copy, cut, paste, drag between roots, rename, delete —

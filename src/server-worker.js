@@ -18,7 +18,7 @@ import { userData } from "./paths.js"
 import { log, logError } from "./log.js"
 
 async function start() {
-	const { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port } = workerData
+	const { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port, launchArgs } = workerData
 	const appDir = path.join(bundleDir, "app")
 	const serverPath = path.join(bundleDir, "server", "WebServer.mjs")
 
@@ -40,7 +40,7 @@ async function start() {
 	// UI has to hand an external url back to the server to open in the default browser.
 	// The backend serves the Check for Updates dialog out of this, and the launch check below
 	// is the same call the dialog's Upgrade button makes.
-	const versionManager = VersionManager({ bundleDir })
+	const versionManager = VersionManager({ bundleDir, launchArgs })
 
 	const server = await WebServer({
 		mode: "prod",

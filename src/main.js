@@ -20,7 +20,7 @@ import { Worker, SHARE_ENV } from "node:worker_threads"
 import { createWindow, applyWindowsArgs, showAlert } from "./webview.js"
 import { openBrowser } from "./browser.js"
 import { resolveBundleDir, resolveFfmpegDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
-import { userData, logFile } from "./paths.js"
+import { userData, logFile, launchGuardFile } from "./paths.js"
 import { log, logError } from "./log.js"
 import { version, bundleVersion } from "./version.js"
 
@@ -78,7 +78,6 @@ async function main() {
 // fire until close. Comparing against the guard file's mtime instead needs no timer at all —
 // the next launch, whenever it comes, does the one comparison and overwrites the timestamp for
 // whichever launch comes after it.
-const launchGuardFile = path.join(userData, "objectexplorer.last-launch")
 const launchGuardWindowMs = 3000
 
 function isDuplicateLaunch() {
@@ -109,6 +108,17 @@ function readAsset(name) {
 	}
 }
 
+// What starting this app again takes, alongside process.execPath. As a single executable argv[1]
+// is the executable itself and the arguments follow it; run from sources — `node src/main.js` —
+// argv[1] is the script, and node needs it to have a program to run at all.
+function launchArgs() {
+	if (sea.isSea()) {
+		return process.argv.slice(2)
+	} else {
+		return process.argv.slice(1)
+	}
+}
+
 function startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir) {
 	const source = Buffer.from(readAsset("worker.js")).toString("utf8")
 	// SHARE_ENV, because the backend publishes OBJECTFS_SERVER into the environment once it knows
@@ -121,7 +131,9 @@ function startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir) {
 	const worker = new Worker(source, {
 		eval: true,
 		env: SHARE_ENV,
-		workerData: { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port: preferredPort },
+		// the launch arguments go with it: a worker's own process.argv is [execPath, "[worker
+		// eval]"], and VersionManager restarts the app with the arguments it was started with
+		workerData: { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port: preferredPort, launchArgs: launchArgs() },
 	})
 	// a worker that outlives the main thread's blocking run() keeps the process alive on its
 	// own, so nothing here needs to hold a reference

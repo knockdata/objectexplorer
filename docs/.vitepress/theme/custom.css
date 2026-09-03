@@ -1,0 +1,50 @@
+/* The app's own colours, so a page and a screenshot of the app agree: the accent is the blue of a
+   selected row, and the page ground is the editor's near-black rather than VitePress's grey. */
+:root {
+	--vp-c-brand-1: #4a9eff;
+	--vp-c-brand-2: #6cb0ff;
+	--vp-c-brand-3: #2b7fe0;
+	--vp-c-brand-soft: rgba(74, 158, 255, 0.14);
+}
+
+.dark {
+	--vp-c-bg: #131417;
+	--vp-c-bg-alt: #0e0f12;
+	--vp-c-bg-elv: #1a1c21;
+	--vp-c-divider: #2a2d33;
+}
+
+.VPHero .name {
+	background: linear-gradient(120deg, #4a9eff, #9d7bff);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+/* Screenshots are the argument on most pages, so they get the app's own frame rather than sitting
+   loose on the page. */
+.vp-doc img {
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 8px;
+	display: block;
+	margin: 20px 0;
+}
+
+/* the format icons in a table cell are 18px marks, not figures */
+.vp-doc td img {
+	border: none;
+	display: inline;
+	margin: 0;
+}
+
+.vp-doc table {
+	display: table;
+	width: 100%;
+}
+
+.promo-video {
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 10px;
+	display: block;
+	margin: 24px 0;
+	width: 100%;
+}
