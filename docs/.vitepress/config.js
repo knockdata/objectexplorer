@@ -1,15 +1,21 @@
 import { defineConfig } from "vitepress"
 
+// Where the built site is rooted. docs.objectexplorer.com serves it at the domain root, which
+// is the default; GitHub Pages serves the same build under /objectexplorer/, and sets DOCS_BASE
+// to say so. Everything VitePress generates — assets, links, the logo — is prefixed with this.
+const base = process.env.DOCS_BASE ?? "/"
+
 // The documentation site, served at docs.objectexplorer.com. Dark is the default —
 // the app is dark, and every screenshot on these pages was taken in it.
 export default defineConfig({
+	base,
 	title: "ObjectExplorer",
 	description: "Browse, preview, query and search S3, GCS, Azure Blob and local folders in one window",
 	appearance: "dark",
 	cleanUrls: true,
 	lastUpdated: true,
 	head: [
-		["link", { rel: "icon", type: "image/png", href: "/img/64.png" }],
+		["link", { rel: "icon", type: "image/png", href: `${base}img/64.png` }],
 		["meta", { property: "og:title", content: "ObjectExplorer" }],
 		["meta", { property: "og:description", content: "The VS Code for cloud storage. Every byte stays on your machine." }],
 		["meta", { property: "og:image", content: "https://docs.objectexplorer.com/shot/hero.png" }],

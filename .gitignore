@@ -23,6 +23,10 @@ objectexplorer-mockup-v4.html
 # the docs site: .* above hides every dot-name, and .vitepress is one
 !docs/.vitepress/
 
+# same reason: .* swallowed .github/workflows/docs.yml, so a commit -a never saw it and the
+# Docs workflow simply did not exist on GitHub
+!.github/
+
 # the promo film is built from these; only the video in docs/public/video is kept
 promo/frames/
 promo/preview/

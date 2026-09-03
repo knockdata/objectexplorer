@@ -36,7 +36,12 @@ jobs:
         with:
           node-version: 24
       - run: npm install
+      # Pages serves this repo's site under /objectexplorer/, not at a domain root, so the
+      # build has to be rooted there or every asset and link answers 404. docs.sh builds the
+      # same pages with no DOCS_BASE for docs.objectexplorer.com, which is served at /.
       - run: npm run docs:build
+        env:
+          DOCS_BASE: /objectexplorer/
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

@@ -14,7 +14,7 @@
 | <img src="/format/text.svg" width="18"> | Text and code | `md` `markdown` `txt` `html` `xml` `xsl` `js` `py`, syntax highlighted |
 | <img src="/format/jupyter.svg" width="18"> | Notebooks | `ipynb` — cells with their outputs |
 | <img src="/format/image.svg" width="18"> | [Images](/formats/images) | `png` `jpg` `jpeg` `webp` `svg` `ico` — with EXIF, GPS and embedded text |
-| <img src="/format/music.svg" width="18"> | [Audio](/formats/media) | `mp3` `wav` `m4a` `aiff` `bwf` `3gpp` — waveform and spectrogram |
+| <img src="/format/music.svg" width="18"> | [Audio](/formats/media) | `mp3` `wav` `m4a` `aiff` `bwf` `3gpp` — played in place, frames and chunks in structure mode |
 | <img src="/format/film.svg" width="18"> | [Video](/formats/media) | played in place, no download first |
 | <img src="/format/excalidraw.svg" width="18"> | Drawings | `excalidraw` |
 | <img src="/format/mermaid.svg" width="18"> | Diagrams | `mmd` `mermaid`, rendered |
