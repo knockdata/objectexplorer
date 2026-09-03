@@ -80,11 +80,13 @@
 	margin: 20px 0;
 }
 
-/* the format icons in a table cell are 18px marks, not figures */
+/* the format icons in a table cell are 18px marks, not figures — and they now stand beside the
+   words they mark, so they sit on the text's own line */
 .vp-doc td img {
 	border: none;
 	display: inline;
 	margin: 0;
+	vertical-align: text-bottom;
 }
 
 .vp-doc table {
