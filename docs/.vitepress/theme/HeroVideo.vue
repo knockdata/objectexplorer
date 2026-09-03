@@ -27,7 +27,7 @@ function expand() {
 			ref="video"
 			class="hero-video"
 			:src="withBase('/video/objectexplorer.mp4')"
-			:poster="withBase('/video/poster.jpg')"
+			:poster="withBase('/video/poster.png')"
 			playsinline
 			loop
 		></video>

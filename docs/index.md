@@ -46,12 +46,6 @@ features:
     icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
 ---
 
-## Try it right here
-
-This is the app itself, running in the frame — the same build the desktop binary and `npx` run,
-demonstrating itself. Click into it: the buckets are a public demo, and nothing you do in it leaves
-your browser. **Expand** gives it the whole screen.
-
 <LiveApp />
 
 ## Where to start

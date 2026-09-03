@@ -179,5 +179,14 @@
 .live-app-away {
 	border: 1px solid var(--vp-c-divider);
 	border-radius: 10px;
-	padding: 16px;
+	line-height: 1.6;
+	padding: 16px 20px;
+}
+
+/* "Open it in the browser" is a promise this device cannot keep: the app wants a wide window and a
+   pointer, so on a phone or a tablet the hero leads with installing it instead. */
+@media (max-width: 899px), (pointer: coarse) {
+	.VPHero .actions .VPButton.brand {
+		display: none;
+	}
 }

@@ -1,11 +1,11 @@
-<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/assets/icon.png" width="96" alt="ObjectExplorer">
 
-# ObjectExplorer
+
+# <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/assets/icon.png" width="32" alt="ObjectExplorer"> ObjectExplorer
 
 **The VSCode for Cloud Storage.** Explorer, Analyze and Machine Learning all in one App. 
 GCS, Azure Blob, S3 and local folders in one window — and every byte stays on your machine.
 
-[<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/video/poster.jpg" width="800" alt="Forty seconds of ObjectExplorer">](https://objectexplorer.com)
+[<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/video/poster.png" width="800" alt="Forty seconds of ObjectExplorer">](https://objectexplorer.com)
 
 🎬 *[Watch the 40-second tour](https://objectexplorer.com)* — it plays on the home page, with sound.
 

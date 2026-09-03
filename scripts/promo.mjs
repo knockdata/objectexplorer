@@ -195,19 +195,23 @@ async function record() {
 	chrome.kill()
 
 	const silent = path.join(frameDir, "silent.mp4")
+	// -color_range tv with yuv420p: the frames are jpegs, whose full range would otherwise carry
+	// through as yuvj420p and confuse players that expect broadcast range
 	ffmpeg(["-framerate", String(FPS), "-i", path.join(frameDir, "%05d.jpg"),
-		"-c:v", "libx264", "-preset", "slow", "-crf", "23", "-pix_fmt", "yuv420p", silent])
+		"-c:v", "libx264", "-preset", "slow", "-crf", "23", "-pix_fmt", "yuv420p",
+		"-color_range", "tv", silent])
 
 	const mp4 = path.join(outDir, "objectexplorer.mp4")
 	if (music) {
 		console.log("music:", music)
 		ffmpeg(["-i", silent, "-i", music,
 			"-filter_complex", `[1:a]afade=t=out:st=${(frames / FPS - 2.5).toFixed(2)}:d=2.5[a]`,
-			"-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-shortest", mp4])
+			"-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-shortest",
+		"-movflags", "+faststart", mp4])
 	}
 	else {
 		console.log("no track in promo/music — the mp4 comes out silent")
-		fs.copyFileSync(silent, mp4)
+		ffmpeg(["-i", silent, "-c", "copy", "-movflags", "+faststart", mp4])
 	}
 
 	// One encode, with its music. The page plays it behind controls rather than autoplaying, so
