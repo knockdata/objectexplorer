@@ -1,10 +1,11 @@
 # ObjectExplorer
 
-**The VSCode for Cloud Storage.** Browse, preview, query and search S3, Google Cloud Storage,
-Azure Blob and local folders in one window — and every byte stays on your machine.
+**The VSCode for Cloud Storage.** Explorer, Analyze and Machine Learning all in one App. 
+GCS, Azure Blob, S3 and local folders in one window — and every byte stays on your machine.
 
-📖 **[Documentation](https://objectexplorer.com)** · 🎬 [Watch the 40-second tour](https://objectexplorer.com/video/objectexplorer.mp4) · 🚀 [Try it in a browser](https://objectexplorer.com/app)
+<video src="https://github.com/knockdata/objectexplorer/raw/main/docs/public/video/objectexplorer.mp4" controls></video>
 
+📖 **[Documentation](https://objectexplorer.com)** · 🚀 [Try it in a browser](https://objectexplorer.com/app)
 ## What it solves
 
 A cloud console can list your objects and little else. To find out what is actually inside a
