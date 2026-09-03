@@ -40,10 +40,35 @@
 	--vp-c-divider: #2a2d33;
 }
 
+/* The old landing's own hero: the promise carried the blue → cyan → purple gradient and the
+   wordmark sat under it in plain blue. Two gradients stacked read as noise, so the headline keeps
+   it and the name goes solid. */
 .VPHero .name {
-	background: linear-gradient(120deg, #4a9eff, #9d7bff);
+	color: var(--vp-c-brand-1);
+}
+
+.VPHero .text {
+	background: linear-gradient(to right, rgb(0, 128, 255), rgb(51, 221, 255), hsl(270, 70%, 57%));
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+}
+
+/* and its primary button, which glowed rather than sat flat */
+.VPButton.brand {
+	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+	border-color: transparent;
+	box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35);
+}
+
+.VPButton.brand:hover {
+	background: linear-gradient(135deg, #7c7ff5, #9d6ff8);
+	border-color: transparent;
+}
+
+/* the landing drew its card icons in the app's green (app.css: .card_icon) */
+.VPFeature .icon {
+	background: transparent;
+	color: hsl(150, 100%, 42%);
 }
 
 /* Screenshots are the argument on most pages, so they get the app's own frame rather than sitting

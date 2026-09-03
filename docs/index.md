@@ -26,21 +26,27 @@ features:
   - title: One window for every provider
     details: S3, GCS, Azure Blob, MinIO and your local disks in the same tree, with the same keyboard shortcuts.
     link: /storage/connect
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>'
   - title: Preview instead of download
     details: Parquet, SPSS, SAS, PDF, office files, ebooks, sprite sheets — rendered in place, by a parser running on your machine.
     link: /explore/preview
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
   - title: Query, chart and model in place
     details: A table opens as a notebook — SQL over the object, a chart of what came back, a gradient boosting model over the rows.
     link: /analyze/notebook
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'
   - title: Delta, Iceberg and Hudi are just tables
     details: Name the folder in a query and it answers, deletes, schema evolution and merge-on-read included.
     link: /analyze/lake
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>'
   - title: Search across buckets
     details: One query over local folders and cloud prefixes at once, with include and exclude globs.
     link: /explore/search
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>'
   - title: Your data never leaves your machine
     details: A local HTTP server and the OS webview in one binary. No backend sees your objects, because there is none.
     link: /privacy
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
 ---
 
 ## Try it right here
