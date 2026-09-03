@@ -26,8 +26,9 @@ rsync -av --delete \
 	--exclude='/releases/' --exclude='/download/' --exclude='/build/' \
 	docs/.vitepress/dist/ node@explorer:/www/sites/objectexplorer.com/
 
-# The vhost and its certificate already exist for this domain, so no restart is needed to serve
-# the new files — serveStatic reads them from disk on every request.
+# No restart: serveStatic reads these files from disk on every request, so the new pages are live
+# the moment the rsync finishes. A restart is only what a NEW domain needs — the vhost list and the
+# certificates are read at start — and rock2/deploy.sh is what does that.
 
 # A URL is the only honest check, and it is worth retrying: a request can lose the race with a
 # restart happening for other reasons. Four shapes, because each exercises a different rule —
