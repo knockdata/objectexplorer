@@ -1,0 +1,45 @@
+name: Docs
+
+# The documentation site at docs.objectexplorer.com. It is built from docs/ with VitePress and
+# published to GitHub Pages, which is why this is its own workflow: release.yml ships the product
+# and must never wait on a docs build, and a typo fix in a page must never touch the binaries.
+#
+# The domain comes from docs/public/CNAME, which VitePress copies into the built site.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "CHANGELOG.md"
+      - "package.json"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch: {}
+
+# One deploy at a time, and a newer push wins rather than queueing behind an older one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install
+      - run: npm run docs:build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
