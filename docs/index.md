@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: ObjectExplorer
-  text: The VS Code for cloud storage
-  tagline: Browse, preview, query and search S3, Google Cloud Storage, Azure Blob and local folders in one window — and every byte stays on your machine.
+  text: Stop downloading files just to look inside
+  tagline: The VS Code for cloud storage. Browse, preview, query and search S3, Google Cloud Storage, Azure Blob and local folders in one window — and every byte stays on your machine.
   image:
     src: /shot/hero.png
     alt: ObjectExplorer listing a folder of parquet, delta, SPSS and SAS files
@@ -42,6 +42,16 @@ features:
     details: A local HTTP server and the OS webview in one binary. No backend sees your objects, because there is none.
     link: /privacy
 ---
+
+## Try it right here
+
+This is the app itself, running in the frame — the same build the desktop binary and `npx` run,
+demonstrating itself. Click into it: the buckets are a public demo, and nothing you do in it leaves
+your browser.
+
+<iframe class="live-app" src="https://objectexplorer.com/app/?animate" title="ObjectExplorer running in the browser" loading="lazy" allow="midi; autoplay"></iframe>
+
+Or [open it in its own tab](https://objectexplorer.com/app).
 
 ## Forty seconds of it
 

@@ -1,17 +1,11 @@
 #!/usr/bin/env bash
-# Publishes the documentation site to https://docs.objectexplorer.com.
+# Publishes the site to https://objectexplorer.com — the landing page and the documentation, which
+# are one VitePress site now. The old nano landing in rock2/sites/explorer is retired: this build
+# is what the apex serves.
 #
-# The site is served by our own front door, not by GitHub Pages: rock2/server/main.js reads
-# server/sites/ and gives every folder in it its own ACME certificate and static root, so
-# "adding a domain" is nothing more than putting the built site in the folder named after it.
-# DNS already points docs.objectexplorer.com at that host.
-#
-# rock2/deploy.sh rsyncs server/ without --delete, so a deploy from there leaves this folder
-# alone — and this script never touches the rest of the host.
-#
-# The restart is what makes a new domain real: the vhost list and the certificates are read at
-# start, so the very first run is when ACME issues the certificate for docs.objectexplorer.com.
-# Asking for a restart on later runs costs a second and keeps one path for both cases.
+# The front door in rock2/server serves sites/<domain>/ as that domain's static root, and answers
+# /app, /api and the source maps from mountApp BEFORE it ever reaches these files — so publishing
+# the site here cannot take the app down.
 #
 #   ./docs.sh
 set -euo pipefail
@@ -20,16 +14,24 @@ cd "$(dirname "$0")"
 
 npm run docs:build
 
-# --delete so a page that was removed from docs/ stops being served. It is safe because the
-# path is one leaf folder, the site's own: nothing else on the host lives under it.
-rsync -av --delete docs/.vitepress/dist/ node@explorer:/www/sites/docs.objectexplorer.com/
+# --delete, so a page removed from docs/ stops being served and the retired landing's index.js and
+# index.css do not linger next to the new home page. Every exclusion is anchored with a leading '/'
+# because an unanchored one matches at every depth: `--exclude='app/'` would also swallow any
+# folder named app inside the built site. These are the host's, not the site's:
+#   app/ maps/ WebServer.mjs   the product, installed from npm and mounted at /app
+#   releases/                  the OTA feed the desktop app polls — deleting it breaks updates
+#   download/ build/           installers and build leftovers that predate this site
+rsync -av --delete \
+	--exclude='/app/' --exclude='/maps/' --exclude='/WebServer.mjs' \
+	--exclude='/releases/' --exclude='/download/' --exclude='/build/' \
+	docs/.vitepress/dist/ node@explorer:/www/sites/objectexplorer.com/
 
-ssh explorer systemctl restart explorer
+# The vhost and its certificate already exist for this domain, so no restart is needed to serve
+# the new files — serveStatic reads them from disk on every request.
 
-# A check straight after the restart races the server: the certificates, every vhost and the
-# port 80 redirect all come up before it binds. Give each URL 30 seconds before calling it
-# broken. The three URLs are the three ways this site is addressed — the root, a page, and a
-# section index — and the last two are exactly what serveStatic resolves without an extension.
+# A URL is the only honest check, and it is worth retrying: a request can lose the race with a
+# restart happening for other reasons. Four shapes, because each exercises a different rule —
+# the root, a page without .html, a section index, and the app the front door mounts.
 function verify {
 	local url=$1
 	local what=$2
@@ -51,8 +53,9 @@ function verify {
 	fi
 }
 
-verify https://docs.objectexplorer.com/ "docs root"
-verify https://docs.objectexplorer.com/reference/shortcuts "a page, addressed without .html"
-verify https://docs.objectexplorer.com/formats/ "a section index"
+verify https://objectexplorer.com/ "the home page"
+verify https://objectexplorer.com/reference/shortcuts "a page, addressed without .html"
+verify https://objectexplorer.com/formats/ "a section index"
+verify https://objectexplorer.com/app/ "the app, still mounted at /app"
 
-echo "published to https://docs.objectexplorer.com"
+echo "published to https://objectexplorer.com"

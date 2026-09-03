@@ -3,7 +3,7 @@
 **The VSCode for Cloud Storage.** Browse, preview, query and search S3, Google Cloud Storage,
 Azure Blob and local folders in one window — and every byte stays on your machine.
 
-📖 **[Documentation](https://docs.objectexplorer.com)** · 🎬 [Watch the 40-second tour](https://docs.objectexplorer.com/video/objectexplorer.mp4) · 🚀 [Try it in a browser](https://objectexplorer.com/app)
+📖 **[Documentation](https://objectexplorer.com)** · 🎬 [Watch the 40-second tour](https://objectexplorer.com/video/objectexplorer.mp4) · 🚀 [Try it in a browser](https://objectexplorer.com/app)
 
 ## What it solves
 
@@ -37,7 +37,7 @@ that sees your data, because there is nothing for it to see. Credentials stay lo
 that is not to your own storage is a version check against the npm registry.
 
 Which also means there is no data-processing agreement to negotiate before anyone can look at a
-bucket. → [the whole argument](https://docs.objectexplorer.com/privacy)
+bucket. → [the whole argument](https://objectexplorer.com/privacy)
 
 ## Install
 
@@ -60,30 +60,30 @@ npx @knockdata/objectexplorer
 ```
 
 Per-platform notes — notarization, SmartScreen, the WebKitGTK package Linux needs — are in
-[getting started](https://docs.objectexplorer.com/getting-started), and the answers to the usual
-snags are in [troubleshooting](https://docs.objectexplorer.com/reference/troubleshooting).
+[getting started](https://objectexplorer.com/getting-started), and the answers to the usual
+snags are in [troubleshooting](https://objectexplorer.com/reference/troubleshooting).
 
 ## Features
 
 | | |
 |---|---|
-| [Connect storage](https://docs.objectexplorer.com/storage/connect) | S3, GCS, Azure Blob, MinIO, local folders — added one root at a time |
-| [Preview anything](https://docs.objectexplorer.com/explore/preview) | parquet, csv, json, SPSS, SAS, pdf, office, images, audio, video, ebooks, sprite sheets, hex |
-| [Column summaries](https://docs.objectexplorer.com/explore/column-summary) | a histogram, a box plot or a split bar under every column header |
-| [Notebook](https://docs.objectexplorer.com/analyze/notebook) | SQL, charts, models and JavaScript over the object you clicked |
-| [Data lake tables](https://docs.objectexplorer.com/analyze/lake) | Delta, Iceberg, Hudi and partitioned exports, read as one table |
-| [Models](https://docs.objectexplorer.com/analyze/model) | LightGBM in WebAssembly, with exact TreeSHAP explanations |
-| [Search](https://docs.objectexplorer.com/explore/search) | local folders and cloud prefixes in the same run |
-| [File management](https://docs.objectexplorer.com/explore/file-management) | copy, move, rename, delete across providers, with a trash and an undo |
-| [Sharing](https://docs.objectexplorer.com/explore/share) | a link to a table, masked or hashed column by column, with an expiry |
-| [Cloud Logging](https://docs.objectexplorer.com/analyze/logging) | a live tail with a timeline, a source tree and a trace waterfall |
+| [Connect storage](https://objectexplorer.com/storage/connect) | S3, GCS, Azure Blob, MinIO, local folders — added one root at a time |
+| [Preview anything](https://objectexplorer.com/explore/preview) | parquet, csv, json, SPSS, SAS, pdf, office, images, audio, video, ebooks, sprite sheets, hex |
+| [Column summaries](https://objectexplorer.com/explore/column-summary) | a histogram, a box plot or a split bar under every column header |
+| [Notebook](https://objectexplorer.com/analyze/notebook) | SQL, charts, models and JavaScript over the object you clicked |
+| [Data lake tables](https://objectexplorer.com/analyze/lake) | Delta, Iceberg, Hudi and partitioned exports, read as one table |
+| [Models](https://objectexplorer.com/analyze/model) | LightGBM in WebAssembly, with exact TreeSHAP explanations |
+| [Search](https://objectexplorer.com/explore/search) | local folders and cloud prefixes in the same run |
+| [File management](https://objectexplorer.com/explore/file-management) | copy, move, rename, delete across providers, with a trash and an undo |
+| [Sharing](https://objectexplorer.com/explore/share) | a link to a table, masked or hashed column by column, with an expiry |
+| [Cloud Logging](https://objectexplorer.com/analyze/logging) | a live tail with a timeline, a source tree and a trace waterfall |
 
-The whole list of formats is on [every format](https://docs.objectexplorer.com/formats/).
+The whole list of formats is on [every format](https://objectexplorer.com/formats/).
 
 ## Links
 
-- [docs.objectexplorer.com](https://docs.objectexplorer.com) — the documentation
-- [objectexplorer.com](https://objectexplorer.com) — the product page
+- [objectexplorer.com](https://objectexplorer.com) — the product page and the documentation
+- [objectexplorer.com/app](https://objectexplorer.com/app) — the app itself, in a browser
 - [@knockdata/objectexplorer](https://www.npmjs.com/package/@knockdata/objectexplorer) — the npm package behind `npx`
 - [Changelog](./CHANGELOG.md) — what changed in each version
 - [Releases](https://github.com/knockdata/objectexplorer/releases) — every version, every platform

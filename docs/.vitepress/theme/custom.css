@@ -67,6 +67,20 @@
 	width: 100%;
 }
 
+/* the app embedded on the home page — the landing's own frame, which gave it the height of a real
+   window rather than of a figure */
+.live-app {
+	/* the app paints its own dark ground once it boots; without this the empty frame is a sheet
+	   of white on a dark page for as long as the load takes */
+	background: var(--vp-c-bg-alt);
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 16px;
+	display: block;
+	height: 80vh;
+	margin: 24px 0;
+	width: 100%;
+}
+
 .promo-video {
 	border: 1px solid var(--vp-c-divider);
 	border-radius: 10px;

@@ -1,12 +1,13 @@
 import { defineConfig } from "vitepress"
 
-// Where the built site is rooted. docs.objectexplorer.com serves it at the domain root, which
-// is the default; GitHub Pages serves the same build under /objectexplorer/, and sets DOCS_BASE
-// to say so. Everything VitePress generates — assets, links, the logo — is prefixed with this.
+// Where the built site is rooted. objectexplorer.com serves it at the domain root, which is the
+// default; GitHub Pages serves the same build under /objectexplorer/, and sets DOCS_BASE to say
+// so. Everything VitePress generates — assets, links, the logo — is prefixed with this.
 const base = process.env.DOCS_BASE ?? "/"
 
-// The documentation site, served at docs.objectexplorer.com. Dark is the default —
-// the app is dark, and every screenshot on these pages was taken in it.
+// The whole site — the landing page and the documentation are one thing now, served at
+// objectexplorer.com by the front door in rock2/server, with the app itself at /app on the same
+// origin. Dark is the default: the app is dark, and every screenshot here was taken in it.
 export default defineConfig({
 	base,
 	title: "ObjectExplorer",
@@ -18,10 +19,10 @@ export default defineConfig({
 		["link", { rel: "icon", type: "image/png", href: `${base}img/64.png` }],
 		["meta", { property: "og:title", content: "ObjectExplorer" }],
 		["meta", { property: "og:description", content: "The VS Code for cloud storage. Every byte stays on your machine." }],
-		["meta", { property: "og:image", content: "https://docs.objectexplorer.com/shot/hero.png" }],
+		["meta", { property: "og:image", content: "https://objectexplorer.com/shot/hero.png" }],
 	],
 	sitemap: {
-		hostname: "https://docs.objectexplorer.com",
+		hostname: "https://objectexplorer.com",
 	},
 	themeConfig: {
 		logo: "/img/64.png",
@@ -109,6 +110,7 @@ export default defineConfig({
 		],
 		socialLinks: [
 			{ icon: "github", link: "https://github.com/knockdata/objectexplorer" },
+			{ icon: "linkedin", link: "https://www.linkedin.com/in/rockieyang/" },
 		],
 		search: {
 			provider: "local",
@@ -118,8 +120,8 @@ export default defineConfig({
 			text: "Edit this page on GitHub",
 		},
 		footer: {
-			message: "Released under the terms on objectexplorer.com",
-			copyright: "© Knockdata",
+			message: 'Every byte stays on your machine. Questions: <a href="mailto:rockie@knockdata.com">rockie@knockdata.com</a>',
+			copyright: "© 2025 ObjectExplorer — a product of Knock Data AB, Sweden.",
 		},
 	},
 })
