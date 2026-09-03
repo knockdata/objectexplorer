@@ -3,14 +3,16 @@ import { onMounted, ref } from "vue"
 
 const appUrl = "https://objectexplorer.com/app/"
 const frame = ref(null)
-// The app answers with `Content-Security-Policy: frame-ancestors 'self'`, so only a page on
-// objectexplorer.com may embed it. Anywhere else — a local dev server, the GitHub Pages copy of
-// these pages — the browser refuses the frame and draws a broken document, so those get the link
-// instead. Decided on mount, because the server render has no origin to ask about.
+// The app answers with `frame-ancestors`, naming the sites of ours that may embed it (see
+// rock2/server/common/Headers.js): objectexplorer.com itself, the GitHub Pages mirror of these
+// pages, and localhost while a site is being edited. On any other origin the browser refuses the
+// frame and draws a broken document, so those get the link instead. Decided on mount, because the
+// server render has no origin to ask about.
+const homeSites = ["https://objectexplorer.com", "https://knockdata.github.io"]
 const canEmbed = ref(false)
 
 onMounted(function () {
-	canEmbed.value = location.origin === "https://objectexplorer.com"
+	canEmbed.value = homeSites.includes(location.origin) || location.hostname === "localhost"
 })
 
 // Expand gives the app the whole screen, which is the only way an embedded window stops being a
@@ -39,11 +41,11 @@ function expand() {
 			:src="`${appUrl}?animate`"
 			title="ObjectExplorer running in the browser"
 			loading="lazy"
-			allow="midi; autoplay; fullscreen"
+			allow="midi; autoplay; fullscreen; cross-origin-isolated"
 			allowfullscreen
 		></iframe>
 	</div>
 	<p class="live-app-away" v-else>
-		<a :href="appUrl">Open the app at objectexplorer.com</a> — it embeds only on its own site.
+		<a :href="appUrl">Open the app at objectexplorer.com</a> — it embeds only on our own sites.
 	</p>
 </template>
