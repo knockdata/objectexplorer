@@ -99,6 +99,10 @@ ObjectExplorer collapses that loop:
 - **Search across buckets.** One query over local folders and cloud prefixes at the same time.
 - **Query, chart and model in place.** A table opens as a notebook: SQL over the object, a chart of
   what came back, and a gradient boosting model over the rows — all on your machine.
+- **Delta, Iceberg and Hudi are just tables.** Point DuckDB at the folder and it answers, deletes
+  and schema changes included.
+- **Move things where they belong.** Copy, move, rename and delete across buckets and disks, with
+  one Undo — the explorer half of a file explorer, not only the reading half.
 
 ## Your data never leaves your machine
 
@@ -171,7 +175,7 @@ Shift+Enter, so what is on screen is always something you asked for.
 | **Table** | SQL, with the rows as a virtualized grid — column summaries and all |
 | **Chart** | a plot of the rows above, as source you can edit |
 | **Model** | gradient boosting over the rows above |
-| **Code** | JavaScript over the same rows, with a pandas-style dataframe already in scope |
+| **Code** | JavaScript over the same rows, with [pandasjs](https://www.npmjs.com/package/@rockiey/pandasjs) — `pd` — already in scope |
 | **Text** | markdown, rendered when you click away |
 
 A chart cell writes its own first draft. The column statistics say which column is a date, which is
@@ -180,7 +184,8 @@ the code offers the charts those columns actually support, named in plain words.
 source is written into the editor and drawn. After that it is source, and it is yours.
 
 A folder is a table too: Delta, Iceberg and Hudi tables, Hive-partitioned exports and `YYYY/MM/DD`
-date prefixes are read as one table rather than as a pile of files.
+date prefixes are read as one table rather than as a pile of files — see
+[Data lake tables](#data-lake-tables).
 
 Notebooks are kept per object. Reopen the file next week — in another window, or after a restart —
 and your cells are still there.
@@ -188,6 +193,39 @@ and your cells are still there.
 Queryable: `parquet` `csv` `tsv` `json` `jsonl` `xlsx` `avro`, plus SPSS `.sav` and SAS
 `.sas7bdat` `.xpt`. ORC, Arrow and HDF5 open as grids and charts too; only SQL over them is
 missing, and the cell says so.
+
+### Data lake tables
+
+A Delta, Iceberg or Hudi table is a folder, and the folder itself says which of the parquet files
+inside it the table is currently made of. So the path is the whole SQL surface — name the folder
+and it answers:
+
+```sql
+SELECT region, sum(amount) FROM 's3://sales-eu/orders' GROUP BY region
+```
+
+There is no `delta_scan()` or `iceberg_scan()` to remember. A quoted path straight after `FROM` or
+`JOIN` is sniffed — a `_delta_log` beside the files, a `metadata/` of metadata.json, a `.hoodie` —
+and rewritten into the query that really reads it before DuckDB sees a character of it.
+
+That query is the table as of now, not a list of every parquet in the folder:
+
+| | What it takes to be right |
+|---|---|
+| **Delta** | partition columns live in the log rather than in the parquet, column mapping names the physical columns by uuid, and a deletion vector marks rows inside a file that is otherwise live |
+| **Iceberg** | schema evolution is resolved by field id, so a renamed column still reads and an added one reads as its default; position deletes, equality deletes and deletion vectors each become their own anti-join |
+| **Hudi** | a merge-on-read slice stacks its base file under the log files written over it, and the last write of each record key wins |
+
+A table with none of that — the common one — comes out as a single scan over a file list, which is
+all it should ever have been.
+
+**The metadata is readable too**, as the thing it actually is rather than as a folder of opaque
+files. `_delta_log` opens as the commit history, every version with the files it added and removed
+underneath it. `.hoodie` opens as the timeline, including the requested and inflight instants a
+writer that died left behind. An Iceberg `metadata/` opens as the chain it really is —
+metadata.json, snapshot, manifest list, manifest, and the data and delete files at the end of it.
+
+Hive-partitioned exports and `YYYY/MM/DD` date prefixes read as one table the same way.
 
 ### Train a model on it
 
@@ -212,6 +250,22 @@ what a column is worth over the whole file, and what it did to this row.
 
 It all runs where the data already is. A model over a bucket you are not allowed to copy out of is
 still just a local read.
+
+### Copy, move, rename, delete
+
+The other half of a file explorer. `⌘C` `⌘X` `⌘V`, `F2` to rename, `⌫` to delete, and drag between
+any two places in the tree — within a root it moves, across roots it copies, and `⌥` or `⌘` says so
+explicitly.
+
+It works across providers, and that is the part a console cannot do: a prefix dragged from S3 to
+Azure streams through your machine and lands as objects, and the destination's size is read back
+before a move deletes anything. Within one provider the bytes never touch your machine at all — GCS
+`rewriteTo`, S3 `x-amz-copy-source`, Azure `x-ms-copy-source`, a plain `cp` on disk. A transfer
+reports its progress in the footer, so an hour-long copy is not an hour-long wait on a spinner.
+
+Nothing is ever unlinked. A delete moves the object into a `.trash` folder at the top of its own
+root — the same layout in a bucket and in a local folder — so `⌘Z` is a move back rather than a
+hope, and it puts back whatever an overwrite wrote over too. The trash is emptied after 30 days.
 
 ### Search
 
