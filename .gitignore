@@ -10,7 +10,7 @@ demo/many
 dist
 node_modules
 out
-reference
+/reference
 release-*
 releases
 smoke
