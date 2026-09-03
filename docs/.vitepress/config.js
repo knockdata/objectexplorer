@@ -27,7 +27,7 @@ export default defineConfig({
 	themeConfig: {
 		logo: "/img/64.png",
 		nav: [
-			{ text: "Guide", link: "/what-is-objectexplorer" },
+			{ text: "Docs", link: "/what-is-objectexplorer" },
 			{ text: "Formats", link: "/formats/" },
 			{ text: "Changelog", link: "/changelog" },
 			{ text: "Download", link: "/getting-started#download" },

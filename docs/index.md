@@ -16,7 +16,7 @@ hero:
       text: Get started
       link: /getting-started
     - theme: alt
-      text: What is it?
+      text: Documentation
       link: /what-is-objectexplorer
     - theme: alt
       text: GitHub
