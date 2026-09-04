@@ -4,6 +4,36 @@ What changed in each version, and why. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.5.9 — 2026-09-04
+
+**Any S3 you have, not only Amazon's.** A MinIO on the laptop, a MinIO in a lab, an R2 bucket, a
+Ceph gateway: give it a name and a URL and its buckets are in the side tree beside everything
+else. Nothing about it is Amazon-shaped — it is the endpoint you typed and the key pair that
+opens it.
+
+### Custom S3 connections
+
+- **A + on the Connections heading in Settings** adds one: Name, Description, URL, and a key pair
+  that may be left empty. There is no Save — **Connect** asks the endpoint for its buckets, which
+  is the only honest test of the URL and the key at the same time, and a connection is kept only
+  once it has answered.
+- **An endpoint that refuses says what it said.** The fields stay open with what was typed in
+  them and the endpoint's own words sit under the button, so a corrected URL is one click away.
+  Nothing is written down until it works, so a typo leaves nothing behind.
+- **The key pair may live in the URL.** `http://key:secret@localhost:9000` is one field instead of
+  three, which is how an S3-compatible endpoint is usually pasted. What is kept is the endpoint
+  alone; the secret goes to the credential store, encrypted, and is never handed back to the app.
+- **A connection that answered collapses to one line and lists its buckets**, each with the same
+  tick every other service uses to put a bucket in the side tree. It gets a row of its own under
+  Connections, named after itself, and Connect stays on it — reconnecting is how it is checked,
+  and retyping a rotated secret is how it is repaired.
+- **Forget takes it away.** The endpoint, the key pair and that connection's buckets leave
+  together; nothing inside the buckets is touched, and connecting the same name again is the way
+  back.
+- **Every custom endpoint is one service.** A bucket's address carries the connection it is on —
+  `minio-local.demo` — so two endpoints with a bucket of the same name stay two buckets, with
+  their own caches and their own history.
+
 ## v0.5.7 — 2026-09-04
 
 **A thousand projects, and a file that opens in something that can show it.** A Google account in
