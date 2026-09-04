@@ -4,6 +4,74 @@ What changed in each version, and why. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.5.7 — 2026-09-04
+
+**A thousand projects, and a file that opens in something that can show it.** A Google account in
+an organisation sees more projects than it can read, and the add dialog now lists them rather than
+asking every one of them for its buckets. And a format no reader of ours names is a picture, a
+sound or a wall of hex — whichever it actually is — instead of the same wall of decoded noise.
+
+### Google Cloud projects
+
+- **The dialog lists projects and asks one for its buckets when you open it.** Ten projects or
+  fewer are opened and filled in at once, so a small account reads exactly as it did before there
+  was a project layer. Past ten there is a filter box, and narrowing it to a handful loads those
+  quietly — you asked to see fewer projects, not to open them.
+- **A project that refuses is an answer, not a failure.** Most projects in an organisation do
+  refuse. What Google said is kept with the project — a missing `storage.buckets.list` and a
+  Storage API nobody enabled both read as an empty list otherwise — and shown on the row, so a
+  project you expected to see says why it is not there. It stays clickable: the grant you just
+  asked for may have landed.
+- **What worked last time is walked first.** Each project's answer is remembered per service, so
+  the buckets you actually have appear immediately and the long tail of refusals is walked behind
+  them. A reopened dialog wears its locks before anything is asked again.
+- **The scan says how far along it is.** Rows arrive as they are found rather than at the end, and
+  the status counts — `Looking… 240 of 3000 projects` — because a minute of silence is
+  indistinguishable from a dialog that has hung. A scan that fails part way keeps what it found,
+  and what it learned.
+- **A project with more buckets than one page holds is followed to the end.** Only the first page
+  was ever read.
+
+### Which reader a format opens in
+
+- **One list of rules picks the reader**, top to bottom, first match wins, for the side pane and
+  the grid tiles alike — and the app logs which rule fired, so what took effect is read rather
+  than guessed at.
+- **A format no reader names is no longer text.** It asks what the extension is: a picture opens
+  as a picture — gif, bmp, tiff, avif — a sound as a player, and anything else binary as hex. A
+  font, a film and a disk image used to be the same wall of decoded UTF-8. An extension nothing
+  has ever heard of stays text, which is what a made-up suffix on a text file usually is.
+- **A video container is not a promise of a picture.** `.3gpp` and `.mov` hold whatever was put in
+  them, so the player asks the browser first: a real picture plays as video, a sound in a video
+  container plays as sound, and a codec the browser has no reader for is converted with ffmpeg. A
+  WhatsApp voice note — AMR-NB in `.3gpp`, which no browser decodes — comes back as playable
+  audio. `.avi` and `.mpg` open as sound for the same reason: Chrome decodes neither container, so
+  a blank `<video>` was all there ever was to show.
+
+### Fixed
+
+- **`.mov`, `.mkv`, `.webm`, `.avi` and `.mpg` rendered as text.** Anything the server holds
+  missed the streaming branch entirely — the check for a local file answered `undefined` and was
+  compared against `false`. `.mp4` escaped it only because it is named explicitly.
+- **Audio over 30 MB from a server played nothing.** The player read the source the local branch
+  sets; the server branch hands back a url.
+- **A refreshed service listing asks the provider.** Refresh is now able to go past the cached
+  listing rather than being handed the same answer back.
+
+## v0.5.6 — 2026-09-03
+
+**One site, with the app running inside it.** objectexplorer.com is the landing page, the
+documentation and a live app on the same pages now, built from one place; the separate landing
+build is gone.
+
+- **The app may be framed by our own sites.** The domain itself, the same pages served from GitHub
+  Pages, and localhost while they are being written — those three, and nothing else, may put the
+  app in a frame, so a page can expand it in place instead of the app refusing to load. Every
+  other site is still refused, which is what the header is for.
+- **Video on our pages seeks, and plays on iPhone.** The static server announces `Accept-Ranges`
+  and answers a range request with the slice it asked for. Safari will not play a video at all
+  without that, so the tour was a still frame there.
+
 ## v0.5.4 — 2026-09-03
 
 **A table can leave the machine now.** One share icon, one dialog, and a link that opens the rows —

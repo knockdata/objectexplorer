@@ -690,15 +690,13 @@ jobs:
           files: latest/*
 
       # What this version says about itself, taken out of CHANGELOG.md by its own heading —
-      # `## v0.5.1` down to the next `## `. A version with no section there leaves an empty file,
-      # and the release is then the generated notes alone, exactly as it was before.
-      - name: Take this version's section out of CHANGELOG.md
+      # `## v0.5.1` down to the next `## `, shortened to its opening line and one bullet per
+      # headline: a releases page is where a download is picked up, not where the full notes are
+      # read. A version with no section there leaves an empty file, and the release is then the
+      # generated notes alone, exactly as it was before.
+      - name: Short notes from this version's CHANGELOG.md section
         run: |
-          awk -v heading="## ${{ needs.source.outputs.tag }}" '
-            index($0, heading) == 1 { taking = 1; next }
-            taking && /^## / { exit }
-            taking { print }
-          ' CHANGELOG.md > notes.md
+          node scripts/release-notes.mjs "${{ needs.source.outputs.tag }}" CHANGELOG.md > notes.md
           cat notes.md
 
       # make_latest: false, or this would take the Latest badge back off the rolling release —
