@@ -1,6 +1,5 @@
-// The short notes a GitHub release shows: this version's opening line, one bullet per headline,
-// and a link to the full section on the site. The whole CHANGELOG section is too long to read on
-// a page whose job is handing over a download — the headlines say what changed, the site says why.
+// The short notes a GitHub release shows: this version's bullets, and a link to the full list on
+// the site.
 //
 //   node scripts/release-notes.mjs v0.5.6 CHANGELOG.md > notes.md
 //
@@ -12,14 +11,10 @@ const [tag, changelogPath] = process.argv.slice(2);
 process.stdout.write(shortNotes(fs.readFileSync(changelogPath, "utf8"), tag));
 
 export function shortNotes(changelog, tag) {
-	const section = sectionOf(changelog, tag);
+	const bullets = bulletsOf(sectionOf(changelog, tag));
 	let notes = "";
-	if (section) {
-		const all = [ledeOf(section), "", ...linesOf(section),
-			"", "[Full release notes](https://objectexplorer.com/changelog)"];
-		// two blank lines in a row is one blank line, so a heading can ask for the space around it
-		// without knowing what was written before it
-		notes = all.filter((line, i) => line !== "" || all[i - 1] !== "").join("\n") + "\n";
+	if (bullets.length > 0) {
+		notes = [...bullets, "", "[Full release notes](https://objectexplorer.com/changelog)"].join("\n") + "\n";
 	}
 	else {
 		// nothing was written about this version
@@ -43,29 +38,7 @@ function sectionOf(changelog, tag) {
 	return section;
 }
 
-// The paragraph under the heading, on one line: the sentence in bold and the reason after it.
-function ledeOf(section) {
-	const paragraph = section.trim().split("\n\n")[0];
-	return paragraph.split("\n").join(" ").trim();
-}
-
-// The bold lead-in of every top-level bullet — `- **A project that refuses…** the rest` — which is
-// what each bullet was written to be read as when it is read on its own, under the sub-heading it
-// was written under, because "rendered as text" only says what it says under Fixed.
-function linesOf(section) {
-	const lines = [];
-	for (const line of section.split("\n")) {
-		const heading = /^### (.+)$/.exec(line);
-		const bullet = /^- \*\*(.+?)\*\*/.exec(line);
-		if (heading) {
-			lines.push("", `**${heading[1]}**`, "");
-		}
-		else if (bullet) {
-			lines.push(`- ${bullet[1].replace(/[,:.]$/, "")}`);
-		}
-		else {
-			// a continuation line, or a bullet with no headline of its own
-		}
-	}
-	return lines;
+// Every `- ` line of the section, as it is written. The changelog is already one bullet per change.
+function bulletsOf(section) {
+	return section.split("\n").filter(line => line.startsWith("- "));
 }
