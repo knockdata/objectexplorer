@@ -4,6 +4,29 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.6.0 — 2026-09-06
+
+- ObjectExplorer answers agents too: an MCP server for Claude Code, Codex and any client that speaks Streamable HTTP
+- The agent never holds a credential and never talks to a provider — it asks the app, and the app decides
+- Five tools: `listRoots`, `listObjects`, `describeObject`, `columnSummary` and `query`, ticked one by one
+- Settings → MCP: the door, the endpoint, the token, and Copy Connection for a client the app cannot write to
+- Install writes the entry into Claude Code's `~/.claude.json` or Codex's `~/.codex/config.toml`, so no token is typed anywhere
+- Nothing is reachable until it is written down: `~/.objectexplorer/mcp.yaml`, and no file means the door is shut
+- Allow roots is one tick per root, reachable in full; Deny rules is one list that holds in every root
+- Approve rules stop a call and ask a person in the window — no answer within the timeout is a no
+- Test a rule answers with the verdict and the content in the form it would go to the agent, reading nothing
+- Settings → PII: hash, mask, FPE or drop, by column name for tabular data and by what a value says for free text
+- FPE is the default — same length, same alphabet, a different value, so a query still joins and still counts
+- Every rewritten column is marked `encrypted`, so an agent never quotes a made-up id back as a real one
+- The share dialog opens on the PII rules, so a column decided once is decided everywhere
+- Data access limits: rows and bytes per call, per session and per day, calls per minute, objects per listing
+- Every call is written and flushed before the answer leaves — the rule that decided it, the rows, the bytes
+- Observe opens what the agent opens, in the window, as it happens; Escape stops following
+- The activity strip draws each agent's calls in its own colour, refusals on the same line
+- Settings → MCP sessions lists every session, and a row opens it as a tab: the agent's own transcript beside what it reached
+- Replay opens again, in order, everything an agent opened, with a step panel in the corner
+- Log history keeps calls for 1D, 7D, 1M, 3M or 1Y
+
 ## v0.5.10 — 2026-09-05
 
 - Microsoft Fabric OneLake is a connection of its own, with its workspaces in the side tree

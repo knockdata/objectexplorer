@@ -45,8 +45,7 @@ server:
   token: 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83   # generated on the first write; the app's only secret
   install:
     claudeCode: true           # write the entry into that client's own MCP config
-    codex: false               # ticking a client also lets it initialize; only Claude Code's
-                               # own config is written for it today
+    codex: false               # ticking a client also lets it initialize at all
 
 # What the window does while an agent is working. Following opens each object the agent touches,
 # debounced, so a burst of calls does not flick through twenty objects. Escape stops following;
@@ -81,14 +80,28 @@ approve:
   onTimeout: deny
   remember: session            # never | session | day
 
-# The PII floor, for every agent and every root. `action` defaults to `fpe`.
+# The PII floor, by column name, for every agent and every root. `action` defaults to `fpe`.
+# A pattern is not anchored: a column whose name has the word in it anywhere is caught, so one
+# rule covers email, emailAddress and billingEmail. Edited in Settings -> PII.
 columns:
-  - match: "^(email|emailAddress)$"
-  - match: "^(phone|phoneNumber|mobile)$"
+  - match: "email"
+  - match: "(phone|mobile)"
   - match: "(ssn|personalNumber|nationalId)"
   - match: "(cardNumber|iban|accountNumber)"
   - match: "^salary$"
     action: drop
+  - match: "^customerName$"
+    action: mask
+    begin: 4                   # the characters a mask hides, from begin up to end
+    end: 6
+
+# The same floor, by what a value says rather than what its column is called. What these match
+# inside a free-text field is replaced; the rest of the field is left alone.
+text:
+  - match: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+  - match: "\\b\\d{6,8}[-+]\\d{4}\\b"
+  - match: "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+  - match: "\\+\\d{1,3}[ -]?\\d{1,4}([ -]?\\d{2,4}){2,3}"
 
 # Denied everywhere, in every root. These are the paths nobody meant to share.
 deny:
@@ -217,7 +230,9 @@ worse than one that stops.
 
 ## Column rules — the PII floor
 
-One list, for every agent and every root. It is applied to every value leaving the app that has a
+Two lists, for every agent and every root, edited in Settings → PII: `columns` matches a **column's
+name**, and `text` matches **what a value says** — see [PII rules](/agents/pii). The rest of this
+section is `columns`. It is applied to every value leaving the app that has a
 column name: `query` results, `columnSummary`, the sample rows in `describeObject`. First matching
 rule wins, matched case-insensitively against the column name, and a column matching nothing is
 returned as it is.
@@ -226,7 +241,7 @@ returned as it is.
 |--------|------------------------------------------------------|----------------|
 | `fpe`  | same length, same alphabet, a different value        | format, joins  |
 | `hash` | 16 hex characters, `sha256(salt + value)`            | joins, counts  |
-| `mask` | `•••` plus the last `keep` characters                | shape          |
+| `mask` | the characters from `begin` up to `end` hidden, the rest kept | shape |
 | `drop` | the column is not in the result at all               | nothing        |
 
 **`fpe` is the default**, and a rule that names no action gets it. It is the only one that leaves
@@ -242,9 +257,9 @@ real id and never quotes it back to a human as one. The FPE key and the hash sal
 `~/.objectexplorer`, never in this file, and never leave the machine. They are per install, so a
 value is stable across sessions and means nothing anywhere else.
 
-Two things a column rule cannot do, which is why they shape the tool list below: it cannot touch
-raw bytes (`readObject`), and it cannot touch a line of a text file (`search`). Those tools carry
-`approve` instead.
+A column rule cannot touch raw bytes (`readObject`) and cannot touch a line of a text file
+(`search`) — for those there is no column name to key on. That is what `text` is for inside a value,
+and what shapes the tool list below: the tools returning either carry `approve` instead.
 
 ## Approve — the human in the loop
 

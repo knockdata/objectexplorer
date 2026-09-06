@@ -3,7 +3,7 @@ layout: home
 
 hero:
   text: Stop downloading files just to look inside
-  tagline: The VS Code for cloud storage. Explorer, Analyze, Machine Learning all in one app, GCS, Azure Blob, S3, Local folder - and every byte stays on your machine.
+  tagline: The VS Code for cloud storage — for you and for your agent. Explore, Analyze, Machine Learning all in one app, GCS, Azure Blob, S3, Local folder - and every byte stays on your machine.
   actions:
     - theme: brand
       text: Open it in the browser
@@ -40,6 +40,10 @@ features:
     details: One query over local folders and cloud prefixes at once, with include and exclude globs.
     link: /explore/search
     icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>'
+  - title: Your agent reads through the same door
+    details: MCP for Claude Code and Codex — only the roots you ticked, PII rewritten on the way out, every call logged, watched live and replayable.
+    link: /agents/
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>'
   - title: Your data never leaves your machine
     details: A local HTTP server and the OS webview in one binary. No backend sees your objects, because there is none.
     link: /privacy
@@ -55,3 +59,4 @@ features:
 - **Have a bucket to connect** — [Connecting storage](/storage/connect)
 - **Have a table to query** — [The notebook](/analyze/notebook)
 - **Wondering what leaves the machine** — [Your data stays here](/privacy)
+- **Pointing an agent at a bucket** — [ObjectExplorer for agents](/agents/)

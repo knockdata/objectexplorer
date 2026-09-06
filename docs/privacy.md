@@ -27,6 +27,14 @@ sees.
 **The version check.** One request to the npm registry asking what the latest published version is.
 It carries no path, no bucket name and no identifier of you.
 
+## What an agent sees
+
+An MCP client on this machine is not an exception to any of the above: it reaches storage only
+through this app, only at `127.0.0.1`, only in the roots you ticked, and only with PII already
+rewritten. It never holds a credential, and every call it made is on your disk in
+`~/.objectexplorer/mcp/`. The door is shut until you open it — see
+[ObjectExplorer for agents](/agents/).
+
 ## What a cloud provider sees
 
 The same thing it would see if you used its own console: signed requests from your machine, for the

@@ -38,6 +38,27 @@ ObjectExplorer collapses that loop:
 - **Move things where they belong.** Copy, move, rename and delete across buckets and disks, with
   one Undo — the explorer half of a file explorer, not only the reading half.
 
+## And now the agent has the same day
+
+Everything above is just as true when the one doing it is an agent, except that an agent cannot see
+that a file is a `sas7bdat` and give up. It downloads. It writes a script. It pulls a whole column
+into a context window you are paying for, and it does it with a credential someone had to hand it.
+
+Point it at this app instead:
+
+- **It never holds a credential**, and never talks to a provider. It asks here, and here decides.
+- **It reaches only what you ticked** — one list of roots, one deny list that holds in every root.
+- **PII is rewritten on the way out**, by rules you wrote once: hash, mask, FPE or drop, on a column
+  name or on what a value says.
+- **Every call is written down** before the answer leaves, watchable live in the window and
+  replayable afterwards.
+- **Limits cap what it can take**, per call, per session and per day — which is a security number
+  and a token-cost number at the same time.
+- **It can read your formats.** Parquet, SPSS, SAS, Delta, Iceberg, Hudi — the agent asks in SQL and
+  gets rows, instead of writing a parser.
+
+That is [ObjectExplorer for agents](/agents/).
+
 ## The part that decides it
 
 Most tools that can read a Parquet file in a bucket read it somewhere else. ObjectExplorer reads it

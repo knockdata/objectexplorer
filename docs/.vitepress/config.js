@@ -29,6 +29,7 @@ export default defineConfig({
 		nav: [
 			{ text: "Docs", link: "/what-is-objectexplorer" },
 			{ text: "Formats", link: "/formats/" },
+			{ text: "Agents", link: "/agents/" },
 			{ text: "Changelog", link: "/changelog" },
 			{ text: "Download", link: "/getting-started#download" },
 			// the running app, on the same origin once this site is objectexplorer.com. Absolute
@@ -85,6 +86,16 @@ export default defineConfig({
 				],
 			},
 			{
+				text: "Agents",
+				collapsed: false,
+				items: [
+					{ text: "ObjectExplorer for agents", link: "/agents/" },
+					{ text: "Connecting an agent", link: "/agents/connect" },
+					{ text: "PII rules", link: "/agents/pii" },
+					{ text: "Sessions, replay and audit", link: "/agents/sessions" },
+				],
+			},
+			{
 				text: "Formats",
 				collapsed: true,
 				items: [
@@ -105,6 +116,8 @@ export default defineConfig({
 					{ text: "Keyboard shortcuts", link: "/reference/shortcuts" },
 					{ text: "Where your data lives", link: "/reference/data-locations" },
 					{ text: "Updating", link: "/reference/updating" },
+					{ text: "The MCP rule file", link: "/reference/mcp-rules" },
+					{ text: "The MCP endpoint", link: "/reference/mcp-protocol" },
 					{ text: "Troubleshooting", link: "/reference/troubleshooting" },
 				],
 			},

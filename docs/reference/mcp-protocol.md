@@ -97,14 +97,14 @@ user mounted. One string for an agent to carry, and the one it would have typed 
 anyway. The gate turns it back into `providerType` + `root` + `path` and checks it there.
 
 ```
-listRoots     {}                                    → what is reachable at all
-listObjects   {uri, limit?, cursor?}                → children of one path, paged
-describeObject{uri}                                 → size, time, format, columns
-columnSummary {uri, columns?}                       → statistics per column
-query         {sql, limit?}                         → rows
+listRoots     {}                → what is reachable at all
+listObjects   {uri, limit?}     → children of one path, and how many were hidden
+describeObject{uri}             → size, time, content type, columns
+columnSummary {uri}             → statistics per column, measured after the column rules
+query         {sql, limit?}     → rows
 ```
 
-Two of them, in full:
+Two of them, as they are listed:
 
 ```json
 {
@@ -114,28 +114,6 @@ Two of them, in full:
     "type": "object",
     "properties": { "uri": { "type": "string" } },
     "required": ["uri"]
-  },
-  "outputSchema": {
-    "type": "object",
-    "properties": {
-      "uri": { "type": "string" },
-      "objectKind": { "enum": ["file", "folder", "table", "bucket"] },
-      "format": { "type": "string" },
-      "size": { "type": "integer" },
-      "mtime": { "type": "integer" },
-      "rows": { "type": "integer" },
-      "columns": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "name": { "type": "string" },
-            "type": { "type": "string" },
-            "encrypted": { "type": "boolean" }
-          }
-        }
-      }
-    }
   }
 }
 ```
@@ -143,7 +121,7 @@ Two of them, in full:
 ```json
 {
   "name": "query",
-  "description": "Run one SQL statement over the objects. Name an object by its URI.",
+  "description": "Run one SQL statement. Name an object by its URI, as duckdb does.",
   "inputSchema": {
     "type": "object",
     "properties": {
@@ -151,17 +129,18 @@ Two of them, in full:
       "limit": { "type": "integer" }
     },
     "required": ["sql"]
-  },
-  "outputSchema": {
-    "type": "object",
-    "properties": {
-      "columns": { "type": "array" },
-      "rows": { "type": "array" },
-      "rowCount": { "type": "integer" },
-      "truncated": { "type": "boolean" }
-    }
   }
 }
+```
+
+What each one answers with:
+
+```
+listRoots      {roots: [{uri, providerType, root}]}
+listObjects    {uri, objects: [{uri, name, objectKind, size, mtime}], hidden, truncated}
+describeObject {uri, objectKind, size, mtime, contentType, columns: [{name, encrypted}]}
+columnSummary  {uri, rowsMeasured, columns: [{name, encrypted, …statistics}]}
+query          {columns: [{name, encrypted}], rows, rowCount, truncated}
 ```
 
 `encrypted: true` is on every column a rule rewrote, in `describeObject`, in `columnSummary` and in
@@ -209,13 +188,15 @@ Ticking a client in Settings writes that client's own config, with the token fro
 --header "Authorization: Bearer <token>"`, which lands in `~/.claude.json`. The app writes the same
 entry itself rather than shelling out, so it works when the CLI is not on PATH.
 
-**Codex** — `~/.codex/config.toml`, `[mcp_servers.objectexplorer]`. Not written yet: its http
-transport is still moving, and a wrong block in someone's config breaks a tool this app does not
-own. Ticking it in the rule file still lets it initialize, for anyone who wires it by hand.
+**Codex** — `~/.codex/config.toml`, `[mcp_servers.objectexplorer]`, edited as text so nothing else
+in the file is touched. `experimental_use_rmcp_client = true` is added when it is missing, because
+that is what turns Codex's HTTP transport on at all, and it is left alone on uninstall — another
+server may be relying on it.
 
-A client that speaks only stdio is not a second implementation: `npx objectexplorer mcp --stdio` is
-a pipe that forwards stdin to this endpoint and the answers back. One transport in the app, a
-bridge for the rest.
+Anything else that speaks this transport is wired by hand: **Copy Connection** in Settings → MCP
+puts the address and the token on the clipboard as one block, already shaped the way a client's
+config wants them. A client that speaks only stdio needs a bridge, and there is none in the app
+today.
 
 ## The other half: what the window listens to
 
@@ -235,6 +216,9 @@ POST /api/mcp/rules    {text}            write it back
 POST /api/mcp/enable   {on}              one line of the rule file, comments kept
 POST /api/mcp/install  {client, on, url} tick a client: the rule file, then its own config
 POST /api/mcp/starter  {roots}           write a first rule file when there is none
+POST /api/mcp/settings {…}               one setting, written back into the file's own text
+POST /api/mcp/try      {…}               run the gate and the column plan, reading nothing
+GET  /api/mcp/transcriptFile             the client's own transcript, as it is on disk
 ```
 
 `/api/mcp/events` is what observing is: the window follows what it sees, debounced, and Escape
@@ -246,7 +230,11 @@ flushed before the answer leaves the server, whether or not a window is listenin
 ```
 server/src/router/RouterMcp.js     the endpoint: sessions, JSON-RPC, SSE
 server/src/mcp/rules.js            read and watch mcp.yaml, parse it into one rule set
-server/src/mcp/gate.js             the eight steps, one function, called by the storage layer
+server/src/mcp/gate.js             the seven steps, one function, called by the storage layer
+server/src/mcp/call.js             one call, from the rules to the record
+server/src/mcp/budget.js           what an agent has taken, and whether it may take more
+server/src/mcp/approve.js          the prompt, and what a timeout means
+server/src/mcp/transcript.js       the client's own account, matched to a session
 server/src/mcp/columns.js          fpe / hash / mask / drop
 server/src/mcp/tools.js            the tool definitions and what each one calls
 server/src/mcp/log.js              one ndjson file per agent per session, flushed on write

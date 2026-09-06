@@ -1,8 +1,9 @@
 # What is ObjectExplorer?
 
-ObjectExplorer is a desktop file explorer for object storage. It puts Amazon S3, Google Cloud
-Storage, Azure Blob Storage, MinIO and the folders on your own disks in one tree, and opens what is
-inside them — including the formats a cloud console will never render.
+ObjectExplorer is a desktop file explorer for object storage — for you, and for the agent working
+beside you. It puts Amazon S3, Google Cloud Storage, Azure Blob Storage, MinIO and the folders on
+your own disks in one tree, and opens what is inside them — including the formats a cloud console
+will never render.
 
 <img src="/shot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it">
 
@@ -20,6 +21,11 @@ anywhere in the path between you and your bucket.
 | **Reads tables** | Delta, Iceberg and Hudi folders as one table, and their metadata as the history it is — see [data lake tables](/analyze/lake) |
 | **Searches** | local folders and cloud prefixes in the same run — see [search](/explore/search) |
 | **Trains** | a gradient boosting model over the rows on screen, with SHAP explanations — see [models](/analyze/model) |
+| **Answers agents** | the same questions over MCP, decided by rules you wrote, PII rewritten on the way out and every call logged — see [for agents](/agents/) |
+
+It has two ways in. One is the window. The other is [MCP](/agents/): Claude Code, Codex or any MCP
+client on this machine asks the app instead of asking your storage — so it never holds a credential,
+reaches only the roots you ticked, and leaves a record of every call it made.
 
 ## What it is not
 
