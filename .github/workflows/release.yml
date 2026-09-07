@@ -51,7 +51,7 @@ jobs:
       publish: ${{ steps.pick.outputs.publish }}
       release: ${{ steps.pick.outputs.release }}
     steps:
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - id: pick
@@ -121,7 +121,7 @@ jobs:
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
           echo "publish=$publish" >> "$GITHUB_OUTPUT"
           echo "release=$release" >> "$GITHUB_OUTPUT"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: candidate
           path: |
@@ -172,13 +172,13 @@ jobs:
           fi
 
       - if: env.SKIP != '1'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - if: env.SKIP != '1'
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: candidate
       - if: env.SKIP != '1'
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           architecture: ${{ matrix.arch }}
@@ -221,7 +221,7 @@ jobs:
           node test/e2e.js
 
       - if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: failure-${{ matrix.runner }}-${{ matrix.arch }}
           path: work/test/*.png
@@ -250,7 +250,7 @@ jobs:
       APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
       APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       # 0.3.5 died 15 minutes in because build/ is gitignored and the icons never left the
       # dev machine. One ls says so in seconds, and the same applies to the native sources —
       # native/build is gitignored, native/napi must not be.
@@ -261,7 +261,7 @@ jobs:
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
@@ -319,7 +319,7 @@ jobs:
             echo "no rosetta on this runner, skipping the x64 smoke test"
           fi
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: mac-${{ matrix.arch }}
           path: dist/*.dmg
@@ -346,7 +346,7 @@ jobs:
     env:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Check the build inputs are in the repo
         shell: bash
         run: |
@@ -355,7 +355,7 @@ jobs:
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - shell: bash
@@ -486,7 +486,7 @@ jobs:
 
       # The exe and the direct msix both go on the releases page: one portable file, or a real
       # install with a Start menu entry and an uninstall.
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: windows-${{ matrix.arch }}
           path: |
@@ -495,7 +495,7 @@ jobs:
 
       # A separate artifact, and never a release asset: this one is unsigned until Partner Center
       # signs it. The release job filters it out by name.
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: store-msix-${{ matrix.arch }}
           path: dist/store/*.msix
@@ -509,8 +509,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - shell: bash
@@ -521,7 +521,7 @@ jobs:
           merge-multiple: true
           path: dist/store
       - run: npm run msix:bundle
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: msixbundle
           path: dist/*.msixbundle
@@ -539,18 +539,18 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Check the build inputs are in the repo
         run: |
           ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: candidate
           path: candidate
@@ -577,7 +577,7 @@ jobs:
       - name: Smoke test
         run: APPIMAGE_EXTRACT_AND_RUN=1 bash .github/smoke.sh "$(ls dist/*.AppImage)" smoke/test
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: linux-${{ matrix.arch }}
           path: dist/*.AppImage
@@ -598,13 +598,13 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: candidate
       # deliberately no registry-url: it writes an .npmrc saying _authToken=${NODE_AUTH_TOKEN}, and
       # with no such variable npm sends an empty credential instead of reaching for OIDC — an
       # authenticated request with nothing in it, which the registry answers 404 on a publish
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       # trusted publishing needs npm 11.5.1 or newer; whatever node ships with is not a promise
@@ -640,13 +640,13 @@ jobs:
     steps:
       # First, and only first: checkout cleans the workspace, so anything downloaded before it
       # would be deleted. It is here for CHANGELOG.md, which is what the version release says.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # pattern, not everything: the store-msix-* and msixbundle artifacts are unsigned until the
       # Store signs them, and `files: artifacts/**/*` below would publish them on the releases
       # page. They are downloaded by hand instead - see RELEASE.md. The signed direct msix does
       # ship, and arrives inside windows-<arch> next to the exe.
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           pattern: "{mac,windows,linux}-*"
           path: artifacts
