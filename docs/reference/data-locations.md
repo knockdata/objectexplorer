@@ -18,6 +18,7 @@ Nothing is ever written into the folders or buckets you browse.
 | `connections.json` | credentials you typed into a dialog rather than into your own CLI |
 | `app.log` | what the app did, in order — the first thing to read when something is wrong |
 | `.app/` | the versions of the product the app has downloaded for itself |
+| `venvs/` | the [Python environments](/analyze/python) you made, one folder each, all of them made by uv |
 | provider folders | the cached copies of objects you opened, per provider |
 
 ## meta.db

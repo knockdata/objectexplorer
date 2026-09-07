@@ -34,4 +34,4 @@ so.
 **Shift+Enter**, or the run button in the cell's toolbar. The cell's label says what came back — the
 row count — and the grid under it is virtualized, so a million rows scroll rather than load.
 
-Next: [charts](/analyze/charts).
+Next: [Python](/analyze/python).

@@ -79,6 +79,7 @@ export default defineConfig({
 				items: [
 					{ text: "The notebook", link: "/analyze/notebook" },
 					{ text: "SQL", link: "/analyze/sql" },
+					{ text: "Python", link: "/analyze/python" },
 					{ text: "Charts", link: "/analyze/charts" },
 					{ text: "Models", link: "/analyze/model" },
 					{ text: "Data lake tables", link: "/analyze/lake" },

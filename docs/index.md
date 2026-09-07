@@ -32,6 +32,10 @@ features:
     details: A table opens as a notebook — SQL over the object, a chart of what came back, a gradient boosting model over the rows.
     link: /analyze/notebook
     icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'
+  - title: Python, on the object where it lives
+    details: A venv this app made, a kernel that keeps its variables, and `oe` in scope — so a cloud URI is a real path and a query is a DataFrame.
+    link: /analyze/python
+    icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>'
   - title: Delta, Iceberg and Hudi are just tables
     details: Name the folder in a query and it answers, deletes, schema evolution and merge-on-read included.
     link: /analyze/lake
@@ -52,11 +56,50 @@ features:
 
 <LiveApp />
 
+## Not just a viewer
+
+Found the object. Now do something with it — yourself, or with your agent.
+
+### Python, where the data is
+
+A **Python cell** in the same notebook as the SQL and the chart. Real pandas, in a real virtual
+environment, in a kernel that keeps your variables between cells.
+
+```python
+frame = oe.frame(f"SELECT * FROM '{oe.uri()}'")
+frame.groupby("region")["amount"].sum()
+```
+
+`oe` is in scope in every cell: a cloud URI is a real local path, a query is a DataFrame, and
+nothing in the cell talks to a provider directly. Environments are made for you with `uv`, the
+common packages are one click away, and there is no Jupyter server and no `.ipynb` to keep in sync.
+
+→ [How the Python cell works](/analyze/python)
+
+### Your agent, through the same door
+
+Claude Code, Codex or any MCP client on your machine asks this app the questions the window asks —
+and gets answers your rules decided.
+
+```
+Endpoint   http://127.0.0.1:7788/api/mcp
+Token      7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83
+```
+
+One button installs that into the client's own config, so nobody types a token. The agent never
+gets a credential and never talks to a provider. It reaches only the roots you ticked — `.env`,
+`*.pem` and anything secret-shaped is denied everywhere — [PII is rewritten on the way
+out](/agents/pii), and every call is logged, watched live in the window and
+[replayable](/agents/sessions) afterwards.
+
+→ [ObjectExplorer for agents](/agents/)
+
 ## Where to start
 
 - **Never seen it** — [What is ObjectExplorer?](/what-is-objectexplorer)
 - **Want it running** — [Getting started](/getting-started)
 - **Have a bucket to connect** — [Connecting storage](/storage/connect)
 - **Have a table to query** — [The notebook](/analyze/notebook)
+- **Wanting pandas on it** — [Python](/analyze/python)
 - **Wondering what leaves the machine** — [Your data stays here](/privacy)
 - **Pointing an agent at a bucket** — [ObjectExplorer for agents](/agents/)

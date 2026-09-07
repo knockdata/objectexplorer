@@ -28,6 +28,7 @@ is always something you asked for.
 | **Chart** | [a plot](/analyze/charts) of the rows above, as source you can edit |
 | **Model** | [gradient boosting](/analyze/model) over the rows above |
 | **Code** | JavaScript over the same rows, with [pandasjs](https://www.npmjs.com/package/@rockiey/pandasjs) — `pd` — already in scope |
+| **Python** | [real Python](/analyze/python) in a venv you made, in a kernel that keeps its variables, with `oe` in scope |
 | **Text** | markdown, rendered when you click away |
 
 ## Adding and moving cells
@@ -41,4 +42,4 @@ Notebooks are kept per object. Reopen the file next week — in another window, 
 and your cells are still there. A cell that had run comes back with its answer; a cell you added and
 never ran comes back unrun rather than running itself because you reloaded.
 
-Next: [SQL](/analyze/sql).
+Next: [SQL](/analyze/sql), then [Python](/analyze/python).
