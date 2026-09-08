@@ -4,6 +4,39 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.6.2 — 2026-09-08
+
+- An agent reaches every object now, not only the ones duckdb can read: a `.docx`, an `.excalidraw` and a `.png` all answer
+- Every object is one of four things, sniffed from the object itself — tabular, textual, structure or raw
+- `readObject` reads any of them: rows for a table, words for a document, the tree for a drawing, bytes for the rest
+- `offset` and `limit` walk whichever of those it is — rows, lines or bytes — so a 2 GB file is read a window at a time
+- `searchText` finds a pattern in one object, or in every textual object in one folder
+- A `.docx` is read by the same parser the app's own viewer uses, so an agent gets the words rather than a zip
+- `describeObject` and `listObjects` say what each object is, and a table is the only thing asked for columns
+- What is sanitized follows what the object is: a table gets the column rules, a document gets the text rules, a tree and a blob get neither
+- A tree is handed over untouched on purpose — a rewritten value in an `.excalidraw` is a file that no longer opens
+- `maxObjectBytes` is checked against the file before it is opened, not against the answer after
+- The MCP overlay: a green dot in the corner that lights when an agent calls, and opens the panel when clicked
+- The panel groups the last three sessions oldest to newest, with the one being worked on expanded
+- The activity strip is one hill per session, as tall as that session was busy
+- Following opens the first object of a burst at once, and only the ones behind it wait
+
+## v0.6.1 — 2026-09-07
+
+- A notebook cell that runs Python, against a venv this app made and a kernel it keeps running
+- The Python sees the same objects the rest of the app sees: `oe.path(uri)` downloads a cloud object and hands back a local path
+- `oe.query(sql)` and `oe.frame(sql)` run through the same duckdb the SQL cells use, so a URI means one thing everywhere
+- `oe.current` and `oe.uri()` name the object the cell was run from
+- The last value is the answer — a DataFrame draws a grid, a matplotlib figure draws a PNG, and there is no `print` to write
+- Rows from a python cell feed the cells below it, so a chart cell plots them with nothing written to a file in between
+- One kernel is shared across notebooks by default; a second is started by naming one, and the cell says which it is on
+- A kernel belongs to one venv — asking for it on another restarts it, and the cell says so out loud
+- Which venv and kernel a notebook uses is remembered per object
+- The toolbar lists what is in the kernel: name, type and a one-line summary
+- Settings → Python finds every interpreter on this machine, and says so plainly when there is none
+- Venvs are made by `uv` under `~/.objectexplorer/venvs`, and packages are installed from the pane
+- Markdown has a filter box: type, and only the lines that match stay, with the hit marked
+
 ## v0.6.0 — 2026-09-06
 
 - ObjectExplorer answers agents too: an MCP server for Claude Code, Codex and any client that speaks Streamable HTTP
