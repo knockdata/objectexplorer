@@ -230,17 +230,20 @@ flushed before the answer leaves the server, whether or not a window is listenin
 ```
 server/src/router/RouterMcp.js     the endpoint: sessions, JSON-RPC, SSE
 server/src/mcp/rules.js            read and watch mcp.yaml, parse it into one rule set
-server/src/mcp/gate.js             the seven steps, one function, called by the storage layer
+server/src/mcp/gate.js             the seven steps, one function, and the only thing that decides
 server/src/mcp/call.js             one call, from the rules to the record
 server/src/mcp/budget.js           what an agent has taken, and whether it may take more
 server/src/mcp/approve.js          the prompt, and what a timeout means
 server/src/mcp/transcript.js       the client's own account, matched to a session
-server/src/mcp/columns.js          fpe / hash / mask / drop
-server/src/mcp/tools.js            the tool definitions and what each one calls
+server/src/mcp/tools.js            each tool as a request to this app's own REST API
+server/src/apiCall.js              that request, made in process, through the same routers
+server/src/router/RouterRead.js    /api/read — one object as what it is, a window at a time
+server/src/pii/columns.js          fpe / hash / mask / drop
+server/src/pii/sanitize.js         the floor a request asks for: sanitization=tabular,textual
 server/src/mcp/log.js              one ndjson file per agent per session, flushed on write
 explorer/src/components/McpPane.jsx   the Settings pane
 explorer/src/components/McpActivity.jsx  the sparkline strip, one colour per agent
 ```
 
-The gate is called by the storage layer, not by the tools — see
+The gate is the door, and everything behind it is the API this app already answers — see
 [one gate, not one per tool](/reference/mcp-rules#one-gate-not-one-per-tool).

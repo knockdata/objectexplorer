@@ -144,10 +144,15 @@ rather than a set of patterns per root: a rule about `.env` is the same rule whe
 
 ### One gate, not one per tool
 
-The check sits where the bytes are, in the storage layer — not in each tool. That matters most for
-`query`: duckdb reaches an object only by asking this app to glob and localize it, so a SQL
+The check sits at the door, before anything is read — not in each tool. A tool is a request to this
+app's own REST API and nothing more, so there is nothing in one to bypass: what it may ask for was
+decided before it asked. That matters most for `query`, which names its objects inside SQL — a
 statement naming a denied path is denied at the same step 5 as a byte range would be. There is no
-second rule engine to keep in sync with the first, and no tool that quietly bypasses it.
+second rule engine to keep in sync with the first.
+
+What the gate binds is `/api/mcp`. A program on this machine calling `/api/read` or
+`/api/duckdb/query` itself is not an agent and is not held to this file — the local API has always
+been the app's own, and only this machine can reach it.
 
 ### What a denial looks like
 

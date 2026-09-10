@@ -4,6 +4,34 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.6.3 — 2026-09-10
+
+- Spark in a python cell: install `pyspark`, and a session reads your objects by name with nothing to configure
+- The name is the same URI a SQL cell is written with, in backticks — `:` and `/` are not characters an unquoted SQL name may hold
+- The sign-in the app already has is reused, the object is cached once, and a format Spark has no reader for — `.sav`, `.sas7bdat`, `.xpt`, `.xlsx` — is converted to parquet first
+- There is no cloud connector to set up, no key to hand Spark and no `spark.hadoop.*` line to write
+- A name that is not one of ours is left alone, so your own tables, views and direct file reads behave exactly as they did
+- Settings → Python grows two sliders once pyspark is in an environment: the cores a session may use, and the memory its driver may take
+- Each slider runs the length of the machine and stops where the machine keeps something back — memory at three quarters, with the end of the track shaded
+- A JVM's heap is fixed when it starts, which is before any `.config()` in your builder is read, so this is the one place the size can be set
+- Every environment keeps its own `spark-defaults.conf`, and a terminal joins by pointing `SPARK_CONF_DIR` at it
+- Stopping a kernel stops its Spark session; a JVM that has stopped answering is killed about eight seconds later
+- Every JVM this app starts is named after its environment, so one found in `ps` is identifiable — and it is what the app checks before killing one
+- A session whose JVM died is replaced on the next cell instead of handed back dead forever
+- It needs a JDK 17 or 21, found wherever your package manager put it, including Homebrew's `openjdk`
+- The ⓘ icon beside Run opens everything else about a python cell: which kernel and venv it ran on, what is in that namespace, and anything it printed
+- The icon is struck through while the panel is shut, the way a crossed-out eye reads — there is something in there and you are not seeing it
+- A cell whose last line is not a value — an assignment, an import, a bare `print` — draws nothing at all
+- The venv picker is gone from the cell: a cell runs in whichever environment its kernel was started on
+- A second kernel comes from `new kernel…` in the toolbar, which asks which environment only when there is more than one
+- Settings → Python asks for a name and a version instead of listing every interpreter to read, and pyspark joins the one-click badges
+- An agent's tools are this app's own routes now: `getObject` is what the window calls and what an agent calls, and `readObject` is gone
+- The gate is the only thing that decides — behind it there is no second implementation of the app to keep in sync with the first
+- A refusal says which step said no, on the line — `getObject: over size limit` — with the rule from the file on hover
+- Hash, mask and FPE live in one place, so a share and an agent's answer are rewritten by the same code
+- The share dialog's preview is the server's own answer, which is what the receiver will read; the browser holds no cipher at all
+- Sanitization is a field of a request rather than a property of who is asking, so a program on this machine calling the local API is not an agent and is not held to `mcp.yaml`
+
 ## v0.6.2 — 2026-09-08
 
 - An agent reaches every object now, not only the ones duckdb can read: a `.docx`, an `.excalidraw` and a `.png` all answer
