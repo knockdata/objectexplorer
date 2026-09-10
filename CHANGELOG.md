@@ -4,6 +4,25 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
+## v0.6.4 — 2026-09-10
+
+- A Google Drive, OneDrive or iCloud folder in streaming mode is a tree of placeholders — the row says 20 MB and not a byte of it is here — and the app tells the difference now
+- ON DISK, a column beside SIZE, is what an object takes up on this machine rather than what it is
+- It appears only where the bytes might not be here: a synced folder, and a bucket, whose objects are cached rather than stored — an ordinary local folder is neither, and the column stays away
+- An object that is not here shows a download icon in that cell, and clicking it fetches that one file without opening it, the gesture Finder puts in the same place
+- A folder never gets the icon: what is under it is the SIZE cell's question
+- Opening an object the provider is still holding asks first, above 5 MB — under that it is simply fetched, because a prompt in front of a document is only a door to open twice
+- The panel names the provider holding it and says how big it is, and a spinner runs until the bytes land
+- iCloud hands a file over whole, in one step, so there is no percentage to report and the spinner is the entire answer; a provider that materialises progressively shows its bytes climbing instead
+- Scanning a streaming folder no longer downloads it — reading a file's first 64 bytes to sniff what it is was enough to make the provider fetch the whole object, so that read is refused before it starts
+- A mount takes the name Finder gives it: "iCloud Drive" and "Google Drive", not `com~apple~CloudDocs` or `GoogleDrive-someone@gmail.com`
+- A folder inside a mount keeps its own name — that one you chose
+- What each object has on disk is remembered, so a listing drawn from the database reads the same as one drawn from a fresh scan
+- A file dragged in from the desktop no longer reports that it no longer exists on disk: it arrives carrying its own bytes, which is better proof than a lookup in the registry of folders you have opened
+- A large PDF opens again — its decoded page images are bigger than the file they came from and were being copied to the window rather than handed to it, which a 20 MB document had no memory for
+- A PDF over 5 MB is not read apart at all now: the pages on screen are drawn by the browser from the same bytes, and the parse only ever fed the extra modes
+- The database this all lives in gains three columns and is built again from scratch, so the folders and cloud favourites you added are added back once
+
 ## v0.6.3 — 2026-09-10
 
 - Spark in a python cell: install `pyspark`, and a session reads your objects by name with nothing to configure
