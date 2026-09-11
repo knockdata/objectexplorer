@@ -617,13 +617,18 @@ jobs:
       - name: verify
         run: |
           version=${{ needs.source.outputs.version }}
+          delay=6
           for attempt in $(seq 1 10); do
             published=$(npm view @knockdata/objectexplorer version 2>/dev/null || echo "")
             if [ "$published" = "$version" ]; then
-              echo "published $version" >> "$GITHUB_STEP_SUMMARY"
+              echo "published $version after $attempt checks" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
-            sleep 6
+            echo "attempt $attempt: registry says ${published:-nothing}, waiting ${delay}s"
+            sleep $delay
+            # the registry needs minutes, not seconds, to settle: 6s grows by half each
+            # time, so the last of the 10 checks lands about 7 minutes after the publish
+            delay=$((delay * 3 / 2))
           done
           echo "::error::npm still reports $published, not $version"
           exit 1
