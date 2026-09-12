@@ -4,13 +4,23 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
-## v0.6.6 — 2026-09-12
+## v0.7.0 2026-09-12
 
+- ObjectExplorer is MIT licensed, and says so: the public repository had no LICENSE file at all, which by default means all rights reserved — the opposite of what was intended, on the page everyone reads first
+- The npm package said ISC while the repository said nothing, so the two halves of the same product disagreed about their own terms; both now say MIT
 - Every font, icon set and engine this app ships with now has its licence written down, in one `LICENSES.md` that travels with the app — in the npm package, inside the desktop binary, and served at `/LICENSES.md` by any of them
 - The hand-drawn font in a drawing is Excalifont, under the SIL Open Font License, which asks that its text go wherever the font goes; that text is in `licenses/OFL-1.1.txt` now instead of nowhere
 - The same file names the rest of what came from other people: Seti UI's file-type icons and DuckDB, both MIT; VS Code's codicons, CC BY 4.0; SQLite, which is in the public domain and asks for nothing
 - Google's Cloud service icons are named there too, as what they are — Google's own marks, shown so a bucket looks like a bucket, and not ours to hand on under an open licence
-- FFmpeg, the WebAssembly build that converts audio, is GPL-2.0-or-later, and its full text ships beside it: the one thing here that asks for more than a credit
+- FFmpeg is no longer inside the app at all: its WebAssembly core is GPL, and rather than carry that, the browser now fetches the core from unpkg the first time an audio file needs converting and keeps it after that
+- The download is one pinned version, cached in the browser, and it only ever happens for a format the browser cannot decode on its own — every other audio file plays without it
+- The desktop binary is 32 MB smaller for it, and the npm package has one dependency fewer
+- Converting audio also stopped going through a worker of our own: the ffmpeg library already runs its core in one, so the second worker was moving the same bytes an extra time
+- The demo song a synthesia keyboard loaded on its own is gone — it was somebody else's sequence, filed under the wrong title, and the keyboard was never meant to open with a tune nobody asked for
+- The drum kit is played on instruments that do not exist: every hit is built out of oscillators and filtered noise instead of a recording, so there is nothing left in the app whose origin cannot be answered
+- It is meant to sound struck rather than triggered — nothing starts at full volume, every decay curves, the toms and the kick glide down in pitch the way a real head does, and each hit ends in a few quiet reflections so it lands in a room rather than in a vacuum
+- The kit is balanced by how loud each piece sounds rather than how tall its waveform is, which is the difference between a hi-hat you can hear under a tom and one you cannot
+- The old sampled kit is gone from the build entirely — not in the npm package, the desktop binary or the hosted app — because a build that cannot say where a recording came from should not be handing it out
 
 ## v0.6.5 — 2026-09-10
 

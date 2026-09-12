@@ -6,15 +6,15 @@
 // at launch and the server then serves that one folder for the whole session — so every answer
 // carries restartRequired, and the dialog says so out loud.
 //
-// The engines are simpler than the bundle: resolveFfmpegDir/resolveDuckdbDir/resolveSqliteDir
+// The engines are simpler than the bundle: resolveDuckdbDir/resolveSqliteDir
 // always return the version embedded in this binary, so what is running is the version.js
 // constant, and a downloaded newer one is only ever "ready", never live.
-import { versionOf, newestBundle, isNewer, ffmpegDirFor, isValidFfmpeg, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
+import { versionOf, newestBundle, isNewer, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
 import { fetchLatest, downloadUpdate } from "./update.js"
 import { spawn } from "node:child_process"
 import fs from "node:fs"
 import { launchGuardFile } from "./paths.js"
-import { ffmpegVersion, duckdbVersion, sqliteVersion } from "./version.js"
+import { duckdbVersion, sqliteVersion } from "./version.js"
 import { log, logError } from "./log.js"
 
 export default function VersionManager({ bundleDir, launchArgs = [] }) {
@@ -118,7 +118,6 @@ export default function VersionManager({ bundleDir, launchArgs = [] }) {
 			{ name: "ObjectExplorer", running, latest: latest && latest.version, ready: readyVersion },
 			{ name: "duckdb", running: duckdbVersion, latest: latest && latest.duckdbVersion, ready: readyEngine(latest && latest.duckdbVersion, duckdbVersion, duckdbDirFor, isValidDuckdb) },
 			{ name: "sqlite", running: sqliteVersion, latest: latest && latest.sqliteVersion, ready: readyEngine(latest && latest.sqliteVersion, sqliteVersion, sqliteDirFor, isValidSqlite) },
-			{ name: "ffmpeg", running: ffmpegVersion, latest: latest && latest.ffmpegVersion, ready: readyEngine(latest && latest.ffmpegVersion, ffmpegVersion, ffmpegDirFor, isValidFfmpeg) },
 		]
 		return rows.map(row => ({ ...row, state: stateOf(row) }))
 	}

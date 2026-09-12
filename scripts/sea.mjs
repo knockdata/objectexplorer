@@ -14,7 +14,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { buildSync } from "esbuild"
-import { bundleVersion, ffmpegVersion, duckdbVersion, hasDuckdbAddon, sqliteVersion, hasSqliteAddon } from "./npm-bundle.mjs"
+import { bundleVersion, duckdbVersion, hasDuckdbAddon, sqliteVersion, hasSqliteAddon } from "./npm-bundle.mjs"
 import { addonName } from "./addon.mjs"
 import { fetchNodeBinary } from "./node-binary.mjs"
 import { targetPlatform } from "./target.mjs"
@@ -69,7 +69,6 @@ function bundle(entry, outFile) {
 		define: {
 			VERSION: `"${version}"`,
 			BUNDLE_VERSION: `"${bundleVersion()}"`,
-			FFMPEG_VERSION: `"${ffmpegVersion()}"`,
 			DUCKDB_VERSION: `"${duckdbVersion()}"`,
 			SQLITE_VERSION: `"${sqliteVersion()}"`,
 		},
@@ -89,7 +88,6 @@ function writeConfig() {
 		assets: {
 			"worker.js": path.join(outDir, "worker.js"),
 			"objectexplorer.tgz": path.join(outDir, "objectexplorer.tgz"),
-			"ffmpeg-core.tgz": path.join(outDir, "ffmpeg-core.tgz"),
 			"duckdb.tgz": path.join(outDir, "duckdb.tgz"),
 			"sqlite.tgz": path.join(outDir, "sqlite.tgz"),
 			"64.png": path.join(outDir, "64.png"),

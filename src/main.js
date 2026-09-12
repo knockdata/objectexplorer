@@ -19,7 +19,7 @@ import sea from "node:sea"
 import { Worker, SHARE_ENV } from "node:worker_threads"
 import { createWindow, applyWindowsArgs, showAlert } from "./webview.js"
 import { openBrowser } from "./browser.js"
-import { resolveBundleDir, resolveFfmpegDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
+import { resolveBundleDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
 import { userData, logFile, launchGuardFile } from "./paths.js"
 import { log, logError } from "./log.js"
 import { version, bundleVersion } from "./version.js"
@@ -47,10 +47,9 @@ async function main() {
 	}
 
 	const bundleDir = await resolveBundleDir(readAsset)
-	const ffmpegDir = await resolveFfmpegDir(readAsset)
 	const duckdbDir = await resolveDuckdbDir(readAsset)
 	const sqliteDir = await resolveSqliteDir(readAsset)
-	const port = await startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir)
+	const port = await startServer(bundleDir, duckdbDir, sqliteDir)
 	const url = `http://127.0.0.1:${port}`
 	log("app url:", url)
 
@@ -119,7 +118,7 @@ function launchArgs() {
 	}
 }
 
-function startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir) {
+function startServer(bundleDir, duckdbDir, sqliteDir) {
 	const source = Buffer.from(readAsset("worker.js")).toString("utf8")
 	// SHARE_ENV, because the backend publishes OBJECTFS_SERVER into the environment once it knows
 	// which port it settled on (server/WebServer.js startAndPublishAddress), and duckdb's objectfs
@@ -133,7 +132,7 @@ function startServer(bundleDir, ffmpegDir, duckdbDir, sqliteDir) {
 		env: SHARE_ENV,
 		// the launch arguments go with it: a worker's own process.argv is [execPath, "[worker
 		// eval]"], and VersionManager restarts the app with the arguments it was started with
-		workerData: { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port: preferredPort, launchArgs: launchArgs() },
+		workerData: { bundleDir, duckdbDir, sqliteDir, port: preferredPort, launchArgs: launchArgs() },
 	})
 	// a worker that outlives the main thread's blocking run() keeps the process alive on its
 	// own, so nothing here needs to hold a reference

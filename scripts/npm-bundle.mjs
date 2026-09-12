@@ -9,11 +9,11 @@
 // A release builds from the candidate, so no binary ever waits for a publish: everything is built
 // and tested first, and npm and the GitHub release go out together at the end of the same run.
 //
-// @ffmpeg/core, @knockdata/duckdb and @knockdata/sqlite are downloaded from the registry either
-// way, into out/ffmpeg-core.tgz, out/<engine>.tgz and out/<engine>-native.tgz. They are
-// dependencies of the package rather than files inside it (that 32 MB wasm used to be two thirds
-// of the tarball), and the binary has no npm to install dependencies with, so the build fetches
-// them — pinned to the exact versions the package itself names.
+// @knockdata/duckdb and @knockdata/sqlite are downloaded from the registry either way, into
+// out/<engine>.tgz and out/<engine>-native.tgz. They are dependencies of the package rather than
+// files inside it, and the binary has no npm to install dependencies with, so the build fetches
+// them — pinned to the exact versions the package itself names. ffmpeg-core is NOT among them:
+// it is GPL, so the app never ships it and the browser fetches it from unpkg when it is needed.
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
@@ -24,7 +24,6 @@ import { extractTarToDir } from "../src/tar.js"
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const outDir = path.join(root, "out")
 const packageName = "@knockdata/objectexplorer"
-const ffmpegName = "@ffmpeg/core"
 const duckdbName = "@knockdata/duckdb"
 const sqliteName = "@knockdata/sqlite"
 
@@ -97,10 +96,9 @@ export async function downloadBundle(source = {}) {
 
 	fs.writeFileSync(path.join(outDir, "objectexplorer.tgz"), tarball)
 
-	const ffmpegVersion = await downloadFfmpeg(manifest)
 	const duckdbVersion = await downloadEngine(manifest, duckdbName, "duckdb")
 	const sqliteVersion = await downloadEngine(manifest, sqliteName, "sqlite")
-	fs.writeFileSync(path.join(outDir, "bundle.json"), JSON.stringify({ version: manifest.version, ffmpegVersion, duckdbVersion, sqliteVersion }, null, "\t"))
+	fs.writeFileSync(path.join(outDir, "bundle.json"), JSON.stringify({ version: manifest.version, duckdbVersion, sqliteVersion }, null, "\t"))
 	return manifest.version
 }
 
@@ -123,23 +121,6 @@ async function readPackage(source) {
 		const manifest = await fetchRetry(registryUrl(packageName, tag), response => response.json())
 		const tarball = Buffer.from(await fetchRetry(manifest.dist.tarball, response => response.arrayBuffer()))
 		return { manifest, tarball }
-	}
-}
-
-// The version comes from the package's own dependencies, so the binary always carries the
-// exact core the app was built against. The pin is exact; a range prefix would be stripped here.
-async function downloadFfmpeg(manifest) {
-	const dependencies = manifest.dependencies ?? {}
-	const version = String(dependencies[ffmpegName] ?? "").replace(/^[^0-9]*/, "")
-	if (version) {
-		const core = await fetchRetry(registryUrl(ffmpegName, version), response => response.json())
-		const tarball = Buffer.from(await fetchRetry(core.dist.tarball, response => response.arrayBuffer()))
-		fs.writeFileSync(path.join(outDir, "ffmpeg-core.tgz"), tarball)
-		console.log("ffmpeg:", ffmpegName, version, tarball.length, "bytes")
-		return version
-	}
-	else {
-		throw new Error(`${packageName}@${manifest.version} does not depend on ${ffmpegName}`)
 	}
 }
 
@@ -180,10 +161,6 @@ async function downloadEngine(manifest, name, localName) {
 
 export function bundleVersion() {
 	return JSON.parse(fs.readFileSync(path.join(outDir, "bundle.json"), "utf8")).version
-}
-
-export function ffmpegVersion() {
-	return JSON.parse(fs.readFileSync(path.join(outDir, "bundle.json"), "utf8")).ffmpegVersion
 }
 
 export function duckdbVersion() {

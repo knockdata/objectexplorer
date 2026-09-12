@@ -10,7 +10,7 @@
 // it asks the registry when it opens, and downloads only when the user says so. The launch
 // does both in a row, through VersionManager.upgrade().
 import { fetchUntar } from "./tar.js"
-import { packageName, ffmpegName, duckdbName, sqliteName, bundleDirFor, isValidBundle, ffmpegDirFor, isValidFfmpeg, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
+import { packageName, duckdbName, sqliteName, bundleDirFor, isValidBundle, duckdbDirFor, isValidDuckdb, sqliteDirFor, isValidSqlite } from "./bundle.js"
 import { log, logError } from "./log.js"
 
 const registryUrl = "https://registry.npmjs.org"
@@ -22,29 +22,11 @@ export async function downloadUpdate(latest) {
 	log("newer bundle available:", latest.version, "->", destDir)
 	await fetchUntar(latest.tarball, destDir, log)
 	log("update ready, will be used on next launch:", isValidBundle(destDir))
-	await fetchFfmpeg(latest.ffmpegVersion)
 	await fetchDuckdb(latest.duckdbVersion)
 	await fetchSqlite(latest.sqliteVersion)
 }
 
-// A newer bundle can want a different @ffmpeg/core than the one embedded in the binary. It is
-// downloaded into its own version folder next to the new bundle, which the next launch picks
-// up; the running session keeps serving what it started with, same as the bundle itself.
-async function fetchFfmpeg(version) {
-	const destDir = version ? ffmpegDirFor(version) : null
-	if (destDir && !isValidFfmpeg(destDir)) {
-		log("bundle wants a different ffmpeg:", version, "->", destDir)
-		const core = await fetchPackage(ffmpegName, version)
-		if (core) {
-			await fetchUntar(core.tarball, destDir, log)
-			log("ffmpeg ready:", isValidFfmpeg(destDir))
-		}
-	} else {
-		log("no ffmpeg update:", version)
-	}
-}
-
-// Same story as ffmpeg: a newer bundle can want a newer engine. Only the universal package
+// A newer bundle can want a newer engine. Only the universal package
 // is fetched here — it carries the wasm, which is enough to keep duckdb working. A newer
 // native addon arrives with the next full app release, where the SEA embeds it.
 async function fetchDuckdb(version) {
@@ -80,10 +62,9 @@ export async function fetchLatest() {
 	const latest = await fetchPackage(packageName, "latest")
 	if (latest) {
 		// the pin is exact; a range prefix ("^0.12.10") would be stripped here
-		const ffmpegVersion = String(latest.dependencies[ffmpegName] ?? "").replace(/^[^0-9]*/, "")
 		const duckdbVersion = String(latest.dependencies[duckdbName] ?? "").replace(/^[^0-9]*/, "")
 		const sqliteVersion = String(latest.dependencies[sqliteName] ?? "").replace(/^[^0-9]*/, "")
-		return { ...latest, ffmpegVersion, duckdbVersion, sqliteVersion }
+		return { ...latest, duckdbVersion, sqliteVersion }
 	} else {
 		return null
 	}

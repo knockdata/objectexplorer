@@ -128,3 +128,19 @@ The whole list is on [every format](https://objectexplorer.com/formats/).
 Under the hood it is a single native binary: no Electron, no Chromium, just the OS webview (WebKit
 on macOS and Linux, WebView2 on Windows) pointed at the HTTP server running inside the same
 executable.
+
+## License
+
+ObjectExplorer is [MIT licensed](./LICENSE), and so is everything in this repository.
+
+The app bundles work by other people, each under its own terms — Excalifont under the SIL Open
+Font License, Seti UI's file-type icons and DuckDB under MIT, VS Code's codicons under CC BY 4.0,
+SQLite in the public domain, and Google's Cloud service icons under Google's own icon terms. Every
+one of them is named, with its licence text, in `LICENSES.md` inside the app: open
+[objectexplorer.com/app/LICENSES.md](https://objectexplorer.com/app/LICENSES.md), or find the same
+file in `app/` of the [npm package](https://www.npmjs.com/package/@knockdata/objectexplorer) and
+of every release binary.
+
+FFmpeg is the one thing the app does **not** bundle. Its WebAssembly core is GPL, so the browser
+fetches it from a CDN the first time an audio file needs converting, and it reaches you from us in
+no build at all.

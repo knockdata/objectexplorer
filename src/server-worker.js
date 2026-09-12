@@ -18,7 +18,7 @@ import { userData } from "./paths.js"
 import { log, logError } from "./log.js"
 
 async function start() {
-	const { bundleDir, ffmpegDir, duckdbDir, sqliteDir, port, launchArgs } = workerData
+	const { bundleDir, duckdbDir, sqliteDir, port, launchArgs } = workerData
 	const appDir = path.join(bundleDir, "app")
 	const serverPath = path.join(bundleDir, "server", "WebServer.mjs")
 
@@ -49,7 +49,6 @@ async function start() {
 		publicDir: appDir,
 		demoPath,
 		userData,
-		ffmpegDir,
 		duckdbDir,
 		sqliteDir,
 		port,

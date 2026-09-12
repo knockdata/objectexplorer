@@ -12,11 +12,9 @@ import path from "node:path"
 import { extractTarToDir } from "./tar.js"
 import { appDir } from "./paths.js"
 import { log } from "./log.js"
-import { bundleVersion, ffmpegVersion, duckdbVersion, sqliteVersion } from "./version.js"
+import { bundleVersion, duckdbVersion, sqliteVersion } from "./version.js"
 
 export const packageName = "@knockdata/objectexplorer"
-export const ffmpegName = "@ffmpeg/core"
-export const ffmpegLocalName = "ffmpeg-core"
 export const duckdbName = "@knockdata/duckdb"
 export const duckdbLocalName = "duckdb"
 export const sqliteName = "@knockdata/sqlite"
@@ -71,36 +69,6 @@ export async function resolveBundleDir(readAsset) {
 	const newest = newestBundle()
 	log("serving bundle:", newest)
 	return newest
-}
-
-// The wasm ffmpeg core. It is a dependency of the npm package rather than a file inside it,
-// so the build embeds its tarball too (scripts/npm-bundle.mjs) and this unpacks it on first
-// run. The folder is keyed by the ffmpeg version, not the bundle version, so an OTA update of
-// the app reuses the 32 MB already on disk instead of extracting it again.
-export function ffmpegDirFor(version) {
-	return path.join(appDir, `${ffmpegLocalName}-${version}`)
-}
-
-// what the server serves: the esm build, which is what the browser loads
-export function ffmpegCoreDir(dir) {
-	return path.join(dir, "dist", "esm")
-}
-
-export function isValidFfmpeg(dir) {
-	return fs.existsSync(path.join(ffmpegCoreDir(dir), "ffmpeg-core.wasm"))
-}
-
-export async function resolveFfmpegDir(readAsset) {
-	const embedded = ffmpegDirFor(ffmpegVersion)
-
-	if (isValidFfmpeg(embedded)) {
-		log("embedded ffmpeg already unpacked:", embedded)
-	} else {
-		log("unpacking embedded ffmpeg to:", embedded)
-		await extractTarToDir(readAsset("ffmpeg-core.tgz"), embedded)
-	}
-
-	return ffmpegCoreDir(embedded)
 }
 
 // DuckDB arrives as two npm packages: the universal one holding wasm/duckdb.wasm, and the
