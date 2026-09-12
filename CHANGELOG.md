@@ -4,7 +4,15 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
 [README](./README.md) always point at the newest one.
 
-## v0.6.4 — 2026-09-10
+## v0.6.6 — 2026-09-12
+
+- Every font, icon set and engine this app ships with now has its licence written down, in one `LICENSES.md` that travels with the app — in the npm package, inside the desktop binary, and served at `/LICENSES.md` by any of them
+- The hand-drawn font in a drawing is Excalifont, under the SIL Open Font License, which asks that its text go wherever the font goes; that text is in `licenses/OFL-1.1.txt` now instead of nowhere
+- The same file names the rest of what came from other people: Seti UI's file-type icons and DuckDB, both MIT; VS Code's codicons, CC BY 4.0; SQLite, which is in the public domain and asks for nothing
+- Google's Cloud service icons are named there too, as what they are — Google's own marks, shown so a bucket looks like a bucket, and not ours to hand on under an open licence
+- FFmpeg, the WebAssembly build that converts audio, is GPL-2.0-or-later, and its full text ships beside it: the one thing here that asks for more than a credit
+
+## v0.6.5 — 2026-09-10
 
 - A Google Drive, OneDrive or iCloud folder in streaming mode is a tree of placeholders — the row says 20 MB and not a byte of it is here — and the app tells the difference now
 - ON DISK, a column beside SIZE, is what an object takes up on this machine rather than what it is
