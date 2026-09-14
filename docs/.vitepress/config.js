@@ -16,7 +16,7 @@ export default defineConfig({
 	cleanUrls: true,
 	lastUpdated: true,
 	head: [
-		["link", { rel: "icon", type: "image/png", href: `${base}img/64.png` }],
+		["link", { rel: "icon", type: "image/png", href: `${base}img/favicon.png` }],
 		["meta", { property: "og:title", content: "ObjectExplorer" }],
 		["meta", { property: "og:description", content: "The VS Code for cloud storage. Every byte stays on your machine." }],
 		["meta", { property: "og:image", content: "https://objectexplorer.com/shot/hero.png" }],
@@ -25,7 +25,7 @@ export default defineConfig({
 		hostname: "https://objectexplorer.com",
 	},
 	themeConfig: {
-		logo: "/img/64.png",
+		logo: { light: "/img/favicon.png", dark: "/img/64.png" },
 		nav: [
 			{ text: "Docs", link: "/what-is-objectexplorer" },
 			{ text: "Formats", link: "/formats/" },

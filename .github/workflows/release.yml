@@ -257,7 +257,7 @@ jobs:
       - name: Check the build inputs are in the repo
         shell: bash
         run: |
-          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
+          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/logo.png assets/logo-full.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
@@ -350,7 +350,7 @@ jobs:
       - name: Check the build inputs are in the repo
         shell: bash
         run: |
-          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
+          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/logo.png assets/logo-full.png
           ls -l assets/icon-44x44.png assets/icon-150x150.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
@@ -542,7 +542,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Check the build inputs are in the repo
         run: |
-          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/icon.png
+          ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/logo.png assets/logo-full.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def

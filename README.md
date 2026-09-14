@@ -1,6 +1,6 @@
 
 
-# <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/assets/icon.png" width="32" alt="ObjectExplorer"> ObjectExplorer
+# <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/assets/logo-full.png" width="32" alt="ObjectExplorer"> ObjectExplorer
 
 **The VSCode for Cloud Storage.** Explorer, Analyze and Machine Learning all in one App. 
 GCS, Azure Blob, S3 and local folders in one window — and every byte stays on your machine.

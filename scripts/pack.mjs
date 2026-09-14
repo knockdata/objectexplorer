@@ -156,7 +156,7 @@ function buildDmg(appPath, dmg) {
 // FinderInfo attribute, which is what `SetFile -a C` writes and xattr can write without Xcode.
 function volumeIcon(mountPoint) {
 	const customIcon = "0000000000000000040000000000000000000000000000000000000000000000"
-	buildVolumeIcns(path.join(mountPoint, ".VolumeIcon.icns"))
+	fs.copyFileSync(path.join(assetsDir, "icon.icns"), path.join(mountPoint, ".VolumeIcon.icns"))
 	execFileSync("xattr", ["-wx", "com.apple.FinderInfo", customIcon, mountPoint], { stdio: "inherit" })
 }
 
@@ -177,23 +177,6 @@ function removeSystemMetadata(mountPoint) {
 	}
 	fs.rmSync(marker, { force: true })
 	console.log("volume cleaned:", fs.readdirSync(mountPoint).join(" "))
-}
-
-// 64.png, not icon.icns: the volume icon is drawn at 16 points in the title bar and the path
-// bar, where icon.icns' dark rounded square disappears into the dark window. The transparent
-// png reads at that size. sips and iconutil both ship with macOS, which a mac pack already needs.
-function buildVolumeIcns(icns) {
-	const iconset = path.join(distDir, "volume.iconset")
-	fs.rmSync(iconset, { recursive: true, force: true })
-	fs.mkdirSync(iconset, { recursive: true })
-
-	const sizes = [["icon_16x16.png", 16], ["icon_16x16@2x.png", 32], ["icon_32x32.png", 32], ["icon_32x32@2x.png", 64], ["icon_128x128.png", 128]]
-	for (const [name, pixels] of sizes) {
-		execFileSync("sips", ["-z", String(pixels), String(pixels), path.join(assetsDir, "64.png"), "--out", path.join(iconset, name)], { stdio: "ignore" })
-	}
-
-	execFileSync("iconutil", ["-c", "icns", iconset, "-o", icns], { stdio: "inherit" })
-	fs.rmSync(iconset, { recursive: true, force: true })
 }
 
 // `hdiutil attach` prints "/dev/disk4  \tGUID_partition_scheme" and one line per slice. The
@@ -320,7 +303,7 @@ async function packLinux() {
 	// the runtime mounts the image and execs AppRun; a relative symlink resolves inside the mount
 	fs.symlinkSync(path.join("usr", "bin", appName), path.join(appDir, "AppRun"))
 	// the desktop entry says Icon=icon, so the file beside it has to be icon.png
-	fs.copyFileSync(path.join(assetsDir, "icon.png"), path.join(appDir, "icon.png"))
+	fs.copyFileSync(path.join(assetsDir, "logo-full.png"), path.join(appDir, "icon.png"))
 	fs.symlinkSync("icon.png", path.join(appDir, ".DirIcon"))
 	fs.writeFileSync(path.join(appDir, `${appName}.desktop`), desktopEntry())
 

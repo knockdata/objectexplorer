@@ -196,7 +196,7 @@ function noWindowMessage(url) {
 // turned a missing asset into "native window unavailable" and a browser tab.
 function readIcon() {
 	try {
-		return Buffer.from(readAsset("64.png"))
+		return Buffer.from(readAsset("logo-full.png"))
 	} catch (error) {
 		logError("no window icon:", error)
 		return null

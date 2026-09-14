@@ -37,7 +37,7 @@ export async function buildSea() {
 	bundle("src/server-worker.js", "worker.js")
 	// the window icon is read at runtime like any other asset, so it goes through out/ too —
 	// that is the folder src/main.js falls back to when there is no SEA to read from
-	fs.copyFileSync(path.join(root, "assets", "64.png"), path.join(outDir, "64.png"))
+	fs.copyFileSync(path.join(root, "assets", "logo-full.png"), path.join(outDir, "logo-full.png"))
 	writeConfig()
 
 	execFileSync(process.execPath, ["--experimental-sea-config", path.join(outDir, "sea-config.json")], { stdio: "inherit" })
@@ -90,7 +90,7 @@ function writeConfig() {
 			"objectexplorer.tgz": path.join(outDir, "objectexplorer.tgz"),
 			"duckdb.tgz": path.join(outDir, "duckdb.tgz"),
 			"sqlite.tgz": path.join(outDir, "sqlite.tgz"),
-			"64.png": path.join(outDir, "64.png"),
+			"logo-full.png": path.join(outDir, "logo-full.png"),
 			[addonName]: path.join(outDir, addonName),
 		},
 	}
