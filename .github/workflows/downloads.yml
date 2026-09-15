@@ -1,0 +1,56 @@
+name: Downloads
+
+# How many times each release asset has been downloaded, one row per asset per day. GitHub only
+# ever shows a running total, and loses it with the release, so the history is kept here: one
+# `downloads.csv` on the orphan `stats` branch, which neither docs.yml nor release.yml triggers on.
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: downloads
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      # The first run has no stats branch to fetch, and starts it: an orphan branch holds nothing
+      # of main, so the history of counts never mixes with the history of the code.
+      - name: Switch to the stats branch, or start it
+        run: |
+          if git fetch --depth 1 origin stats; then
+            git switch -c stats FETCH_HEAD
+          else
+            git switch --orphan stats
+          fi
+
+      - name: Append today's counts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          today=$(date -u +%F)
+          if [ -f downloads.csv ]; then
+            echo "appending to downloads.csv"
+          else
+            echo "date,tag,asset,downloadCount" > downloads.csv
+          fi
+          gh api --paginate "repos/${{ github.repository }}/releases" \
+            --jq '.[] | .tag_name as $tag | .assets[] | [$tag, .name, .download_count] | @csv' \
+            | sed "s/^/$today,/" >> downloads.csv
+          tail -n 20 downloads.csv
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads.csv
+          git commit -m "downloads $(date -u +%F)"
+          git push origin stats

@@ -1,17 +1,22 @@
 import DefaultTheme from "vitepress/theme"
-import { h } from "vue"
-import HeroVideo from "./HeroVideo.vue"
-import LiveApp from "./LiveApp.vue"
+import ThemeLayout from "./ThemeLayout.vue"
+import DownloadTable from "./components/DownloadTable.vue"
+import Landing from "./components/Landing.vue"
+import PricingTable from "./components/PricingTable.vue"
+import ShortsGrid from "./components/ShortsGrid.vue"
 import "./custom.css"
+import "./landing.css"
 
+// The documentation keeps the default theme. The landing page opts out of it entirely
+// (index.md is `layout: false` around <Landing />), and a short gets its video and share row
+// around the article through ThemeLayout's slots.
 export default {
 	extends: DefaultTheme,
-	// the hero picture is the film: a poster frame that plays, full screen, on a click
-	Layout() {
-		return h(DefaultTheme.Layout, null, { "home-hero-image": () => h(HeroVideo) })
-	},
-	// <LiveApp /> is the running app embedded in a page
+	Layout: ThemeLayout,
 	enhanceApp({ app }) {
-		app.component("LiveApp", LiveApp)
+		app.component("DownloadTable", DownloadTable)
+		app.component("Landing", Landing)
+		app.component("PricingTable", PricingTable)
+		app.component("ShortsGrid", ShortsGrid)
 	},
 }

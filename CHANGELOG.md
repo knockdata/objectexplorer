@@ -1,8 +1,8 @@
 # Release notes
 
 What changed in each version. Every build is on the
-[releases page](https://github.com/knockdata/objectexplorer/releases); the download links in the
-[README](./README.md) always point at the newest one.
+[releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
+[objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
 ## v0.7.0 2026-09-12
 

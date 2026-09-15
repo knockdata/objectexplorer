@@ -1,0 +1,233 @@
+.download {
+	padding-block: clamp(48px, 9vh, 104px) clamp(40px, 7vh, 72px);
+	scroll-margin-top: 60px;
+}
+
+.download h2 {
+	font-size: clamp(1.7rem, 3.6vw, 2.7rem);
+	font-variation-settings: "wdth" 110, "wght" 620;
+	letter-spacing: -0.028em;
+	line-height: 1.04;
+	margin: 0 0 18px;
+}
+
+.download h3 {
+	font-size: 17px;
+	font-variation-settings: "wdth" 104, "wght" 600;
+	letter-spacing: -0.012em;
+	line-height: 1.3;
+}
+
+.download code {
+	font-family: var(--mono);
+	font-size: 0.88em;
+}
+
+.download-lede {
+	color: var(--chalk-2);
+	margin: 0 0 34px;
+}
+
+.download-platforms {
+	display: grid;
+	gap: 18px;
+	grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+}
+
+.download-platform {
+	background: linear-gradient(180deg, rgba(234, 241, 248, 0.035), rgba(10, 12, 14, 0.4));
+	border: 1px solid var(--rule);
+	border-radius: 10px;
+	padding: 20px 20px 18px;
+	display: flex;
+	flex-direction: column;
+}
+
+.download-platform h3 {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+	margin: 0 0 14px;
+}
+
+.download-here {
+	display: none;
+}
+
+.download-platform ul {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.landing .download-package {
+	align-items: baseline;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	color: var(--chalk-2);
+	display: flex;
+	font-size: 15px;
+	gap: 14px;
+	justify-content: space-between;
+	padding: 9px 10px;
+	margin: 0 -10px;
+}
+
+.download-package span {
+	color: var(--chalk-3);
+	font-family: var(--mono);
+	font-size: 12.5px;
+	white-space: nowrap;
+}
+
+.landing .download-package:hover,
+.landing .download-package:focus-visible {
+	background: rgba(234, 241, 248, 0.06);
+	border-color: var(--rule);
+	color: var(--chalk);
+}
+
+.download-note {
+	color: var(--chalk-3);
+	font-size: 13px;
+	margin: 14px 2px 0;
+	margin-top: auto;
+}
+
+html[data-platform="linux"] .download-platform-linux,
+html[data-platform="mac"] .download-platform-mac,
+html[data-platform="windows"] .download-platform-windows {
+	background: linear-gradient(180deg, rgba(77, 255, 159, 0.1), rgba(10, 12, 14, 0.45));
+	border-color: var(--brand-glow);
+	box-shadow: 0 0 44px -22px var(--brand-glow);
+	order: -1;
+}
+
+html[data-platform="linux"] .download-platform-linux .download-here,
+html[data-platform="mac"] .download-platform-mac .download-here,
+html[data-platform="windows"] .download-platform-windows .download-here {
+	background: var(--brand-soft);
+	border: 1px solid var(--brand-glow);
+	border-radius: 999px;
+	color: var(--brand);
+	display: inline-block;
+	font-size: 11.5px;
+	font-variation-settings: "wdth" 100, "wght" 500;
+	padding: 3px 9px;
+}
+
+html[data-platform="linux"] .landing .download-platform-linux li:first-child .download-package,
+html[data-platform="mac"] .landing .download-platform-mac li:first-child .download-package,
+html[data-platform="windows"] .landing .download-platform-windows li:first-child .download-package {
+	background: var(--brand);
+	color: var(--brand-text);
+	font-variation-settings: "wdth" 102, "wght" 600;
+}
+
+html[data-platform="linux"] .download-platform-linux li:first-child .download-package span,
+html[data-platform="mac"] .download-platform-mac li:first-child .download-package span,
+html[data-platform="windows"] .download-platform-windows li:first-child .download-package span {
+	color: rgba(0, 0, 0, 0.62);
+}
+
+.download-share {
+	background: linear-gradient(180deg, rgba(77, 255, 159, 0.08), rgba(10, 12, 14, 0.45));
+	border: 1px solid var(--brand-glow);
+	border-radius: 10px;
+	padding: 22px 20px;
+}
+
+.download-share h3 {
+	margin: 0 0 8px;
+}
+
+.download-share p {
+	color: var(--chalk-2);
+	font-size: 15px;
+	margin: 0 0 18px;
+}
+
+.download .download-share-button {
+	background: var(--brand);
+	border-color: var(--brand);
+	color: var(--brand-text);
+	font-variation-settings: "wdth" 104, "wght" 600;
+	padding: 12px 20px;
+}
+
+.download-run {
+	align-items: center;
+	background: rgba(234, 241, 248, 0.025);
+	border: 1px solid var(--rule-soft);
+	border-radius: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px 28px;
+	margin-top: 22px;
+	padding: 18px 20px;
+}
+
+.download-run-text {
+	flex: 1 1 260px;
+}
+
+.download-run-text h3 {
+	margin: 0 0 4px;
+}
+
+.download-run-text p {
+	color: var(--chalk-3);
+	font-size: 14px;
+	margin: 0;
+}
+
+.download-command {
+	align-items: center;
+	background: rgba(10, 12, 14, 0.7);
+	border: 1px solid var(--rule);
+	border-radius: 8px;
+	display: flex;
+	gap: 12px;
+	max-width: 100%;
+	padding: 9px 10px 9px 15px;
+}
+
+/* a phone is narrower than the command: it breaks at the slash rather than hiding its end */
+.download-command code {
+	color: var(--brand);
+	overflow-wrap: anywhere;
+}
+
+.download-command button {
+	background: transparent;
+	border: 1px solid var(--rule);
+	border-radius: 5px;
+	color: var(--chalk-2);
+	cursor: pointer;
+	flex: none;
+	font-size: 13px;
+	padding: 6px 12px;
+}
+
+.download-command button:hover {
+	border-color: var(--chalk-3);
+	color: var(--chalk);
+}
+
+.download-all {
+	font-size: 14.5px;
+	margin: 22px 2px 0;
+}
+
+.landing .download-all a {
+	border-bottom: 1px solid var(--rule);
+	color: var(--chalk-3);
+}
+
+.landing .download-all a:hover {
+	border-bottom-color: var(--brand-glow);
+	color: var(--brand);
+}

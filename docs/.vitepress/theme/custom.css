@@ -1,12 +1,14 @@
-/* The app's own colours, so a page and a screenshot of the app agree: the accent is the blue of a
-   selected row, and the page ground is the editor's near-black rather than VitePress's grey. */
+/* The app's own colours, so a page and a screenshot of the app agree. The accent is the app's
+   green primary: dark enough to read on white in the light theme, muted in the dark theme, where
+   the neon #4dff9f is kept for hover, the landing page and the mark. The page ground is the
+   editor's near-black rather than VitePress's grey. */
 :root {
-	--vp-c-brand-1: #4a9eff;
-	--vp-c-brand-2: #6cb0ff;
-	--vp-c-brand-3: #2b7fe0;
-	--vp-c-brand-soft: rgba(74, 158, 255, 0.14);
+	--vp-c-brand-1: #2e7d4f;
+	--vp-c-brand-2: #276b43;
+	--vp-c-brand-3: #2e7d4f;
+	--vp-c-brand-soft: rgba(46, 125, 79, 0.14);
 	/* an extension in backticks is a name, not a link. VitePress paints inline code with the
-	   brand colour, which turns a table of formats into twenty blue words that lead nowhere. */
+	   brand colour, which turns a table of formats into twenty coloured words that lead nowhere. */
 	--vp-code-color: var(--vp-c-text-1);
 }
 
@@ -33,42 +35,19 @@
 	background: transparent;
 }
 
+/* a filled green button carries black text, as the app's own does (10:1) */
 .dark {
+	--vp-button-brand-active-text: #000000;
+	--vp-button-brand-hover-text: #000000;
+	--vp-button-brand-text: #000000;
 	--vp-c-bg: #131417;
 	--vp-c-bg-alt: #0e0f12;
 	--vp-c-bg-elv: #1a1c21;
+	--vp-c-brand-1: #3dcc70;
+	--vp-c-brand-2: #4dff9f;
+	--vp-c-brand-3: #34b562;
+	--vp-c-brand-soft: rgba(61, 204, 112, 0.16);
 	--vp-c-divider: #2a2d33;
-}
-
-/* The old landing's own hero: the promise carried the blue → cyan → purple gradient and the
-   wordmark sat under it in plain blue. Two gradients stacked read as noise, so the headline keeps
-   it and the name goes solid. */
-.VPHero .name {
-	color: var(--vp-c-brand-1);
-}
-
-.VPHero .text {
-	background: linear-gradient(to right, rgb(0, 128, 255), rgb(51, 221, 255), hsl(270, 70%, 57%));
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-}
-
-/* and its primary button, which glowed rather than sat flat */
-.VPButton.brand {
-	background: linear-gradient(135deg, #6366f1, #8b5cf6);
-	border-color: transparent;
-	box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35);
-}
-
-.VPButton.brand:hover {
-	background: linear-gradient(135deg, #7c7ff5, #9d6ff8);
-	border-color: transparent;
-}
-
-/* the landing drew its card icons in the app's green (app.css: .card_icon) */
-.VPFeature .icon {
-	background: transparent;
-	color: hsl(150, 100%, 42%);
 }
 
 /* Screenshots are the argument on most pages, so they get the app's own frame rather than sitting
@@ -92,101 +71,4 @@
 .vp-doc table {
 	display: table;
 	width: 100%;
-}
-
-/* The hero picture is the film. It sits under the poster frame until a click plays it full screen,
-   so the first thing on the page is the product moving rather than a still of it. */
-.hero-video-frame {
-	cursor: pointer;
-	display: block;
-	position: relative;
-}
-
-.hero-video {
-	border: 1px solid var(--vp-c-divider);
-	border-radius: 12px;
-	display: block;
-	width: 100%;
-}
-
-.hero-video-play {
-	align-items: center;
-	background: rgba(20, 20, 24, 0.72);
-	border: 1px solid var(--vp-c-divider);
-	border-radius: 50%;
-	color: #fff;
-	display: flex;
-	height: 64px;
-	justify-content: center;
-	left: 50%;
-	padding-left: 4px;
-	position: absolute;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	transition: background 0.2s;
-	width: 64px;
-}
-
-.hero-video-frame:hover .hero-video-play {
-	background: linear-gradient(135deg, #6366f1, #8b5cf6);
-}
-
-/* the app embedded on the home page — the landing's own frame, which gave it the height of a real
-   window rather than of a figure */
-.live-app-frame {
-	position: relative;
-}
-
-/* above the frame rather than over it: floated on top, the button sat under the sticky nav bar
-   for as long as the page was scrolled to the embed */
-.live-app-bar {
-	display: flex;
-	justify-content: flex-end;
-	margin-top: 16px;
-}
-
-.live-app-expand {
-	align-items: center;
-	background: var(--vp-c-bg-elv);
-	border: 1px solid var(--vp-c-divider);
-	border-radius: 8px;
-	color: var(--vp-c-text-1);
-	cursor: pointer;
-	display: flex;
-	font-size: 13px;
-	gap: 6px;
-	padding: 6px 12px;
-	text-decoration: none;
-}
-
-.live-app-expand:hover {
-	border-color: var(--vp-c-brand-1);
-	color: var(--vp-c-brand-1);
-}
-
-.live-app {
-	/* the app paints its own dark ground once it boots; without this the empty frame is a sheet
-	   of white on a dark page for as long as the load takes */
-	background: var(--vp-c-bg-alt);
-	border: 1px solid var(--vp-c-divider);
-	border-radius: 16px;
-	display: block;
-	height: 80vh;
-	margin: 8px 0 24px;
-	width: 100%;
-}
-
-.live-app-away {
-	border: 1px solid var(--vp-c-divider);
-	border-radius: 10px;
-	line-height: 1.6;
-	padding: 16px 20px;
-}
-
-/* "Open it in the browser" is a promise this device cannot keep: the app wants a wide window and a
-   pointer, so on a phone or a tablet the hero leads with installing it instead. */
-@media (max-width: 899px), (pointer: coarse) {
-	.VPHero .actions .VPButton.brand {
-		display: none;
-	}
 }

@@ -5,7 +5,36 @@ import { defineConfig } from "vitepress"
 // so. Everything VitePress generates — assets, links, the logo — is prefixed with this.
 const base = process.env.DOCS_BASE ?? "/"
 
-// The whole site — the landing page and the documentation are one thing now, served at
+// Every absolute URL a crawler or a share preview sees names the real site, whichever copy built it.
+const site = "https://objectexplorer.com"
+const defaultDescription = "The VS Code for cloud storage. Every byte stays on your machine."
+
+// Which kind of machine is looking, written onto <html data-platform> before the first paint, so
+// a phone never sees a download grid that then swaps for a share button. The width decides the
+// layout; this decides whether an installer is any use. iPadOS says "Macintosh" exactly like a
+// Mac does, so a touch screen is what gives it away. ES5, because it runs before anything else.
+const platformScript = `(function () {
+	var agent = navigator.userAgent;
+	var platform = "unknown";
+	if (/iPhone|iPad|iPod|Android/i.test(agent) || (/Macintosh/.test(agent) && navigator.maxTouchPoints > 1)) {
+		platform = "mobile";
+	}
+	else if (/CrOS/.test(agent)) {
+		platform = "unknown";
+	}
+	else if (/Macintosh/.test(agent)) {
+		platform = "mac";
+	}
+	else if (/Windows/.test(agent)) {
+		platform = "windows";
+	}
+	else if (/Linux|X11/.test(agent)) {
+		platform = "linux";
+	}
+	document.documentElement.dataset.platform = platform;
+})()`
+
+// The whole site — the landing page and the documentation are one thing, served at
 // objectexplorer.com by the front door in rock2/server, with the app itself at /app on the same
 // origin. Dark is the default: the app is dark, and every screenshot here was taken in it.
 export default defineConfig({
@@ -17,21 +46,45 @@ export default defineConfig({
 	lastUpdated: true,
 	head: [
 		["link", { rel: "icon", type: "image/png", href: `${base}img/favicon.png` }],
-		["meta", { property: "og:title", content: "ObjectExplorer" }],
-		["meta", { property: "og:description", content: "The VS Code for cloud storage. Every byte stays on your machine." }],
-		["meta", { property: "og:image", content: "https://objectexplorer.com/shot/hero.png" }],
+		["script", {}, platformScript],
 	],
+	// a short is an article: no sidebar and no outline beside it
+	transformPageData(pageData) {
+		if (pageData.relativePath.startsWith("shorts/")) {
+			pageData.frontmatter.sidebar = false
+			pageData.frontmatter.aside = false
+		}
+	},
+	// Open Graph and a canonical link on every page, from its own frontmatter, so a short shared on
+	// LinkedIn, X or Slack previews with its own title, problem and picture rather than the site's.
+	transformHead({ pageData }) {
+		const { frontmatter, relativePath } = pageData
+		const pagePath = relativePath.replace(/index\.md$/, "").replace(/\.md$/, "")
+		const pageUrl = `${site}/${pagePath}`
+		const isShort = relativePath.startsWith("shorts/") && relativePath !== "shorts/index.md"
+		const title = [frontmatter.title, pageData.title, "ObjectExplorer"].find(Boolean)
+		const description = frontmatter.description ?? defaultDescription
+		const image = `${site}${frontmatter.poster ?? "/shot/hero.png"}`
+		return [
+			["link", { rel: "canonical", href: pageUrl }],
+			["meta", { property: "og:type", content: isShort ? "article" : "website" }],
+			["meta", { property: "og:title", content: title }],
+			["meta", { property: "og:description", content: description }],
+			["meta", { property: "og:image", content: image }],
+			["meta", { property: "og:url", content: pageUrl }],
+			["meta", { name: "twitter:card", content: "summary_large_image" }],
+		]
+	},
 	sitemap: {
-		hostname: "https://objectexplorer.com",
+		hostname: site,
 	},
 	themeConfig: {
 		logo: { light: "/img/favicon.png", dark: "/img/64.png" },
 		nav: [
+			{ text: "Pricing", link: "/pricing" },
 			{ text: "Docs", link: "/what-is-objectexplorer" },
-			{ text: "Formats", link: "/formats/" },
-			{ text: "Agents", link: "/agents/" },
 			{ text: "Changelog", link: "/changelog" },
-			{ text: "Download", link: "/getting-started#download" },
+			{ text: "Download", link: "/#download" },
 			// the running app, on the same origin once this site is objectexplorer.com. Absolute
 			// so it still reaches the app from the GitHub Pages copy of these pages, and in this
 			// tab — a reader who wants a second one right-clicks, which no site can take away.
@@ -126,6 +179,9 @@ export default defineConfig({
 		socialLinks: [
 			{ icon: "github", link: "https://github.com/knockdata/objectexplorer" },
 			{ icon: "linkedin", link: "https://www.linkedin.com/in/rockieyang/" },
+			{ icon: "youtube", link: "https://www.youtube.com/@objectexplorercom" },
+			{ icon: "x", link: "https://x.com/objectexplorer" },
+			{ icon: "tiktok", link: "https://www.tiktok.com/@objectexplorer" },
 		],
 		search: {
 			provider: "local",
@@ -135,8 +191,8 @@ export default defineConfig({
 			text: "Edit this page on GitHub",
 		},
 		footer: {
-			message: 'Every byte stays on your machine. Questions: <a href="mailto:rockie@knockdata.com">rockie@knockdata.com</a>',
-			copyright: "© 2025 ObjectExplorer — a product of Knock Data AB, Sweden.",
+			message: `<a href="${base}what-is-objectexplorer">Docs</a> · <a href="${base}pricing">Pricing</a> · <a href="${base}changelog">Changelog</a> · <a href="${base}privacy">Privacy</a> · <a href="mailto:rockie@knockdata.com">Contact</a>`,
+			copyright: "© Knock Data AB, Sweden 2026",
 		},
 	},
 })
