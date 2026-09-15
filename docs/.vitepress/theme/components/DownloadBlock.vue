@@ -75,7 +75,7 @@ async function copyCommand() {
 			<p>ObjectExplorer is a desktop app for macOS, Windows and Linux. Send yourself the link and open it there.</p>
 			<ShareLink
 				class="download-share-button"
-				url="https://objectexplorer.com/#download"
+				url="https://objectexplorer.com/download"
 				title="Download ObjectExplorer"
 				text="ObjectExplorer is a desktop app. Open this link on your computer to install it."
 				label="Share the download link"
@@ -84,12 +84,20 @@ async function copyCommand() {
 
 		<div class="download-run">
 			<div class="download-run-text">
-				<h3>Or run it without installing</h3>
-				<p>Starts on localhost and opens in your browser. Node 20 or newer.</p>
+				<h3>Run in Command Line</h3>
+				<p>Use in your browser</p>
 			</div>
 			<div class="download-command">
 				<code>{{ command }}</code>
-				<button type="button" @click="copyCommand">{{ copied ? "Copied" : "Copy" }}</button>
+				<button type="button" :aria-label="copied ? 'Copied' : 'Copy the command'" :title="copied ? 'Copied' : 'Copy'" @click="copyCommand">
+					<svg v-if="copied" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<polyline points="20 6 9 17 4 12" />
+					</svg>
+					<svg v-else viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+					</svg>
+				</button>
 			</div>
 		</div>
 

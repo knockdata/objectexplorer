@@ -9,12 +9,12 @@ const plans = [
 	{
 		id: "free",
 		name: "Free",
-		tagline: "Try it on your own storage",
+		tagline: "Sufficient for most case",
 		price: "€0",
 		period: "",
 		lifetime: "",
 		action: "Download",
-		href: "/#download",
+		href: "/download",
 		includes: "What you get:",
 		features: [
 			"Preview 60+ formats in place",
@@ -32,7 +32,7 @@ const plans = [
 		tagline: "For the window you leave open all day",
 		price: "€20",
 		period: "per month",
-		lifetime: "Or €300 once, for life. It pays for itself in 15 months.",
+		// lifetime: "Or €300 once, for life. It pays for itself in 15 months.",
 		includes: "Everything in Free and:",
 		features: [
 			"Unlimited cloud roots per provider",
@@ -45,7 +45,7 @@ const plans = [
 	{
 		id: "enterprise",
 		name: "Enterprise",
-		tagline: "For teams that have to prove it",
+		tagline: "Most secure, custom support",
 		price: "Contact sales",
 		period: "",
 		lifetime: "",
@@ -103,10 +103,11 @@ function linkOf(href) {
 </template>
 
 <style>
+/* the site's one frame (landing.css), so the title and the plans sit on the header's edges */
 .pricing {
 	margin: 0 auto;
-	max-width: 1080px;
-	padding: 48px 24px 96px;
+	max-width: var(--landing-width);
+	padding: 48px var(--landing-gutter) 96px;
 }
 
 .pricing h1 {
@@ -144,7 +145,7 @@ function linkOf(href) {
 }
 
 .pricing-plan-pro {
-	border-color: var(--vp-c-brand-1);
+	/* border-color: var(--vp-c-brand-1); */
 	box-shadow: 0 0 40px -24px var(--vp-c-brand-1);
 }
 
@@ -217,7 +218,7 @@ function linkOf(href) {
 	color: var(--vp-c-brand-1);
 }
 
-.pricing .pricing-plan-pro .pricing-action {
+/* .pricing .pricing-plan-pro .pricing-action {
 	background: var(--vp-button-brand-bg);
 	border-color: var(--vp-button-brand-border);
 	color: var(--vp-button-brand-text);
@@ -226,7 +227,7 @@ function linkOf(href) {
 .pricing .pricing-plan-pro .pricing-action:hover {
 	background: var(--vp-button-brand-hover-bg);
 	color: var(--vp-button-brand-hover-text);
-}
+} */
 
 .pricing-plan-features {
 	border-top: 1px solid var(--vp-c-divider);
@@ -265,10 +266,6 @@ function linkOf(href) {
 }
 
 @media (min-width: 768px) {
-	.pricing {
-		padding-inline: 32px;
-	}
-
 	.pricing-plans {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}

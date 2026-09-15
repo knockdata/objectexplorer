@@ -102,7 +102,7 @@ function hexOf(buffer) {
 	<div class="pricing-signup">
 		<div v-if="signedUpAs" class="pricing-signup-form">
 			<p class="pricing-signup-done">You are signed up as {{ signedUpAs }}.</p>
-			<a class="pricing-action" :href="withBase('/#download')">Download</a>
+			<a class="pricing-action" :href="withBase('/download')">Download</a>
 		</div>
 		<form v-else-if="opened" class="pricing-signup-form" @submit.prevent="signup">
 			<input v-model="email" class="pricing-signup-field" type="email" autocomplete="email" placeholder="you@company.com">

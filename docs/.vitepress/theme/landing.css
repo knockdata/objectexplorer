@@ -11,15 +11,27 @@
 	--glass-lift: rgba(234, 241, 248, 0.045);
 	--ink: #0a0c0e;
 	--landing-font: system-ui, -apple-system, sans-serif;
-	--landing-gutter: clamp(16px, 4vw, 44px);
-	--landing-width: 1220px;
+	--landing-gutter: 24px;
+	--landing-header-stretch: 6px;
+	--landing-width: 1280px;
 	--marker-amber: #ffc163;
 	--marker-neon: #4dff9f;
 	--marker-pink: #ff79b8;
 	--marker-violet: #9d8cff;
 	--mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+	/* about 80 characters a line: an average character is 0.47em of Inter and 0.46em of the system font */
+	--reading-width: 37em;
 	--rule: rgba(234, 241, 248, 0.14);
 	--rule-soft: rgba(234, 241, 248, 0.08);
+}
+
+/* One frame for every page: 1280px wide, with 24px of padding on a phone and 32px from a tablet up —
+   the padding VitePress gives its docs. custom.css brings the docs layout to the same width, so the
+   header, the footer and every landing section share their edges with the sidebar and the outline. */
+@media (min-width: 768px) {
+	:root {
+		--landing-gutter: 32px;
+	}
 }
 
 /* Two questions, kept apart. The width decides the layout — the media queries in each component,
@@ -63,7 +75,7 @@ html:not([data-platform="mobile"]) .mobile-only {
 	padding-inline: var(--landing-gutter);
 }
 
-/* The pane of glass the pitch is written on. "Open the app" wipes it upward off the app. */
+/* The pane of glass the pitch is written on. "Open App" wipes it upward off the app. */
 .landing-pitch {
 	clip-path: inset(0 0 0 0);
 	position: relative;

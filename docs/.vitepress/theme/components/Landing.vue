@@ -7,7 +7,7 @@ import LandingNav from "./LandingNav.vue"
 import StoryGrid from "./StoryGrid.vue"
 import SiteFooter from "./SiteFooter.vue"
 
-// The page is a lightboard pane standing in front of the app. "Open the app" loads the app behind
+// The page is a lightboard pane standing in front of the app. "Open App" loads the app behind
 // the glass, then wipes the pane away; "Back to the tour" brings it back.
 //   closed → loading (the app is arriving behind the glass) → open (the pane is wiped)
 const appState = ref("closed")

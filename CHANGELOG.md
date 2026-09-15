@@ -4,7 +4,7 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
-## v0.7.0 2026-09-12
+## v0.7.0  —  2026-09-12
 
 - ObjectExplorer is MIT licensed, and says so: the public repository had no LICENSE file at all, which by default means all rights reserved — the opposite of what was intended, on the page everyone reads first
 - The npm package said ISC while the repository said nothing, so the two halves of the same product disagreed about their own terms; both now say MIT

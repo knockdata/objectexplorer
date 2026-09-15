@@ -26,6 +26,7 @@
 .download-lede {
 	color: var(--chalk-2);
 	margin: 0 0 34px;
+	max-width: var(--reading-width);
 }
 
 .download-platforms {
@@ -78,7 +79,7 @@
 	margin-right: auto;
 }
 
-.landing .download-package {
+.download .download-package {
 	border: 1px solid var(--rule);
 	border-radius: 6px;
 	color: var(--chalk-2);
@@ -91,8 +92,8 @@
 	width: 88px;
 }
 
-.landing .download-package:hover,
-.landing .download-package:focus-visible {
+.download .download-package:hover,
+.download .download-package:focus-visible {
 	background: rgba(234, 241, 248, 0.06);
 	border-color: var(--chalk-3);
 	color: var(--chalk);
@@ -126,9 +127,9 @@ html[data-platform="windows"] .download-platform-windows .download-here {
 	padding: 3px 9px;
 }
 
-html[data-platform="linux"] .landing .download-platform-linux li:first-child .download-package:first-of-type,
-html[data-platform="mac"] .landing .download-platform-mac li:first-child .download-package:first-of-type,
-html[data-platform="windows"] .landing .download-platform-windows li:first-child .download-package:first-of-type {
+html[data-platform="linux"] .download .download-platform-linux li:first-child .download-package:first-of-type,
+html[data-platform="mac"] .download .download-platform-mac li:first-child .download-package:first-of-type,
+html[data-platform="windows"] .download .download-platform-windows li:first-child .download-package:first-of-type {
 	background: var(--brand);
 	border-color: var(--brand);
 	color: var(--brand-text);
@@ -203,19 +204,19 @@ html[data-platform="windows"] .landing .download-platform-windows li:first-child
 	overflow-wrap: anywhere;
 }
 
+/* an icon, no box: the copy mark turns into a tick once the command is on the clipboard */
 .download-command button {
+	align-items: center;
 	background: transparent;
-	border: 1px solid var(--rule);
-	border-radius: 5px;
-	color: var(--chalk-2);
+	border: 0;
+	color: var(--chalk-3);
 	cursor: pointer;
+	display: flex;
 	flex: none;
-	font-size: 13px;
-	padding: 6px 12px;
+	padding: 6px;
 }
 
 .download-command button:hover {
-	border-color: var(--chalk-3);
 	color: var(--chalk);
 }
 
@@ -224,12 +225,12 @@ html[data-platform="windows"] .landing .download-platform-windows li:first-child
 	margin: 22px 2px 0;
 }
 
-.landing .download-all a {
+.download .download-all a {
 	border-bottom: 1px solid var(--rule);
 	color: var(--chalk-3);
 }
 
-.landing .download-all a:hover {
+.download .download-all a:hover {
 	border-bottom-color: var(--brand-glow);
 	color: var(--brand);
 }

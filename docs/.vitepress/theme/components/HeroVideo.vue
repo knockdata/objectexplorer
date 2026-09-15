@@ -32,7 +32,7 @@ function expand() {
 			loop
 		></video>
 		<span class="hero-video-play">
-			<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+			<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
 		</span>
 	</div>
 </template>

@@ -26,14 +26,15 @@ const visibleStories = computed(function () {
 	<section class="story" :class="list ? 'story-list' : 'story-landing'">
 		<div class="landing-wrap">
 			<div v-if="list" class="story-list-head">
-				<h1>Things that shouldn't be hard</h1>
+				<h1>This Shouldn't Be That Hard</h1>
 				<p>
 					Each one is an afternoon it happens in: how it goes today, and how it goes in ObjectExplorer.
 					Articles for now; the lightboard video joins each one as it is recorded.
 				</p>
 			</div>
 			<div v-else class="story-head">
-				<h2>This Shouldn't Be That Hard, ONE at a time</h2>
+				<h2 style="text-transform: uppercase;">This Shouldn't Be That Hard</h2>
+				<p>ONE at a time</p>
 			</div>
 			<div class="story-rail">
 				<StoryCard v-for="story in visibleStories" :key="story.url" :story="story" />
@@ -62,7 +63,8 @@ const visibleStories = computed(function () {
 	letter-spacing: -0.024em;
 	line-height: 1.08;
 	margin: 0;
-	max-width: 22ch;
+	word-spacing: 4px;
+	/* max-width: 22ch; */
 }
 
 .story-list-head {
@@ -76,6 +78,8 @@ const visibleStories = computed(function () {
 	letter-spacing: -0.02em;
 	line-height: 1.2;
 	margin: 0 0 12px;
+	word-spacing: 4px;
+    text-transform: uppercase;
 }
 
 .story-list-head p {
@@ -99,12 +103,13 @@ const visibleStories = computed(function () {
 }
 
 @media (min-width: 1200px) {
+	/* the rail is the content box: the first card snaps onto the heading's edge and the last visible
+	   one is cut at the header's right edge, which says there is more */
 	.story-landing .story-rail {
 		display: flex;
-		margin-inline: calc(-1 * var(--landing-gutter));
 		overflow-x: auto;
 		overflow-y: hidden;
-		padding: 4px var(--landing-gutter) 22px;
+		padding: 4px 0 22px;
 		scroll-snap-type: x mandatory;
 		scrollbar-color: var(--rule) transparent;
 		scrollbar-width: thin;

@@ -67,3 +67,48 @@
 	display: table;
 	width: 100%;
 }
+
+/* The documentation takes the site's frame (landing.css) instead of VitePress's 1440px. VitePress
+   centres its layout on that width only from 1440px up and lies flush below it, so its own centring
+   rules are repeated here from 1280px up; the sidebar then starts on the header's left edge at every
+   width. `:root .Layout` outranks the components' scoped styles. */
+html:root {
+	--vp-layout-max-width: var(--landing-width);
+}
+
+@media (min-width: 1280px) {
+	:root .Layout .VPSidebar {
+		padding-left: max(32px, calc((100% - (var(--vp-layout-max-width) - 64px)) / 2));
+		width: calc((100% - (var(--vp-layout-max-width) - 64px)) / 2 + var(--vp-sidebar-width) - 32px);
+	}
+
+	:root .Layout .VPContent.has-sidebar {
+		padding-left: calc((100vw - var(--vp-layout-max-width)) / 2 + var(--vp-sidebar-width));
+		padding-right: calc((100vw - var(--vp-layout-max-width)) / 2);
+	}
+}
+
+/* a documentation page and a story read in a column of about 80 characters (landing.css) */
+:root .Layout .VPContent .VPDoc .content-container {
+	max-width: var(--reading-width);
+}
+
+/* The outline beside a documentation page ends on the header's right edge. VitePress fixes it at
+   224px, which ends on the frame; the header reaches --landing-header-stretch past the frame
+   (LandingNav), so the outline does too. */
+.VPDoc.has-aside .aside-container,
+.VPDoc.has-aside .aside-curtain {
+	width: calc(224px + var(--landing-header-stretch));
+}
+
+/* The outline hugs its longest entry and stands at the right of that column, so the end of the
+   longest entry meets the header's edge and shorter entries start under it. The links stay flex
+   rows (ThemeOutlineItem), filling the hugged width, so a release's date still ends on that edge. */
+.VPDoc .VPDocAsideOutline {
+	margin-left: auto;
+	width: fit-content;
+}
+
+.VPDoc .VPDocAsideOutline .content {
+	width: fit-content;
+}

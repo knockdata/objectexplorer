@@ -1,4 +1,6 @@
+import { fileURLToPath, URL } from "node:url"
 import { defineConfig } from "vitepress"
+import storyMarkdown from "./storyMarkdown.js"
 
 // Where the built site is rooted. objectexplorer.com serves it at the domain root, which is the
 // default; GitHub Pages serves the same build under /objectexplorer/, and sets DOCS_BASE to say
@@ -62,11 +64,14 @@ export default defineConfig({
 		["link", { rel: "icon", type: "image/png", href: `${base}img/favicon.png` }],
 		["script", {}, platformScript],
 	],
-	// a story is an article: no sidebar and no outline beside it
+	// a story is an article: no sidebar and no outline beside it, and no documentation page as its
+	// previous or next — StoryFooter links the stories either side of it
 	transformPageData(pageData) {
 		if (pageData.relativePath.startsWith("story/")) {
 			pageData.frontmatter.sidebar = false
 			pageData.frontmatter.aside = false
+			pageData.frontmatter.prev = false
+			pageData.frontmatter.next = false
 			pageData.title = pageTitle(pageData.frontmatter)
 		}
 	},
@@ -93,18 +98,24 @@ export default defineConfig({
 	sitemap: {
 		hostname: site,
 	},
+	markdown: {
+		config(md) {
+			md.use(storyMarkdown)
+		},
+	},
+	// Every page wears the landing's header and footer: VitePress's own VPNav and VPFooter are swapped
+	// for ThemeNav and ThemeFooter, the override VitePress documents for its internal components. Its
+	// outline item is swapped too, for ThemeOutlineItem, which lays a release out as version and date.
+	vite: {
+		resolve: {
+			alias: [
+				{ find: /^.*\/VPNav\.vue$/, replacement: fileURLToPath(new URL("./theme/ThemeNav.vue", import.meta.url)) },
+				{ find: /^.*\/VPFooter\.vue$/, replacement: fileURLToPath(new URL("./theme/ThemeFooter.vue", import.meta.url)) },
+				{ find: /^.*\/VPDocOutlineItem\.vue$/, replacement: fileURLToPath(new URL("./theme/ThemeOutlineItem.vue", import.meta.url)) },
+			],
+		},
+	},
 	themeConfig: {
-		logo: { light: "/img/favicon.png", dark: "/img/64.png" },
-		nav: [
-			{ text: "Pricing", link: "/pricing" },
-			{ text: "Docs", link: "/what-is-objectexplorer" },
-			{ text: "Changelog", link: "/changelog" },
-			{ text: "Download", link: "/#download" },
-			// the running app, on the same origin once this site is objectexplorer.com. Absolute
-			// so it still reaches the app from the GitHub Pages copy of these pages, and in this
-			// tab — a reader who wants a second one right-clicks, which no site can take away.
-			{ text: "Open app", link: "https://objectexplorer.com/app", target: "_self", noIcon: true },
-		],
 		sidebar: [
 			{
 				text: "Introduction",
@@ -191,23 +202,12 @@ export default defineConfig({
 				],
 			},
 		],
-		socialLinks: [
-			{ icon: "github", link: "https://github.com/knockdata/objectexplorer" },
-			{ icon: "linkedin", link: "https://www.linkedin.com/in/rockieyang/" },
-			{ icon: "youtube", link: "https://www.youtube.com/@objectexplorercom" },
-			{ icon: "x", link: "https://x.com/objectexplorer" },
-			{ icon: "tiktok", link: "https://www.tiktok.com/@objectexplorer" },
-		],
 		search: {
 			provider: "local",
 		},
 		editLink: {
 			pattern: "https://github.com/knockdata/objectexplorer/edit/main/docs/:path",
 			text: "Edit this page on GitHub",
-		},
-		footer: {
-			message: `<a href="${base}what-is-objectexplorer">Docs</a> · <a href="${base}pricing">Pricing</a> · <a href="${base}changelog">Changelog</a> · <a href="${base}privacy">Privacy</a> · <a href="mailto:rockie@knockdata.com">Contact</a>`,
-			copyright: "© Knock Data AB, Sweden 2026",
 		},
 	},
 })

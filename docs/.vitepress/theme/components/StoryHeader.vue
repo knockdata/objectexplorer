@@ -4,8 +4,8 @@ import { useData, withBase } from "vitepress"
 const { frontmatter } = useData()
 </script>
 
-<!-- The question, its answer, then the picture. Publishing a recording is filling in `video:` —
-     the page is the same page either way; until then the poster stands in, and says so. -->
+<!-- The question, its answer, then the video once one is recorded — publishing it is filling in
+     `video:`. The poster is not drawn here: it stands before the closing line (StoryPoster). -->
 <template>
 	<header class="story-header">
 		<h1>{{ frontmatter.title }}</h1>
@@ -19,10 +19,6 @@ const { frontmatter } = useData()
 				preload="metadata"
 			></video>
 			<p class="story-header-note">{{ frontmatter.runtime }}</p>
-		</div>
-		<div v-else-if="frontmatter.poster" class="story-header-media">
-			<img :src="withBase(frontmatter.poster)" :alt="frontmatter.title">
-			<p class="story-header-note">The lightboard video for this one is still to be recorded. The whole story is below.</p>
 		</div>
 	</header>
 </template>
@@ -52,7 +48,6 @@ const { frontmatter } = useData()
 	margin: 0 0 28px;
 }
 
-.story-header-media img,
 .story-header-media video {
 	border: 1px solid var(--vp-c-divider);
 	border-radius: 12px;

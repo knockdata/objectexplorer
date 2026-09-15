@@ -1,8 +1,54 @@
 <script setup>
 import { withBase } from "vitepress"
+import { VPNavBarSearch } from "vitepress/theme"
+import { onMounted, onUnmounted, ref, watch } from "vue"
+import { headerLinks, linkOf } from "../data/siteLinks.js"
 import ShareLink from "./ShareLink.vue"
+import SiteMenu from "./SiteMenu.vue"
+
+// Every page wears this header. On the landing "Open App" opens the app behind the glass; every
+// other page (ThemeNav) passes `appLink`, and there it is a plain link to the app.
+defineProps({
+	appLink: { type: String, default: "" },
+})
 
 const emit = defineEmits(["open-app"])
+
+// On a phone the header's links, its app action and the footer fold into one menu (SiteMenu). While it is open the
+// page under it stays put (the class on <html>); Escape or following a link closes it.
+const menuOpen = ref(false)
+
+function toggleMenu() {
+	menuOpen.value = menuOpen.value === false
+}
+
+function closeMenu() {
+	menuOpen.value = false
+}
+
+function openApp() {
+	closeMenu()
+	emit("open-app")
+}
+
+function closeOnEscape(event) {
+	if (event.key === "Escape") {
+		closeMenu()
+	}
+}
+
+watch(menuOpen, function (open) {
+	document.documentElement.classList.toggle("site-menu-open", open)
+})
+
+onMounted(function () {
+	window.addEventListener("keydown", closeOnEscape)
+})
+
+onUnmounted(function () {
+	window.removeEventListener("keydown", closeOnEscape)
+	document.documentElement.classList.remove("site-menu-open")
+})
 </script>
 
 <template>
@@ -12,18 +58,12 @@ const emit = defineEmits(["open-app"])
 				<img :src="withBase('/img/64.png')" alt="" width="24" height="24">
 				ObjectExplorer
 			</a>
+			<VPNavBarSearch />
 			<nav class="landing-nav-links" aria-label="Site">
-				<a :href="withBase('/pricing')">Pricing</a>
-				<a :href="withBase('/what-is-objectexplorer')">Docs</a>
-				<a :href="withBase('/changelog')">Changelog</a>
-				<a href="https://github.com/knockdata/objectexplorer" target="_blank" rel="noopener noreferrer">
-					<svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
-						<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-					</svg>
-					GitHub
-				</a>
+				<a v-for="headerLink in headerLinks" :key="headerLink.name" :href="linkOf(headerLink.link)">{{ headerLink.name }}</a>
 			</nav>
-			<button class="landing-nav-action desktop-only" type="button" @click="emit('open-app')">Open the app</button>
+			<a v-if="appLink" class="landing-nav-action desktop-only" :href="appLink">Open App</a>
+			<button v-else class="landing-nav-action desktop-only" type="button" @click="emit('open-app')">Open App</button>
 			<ShareLink
 				class="landing-nav-action mobile-only"
 				url="https://objectexplorer.com/"
@@ -31,19 +71,37 @@ const emit = defineEmits(["open-app"])
 				text="The VS Code for cloud storage. Open it on the computer you work on."
 				label="App link"
 			/>
+			<button class="landing-nav-menu-button" type="button" aria-controls="site-menu" :aria-expanded="menuOpen" aria-label="Menu" @click="toggleMenu">
+				<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+					<path v-if="menuOpen" d="M6 6l12 12M18 6 6 18" />
+					<path v-else d="M4 7h16M4 12h16M4 17h16" />
+				</svg>
+			</button>
 		</div>
+		<SiteMenu v-if="menuOpen" :app-link="appLink" @close="closeMenu" @open-app="openApp" />
 	</header>
 </template>
 
 <style>
+/* the landing's type and colour sit on the header itself, so it looks the same on a documentation page */
 .landing-nav {
 	-webkit-backdrop-filter: blur(14px) saturate(120%);
+	-webkit-font-smoothing: antialiased;
 	backdrop-filter: blur(14px) saturate(120%);
-	background: linear-gradient(180deg, rgba(10, 12, 14, 0.92), rgba(10, 12, 14, 0.66));
+	background: linear-gradient(180deg, rgba(10, 12, 14, 0.99), rgba(10, 12, 14, 0.96));
 	border-bottom: 1px solid var(--rule-soft);
+	color: var(--chalk);
+	font-family: var(--landing-font);
+	font-size: 17px;
+	line-height: 1.55;
 	position: sticky;
 	top: 0;
 	z-index: 5;
+}
+
+.landing-nav a {
+	color: inherit;
+	text-decoration: none;
 }
 
 .landing-nav-inner {
@@ -53,7 +111,7 @@ const emit = defineEmits(["open-app"])
 	gap: 8px clamp(14px, 3vw, 34px);
 	margin: 0 auto;
 	max-width: var(--landing-width);
-	padding: 12px var(--landing-gutter);
+	padding: 12px calc(var(--landing-gutter) - var(--landing-header-stretch)); /* header has smaller font, stretch a bit to look visually aligned vertically */
 }
 
 .landing-nav-mark {
@@ -65,17 +123,21 @@ const emit = defineEmits(["open-app"])
 	margin-right: auto;
 }
 
+/* VitePress lays its search out to fill its own nav bar; here it is one more item in the row */
+.landing-nav .VPNavBarSearch {
+	flex-grow: 0;
+	padding-left: 0;
+}
+
+/* on a phone the links are in the menu, not in the row */
 .landing-nav-links {
 	align-items: center;
-	display: flex;
+	display: none;
 	gap: clamp(16px, 2.4vw, 28px);
-	order: 3;
-	width: 100%;
 }
 
 .landing-nav-links a {
 	align-items: center;
-	border-bottom: 1px solid transparent;
 	color: var(--chalk-2);
 	display: inline-flex;
 	font-size: 15px;
@@ -83,34 +145,71 @@ const emit = defineEmits(["open-app"])
 	padding: 4px 0;
 }
 
-.landing .landing-nav-links a:hover {
-	border-bottom-color: var(--brand);
+.landing-nav .landing-nav-links a:hover {
+	border-bottom: 2px solid var(--brand);
 	color: var(--chalk);
 }
 
+/* the same rounded rectangle as the landing's own primary button */
 .landing-nav .landing-nav-action {
 	background: transparent;
-	border: 1px solid var(--brand-glow);
-	border-radius: 999px;
+	border: 1.5px solid var(--brand-glow);
+	border-radius: 6px;
 	color: var(--brand);
 	cursor: pointer;
 	font-size: 15px;
 	padding: 8px 16px;
+	text-wrap: nowrap;
 }
 
 .landing-nav .landing-nav-action:hover {
 	background: var(--brand-soft);
 }
 
+.landing-nav-menu-button {
+	align-items: center;
+	background: transparent;
+	border: 0;
+	color: var(--chalk);
+	cursor: pointer;
+	display: flex;
+	height: 40px;
+	justify-content: center;
+	padding: 0;
+	width: 36px;
+}
+
+/* On a phone the row is the mark, search and the menu button; the app action is in the menu with the
+   links (SiteMenu). VitePress's phone search button is 48px wide and 55px tall. */
+@media (max-width: 767px) {
+	.landing-nav-inner {
+		column-gap: 10px;
+	}
+
+	.landing-nav .DocSearch-Button {
+		height: 40px;
+		width: 32px;
+	}
+
+	.landing-nav-inner > .landing-nav-action {
+		display: none;
+	}
+}
+
+/* one row, as tall as the nav VitePress offsets its sidebar and content by, less the border */
 @media (min-width: 768px) {
 	.landing-nav-inner {
 		flex-wrap: nowrap;
-		padding-block: 14px;
+		height: calc(var(--vp-nav-height) - 1px);
+		padding-block: 0;
 	}
 
 	.landing-nav-links {
-		order: 0;
-		width: auto;
+		display: flex;
+	}
+
+	.landing-nav-menu-button {
+		display: none;
 	}
 }
 </style>

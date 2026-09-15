@@ -17,24 +17,26 @@ const emit = defineEmits(["open-app"])
 				<path d="M2 11.5c54-6 96 2 148-2.5C196 5 246 12 338 5.5" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
 			</svg>
 			<p class="landing-hero-lede">
-				One app on your machine. S3, GCS, Azure Blob, MinIO, OneLake, Dropbox, OneDrive, Box and
-				your local disks in one tree — every object previewed in place, queried in SQL, summarised
-				column by column, and handed to your agent only on the terms you set.
+				One app, explorer, analyze, plot over S3, GCS, Azure Blob ...
 			</p>
-			<div class="landing-hero-actions">
-				<button class="landing-hero-primary desktop-only" type="button" @click="emit('open-app')">Start using ObjectExplorer</button>
+			<p class="landing-hero-lede">
+				Agent is just another user, full control with audit
+			</p>
+			<div class="landing-hero-actions" style="display: flex;">
+				<button class="landing-hero-primary desktop-only" type="button" @click="emit('open-app')">Open App</button>
+				<p class="landing-hero-note desktop-only">
+					<div>It opens right here.</div>
+					<div>Nothing leaves your browser.</div>
+				</p>
 				<ShareLink
 					class="landing-hero-primary mobile-only"
-					url="https://objectexplorer.com/#download"
+					url="https://objectexplorer.com/download"
 					title="Download ObjectExplorer"
 					text="ObjectExplorer is a desktop app. Open this link on your computer to install it."
 					label="Share the download link"
 				/>
 			</div>
-			<p class="landing-hero-note desktop-only">
-				It opens right here, on a public demo — the same app the desktop build runs.
-				<b>Nothing you do in it leaves your browser.</b>
-			</p>
+			
 			<p class="landing-hero-note mobile-only">
 				A desktop app: a tree, a grid and a notebook side by side.
 				<b>Send the link to the computer you work on.</b>
@@ -89,7 +91,7 @@ const emit = defineEmits(["open-app"])
 .landing-hero-lede {
 	color: var(--chalk-2);
 	font-size: clamp(1rem, 1.25vw, 1.11rem);
-	margin: 0 0 30px;
+	margin: 10px 0;
 	max-width: 500px;
 }
 
@@ -98,6 +100,7 @@ const emit = defineEmits(["open-app"])
 	display: flex;
 	flex-wrap: wrap;
 	gap: 14px 18px;
+	padding: 10px 0;
 }
 
 .landing-hero .landing-hero-primary {
@@ -126,7 +129,6 @@ const emit = defineEmits(["open-app"])
 .landing-hero-note {
 	color: var(--chalk-3);
 	font-size: 14.5px;
-	margin: 22px 0 0;
 	max-width: 500px;
 }
 

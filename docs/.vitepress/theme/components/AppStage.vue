@@ -14,7 +14,7 @@ const homeSites = ["https://objectexplorer.com", "https://knockdata.github.io"]
 const hasFrame = ref(false)
 const isLoaded = ref(false)
 
-// The frame is created on the first "Open the app", never before: the app is a large download,
+// The frame is created on the first "Open App", never before: the app is a large download,
 // and a visitor who only came to read should not pay for it. Behind the glass until then is a
 // picture of it. A phone or a tablet never gets the button, so it only ever sees the picture.
 watch(() => props.state, function (state) {
