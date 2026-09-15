@@ -1,27 +1,64 @@
 ---
 title: "Train without copying data out?"
-answer: "Data stays, columns leave rewritten."
+answer: "The rows stay. The answer leaves."
 episode: 12
 runtime: null
 video: null
 poster: /screenshot/notebook-python.png
 published: 2026-09-14
-description: "Parsers and queries run on your machine against the bucket, and PII rules rewrite the columns that matter on every request that leaves."
+description: "A request, a review, and a scrubbed extract someone built by hand. Code is small and data is big, so send the code to the data."
 ---
+
+<!--
+Lines:
+1. The rows stay. The answer leaves.
+2. Send the code to the data.
+3. Copy the question, not the table.
+
+Cue:
+- request, review, three weeks
+- a second copy, no rules
+- code is small, data is big
+- The rows stay. The answer leaves.
+
+Board:
+  0:00  Train without copying data out?      white       top
+  0:06  bucket shape                         amber       upper middle
+  0:20  arrow out to COPY, 3 WEEKS           pink        upper middle, right
+  0:44  small code box, arrow into bucket    neon green  middle
+  0:52  The rows stay. / The answer leaves.  neon green  lower band
+Drawn: 7
+
+Words: 129
+
+Delivery:
+- "Three weeks" is the number that stings. Let it land alone.
+- Pause after "Code is small. Data is big."
+- Cut "Run it against the bucket, on your own machine." first.
+-->
+
+<!-- 0:00, walk in -->
+
+It took three weeks to get a copy of data you were already allowed to read.
 
 ## Today
 
-A request, a review, a scrubbed extract someone hand-built, and a three-week wait.
+<!-- 0:06, draw a bucket, amber -->
 
-## Here
+You asked. There was a review. Someone built you an extract by hand, with the sensitive columns taken out.
 
-The data is never copied anywhere we can see: parsers and queries run on your machine, against the
-bucket. PII rules rewrite the columns that matter on every request that leaves, so an agent's answer
-and a share link are sanitized by the same code. FPE means `customerId` still joins to the other
-table, and every rewritten column is marked `encrypted`, so nothing fabricated is quoted back as real.
+<!-- 0:20, draw an arrow out to COPY, 3 WEEKS beside it, pink -->
 
-## In the docs
+Three weeks. And now there are two copies of the data instead of one. The second one sits on a laptop with no rules attached to it at all.
 
-- [Your data stays here](/privacy)
-- [PII rules](/agents/pii)
-- [Python](/analyze/python)
+## Ideal
+
+Start over. Why did the data move? It didn't have to. Your code is a few kilobytes. The table is a terabyte. Code is small. Data is big.
+
+<!-- 0:44, draw a small code box with an arrow into the bucket, neon green -->
+
+So send the small thing to the big thing. Run it against the bucket, on your own machine. Only the answer comes back, and the columns that shouldn't travel never do.
+
+<!-- 0:52, write the line, step out, hold three seconds -->
+
+**The rows stay. The answer leaves.**

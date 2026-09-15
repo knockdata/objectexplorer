@@ -25,7 +25,7 @@ defineProps({
 .story-card {
 	background: linear-gradient(180deg, rgba(234, 241, 248, 0.055), rgba(10, 12, 14, 0.5)), var(--ink);
 	border: 1px solid var(--rule);
-	border-radius: 10px;
+	border-radius: 3px;
 	color: var(--chalk);
 	display: flex;
 	flex-direction: column;

@@ -1,28 +1,65 @@
 ---
 title: "Give an agent production data?"
-answer: "Through a gateway, never the bucket."
+answer: "An agent gets rows, never keys."
 episode: 14
 runtime: null
 video: null
 poster: null
 published: 2026-09-14
-description: "The agent holds no credential: it goes through a gateway that reaches only the ticked roots, asks a person for named paths, rewrites PII and caps what leaves."
+description: "A long-lived key pasted into an agent's environment buys the whole account forever. It asked for answers, not the keys to the building."
 ---
+
+<!--
+Lines:
+1. An agent gets rows, never keys.
+2. Answer its questions. Don't hand over the keys.
+3. It asked for rows. Give it rows.
+
+Cue:
+- a key in an environment
+- whole account, forever
+- it wanted answers, not keys
+- An agent gets rows, never keys.
+
+Board:
+  0:00  Give an agent production data?      white       top
+  0:06  robot box, KEY inside it            amber       upper middle
+  0:20  arrow from robot around everything  pink        upper middle, wide
+  0:44  door between robot and bucket,      neon green  middle
+        ROWS passing through
+  0:52  An agent gets rows, / never keys.   neon green  lower band
+Drawn: 8
+
+Words: 128
+
+Delivery:
+- "Keys to the building" is the turn. Slow down for it.
+- Pause after "A key is all or nothing."
+- Cut "Every bucket. Every object." first.
+-->
+
+<!-- 0:00, walk in -->
+
+Somebody pasted a production key into an agent's environment, and everyone moved on.
 
 ## Today
 
-Someone puts a long-lived key in an agent's environment, and nobody can say afterwards what it read.
+<!-- 0:06, draw a robot box with KEY inside it, amber -->
 
-## Here
+It needed to read one folder. So it got a key. That's the only thing the cloud hands out.
 
-The agent holds no credential and never talks to a provider; it goes through the gateway. It reaches
-only the roots that were ticked, minus the deny list. Named paths stop and ask a person in the window,
-with a timeout that defaults to no. PII is rewritten on the way out. Limits cap rows, bytes and calls
-per call, per session and per day — which bounds a leak and an agent's token bill with the same number.
+<!-- 0:20, draw an arrow from the robot around everything, pink -->
 
-## In the docs
+And that key opens the whole account. Every bucket. Every object. If you ask next month what it actually read, nobody can tell you.
 
-- [ObjectExplorer for agents](/agents/)
-- [Connecting an agent](/agents/connect)
-- [PII rules](/agents/pii)
-- [The MCP rule file](/reference/mcp-rules)
+## Ideal
+
+Start over. What did the agent want? Rows. Answers to questions. It never asked for the keys to the building. A key is all or nothing, which is why handing one over feels wrong every single time.
+
+<!-- 0:44, draw a door between the robot and the bucket, ROWS passing through, neon green -->
+
+So put a door in between. It answers questions about the folders you ticked, and refuses the rest. The agent gets its rows. The key never leaves the room.
+
+<!-- 0:52, write the line, step out, hold three seconds -->
+
+**An agent gets rows, never keys.**

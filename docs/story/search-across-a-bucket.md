@@ -6,22 +6,59 @@ runtime: null
 video: null
 poster: /screenshot/search.png
 published: 2026-09-14
-description: "Search a prefix by name and by content, across a local folder and two buckets at once, then let the column summaries say which export has the field."
+description: "The console search box matches a prefix in the folder you are standing in. Searching is the oldest thing a computer does."
 ---
+
+<!--
+Lines:
+1. Type, search, every match.
+2. Type a word. Find every file.
+3. Search should look inside the files.
+
+Cue:
+- forty files, one date apart
+- prefix only, this folder only
+- searching is what it's for
+- Type, search, every match.
+
+Board:
+  0:00  Search across a bucket?        white       top
+  0:06  search box shape, empty        white       upper middle
+  0:18  PREFIX / THIS FOLDER, stacked  pink        upper middle
+  0:42  search box, three arrows out   neon green  middle
+  0:52  Type, search, / every match.   neon green  lower band
+Drawn: 7
+
+Words: 127
+
+Delivery:
+- "Prefix" is the one piece of jargon. Say it plainly, it earns itself in the next sentence.
+- Pause after "It only matches the beginning."
+- Cut "Then you did it again on the other cloud." first.
+-->
+
+<!-- 0:00, walk in -->
+
+You searched a bucket and it found nothing, twice.
 
 ## Today
 
-The prefix has forty files with names that differ by a date. Download four, open each, look for the
-column, guess again.
+<!-- 0:06, draw an empty search box, white -->
 
-## Here
+The folder had forty files. The names differed by a date. You knew one word that was in the right one.
 
-Search the prefix by name and by content in one run, across the local folder and both buckets at
-once. Open the two candidates in place; the column headers and their summaries say immediately which
-one has the field and which one has it populated.
+<!-- 0:18, write PREFIX / THIS FOLDER under the box, pink -->
 
-## In the docs
+But the console's search box only matches the beginning of a name. And only in the folder you're standing in. It never looks inside a file. So you listed the whole bucket in the terminal and grepped the names. Then you did it again on the other cloud.
 
-- [Search](/explore/search)
-- [Column summaries](/explore/column-summary)
-- [Previewing an object](/explore/preview)
+## Ideal
+
+Start over. Searching is the oldest thing a computer does. Your laptop does it across a million files, inside the documents, while you type.
+
+<!-- 0:42, draw a search box with three arrows leaving it, neon green -->
+
+Nothing about a bucket makes that harder. Type the word. Search the names and the contents. Search every place at once.
+
+<!-- 0:52, write the line, step out, hold three seconds -->
+
+**Type, search, every match.**

@@ -6,23 +6,59 @@ runtime: null
 video: null
 poster: /screenshot/column-summary.png
 published: 2026-09-14
-description: "A new tabular object opens as a notebook with the query and the chart written, and a summary under every column header."
+description: "Twenty minutes of notebook ceremony to learn a file has three usable columns. The machine reads the rows anyway. It can count while it reads."
 ---
+
+<!--
+Lines:
+1. One click, full stats.
+2. Show me the columns. All of them.
+3. It read the rows. It can count them.
+
+Cue:
+- imports, read, run, run
+- twenty minutes, three columns
+- it's already reading the rows
+- One click, full stats.
+
+Board:
+  0:00  Get a column summary?           white       top
+  0:08  IMPORT / READ / DESCRIBE stack  pink        upper middle
+  0:24  20 MIN beside the stack         pink        upper middle, right
+  0:42  column header with a bar chart  neon green  middle
+  0:52  One click, / full stats.        neon green  lower band
+Drawn: 7
+
+Words: 120
+
+Delivery:
+- Run the import-read-run list fast and flat. It's ceremony; it should sound like ceremony.
+- Pause before "Three usable columns."
+- Cut "You'd done it four hundred times before." first.
+-->
+
+<!-- 0:00, walk in -->
+
+You wrote twenty minutes of code to learn a file was useless.
 
 ## Today
 
-Start Jupyter, make a new notebook, type the imports, type the read, run it, type `df.describe()`,
-run it, type `df.isna().sum()`, run it. Twenty minutes of ceremony to learn the object has three
-usable columns and a date range that stops in March.
+<!-- 0:08, write IMPORT / READ / DESCRIBE stacked, pink -->
 
-## Here
+Start a notebook. Type the imports. Type the read. Run it. Describe it. Run it. Count the nulls. Run it. You'd done it four hundred times before.
 
-Click it. It opens as a notebook that already has the query and the chart written, and under every
-column header there is a histogram or a box plot with min, max, nulls, distinct count and top
-values — measured here, on the rows that were read, by your own cores.
+<!-- 0:24, write 20 MIN beside the stack, pink -->
 
-## In the docs
+Twenty minutes. And the answer was: three usable columns, and the dates stop in March. You closed the notebook.
 
-- [Column summaries](/explore/column-summary)
-- [The notebook](/analyze/notebook)
-- [SQL](/analyze/sql)
+## Ideal
+
+Start over. Where do those numbers come from? The rows. Min, max, how many are empty, how many are different. Counting is what a machine is fastest at. And it has to read the rows anyway, to show them to you at all.
+
+<!-- 0:42, draw a column header with a small bar chart under it, neon green -->
+
+So count while you read. Put it under the column name, where you're already looking.
+
+<!-- 0:52, write the line, step out, hold three seconds -->
+
+**One click, full stats.**

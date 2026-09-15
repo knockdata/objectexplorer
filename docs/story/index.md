@@ -1,7 +1,7 @@
 ---
 layout: page
 title: This Shouldn't Be That Hard
-description: Sixteen afternoons that shouldn't be hard — how each one goes today, and how it goes in ObjectExplorer.
+description: Twenty-two afternoons that shouldn't be hard — how each one goes today, and what it would be with nothing in the way.
 ---
 
 <StoryGrid list />
