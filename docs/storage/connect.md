@@ -1,6 +1,6 @@
 # Connecting storage
 
-<img src="/shot/settings.png" alt="Settings, with the connections list: local folder, Cloud Storage, S3, Blob Storage">
+<img src="/screenshot/settings.png" alt="Settings, with the connections list: local folder, Cloud Storage, S3, Blob Storage">
 
 Press **+** in the sidebar header, or open **Settings** from the activity bar, and every kind of
 storage is one row in the same list. A provider you have signed into carries a green check.

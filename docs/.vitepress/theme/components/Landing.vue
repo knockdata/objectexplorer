@@ -4,7 +4,7 @@ import AppStage from "./AppStage.vue"
 import DownloadBlock from "./DownloadBlock.vue"
 import LandingHero from "./LandingHero.vue"
 import LandingNav from "./LandingNav.vue"
-import ShortsGrid from "./ShortsGrid.vue"
+import StoryGrid from "./StoryGrid.vue"
 import SiteFooter from "./SiteFooter.vue"
 
 // The page is a lightboard pane standing in front of the app. "Open the app" loads the app behind
@@ -33,7 +33,7 @@ function closeApp() {
 			<LandingNav @open-app="openApp" />
 			<main>
 				<LandingHero @open-app="openApp" />
-				<ShortsGrid :limit="6" />
+				<StoryGrid />
 				<DownloadBlock />
 			</main>
 			<SiteFooter />

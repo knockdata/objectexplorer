@@ -2,25 +2,25 @@
 import { useData } from "vitepress"
 import DefaultTheme from "vitepress/theme"
 import { computed } from "vue"
-import ShortFooter from "./components/ShortFooter.vue"
-import ShortHeader from "./components/ShortHeader.vue"
+import StoryFooter from "./components/StoryFooter.vue"
+import StoryHeader from "./components/StoryHeader.vue"
 
 const { page } = useData()
 
-// shorts/<slug>.md is an episode; shorts/index.md is the list of them
-const isShort = computed(function () {
+// story/<slug>.md is an episode; story/index.md is the list of them
+const isStory = computed(function () {
 	const relativePath = page.value.relativePath
-	return relativePath.startsWith("shorts/") && relativePath !== "shorts/index.md"
+	return relativePath.startsWith("story/") && relativePath !== "story/index.md"
 })
 </script>
 
 <template>
 	<DefaultTheme.Layout>
 		<template #doc-before>
-			<ShortHeader v-if="isShort" />
+			<StoryHeader v-if="isStory" />
 		</template>
 		<template #doc-after>
-			<ShortFooter v-if="isShort" />
+			<StoryFooter v-if="isStory" />
 		</template>
 	</DefaultTheme.Layout>
 </template>

@@ -61,7 +61,7 @@ npx @knockdata/objectexplorer
 - **An access gateway for agents.** MCP for Claude Code and Codex: the agent holds no credential, PII
   is rewritten on the way out, and every call is logged. → [agents](https://objectexplorer.com/agents/)
 
-The whole story, one afternoon at a time: [objectexplorer.com/shorts](https://objectexplorer.com/shorts/).
+The whole story, one afternoon at a time: [objectexplorer.com/story](https://objectexplorer.com/story/).
 
 ## Your data never leaves your machine
 
@@ -76,7 +76,7 @@ executable.
 
 ## Links
 
-- [objectexplorer.com](https://objectexplorer.com) — the product page, the documentation and the shorts
+- [objectexplorer.com](https://objectexplorer.com) — the product page, the documentation and the stories
 - [objectexplorer.com/app](https://objectexplorer.com/app) — the app itself, in a browser
 - [@knockdata/objectexplorer](https://www.npmjs.com/package/@knockdata/objectexplorer) — the application bundle behind `npx` and every desktop build
 - [Changelog](./CHANGELOG.md) — what changed in each version

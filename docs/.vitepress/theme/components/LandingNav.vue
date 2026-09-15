@@ -59,7 +59,7 @@ const emit = defineEmits(["open-app"])
 .landing-nav-mark {
 	align-items: center;
 	display: flex;
-	font-variation-settings: "wdth" 108, "wght" 620;
+	font-weight: 600;
 	gap: 10px;
 	letter-spacing: -0.012em;
 	margin-right: auto;

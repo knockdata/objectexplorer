@@ -5,37 +5,59 @@
 export const downloadSite = "https://objectexplorer.com/download/"
 export const releasesPage = "https://github.com/knockdata/objectexplorer/releases/latest"
 
+// One row per architecture, and one link per file in it. The first file of the first row is the
+// one the landing page lights up for a visitor on that platform, so .msix comes before .exe.
 export const downloadPlatforms = [
 	{
 		id: "mac",
 		name: "macOS",
-		note: "Signed and notarized, so it opens on the first double-click.",
+		note: "Signed and notarized. Open and drag to Applications.",
 		downloads: [
-			{ target: "mac-arm64.dmg", label: "Apple silicon", extension: ".dmg" },
-			{ target: "mac-x64.dmg", label: "Intel", extension: ".dmg" },
+			{ label: "Apple silicon", files: [{ target: "mac-arm64.dmg", extension: ".dmg" }] },
+			{ label: "Intel", files: [{ target: "mac-x64.dmg", extension: ".dmg" }] },
 		],
 	},
 	{
 		id: "windows",
 		name: "Windows",
-		note: "The .msix is signed; SmartScreen may still ask the first time.",
+		note: ".msix/.exe are signed; SmartScreen may still popup.",
 		downloads: [
-			{ target: "windows-x64.msix", label: "Installer, x64", extension: ".msix" },
-			{ target: "windows-arm64.msix", label: "Installer, ARM64", extension: ".msix" },
-			{ target: "windows-x64.exe", label: "Executable, x64", extension: ".exe" },
-			{ target: "windows-arm64.exe", label: "Executable, ARM64", extension: ".exe" },
+			{
+				label: "x64 / AMD64",
+				files: [
+					{ target: "windows-x64.msix", extension: ".msix" },
+					{ target: "windows-x64.exe", extension: ".exe" },
+				],
+			},
+			{
+				label: "ARM64",
+				files: [
+					{ target: "windows-arm64.msix", extension: ".msix" },
+					{ target: "windows-arm64.exe", extension: ".exe" },
+				],
+			},
 		],
 	},
 	{
 		id: "linux",
 		name: "Linux",
-		note: "One AppImage. Its window is WebKitGTK 4.1; without it, it opens in your browser.",
+		note: "Open in browser when no WebKitGTK installed.",
 		downloads: [
-			{ target: "linux-x64.AppImage", label: "x64", extension: ".AppImage" },
-			{ target: "linux-arm64.AppImage", label: "ARM64", extension: ".AppImage" },
+			{ label: "x64 / AMD64", files: [{ target: "linux-x64.AppImage", extension: ".AppImage" }] },
+			{ label: "ARM64", files: [{ target: "linux-arm64.AppImage", extension: ".AppImage" }] },
 		],
 	},
 ]
+
+// every target in the list, for the release lookup that reads their sizes
+export function downloadTargets() {
+	return downloadPlatforms.flatMap(platform => platform.downloads.flatMap(download => download.files.map(file => file.target)))
+}
+
+// the asset's name in the release, which is also the name the file is saved under
+export function downloadName(target) {
+	return `ObjectExplorer-${target}`
+}
 
 // the channel a visitor arrived through (objectexplorer.com/youtube → ?channel=youtube) travels on,
 // so the host counts downloads by where people came from without a cookie

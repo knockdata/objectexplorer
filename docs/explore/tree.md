@@ -1,6 +1,6 @@
 # The tree and the list
 
-<img src="/shot/hero.png" alt="The tree with local and cloud roots, and a folder listing beside it">
+<img src="/screenshot/hero.png" alt="The tree with local and cloud roots, and a folder listing beside it">
 
 The sidebar holds every [root](/storage/connect) you added — local folders and cloud buckets in one
 tree, in the order you added them. The pane beside it lists whatever is selected.

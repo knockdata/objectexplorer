@@ -1,6 +1,6 @@
 # Sharing a table
 
-<img src="/shot/share.png" alt="The share dialog: every column with None, Mask, Hash and FPE, and a preview of three rows">
+<img src="/screenshot/share.png" alt="The share dialog: every column with None, Mask, Hash and FPE, and a preview of three rows">
 
 One share icon, one dialog, and a link that opens the rows — or a model you just trained — in the app
 at objectexplorer.com/app, on a machine with none of your storage, none of your accounts and nothing

@@ -5,7 +5,7 @@
 A tabular object opens as a [notebook](/analyze/notebook): a `SELECT *` over it, the rows in a
 virtualized grid with [column summaries](/explore/column-summary), and a chart of what came back.
 
-<img src="/shot/notebook-sql.png" alt="A parquet file opened as a notebook, the query above its rows">
+<img src="/screenshot/notebook-sql.png" alt="A parquet file opened as a notebook, the query above its rows">
 
 | | |
 |---|---|

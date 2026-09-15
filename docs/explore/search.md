@@ -1,6 +1,6 @@
 # Search
 
-<img src="/shot/search.png" alt="Search results across local folders, grouped by file with the matching line">
+<img src="/screenshot/search.png" alt="Search results across local folders, grouped by file with the matching line">
 
 Search local folders and cloud buckets in the same run: literal, whole word or regex, with include
 and exclude globs, and `.gitignore` honoured when you point it at a repo.

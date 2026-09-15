@@ -1,14 +1,6 @@
-/* The app's own colours, so a page and a screenshot of the app agree. The accent is the app's
-   green primary: dark enough to read on white in the light theme, muted in the dark theme, where
-   the neon #4dff9f is kept for hover, the landing page and the mark. The page ground is the
-   editor's near-black rather than VitePress's grey. */
+/* An extension in backticks is a name, not a link. VitePress paints inline code with the brand
+   colour, which turns a table of formats into twenty coloured words that lead nowhere. */
 :root {
-	--vp-c-brand-1: #2e7d4f;
-	--vp-c-brand-2: #276b43;
-	--vp-c-brand-3: #2e7d4f;
-	--vp-c-brand-soft: rgba(46, 125, 79, 0.14);
-	/* an extension in backticks is a name, not a link. VitePress paints inline code with the
-	   brand colour, which turns a table of formats into twenty coloured words that lead nowhere. */
 	--vp-code-color: var(--vp-c-text-1);
 }
 
@@ -35,7 +27,10 @@
 	background: transparent;
 }
 
-/* a filled green button carries black text, as the app's own does (10:1) */
+/* The app's own colours, so a page and a screenshot of the app agree. The site is force-dark
+   (config.js), so this is the only palette there is: the landing is dark whatever the reader's
+   browser is set to, and walking from it into a documentation page must not turn the lights on.
+   A filled green button carries black text, as the app's own does (10:1). */
 .dark {
 	--vp-button-brand-active-text: #000000;
 	--vp-button-brand-hover-text: #000000;

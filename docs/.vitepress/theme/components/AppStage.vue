@@ -42,7 +42,7 @@ function frameLoaded() {
 <template>
 	<div class="app-stage-layer">
 		<div class="app-stage" :class="`app-stage-${state}`">
-			<img class="app-stage-poster" :src="withBase('/shot/hero.png')" alt="">
+			<img class="app-stage-poster" :src="withBase('/screenshot/hero.png')" alt="">
 			<iframe
 				v-if="hasFrame"
 				class="app-stage-frame"

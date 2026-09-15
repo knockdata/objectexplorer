@@ -9,7 +9,7 @@ const emit = defineEmits(["open-app"])
 	<section class="landing-hero landing-wrap">
 		<div class="landing-hero-copy">
 			<h1>
-				Things shouldn't be this hard
+				This Shouldn't Be That Hard
 				<span class="landing-hero-sub">to work with cloud storage.</span>
 			</h1>
 			<!-- the one drawn mark on the page: a squeegee stroke, echoing the wipe -->
@@ -58,7 +58,7 @@ const emit = defineEmits(["open-app"])
 
 .landing-hero h1 {
 	font-size: clamp(2.35rem, 5.2vw, 4.1rem);
-	font-variation-settings: "wdth" 114, "wght" 630;
+	font-weight: 700;
 	letter-spacing: -0.032em;
 	line-height: 0.97;
 	margin: 0;
@@ -70,7 +70,7 @@ const emit = defineEmits(["open-app"])
 	color: var(--chalk-2);
 	display: block;
 	font-size: clamp(1.2rem, 2.1vw, 1.7rem);
-	font-variation-settings: "wdth" 100, "wght" 450;
+	font-weight: 400;
 	letter-spacing: -0.016em;
 	line-height: 1.16;
 	margin-top: 0.36em;
@@ -111,7 +111,7 @@ const emit = defineEmits(["open-app"])
 	display: inline-flex;
 	font-family: var(--landing-font);
 	font-size: 17px;
-	font-variation-settings: "wdth" 104, "wght" 620;
+	font-weight: 600;
 	gap: 10px;
 	letter-spacing: -0.008em;
 	padding: 15px 26px;
@@ -132,7 +132,7 @@ const emit = defineEmits(["open-app"])
 
 .landing-hero-note b {
 	color: var(--chalk-2);
-	font-variation-settings: "wdth" 100, "wght" 560;
+	font-weight: 600;
 }
 
 .landing-hero-caption {

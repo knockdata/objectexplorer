@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue"
 import useRelease from "../composables/useRelease.js"
-import { downloadLink, downloadPlatforms, releasesPage } from "../data/downloadPlatforms.js"
+import { downloadLink, downloadName, downloadPlatforms, releasesPage } from "../data/downloadPlatforms.js"
 import ShareLink from "./ShareLink.vue"
 
 const command = "npx @knockdata/objectexplorer"
@@ -14,6 +14,17 @@ const copied = ref(false)
 onMounted(function () {
 	channel.value = new URLSearchParams(location.search).get("channel") ?? ""
 })
+
+// the full filename, and its size once the release lookup has answered
+function downloadTitle(target) {
+	const size = release.value.sizes[target]
+	if (size) {
+		return `${downloadName(target)} · ${size}`
+	}
+	else {
+		return downloadName(target)
+	}
+}
 
 async function copyCommand() {
 	try {
@@ -44,11 +55,15 @@ async function copyCommand() {
 			<div v-for="platform in downloadPlatforms" :key="platform.id" class="download-platform" :class="`download-platform-${platform.id}`">
 				<h3>{{ platform.name }}<span class="download-here">Your system</span></h3>
 				<ul>
-					<li v-for="download in platform.downloads" :key="download.target">
-						<a class="download-package" :href="downloadLink(download.target, channel)">
-							{{ download.label }}
-							<span>{{ download.extension }}<template v-if="release.sizes[download.target]"> · {{ release.sizes[download.target] }}</template></span>
-						</a>
+					<li v-for="download in platform.downloads" :key="download.label" class="download-architecture">
+						<span class="download-architecture-name">{{ download.label }}</span>
+						<a
+							v-for="file in download.files"
+							:key="file.target"
+							class="download-package"
+							:href="downloadLink(file.target, channel)"
+							:title="downloadTitle(file.target)"
+						>{{ file.extension }}</a>
 					</li>
 				</ul>
 				<p class="download-note">{{ platform.note }}</p>

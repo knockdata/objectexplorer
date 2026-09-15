@@ -8,7 +8,7 @@ So the window is one of two ways in now. The other is
 [MCP](https://modelcontextprotocol.io): Claude Code, Codex or any MCP client on this machine can ask
 the app the same questions the window asks, and gets answers decided by rules you wrote.
 
-<img src="/shot/hero.png" alt="ObjectExplorer with a folder of parquet open">
+<img src="/screenshot/hero.png" alt="ObjectExplorer with a folder of parquet open">
 
 **The agent never gets a credential and never talks to a provider.** It asks this app, and this app
 answers — or refuses. Everything below follows from that one arrangement.

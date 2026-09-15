@@ -1,6 +1,6 @@
 # Models
 
-<img src="/shot/notebook-model.png" alt="A model cell: features and sliders, the training source, feature importance and a SHAP waterfall">
+<img src="/screenshot/notebook-model.png" alt="A model cell: features and sliders, the training source, feature importance and a SHAP waterfall">
 
 A model cell is gradient boosting — LightGBM, compiled to WebAssembly and running inside the app —
 over the rows the cell above produced.

@@ -3,7 +3,7 @@
 Open an object and it renders in place, with the viewer its format deserves — no download, no
 temporary copy, no second application.
 
-<img src="/shot/document.png" alt="A PDF rendered in the content pane">
+<img src="/screenshot/document.png" alt="A PDF rendered in the content pane">
 
 The parser runs in a worker on your machine, reading the bytes the provider streamed back. That is
 true of every format in the list, from a 40 KB parquet file to a multi-gigabyte object opened in

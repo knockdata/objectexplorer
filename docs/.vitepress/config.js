@@ -34,6 +34,17 @@ const platformScript = `(function () {
 	document.documentElement.dataset.platform = platform;
 })()`
 
+// A story's page title is its question and its answer together: the question says what the page
+// is about, the answer is the reason anyone opens it. Every other page keeps its own title.
+function pageTitle(frontmatter) {
+	if (frontmatter.answer) {
+		return `${frontmatter.title} ${frontmatter.answer}`
+	}
+	else {
+		return frontmatter.title
+	}
+}
+
 // The whole site — the landing page and the documentation are one thing, served at
 // objectexplorer.com by the front door in rock2/server, with the app itself at /app on the same
 // origin. Dark is the default: the app is dark, and every screenshot here was taken in it.
@@ -41,33 +52,37 @@ export default defineConfig({
 	base,
 	title: "ObjectExplorer",
 	description: "Browse, preview, query and search S3, GCS, Azure Blob and local folders in one window",
-	appearance: "dark",
+	// force-dark, not "dark": "dark" is only the starting value, so a reader whose browser remembers
+	// light walks from the landing — which is dark whatever the setting — into a white page. The app
+	// is dark, every screenshot here was taken in it, and the site is one surface.
+	appearance: "force-dark",
 	cleanUrls: true,
 	lastUpdated: true,
 	head: [
 		["link", { rel: "icon", type: "image/png", href: `${base}img/favicon.png` }],
 		["script", {}, platformScript],
 	],
-	// a short is an article: no sidebar and no outline beside it
+	// a story is an article: no sidebar and no outline beside it
 	transformPageData(pageData) {
-		if (pageData.relativePath.startsWith("shorts/")) {
+		if (pageData.relativePath.startsWith("story/")) {
 			pageData.frontmatter.sidebar = false
 			pageData.frontmatter.aside = false
+			pageData.title = pageTitle(pageData.frontmatter)
 		}
 	},
-	// Open Graph and a canonical link on every page, from its own frontmatter, so a short shared on
-	// LinkedIn, X or Slack previews with its own title, problem and picture rather than the site's.
+	// Open Graph and a canonical link on every page, from its own frontmatter, so a story shared on
+	// LinkedIn, X or Slack previews with its own question, answer and picture rather than the site's.
 	transformHead({ pageData }) {
 		const { frontmatter, relativePath } = pageData
 		const pagePath = relativePath.replace(/index\.md$/, "").replace(/\.md$/, "")
 		const pageUrl = `${site}/${pagePath}`
-		const isShort = relativePath.startsWith("shorts/") && relativePath !== "shorts/index.md"
-		const title = [frontmatter.title, pageData.title, "ObjectExplorer"].find(Boolean)
+		const isStory = relativePath.startsWith("story/") && relativePath !== "story/index.md"
+		const title = [pageTitle(frontmatter), pageData.title, "ObjectExplorer"].find(Boolean)
 		const description = frontmatter.description ?? defaultDescription
-		const image = `${site}${frontmatter.poster ?? "/shot/hero.png"}`
+		const image = `${site}${frontmatter.poster ?? "/screenshot/hero.png"}`
 		return [
 			["link", { rel: "canonical", href: pageUrl }],
-			["meta", { property: "og:type", content: isShort ? "article" : "website" }],
+			["meta", { property: "og:type", content: isStory ? "article" : "website" }],
 			["meta", { property: "og:title", content: title }],
 			["meta", { property: "og:description", content: description }],
 			["meta", { property: "og:image", content: image }],

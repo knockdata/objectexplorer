@@ -5,7 +5,7 @@
 
 .download h2 {
 	font-size: clamp(1.7rem, 3.6vw, 2.7rem);
-	font-variation-settings: "wdth" 110, "wght" 620;
+	font-weight: 600;
 	letter-spacing: -0.028em;
 	line-height: 1.04;
 	margin: 0 0 18px;
@@ -13,7 +13,7 @@
 
 .download h3 {
 	font-size: 17px;
-	font-variation-settings: "wdth" 104, "wght" 600;
+	font-weight: 600;
 	letter-spacing: -0.012em;
 	line-height: 1.3;
 }
@@ -47,7 +47,7 @@
 	align-items: center;
 	display: flex;
 	gap: 10px;
-	margin: 0 0 14px;
+	margin-bottom: 30px;
 }
 
 .download-here {
@@ -57,43 +57,50 @@
 .download-platform ul {
 	display: flex;
 	flex-direction: column;
-	gap: 1px;
+	gap: 6px;
 	list-style: none;
 	margin: 0;
+	margin-bottom: 25px;
 	padding: 0;
 }
 
-.landing .download-package {
-	align-items: baseline;
-	border: 1px solid transparent;
-	border-radius: 6px;
-	color: var(--chalk-2);
+.download-architecture {
+	align-items: center;
 	display: flex;
-	font-size: 15px;
-	gap: 14px;
-	justify-content: space-between;
-	padding: 9px 10px;
-	margin: 0 -10px;
+	gap: 6px;
+	justify-content: flex-end;
 }
 
-.download-package span {
-	color: var(--chalk-3);
+/* pushes the packages to the right edge, where .dmg is as wide as .AppImage */
+.download-architecture-name {
+	color: var(--chalk-2);
+	font-size: 15px;
+	margin-right: auto;
+}
+
+.landing .download-package {
+	border: 1px solid var(--rule);
+	border-radius: 6px;
+	color: var(--chalk-2);
 	font-family: var(--mono);
 	font-size: 12.5px;
+	padding: 6px 8px;
+	text-align: center;
 	white-space: nowrap;
+	/* the widest of them, .AppImage, decides it — every package box is that wide */
+	width: 88px;
 }
 
 .landing .download-package:hover,
 .landing .download-package:focus-visible {
 	background: rgba(234, 241, 248, 0.06);
-	border-color: var(--rule);
+	border-color: var(--chalk-3);
 	color: var(--chalk);
 }
 
 .download-note {
 	color: var(--chalk-3);
 	font-size: 13px;
-	margin: 14px 2px 0;
 	margin-top: auto;
 }
 
@@ -115,22 +122,17 @@ html[data-platform="windows"] .download-platform-windows .download-here {
 	color: var(--brand);
 	display: inline-block;
 	font-size: 11.5px;
-	font-variation-settings: "wdth" 100, "wght" 500;
+	font-weight: 500;
 	padding: 3px 9px;
 }
 
-html[data-platform="linux"] .landing .download-platform-linux li:first-child .download-package,
-html[data-platform="mac"] .landing .download-platform-mac li:first-child .download-package,
-html[data-platform="windows"] .landing .download-platform-windows li:first-child .download-package {
+html[data-platform="linux"] .landing .download-platform-linux li:first-child .download-package:first-of-type,
+html[data-platform="mac"] .landing .download-platform-mac li:first-child .download-package:first-of-type,
+html[data-platform="windows"] .landing .download-platform-windows li:first-child .download-package:first-of-type {
 	background: var(--brand);
+	border-color: var(--brand);
 	color: var(--brand-text);
-	font-variation-settings: "wdth" 102, "wght" 600;
-}
-
-html[data-platform="linux"] .download-platform-linux li:first-child .download-package span,
-html[data-platform="mac"] .download-platform-mac li:first-child .download-package span,
-html[data-platform="windows"] .download-platform-windows li:first-child .download-package span {
-	color: rgba(0, 0, 0, 0.62);
+	font-weight: 600;
 }
 
 .download-share {
@@ -154,7 +156,7 @@ html[data-platform="windows"] .download-platform-windows li:first-child .downloa
 	background: var(--brand);
 	border-color: var(--brand);
 	color: var(--brand-text);
-	font-variation-settings: "wdth" 104, "wght" 600;
+	font-weight: 600;
 	padding: 12px 20px;
 }
 

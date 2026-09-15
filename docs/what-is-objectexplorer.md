@@ -5,7 +5,7 @@ beside you. It puts Amazon S3, Google Cloud Storage, Azure Blob Storage, MinIO a
 your own disks in one tree, and opens what is inside them — including the formats a cloud console
 will never render.
 
-<img src="/shot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it">
+<img src="/screenshot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it">
 
 It is one native binary: an HTTP server bound to `127.0.0.1` plus the operating system's own webview,
 both inside the same executable. There is no Electron and no Chromium, and there is no server of ours

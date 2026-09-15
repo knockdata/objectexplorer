@@ -12,7 +12,7 @@ node scripts/promo.mjs             # the whole film, into docs/public/video
 | | |
 |---|---|
 | The squirrel comic | `assets/oe.png`, ours |
-| Every app screenshot | `docs/public/shot/*.png`, captured from the running app by `explorer/test/docShot.js` in the rock2 workspace |
+| Every app screenshot | `docs/public/screenshot/*.png`, captured from the running app by `explorer/test/docShot.js` in the rock2 workspace |
 
 ## Music
 

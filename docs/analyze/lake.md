@@ -1,6 +1,6 @@
 # Data lake tables
 
-<img src="/shot/lake-table.png" alt="A Delta folder queried by its path, returning the current rows">
+<img src="/screenshot/lake-table.png" alt="A Delta folder queried by its path, returning the current rows">
 
 A Delta, Iceberg or Hudi table is a folder, and the folder itself says which of the parquet files
 inside it the table is currently made of. So the path is the whole SQL surface — name the folder and
@@ -29,7 +29,7 @@ Hive-partitioned exports and `YYYY/MM/DD` date prefixes read as one table the sa
 
 ## The metadata is readable too
 
-<img src="/shot/lake-metadata.png" alt="_delta_log opened as commit history: every version with the files it added and removed">
+<img src="/screenshot/lake-metadata.png" alt="_delta_log opened as commit history: every version with the files it added and removed">
 
 `_delta_log` opens as the commit history, every version with the files it added and removed
 underneath it. `.hoodie` opens as the timeline, including the requested and inflight instants a

@@ -1,6 +1,6 @@
 # Python
 
-<img src="/shot/notebook-python.png" alt="A Python cell: oe.frame over the object, and the DataFrame it returned as a grid">
+<img src="/screenshot/notebook-python.png" alt="A Python cell: oe.frame over the object, and the DataFrame it returned as a grid">
 
 A **Python** cell runs real Python — in a real interpreter, in a virtual environment you made, with
 pandas or polars or whatever else you installed. It sits in the same notebook as the SQL and the
@@ -135,7 +135,7 @@ from the environment's own setting, and a builder that names its own master over
 Install **pyspark** into an environment and Settings → Python grows two sliders for it: how many
 cores a session may use, and how much memory its driver may take.
 
-Each slider runs the length of the machine — all 10 cores, all 24 GB — and the thumb stops short of
+Each slider runs the length of the machine — all 10 cores, all 24 GB — and the thumb stops story of
 the end where the machine keeps something back. Memory stops at three quarters, so a 24 GB machine
 lets a session have 18 GB and holds the rest for the operating system, this app and your browser;
 the end of the track past that is shaded. Cores have no such reserve, so that slider goes the whole
