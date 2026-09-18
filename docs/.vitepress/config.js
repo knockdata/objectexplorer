@@ -194,6 +194,8 @@ export default defineConfig({
 				collapsed: true,
 				items: [
 					{ text: "Keyboard shortcuts", link: "/reference/shortcuts" },
+					{ text: "Moving around a view", link: "/reference/view-controls" },
+					{ text: "Dragging things in and around", link: "/reference/drag-drop" },
 					{ text: "Where your data lives", link: "/reference/data-locations" },
 					{ text: "Updating", link: "/reference/updating" },
 					{ text: "The MCP rule file", link: "/reference/mcp-rules" },

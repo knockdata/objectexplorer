@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "webview.h"
+#include "drop-linux.h"
 
 // gtk_window_new(GTK_WINDOW_TOPLEVEL)
 #define TOPLEVEL 0
@@ -115,6 +116,9 @@ static void buildWindow(Webview *webview) {
 	webview->containerAdd(webview->window, webview->view);
 	// closing the window ends the run loop, which is what unblocks the calling thread
 	webview->signalConnect(webview->window, "destroy", (Callback)webview->mainQuit, NULL, NULL, 0);
+
+	// a folder dragged in from the desktop, read as a path the server can open
+	dropLinuxAttach(webview->view, webview->gtkLibrary, webview->gobjectLibrary, webview->webkitLibrary);
 
 	// always on: Ctrl+Shift+I then opens the inspector, which is the only way a user can show what
 	// their machine did. Nothing else was ever behind the old debug flag.

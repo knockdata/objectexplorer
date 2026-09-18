@@ -1,6 +1,6 @@
 {
 	"name": "one",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"description": "ObjectExplorer: VSCode for cloud storage, explore, analytics and machine learning",
 	"private": true,
 	"type": "module",
@@ -10,6 +10,8 @@
 		"sea": "node scripts/sea.mjs",
 		"pack": "node scripts/pack.mjs",
 		"build": "npm run addon && npm run bundle && npm run sea && npm run pack",
+		"bundle:dev": "node scripts/local-bundle.mjs",
+		"build:dev": "npm run addon && npm run bundle:dev && npm run sea && npm run pack",
 		"msix": "node scripts/msix.mjs",
 		"msix:store": "node scripts/msix.mjs store",
 		"msix:bundle": "node scripts/msix-bundle.mjs",

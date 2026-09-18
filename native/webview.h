@@ -11,10 +11,16 @@
 // Eight calls, nothing more. The explorer UI talks to the Node backend over HTTP on localhost,
 // so there is no JS bridge to build: no bind, no eval, no init, no dispatch.
 //
-// The one exception is the web inspector, which is not something a backend can do: on mac the page
-// posts "devtools" to a script message handler, because WKWebView has neither a key for it nor a
-// public API. Windows (F12) and linux (Ctrl+Shift+I) have a key already and get no handler. It is
-// not part of this contract — nothing here is called for it.
+// Two things happen outside that contract, neither of them a call and neither of them something
+// a caller can see or configure:
+//
+// The web inspector, which is not something a backend can do: on mac the page posts "devtools"
+// to a script message handler, because WKWebView has neither a key for it nor a public API.
+// Windows (F12) and linux (Ctrl+Shift+I) have a key already and get no handler.
+//
+// A folder dragged in from the desktop — see drop-mac.m. No browser tells the page a dropped
+// folder's path, so the window reads it off the OS drag and writes it into the page itself. One
+// way, one fixed value, no reply: nothing crosses N-API and nothing reaches Node.
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 

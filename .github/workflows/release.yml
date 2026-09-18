@@ -260,6 +260,8 @@ jobs:
           ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/logo.png assets/logo-full.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
+          ls -l native/drop-mac.h native/drop-mac.m native/drop-linux.h native/drop-linux.c
+          ls -l native/applog.h native/applog.c
           ls -l native/napi/node_api.h native/napi/node_api.def
       - uses: actions/setup-node@v6
         with:
@@ -354,6 +356,8 @@ jobs:
           ls -l assets/icon-44x44.png assets/icon-150x150.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
+          ls -l native/drop-mac.h native/drop-mac.m native/drop-linux.h native/drop-linux.c
+          ls -l native/applog.h native/applog.c
           ls -l native/napi/node_api.h native/napi/node_api.def
       - uses: actions/setup-node@v6
         with:
@@ -545,6 +549,8 @@ jobs:
           ls -l assets/entitlements.plist assets/icon.icns assets/icon.ico assets/logo.png assets/logo-full.png
           ls -l native/webview.h native/webview_napi.c native/Makefile
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
+          ls -l native/drop-mac.h native/drop-mac.m native/drop-linux.h native/drop-linux.c
+          ls -l native/applog.h native/applog.c
           ls -l native/napi/node_api.h native/napi/node_api.def
       - uses: actions/setup-node@v6
         with:

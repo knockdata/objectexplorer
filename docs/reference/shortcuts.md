@@ -38,4 +38,20 @@
 Within a root, a drag **moves**. Across roots, it **copies**. Holding `⌥` or `⌘` while dropping says
 which one explicitly.
 
-Next: [where your data lives](/reference/data-locations).
+## In a 3D view
+
+Once the view has focus:
+
+| Key             | What it does                                    |
+|-----------------|-------------------------------------------------|
+| `←` `→` `↑` `↓` | rotate                                          |
+| `⇧` + arrow     | pan                                             |
+| `1` `3` `7`     | look at the front, the right side, the top      |
+| `9`             | look from the opposite side                     |
+| `0`             | isometric                                       |
+| `F`             | fit the object back into the view               |
+| `R`             | reset                                           |
+
+The mouse is covered in [moving around a view](/reference/view-controls).
+
+Next: [moving around a view](/reference/view-controls).

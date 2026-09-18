@@ -4,7 +4,8 @@
 // process.dlopen, so nothing may go looking for a build folder at runtime.
 //
 // Eight calls, one per function in webview.h. Only create can fail, and it fails by returning
-// NULL — see that file.
+// NULL — see that file. The dragged-folder reader in drop-mac.m / drop-linux.c adds none: it
+// talks to the page, never to Node.
 //
 // webviewRun blocks the calling thread until the window closes. That is the whole reason the
 // HTTP server lives in a worker thread — see src/main.js.

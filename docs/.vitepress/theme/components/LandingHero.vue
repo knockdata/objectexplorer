@@ -25,8 +25,8 @@ const emit = defineEmits(["open-app"])
 			<div class="landing-hero-actions" style="display: flex;">
 				<button class="landing-hero-primary desktop-only" type="button" @click="emit('open-app')">Open App</button>
 				<p class="landing-hero-note desktop-only">
-					<div>It opens right here.</div>
-					<div>Nothing leaves your browser.</div>
+					<span style="display: block;">It opens right here.</span>
+					<span style="display: block;">Nothing leaves your browser.</span>
 				</p>
 				<ShareLink
 					class="landing-hero-primary mobile-only"

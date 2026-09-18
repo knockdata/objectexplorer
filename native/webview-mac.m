@@ -9,6 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 #include "webview.h"
+#import "drop-mac.h"
+#include "applog.h"
 
 struct Webview {
 	NSWindow *window;
@@ -36,11 +38,18 @@ struct Webview {
 }
 @end
 
-// The one thing the page can ask the window for: show the web inspector.
+// The two things the page can ask the window for: show the web inspector, and write a line to
+// app.log.
 //
-// WKWebView has no key of its own for it and no public API to open it, so this object is both
-// halves of the answer — the target of the Develop menu's item, and the handler behind
+// WKWebView has no key of its own for the inspector and no public API to open it, so this object
+// is both halves of that answer — the target of the Develop menu's item, and the handler behind
 // window.webkit.messageHandlers.objectexplorer, which is what the command palette posts to.
+//
+// The log line is the other half of a problem the inspector cannot solve: what the page saw is in
+// the web inspector and what the window did is in app.log, and a drag that goes wrong is a story
+// told half in each. Anything posted that is not "devtools" is written to app.log as it stands,
+// so the one file holds both halves in order.
+//
 // Everything else the UI needs it gets over http from the backend, exactly as in a browser.
 //
 // -[WKWebView _inspector] and -[_WKInspector show] are private, so both are reached by name and
@@ -70,6 +79,8 @@ struct Webview {
 	(void)controller;
 	if ([[message body] isEqual:@"devtools"]) {
 		[self showInspector:nil];
+	} else if ([[message body] isKindOfClass:[NSString class]]) {
+		appLog("page: %s", [[message body] UTF8String]);
 	} else {
 	}
 }
@@ -138,7 +149,8 @@ Webview *webviewCreate(void) {
 	Bridge *bridge = [[Bridge alloc] init];
 	[[configuration userContentController] addScriptMessageHandler:bridge name:@"objectexplorer"];
 
-	WKWebView *view = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
+	// DropWebView rather than WKWebView: the same view, plus the dragged folder's real path
+	WKWebView *view = [[DropWebView alloc] initWithFrame:frame configuration:configuration];
 	[view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 	[window setContentView:view];
 	[bridge setView:view];

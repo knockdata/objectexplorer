@@ -4,6 +4,15 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## Unreleased
+
+- A folder dragged in from the desktop now works in the desktop app, where it used to do nothing: the window the app runs in cannot open a dropped folder on its own, so the app reads where the folder is instead and opens it the way every other program on the machine would
+- A folder dropped that way is kept the way the **Add folder** button keeps one, so it is there the next time the app opens and never asks to be confirmed again — in a browser the same drop is permission that has to be granted on every reload
+- SQL can read a dropped folder too, which it could not when the folder was only a browser's permission to look at it
+- Dragging a folder onto a bucket now copies it from the machine itself rather than reading every file into the page first
+- Two folders of the same name dragged in from two different places stay two folders; before, the second was read as the first
+- A rebuilt app under a version already on the machine now actually replaces what is there: the unpacked copy is keyed on the bytes it came from rather than on the version alone, so a build carrying different code no longer runs the old one for good
+
 ## v0.7.0  —  2026-09-12
 
 - ObjectExplorer is MIT licensed, and says so: the public repository had no LICENSE file at all, which by default means all rights reserved — the opposite of what was intended, on the page everyone reads first

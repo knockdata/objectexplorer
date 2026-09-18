@@ -3,12 +3,14 @@
 // The whole app — backend, built frontend, sqlite wasm, demo data — is the
 // @knockdata/objectexplorer npm package. The build embeds that package's tarball in the
 // binary (scripts/npm-bundle.mjs), and the first run unpacks it into
-// ~/.objectexplorer/.app/objectexplorer-<version>/. Later runs reuse the folder.
+// ~/.objectexplorer/.app/objectexplorer-<version>/. Later runs reuse the folder, unless the
+// tarball in the binary is not the one that folder was unpacked from — see sourceFile below.
 //
 // update.js then downloads a newer tarball from the registry into a sibling folder, which
 // this picks up on the next launch. Both paths extract with the same tar reader.
 import fs from "node:fs"
 import path from "node:path"
+import { createHash } from "node:crypto"
 import { extractTarToDir } from "./tar.js"
 import { appDir } from "./paths.js"
 import { log } from "./log.js"
@@ -57,18 +59,48 @@ export function versionOf(dir) {
 // node during development, where the asset comes off disk instead.
 export async function resolveBundleDir(readAsset) {
 	const embedded = bundleDirFor(bundleVersion)
+	const tarball = Buffer.from(readAsset("objectexplorer.tgz"))
+	const hash = createHash("sha256").update(tarball).digest("hex").slice(0, 12)
 
-	if (isValidBundle(embedded)) {
+	if (isValidBundle(embedded) && readSource(embedded) === hash) {
 		log("embedded bundle already unpacked:", embedded)
 	} else {
+		// emptied first, not merged into: a file the new tarball no longer has would otherwise
+		// stay behind and be served alongside the ones that replaced it
 		log("unpacking embedded bundle to:", embedded)
-		await extractTarToDir(readAsset("objectexplorer.tgz"), embedded)
+		fs.rmSync(embedded, { recursive: true, force: true })
+		await extractTarToDir(tarball, embedded)
+		writeSource(embedded, hash)
 	}
 
 	// an OTA download from a previous session outranks the embedded copy
 	const newest = newestBundle()
 	log("serving bundle:", newest)
 	return newest
+}
+
+// Which tarball the unpacked folder came from, as the first 12 hex of its sha256 — the same
+// key addon.js uses, and for the same reason. The folder is named after the version, and two
+// different builds carry the same version all the time: a rebuilt release, and every
+// `npm run build:dev` from the source next door. Without this, the first one unpacked would be
+// the one served for good, however many times the binary was rebuilt.
+//
+// A folder from an older binary has no such file, which reads as "not this tarball" and is
+// unpacked once more. That costs one extra unpack on a single upgrade and nothing after it.
+function sourceFile(dir) {
+	return path.join(dir, ".bundle-source")
+}
+
+function readSource(dir) {
+	try {
+		return fs.readFileSync(sourceFile(dir), "utf8").trim()
+	} catch (error) {
+		return ""
+	}
+}
+
+function writeSource(dir, hash) {
+	fs.writeFileSync(sourceFile(dir), hash)
 }
 
 // DuckDB arrives as two npm packages: the universal one holding wasm/duckdb.wasm, and the

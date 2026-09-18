@@ -14,16 +14,16 @@ BUILD_DIR := build/$(ARCH)
 TARGET := $(BUILD_DIR)/webview_napi.node
 
 CFLAGS := -std=c11 -O2 -Wall -Inapi
-HEADERS := webview.h
+HEADERS := webview.h drop-mac.h drop-linux.h applog.h
 
 ifeq ($(UNAME),Darwin)
-SOURCES := webview_napi.c webview-mac.m
+SOURCES := webview_napi.c webview-mac.m drop-mac.m applog.c
 CFLAGS += -arch $(ARCH)
 # a .node resolves its napi symbols from the host process at dlopen time, so there is no node
 # library to link at all; dynamic_lookup is what lets them stay undefined
 LDFLAGS := -bundle -undefined dynamic_lookup -arch $(ARCH) -framework Cocoa -framework WebKit
 else
-SOURCES := webview_napi.c webview-linux.c
+SOURCES := webview_napi.c webview-linux.c drop-linux.c applog.c
 CFLAGS += -fPIC
 # gtk and webkit are opened with dlopen, so libdl is the whole link line
 LDFLAGS := -shared -ldl
