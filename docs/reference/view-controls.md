@@ -5,6 +5,7 @@ Every view that shows something in three dimensions moves the same way:
 - a model: `glb` `gltf` `fbx` `blend` `obj`, or a Unity asset
 - a CAD part: `step` `sldprt` `catpart`
 - a shader drawn on a shape
+- [the usage disc](/explore/usage), where a click picks a pole or one of the objects on it
 
 Drag to look around, hold Shift to pan, use the wheel to zoom, and double-click to start over.
 

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 532" width="760" height="532" role="img"
+	aria-label="What the disc is drawn from: each row names what was recorded, what is worked out from it, and what that becomes on the disc.">
+<style>
+	.bg { fill: #10141a }
+	.box { fill: #171d26; stroke: #2b3644; stroke-width: 1 }
+	.mono { fill: #9fb6d0; font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+	.mid { fill: #7d8998; font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif }
+	.ink { fill: #c9d3e0; font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif }
+	.head { fill: #7d8998; font: 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; letter-spacing: 0.1em; text-transform: uppercase }
+	.arrow { stroke: #4a5666; stroke-width: 1.2; fill: none }
+</style>
+<defs><marker id="tip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+	<path d="M0,0 L10,5 L0,10" fill="none" stroke="#4a5666" stroke-width="1.6"/>
+</marker></defs>
+<rect class="bg" x="0" y="0" width="760" height="532" rx="8"/>
+<text class="head" x="24" y="56">What was recorded, here</text>
+<text class="head" x="278" y="56">Worked out in the window</text>
+<text class="head" x="496" y="56">What you see on the disc</text>
+<rect class="box" x="24" y="86" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="110">object + sizeSnapshot</text>
+<path class="arrow" d="M244,105 L268,105" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="109">bytes, per storage class</text>
+<path class="arrow" d="M462,105 L486,105" marker-end="url(#tip)"/>
+<rect x="496" y="99" width="9" height="9" rx="2" fill="#8fa6c4"/>
+<text class="ink" x="514" y="109">how tall the pole is</text>
+<rect class="box" x="24" y="138" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="162">the bucket's region</text>
+<path class="arrow" d="M244,157 L268,157" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="161">× the published rate</text>
+<path class="arrow" d="M462,157 L486,157" marker-end="url(#tip)"/>
+<rect x="496" y="151" width="9" height="9" rx="2" fill="#8fa6c4"/>
+<text class="ink" x="514" y="161">how tall it is in Cost</text>
+<rect class="box" x="24" y="190" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="214">object.category</text>
+<path class="arrow" d="M244,209 L268,209" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="213">what kind of thing it is</text>
+<path class="arrow" d="M462,209 L486,209" marker-end="url(#tip)"/>
+<rect x="496" y="203" width="9" height="9" rx="2" fill="#8fa6c4"/>
+<text class="ink" x="514" y="213">which sector, in Category</text>
+<rect class="box" x="24" y="242" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="266">object.mtime</text>
+<path class="arrow" d="M244,261 L268,261" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="265">bytes in five age bands</text>
+<path class="arrow" d="M462,261 L486,261" marker-end="url(#tip)"/>
+<rect x="496" y="255" width="9" height="9" rx="2" fill="#8fa6c4"/>
+<text class="ink" x="514" y="265">the ring, and a ball’s distance</text>
+<rect class="box" x="24" y="294" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="311">the cache folder,</text>
+<text class="mono" x="36" y="326">object.onDiskSize</text>
+<path class="arrow" d="M244,313 L268,313" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="317">what is already here</text>
+<path class="arrow" d="M462,313 L486,313" marker-end="url(#tip)"/>
+<rect x="496" y="307" width="9" height="9" rx="2" fill="#b7d2e8"/>
+<text class="ink" x="514" y="317">the pale middle of the cap</text>
+<rect class="box" x="24" y="346" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="370">objectView</text>
+<path class="arrow" d="M244,365 L268,365" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="369">opens in this window</text>
+<path class="arrow" d="M462,365 L486,365" marker-end="url(#tip)"/>
+<rect x="496" y="359" width="9" height="9" rx="2" fill="#e3eaf3"/>
+<text class="ink" x="514" y="369">the pale arc, and a ball’s halo</text>
+<rect class="box" x="24" y="398" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="422">~/.objectexplorer/mcp</text>
+<path class="arrow" d="M244,417 L268,417" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="421">calls through the gateway</text>
+<path class="arrow" d="M462,417 L486,417" marker-end="url(#tip)"/>
+<rect x="496" y="411" width="9" height="9" rx="2" fill="#e8b04b"/>
+<text class="ink" x="514" y="421">the amber arc of the base ring</text>
+<rect class="box" x="24" y="450" width="214" height="38" rx="5"/>
+<text class="mono" x="36" y="467">apiResponse.etag,</text>
+<text class="mono" x="36" y="482">else name + size</text>
+<path class="arrow" d="M244,469 L268,469" marker-end="url(#tip)"/>
+<text class="mid" x="278" y="473">the same bytes, twice</text>
+<path class="arrow" d="M462,469 L486,469" marker-end="url(#tip)"/>
+<rect x="496" y="463" width="9" height="9" rx="2" fill="#e0c878"/>
+<text class="ink" x="514" y="473">a chord between two poles</text>
+<text class="mid" x="24" y="512">How often something was written is in no row above, so nothing on the disc says it.</text>
+</svg>

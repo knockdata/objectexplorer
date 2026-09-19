@@ -24,4 +24,4 @@ all it takes and nothing is overwritten in place.
 
 Every version's notes are in the [changelog](/changelog).
 
-Next: [troubleshooting](/reference/troubleshooting).
+Next: [where the usage numbers come from](/reference/usage-data).

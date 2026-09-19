@@ -31,4 +31,7 @@ The icons on the right of the breadcrumb switch what the same object is shown as
 A tabular object opens as a [notebook](/analyze/notebook) instead: the grid is the first cell's
 output, and there is a query above it.
 
+With no object open at all, the window shows [where the storage went](/explore/usage) — every root
+you added, as one disc.
+
 Next: [column summaries](/explore/column-summary).

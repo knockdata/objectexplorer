@@ -143,6 +143,7 @@ export default defineConfig({
 				collapsed: false,
 				items: [
 					{ text: "The tree and the list", link: "/explore/tree" },
+					{ text: "Where the storage went", link: "/explore/usage" },
 					{ text: "Previewing an object", link: "/explore/preview" },
 					{ text: "Column summaries", link: "/explore/column-summary" },
 					{ text: "Search", link: "/explore/search" },
@@ -198,6 +199,7 @@ export default defineConfig({
 					{ text: "Dragging things in and around", link: "/reference/drag-drop" },
 					{ text: "Where your data lives", link: "/reference/data-locations" },
 					{ text: "Updating", link: "/reference/updating" },
+					{ text: "Where the usage numbers come from", link: "/reference/usage-data" },
 					{ text: "The MCP rule file", link: "/reference/mcp-rules" },
 					{ text: "The MCP endpoint", link: "/reference/mcp-protocol" },
 					{ text: "Troubleshooting", link: "/reference/troubleshooting" },

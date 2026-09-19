@@ -17,6 +17,7 @@ anywhere in the path between you and your bucket.
 |---|---|
 | **Explores** | every provider in one tree, with copy, move, rename, delete and an undo that works across buckets — see [the tree and the list](/explore/tree) |
 | **Previews** | parquet, csv, json, SPSS, SAS, pdf, docx, pptx, xlsx, images, audio, video, ebooks, archives, and hex for everything else — see [formats](/formats/) |
+| **Shows the bill** | every bucket and folder on one disc: what each costs a month, what has gone cold, what is already on this machine, what nobody opens and what is being kept twice — see [where the storage went](/explore/usage) |
 | **Queries** | DuckDB over the object where it lives, in a [notebook](/analyze/notebook) that opens with the query already written |
 | **Reads tables** | Delta, Iceberg and Hudi folders as one table, and their metadata as the history it is — see [data lake tables](/analyze/lake) |
 | **Searches** | local folders and cloud prefixes in the same run — see [search](/explore/search) |

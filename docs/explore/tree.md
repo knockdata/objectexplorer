@@ -39,4 +39,4 @@ Two toggles decide what the list shows beyond the obvious:
 Arrow keys walk every row; **→** enters a folder and **←** steps out; **Enter** opens what is
 selected. The full list is on [keyboard shortcuts](/reference/shortcuts).
 
-Next: [previewing an object](/explore/preview).
+Next: [where the storage went](/explore/usage).

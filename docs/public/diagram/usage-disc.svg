@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 440" width="760" height="440" role="img"
+	aria-label="The same disc under both groupings. On the left a sector per provider, on the right a sector per kind of thing, where one bucket stands in several sectors and the colour still says whose it is. A gold chord joins two poles holding the same bytes.">
+<style>
+	.bg { fill: #10141a }
+	.rim { stroke: #3a4552; stroke-width: 1.5; fill: none }
+	.guide { stroke: #2b3644; stroke-width: 1; fill: none; stroke-dasharray: 3 5 }
+	.divide { stroke: #2b3644; stroke-width: 1 }
+	.hub { fill: #1b212b; stroke: #4a5666; stroke-width: 1 }
+	.spoke { stroke: #2b3644; stroke-width: 1 }
+	.chord { stroke: #e0c878; stroke-width: 3; fill: none; opacity: 0.9 }
+	.tag { fill: #9aa6b6; font: 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; letter-spacing: 0.08em }
+	.cap { fill: #c9d3e0; font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-anchor: middle }
+	.sub { fill: #7d8998; font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-anchor: middle }
+	.key { fill: #7d8998; font: 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif }
+</style>
+<rect class="bg" x="0" y="0" width="760" height="440" rx="8"/>
+<circle class="rim" cx="196" cy="206" r="122"/>
+<circle class="guide" cx="196" cy="206" r="88"/>
+<line class="spoke" x1="200.3" y1="188.5" x2="217.1" y2="120.6"/>
+<circle cx="217.1" cy="120.6" r="11" fill="#b4743f"/>
+<line class="spoke" x1="207.9" y1="192.5" x2="254.4" y2="140.1"/>
+<circle cx="254.4" cy="140.1" r="8" fill="#b4743f"/>
+<line class="spoke" x1="212.8" y1="199.6" x2="278.3" y2="174.8"/>
+<circle cx="278.3" cy="174.8" r="6" fill="#b4743f"/>
+<text class="tag" x="290.2" y="103.7" text-anchor="middle">AWS</text>
+<line class="divide" x1="215.9" y1="203.6" x2="317.1" y2="191.3"/>
+<line class="spoke" x1="210.8" y1="216.2" x2="268.4" y2="256.0"/>
+<circle cx="268.4" cy="256.0" r="9" fill="#4a7ba6"/>
+<line class="spoke" x1="204.4" y1="221.9" x2="236.9" y2="283.9"/>
+<circle cx="236.9" cy="283.9" r="5" fill="#4a7ba6"/>
+<text class="tag" x="290.2" y="316.3" text-anchor="middle">GOOGLE CLOUD</text>
+<line class="divide" x1="200.8" y1="225.4" x2="225.2" y2="324.5"/>
+<line class="spoke" x1="187.6" y1="221.9" x2="155.1" y2="283.9"/>
+<circle cx="155.1" cy="283.9" r="8" fill="#4c8a60"/>
+<text class="tag" x="130.0" y="335.7" text-anchor="middle">AZURE</text>
+<line class="divide" x1="182.7" y1="221.0" x2="115.1" y2="297.3"/>
+<line class="spoke" x1="178.1" y1="208.2" x2="108.6" y2="216.6"/>
+<circle cx="108.6" cy="216.6" r="7" fill="#6b7079"/>
+<line class="spoke" x1="179.2" y1="199.6" x2="113.7" y2="174.8"/>
+<circle cx="113.7" cy="174.8" r="6" fill="#6b7079"/>
+<line class="spoke" x1="184.1" y1="192.5" x2="137.6" y2="140.1"/>
+<circle cx="137.6" cy="140.1" r="5" fill="#6b7079"/>
+<text class="tag" x="63.2" y="159.6" text-anchor="middle">THIS MACHINE</text>
+<line class="divide" x1="186.7" y1="188.3" x2="139.3" y2="98.0"/>
+<circle class="hub" cx="196" cy="206" r="16"/>
+<circle class="rim" cx="564" cy="206" r="122"/>
+<circle class="guide" cx="564" cy="206" r="88"/>
+<line class="spoke" x1="567.1" y1="188.3" x2="579.3" y2="119.3"/>
+<circle cx="579.3" cy="119.3" r="10" fill="#b4743f"/>
+<line class="spoke" x1="573.0" y1="190.4" x2="608.0" y2="129.8"/>
+<circle cx="608.0" cy="129.8" r="7" fill="#6b7079"/>
+<text class="tag" x="612.6" y="76.6" text-anchor="middle">MEDIA</text>
+<line class="divide" x1="576.9" y1="190.7" x2="642.4" y2="112.5"/>
+<line class="spoke" x1="580.9" y1="199.8" x2="646.7" y2="175.9"/>
+<circle cx="646.7" cy="175.9" r="5" fill="#b4743f"/>
+<line class="spoke" x1="582.0" y1="206.0" x2="652.0" y2="206.0"/>
+<circle cx="652.0" cy="206.0" r="4" fill="#6b7079"/>
+<text class="tag" x="703.8" y="185.3" text-anchor="middle">DOCUMENTS</text>
+<line class="divide" x1="583.7" y1="209.5" x2="684.1" y2="227.2"/>
+<line class="spoke" x1="577.8" y1="217.6" x2="631.4" y2="262.6"/>
+<circle cx="631.4" cy="262.6" r="9" fill="#4a7ba6"/>
+<line class="spoke" x1="573.0" y1="221.6" x2="608.0" y2="282.2"/>
+<circle cx="608.0" cy="282.2" r="5" fill="#b4743f"/>
+<text class="tag" x="655.3" y="318.8" text-anchor="middle">DATASETS</text>
+<line class="divide" x1="570.8" y1="224.8" x2="605.7" y2="320.6"/>
+<line class="spoke" x1="560.9" y1="223.7" x2="548.7" y2="292.7"/>
+<circle cx="548.7" cy="292.7" r="8" fill="#b4743f"/>
+<line class="spoke" x1="555.0" y1="221.6" x2="520.0" y2="282.2"/>
+<circle cx="520.0" cy="282.2" r="5" fill="#4a7ba6"/>
+<line class="spoke" x1="550.2" y1="217.6" x2="496.6" y2="262.6"/>
+<circle cx="496.6" cy="262.6" r="6" fill="#6b7079"/>
+<text class="tag" x="493.0" y="333.0" text-anchor="middle">ARCHIVES</text>
+<line class="divide" x1="546.7" y1="216.0" x2="458.3" y2="267.0"/>
+<line class="spoke" x1="546.0" y1="206.0" x2="476.0" y2="206.0"/>
+<circle cx="476.0" cy="206.0" r="4" fill="#6b7079"/>
+<text class="tag" x="422.0" y="210.0" text-anchor="middle">CODE</text>
+<line class="divide" x1="544.3" y1="202.5" x2="443.9" y2="184.8"/>
+<line class="spoke" x1="550.2" y1="194.4" x2="496.6" y2="149.4"/>
+<circle cx="496.6" cy="149.4" r="8" fill="#4c8a60"/>
+<line class="spoke" x1="555.0" y1="190.4" x2="520.0" y2="129.8"/>
+<circle cx="520.0" cy="129.8" r="6" fill="#6b7079"/>
+<text class="tag" x="472.7" y="101.2" text-anchor="middle">OTHER</text>
+<line class="divide" x1="557.2" y1="187.2" x2="522.3" y2="91.4"/>
+<path class="chord" d="M548.7,292.7 Q540.8,246.1 496.6,262.6"/>
+<circle class="hub" cx="564" cy="206" r="16"/>
+<text class="cap" x="196" y="384">Group by provider</text>
+<text class="sub" x="196" y="404">one pole per root, a sector per cloud</text>
+<text class="cap" x="564" y="384">Group by category</text>
+<text class="sub" x="564" y="404">one pole per root and kind, colour still says whose</text>
+<rect x="24" y="24" width="9" height="9" rx="2" fill="#b4743f"/><text class="key" x="40" y="33">AWS</text>
+<rect x="88" y="24" width="9" height="9" rx="2" fill="#4a7ba6"/><text class="key" x="104" y="33">Google Cloud</text>
+<rect x="188" y="24" width="9" height="9" rx="2" fill="#4c8a60"/><text class="key" x="204" y="33">Azure</text>
+<rect x="250" y="24" width="9" height="9" rx="2" fill="#6b7079"/><text class="key" x="266" y="33">This machine</text>
+<line x1="350" y1="28" x2="374" y2="28" stroke="#e0c878" stroke-width="3"/><text class="key" x="382" y="33">the same bytes, held twice</text>
+</svg>
