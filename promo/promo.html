@@ -3,90 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>ObjectExplorer promo</title>
-<style>
-	:root {
-		--bg: #0b0d10;
-		--text: #f2f4f8;
-		--dim: #9aa4b2;
-		--accent: #4a9eff;
-	}
-	* { box-sizing: border-box; margin: 0; padding: 0; }
-	body { background: #000; }
-	#stage {
-		position: relative;
-		width: 1280px;
-		height: 720px;
-		overflow: hidden;
-		background: var(--bg);
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-		color: var(--text);
-	}
-	.layer {
-		position: absolute;
-		inset: 0;
-		overflow: hidden;
-		opacity: 0;
-	}
-	.frame {
-		position: absolute;
-		border-radius: 10px;
-		box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-		overflow: hidden;
-	}
-	.backdrop {
-		position: absolute;
-		inset: 0;
-		overflow: hidden;
-	}
-	.backdrop img {
-		filter: blur(34px) brightness(0.45) saturate(0.8);
-		position: absolute;
-		transform: scale(1.15);
-	}
-	.layer img {
-		position: absolute;
-	}
-	.shade {
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(to top, rgba(6, 8, 11, 0.92) 0%, rgba(6, 8, 11, 0.55) 28%, rgba(6, 8, 11, 0) 60%);
-	}
-	.caption {
-		position: absolute;
-		left: 64px;
-		right: 64px;
-		bottom: 68px;
-	}
-	.line {
-		font-size: 52px;
-		font-weight: 700;
-		letter-spacing: -0.02em;
-		line-height: 1.14;
-		opacity: 0;
-	}
-	.line.small {
-		font-size: 30px;
-		font-weight: 500;
-		color: var(--dim);
-		margin-top: 14px;
-	}
-	.line em { font-style: normal; color: var(--accent); }
-	#flash {
-		position: absolute;
-		inset: 0;
-		background: #fff;
-		opacity: 0;
-		pointer-events: none;
-	}
-	#grid { position: absolute; inset: 0; display: none; }
-	#grid div {
-		position: absolute;
-		border: 2px solid #4a9eff;
-		color: #fff;
-		font: 700 20px/1 monospace;
-		background: rgba(0, 0, 0, 0.35);
-	}
-</style>
+<link rel="stylesheet" href="./promo.css">
 </head>
 <body>
 <div id="stage">
@@ -102,8 +19,14 @@
 // cannot drop a frame and the film is the same every time it is built.
 //
 // Open it with ?t=12.5 to look at one second of it, or ?grid=1 to check the crop boxes over the
-// squirrel comic. The comic is promo/oe@2x.jpg — assets/oe.png upscaled once, because a single
-// panel of the original is only ~340px wide and the film would otherwise blow it up four times.
+// squirrel comic. The comic is promo/oe@4x.jpg, made by scripts/promo-comic.py: assets/oe.png
+// upscaled four times by Real-ESRGAN and rebranded green, because a single panel of the original
+// is only ~340px wide and the film shows it ~900px tall on a 1080p frame.
+//
+// The page is laid out at 1280x720 and recorded at a device scale of 1.5, so the film is 1080p
+// with text drawn at that size and every picture sampled from its own full resolution.
+
+const COMIC = "./oe@4x.jpg"
 
 // A panel of the comic, as fractions of the whole picture, so the numbers survive a re-export at
 // another size. Row 1 is panels 1-5, row 2 is 6-10, row 3 is 11 and the wide 12, row 4 is the
@@ -123,29 +46,39 @@ const panels = {
 	giveUp:   { x: 0.8406, y: 0.2823, w: 0.1575, h: 0.2313 },
 	idea:     { x: 0.0267, y: 0.5235, w: 0.1653, h: 0.2226 },
 	inside:   { x: 0.2130, y: 0.5330, w: 0.7830, h: 0.2050 },
-	endCard:  { x: 0.0280, y: 0.7700, w: 0.9680, h: 0.2200 },
+	// the squirrel alone from the end card, clear of its panel number, for the film's own end card
+	mascot:   { x: 0.0280, y: 0.7830, w: 0.1780, h: 0.2130 },
 }
 
 // One entry per cut. `at` is when it starts, `hold` how long it is on screen, `crop` a panel of
 // the comic or nothing at all for a screenshot, `zoom` how much it pushes in while it plays, and
 // `anchor` which part of a filled panel survives the crop — 0 keeps its top, 0.5 its middle.
+// `card` is the end card, drawn by the page rather than cut from a picture.
+const SHOT = "../docs/public/screenshot/"
 const scenes = [
-	{ at: 0.0,  hold: 2.6, src: "./oe@2x.jpg", crop: panels.found,   zoom: 1.10, lines: [] },
-	{ at: 2.6,  hold: 1.5, src: "./oe@2x.jpg", crop: panels.hammer,  zoom: 1.12, lines: [] },
-	{ at: 4.1,  hold: 1.2, src: "./oe@2x.jpg", crop: panels.pliers,  zoom: 1.12, lines: [] },
-	{ at: 5.3,  hold: 1.2, src: "./oe@2x.jpg", crop: panels.drill,   zoom: 1.12, lines: [] },
-	{ at: 6.5,  hold: 2.0, src: "./oe@2x.jpg", crop: panels.giveUp,  zoom: 1.10, lines: [] },
-	{ at: 8.5,  hold: 2.4, src: "./oe@2x.jpg", crop: panels.idea, anchor: 0.18, zoom: 1.10, lines: [] },
-	{ at: 10.9, hold: 3.4, src: "../docs/public/screenshot/hero.png",           zoom: 1.08, lines: ["One window.", "S3, GCS, Azure, MinIO, local."], small: 1 },
-	{ at: 14.3, hold: 3.2, src: "../docs/public/screenshot/column-summary.png", zoom: 1.10, lines: ["See the shape", "before you read a row."] },
-	{ at: 17.5, hold: 3.2, src: "../docs/public/screenshot/notebook-sql.png",   zoom: 1.08, lines: ["SQL where the data", "already lives."] },
-	{ at: 20.7, hold: 3.0, src: "../docs/public/screenshot/notebook-chart.png", zoom: 1.08, lines: ["A chart it wrote itself."] },
-	{ at: 23.7, hold: 3.2, src: "../docs/public/screenshot/notebook-model.png", zoom: 1.08, lines: ["Train a model.", "See what it learned."] },
-	{ at: 26.9, hold: 3.0, src: "../docs/public/screenshot/lake-metadata.png",  zoom: 1.08, lines: ["Delta, Iceberg, Hudi —", "just tables."] },
-	{ at: 29.9, hold: 3.0, src: "../docs/public/screenshot/share.png",          zoom: 1.08, lines: ["Share it masked,", "hashed, and expiring."] },
-	{ at: 32.9, hold: 2.6, src: "./oe@2x.jpg", crop: panels.inside, wide: true, zoom: 1.08, lines: [] },
-	{ at: 35.5, hold: 4.0, src: "./oe@2x.jpg", crop: panels.endCard, wide: true, zoom: 1.05, lines: ["objectexplorer.com"], small: 0, end: true },
+	{ at: 0.0,  hold: 2.4, src: COMIC, crop: panels.found,   zoom: 1.10, lines: [] },
+	{ at: 2.4,  hold: 1.3, src: COMIC, crop: panels.hammer,  zoom: 1.12, lines: [] },
+	{ at: 3.7,  hold: 1.1, src: COMIC, crop: panels.pliers,  zoom: 1.12, lines: [] },
+	{ at: 4.8,  hold: 1.1, src: COMIC, crop: panels.drill,   zoom: 1.12, lines: [] },
+	{ at: 5.9,  hold: 1.1, src: COMIC, crop: panels.torch,   zoom: 1.12, lines: [] },
+	{ at: 7.0,  hold: 1.8, src: COMIC, crop: panels.giveUp,  zoom: 1.10, lines: [] },
+	{ at: 8.8,  hold: 2.2, src: COMIC, crop: panels.idea, anchor: 0.18, zoom: 1.10, lines: [] },
+	{ at: 11.0, hold: 3.2, src: SHOT + "hero.png",                zoom: 1.08, lines: ["One window.", "S3, GCS, Azure, OneLake, local."], small: 1 },
+	{ at: 14.2, hold: 2.8, src: SHOT + "column-summary.png",      zoom: 1.10, lines: ["See the shape", "before you read a row."] },
+	{ at: 17.0, hold: 2.8, src: SHOT + "notebook-chart.png",      zoom: 1.08, lines: ["SQL and a chart,", "where the data lives."] },
+	{ at: 19.8, hold: 2.8, src: SHOT + "story-big-file.png",      zoom: 1.08, lines: ["A 2 GB file?", "Just scroll it."] },
+	{ at: 22.6, hold: 2.8, src: SHOT + "story-cad-cloud.png",     zoom: 1.08, lines: ["CAD, straight", "from the bucket."] },
+	{ at: 25.4, hold: 2.8, src: SHOT + "format-model.png",        zoom: 1.08, lines: ["Models, textures", "and shaders, drawn."] },
+	{ at: 28.2, hold: 2.8, src: SHOT + "lake-metadata.png",       zoom: 1.08, lines: ["Delta, Iceberg, Hudi —", "just tables."] },
+	{ at: 31.0, hold: 2.8, src: SHOT + "story-agent-observe.png", zoom: 1.08, lines: ["Watch an agent", "read your data."] },
+	{ at: 33.8, hold: 2.8, src: SHOT + "story-agent-replay.png",  zoom: 1.08, lines: ["Then replay", "every step it took."] },
+	{ at: 36.6, hold: 2.8, src: SHOT + "share.png",               zoom: 1.08, lines: ["Share it masked,", "hashed, and expiring."] },
+	{ at: 39.4, hold: 2.6, src: COMIC, crop: panels.inside, wide: true, zoom: 1.08, lines: [] },
+	{ at: 42.0, hold: 4.5, card: true, lines: [], end: true },
 ]
+
+// the cut into the product half gets one white blink, so the two halves are told apart
+const PRODUCT_AT = scenes.find((scene) => !scene.crop && !scene.card).at
 
 const DURATION = scenes.at(-1).at + scenes.at(-1).hold
 const stage = { width: 1280, height: 720 }
@@ -157,7 +90,9 @@ const shade = document.querySelector(".shade")
 // one layer per scene, all built once so a frame is only a matter of setting styles. The frame
 // inside it is the crop window: without it a fitted panel would show the panels around it, since
 // they are all one picture.
-const built = scenes.map((scene) => {
+const built = scenes.map((scene) => (scene.card ? buildCard(scene) : buildPicture(scene)))
+
+function buildPicture(scene) {
 	const layer = document.createElement("div")
 	layer.className = "layer"
 	const backdrop = document.createElement("div")
@@ -174,7 +109,39 @@ const built = scenes.map((scene) => {
 	layer.appendChild(frame)
 	layers.appendChild(layer)
 	return { scene, layer, frame, image, backdropImage }
-})
+}
+
+function buildCard(scene) {
+	const layer = document.createElement("div")
+	layer.className = "layer"
+	layer.innerHTML = `
+		<div class="card">
+			<div class="card-mascot"><img src="${COMIC}"></div>
+			<div class="card-brand">
+				<div class="card-name"><img src="../assets/mark.png"><span>Object<em>Explorer</em></span></div>
+				<div class="card-tagline">Open anything. Explore everything.</div>
+				<div class="card-url">objectexplorer.com</div>
+			</div>
+		</div>`
+	layers.appendChild(layer)
+	const mascot = layer.querySelector(".card-mascot")
+	return { scene, layer, mascot, image: mascot.querySelector("img"), mark: layer.querySelector(".card-name img") }
+}
+
+// the squirrel fills its frame, cropped from the comic the way a panel is
+function placeMascot(entry, scale) {
+	const image = entry.image
+	const crop = panels.mascot
+	const frameWidth = 500
+	const frameHeight = 400
+	const cover = Math.max(frameWidth / (image.naturalWidth * crop.w), frameHeight / (image.naturalHeight * crop.h)) * scale
+	const width = image.naturalWidth * cover
+	const height = image.naturalHeight * cover
+	image.style.width = `${width}px`
+	image.style.height = `${height}px`
+	image.style.left = `${-crop.x * width - (image.naturalWidth * crop.w * cover - frameWidth) / 2}px`
+	image.style.top = `${-crop.y * height - (image.naturalHeight * crop.h * cover - frameHeight) / 2}px`
+}
 
 function easeOut(fraction) {
 	return 1 - Math.pow(1 - fraction, 3)
@@ -243,9 +210,14 @@ function renderFrame(time) {
 			layer.style.opacity = String(Math.min(fadeIn, fadeOut))
 			// a panel pushes in, a screenshot pulls back — so the app ends whole on screen
 			const through = local / scene.hold
-			const scale = scene.crop ? 1 + (scene.zoom - 1) * through : scene.zoom - (scene.zoom - 1) * through
-			place(entry.frame, image, scene, scale)
-			fill(entry.backdropImage, scene)
+			if (scene.card) {
+				placeMascot(entry, 1 + 0.06 * through)
+			}
+			else {
+				const scale = scene.crop ? 1 + (scene.zoom - 1) * through : scene.zoom - (scene.zoom - 1) * through
+				place(entry.frame, image, scene, scale)
+				fill(entry.backdropImage, scene)
+			}
 		}
 		else {
 			layer.style.opacity = "0"
@@ -253,8 +225,7 @@ function renderFrame(time) {
 	}
 	drawCaption(current.scene, at - current.scene.at)
 	shade.style.opacity = current.scene.lines.length ? "1" : "0"
-	// one white blink on the cut into the product half, so the two halves are told apart
-	const blink = at - 10.9
+	const blink = at - PRODUCT_AT
 	flash.style.opacity = blink >= 0 && blink < 0.22 ? String(0.8 * (1 - blink / 0.22)) : "0"
 }
 
@@ -279,7 +250,7 @@ function drawCaption(scene, local) {
 // ?grid=1 draws the crop boxes over the whole comic, which is how the fractions above were checked
 function drawGrid() {
 	const image = document.createElement("img")
-	image.src = "./oe@2x.jpg"
+	image.src = COMIC
 	image.style.width = `${stage.width}px`
 	image.style.position = "absolute"
 	const grid = document.getElementById("grid")
@@ -310,7 +281,8 @@ if (params.has("grid")) {
 else {
 	// every picture has to be decoded before the first frame is asked for, or a cut lands on an
 	// empty box
-	window.promoReady = Promise.all(built.map((entry) => entry.image.decode().catch(() => null)))
+	const pictures = built.flatMap((entry) => (entry.mark ? [entry.image, entry.mark] : [entry.image]))
+	window.promoReady = Promise.all(pictures.map((picture) => picture.decode().catch(() => null)))
 		.then(() => renderFrame(Number(params.get("t") ?? 0)))
 }
 </script>

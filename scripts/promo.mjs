@@ -21,9 +21,14 @@ const frameDir = path.join(root, "promo", "frames")
 const outDir = path.join(root, "docs", "public", "video")
 const profileDir = path.join(os.tmpdir(), "chrome-promo")
 
+// the page is laid out at 1280x720 and drawn at 1.5x, so the film is 1080p with every picture
+// sampled from its own full size rather than blown up from a 720p frame
 const WIDTH = 1280
 const HEIGHT = 720
+const SCALE = 1.5
 const FPS = 30
+// when the poster is taken: the end card, once it has faded in
+const POSTER_AT = 43.5
 // a fixed port is somebody else's the moment two things debug a browser on this machine, and the
 // poll below would then talk to their Chrome instead of ours
 const PORT = 9400 + Math.floor(Math.random() * 90)
@@ -152,7 +157,7 @@ async function record() {
 	await send(socket, "Page.enable", {}, sessionId)
 	await send(socket, "Runtime.enable", {}, sessionId)
 	await send(socket, "Emulation.setDeviceMetricsOverride",
-		{ width: WIDTH, height: HEIGHT, deviceScaleFactor: 1, mobile: false }, sessionId)
+		{ width: WIDTH, height: HEIGHT, deviceScaleFactor: SCALE, mobile: false }, sessionId)
 
 	// the page decodes every picture before it draws its first frame
 	await evaluate(socket, sessionId, "window.promoReady")
@@ -184,8 +189,10 @@ async function record() {
 
 	for (let frame = 0; frame < frames; frame++) {
 		await evaluate(socket, sessionId, `window.renderFrame(${frame / FPS})`)
-		const shot = await send(socket, "Page.captureScreenshot", { format: "jpeg", quality: 92 }, sessionId)
-		fs.writeFileSync(path.join(frameDir, `${String(frame).padStart(5, "0")}.jpg`), Buffer.from(shot.data, "base64"))
+		// png, not jpeg: a lossy frame fed to a lossy encoder is two rounds of loss, and the fine
+		// text of a screenshot is what shows it first
+		const shot = await send(socket, "Page.captureScreenshot", { format: "png" }, sessionId)
+		fs.writeFileSync(path.join(frameDir, `${String(frame).padStart(5, "0")}.png`), Buffer.from(shot.data, "base64"))
 		if (frame % 60 === 0) {
 			console.log(`  frame ${frame}/${frames}`)
 		}
@@ -195,11 +202,11 @@ async function record() {
 	chrome.kill()
 
 	const silent = path.join(frameDir, "silent.mp4")
-	// -color_range tv with yuv420p: the frames are jpegs, whose full range would otherwise carry
-	// through as yuvj420p and confuse players that expect broadcast range
-	ffmpeg(["-framerate", String(FPS), "-i", path.join(frameDir, "%05d.jpg"),
-		"-c:v", "libx264", "-preset", "slow", "-crf", "23", "-pix_fmt", "yuv420p",
-		"-color_range", "tv", silent])
+	// crf 18 is near what the eye can tell from the frames; -color_range tv with yuv420p so players
+	// that expect broadcast range read it right, and bt709 because that is what 1080p is shown in
+	ffmpeg(["-framerate", String(FPS), "-i", path.join(frameDir, "%05d.png"),
+		"-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p",
+		"-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", silent])
 
 	const mp4 = path.join(outDir, "objectexplorer.mp4")
 	if (music) {
@@ -216,8 +223,8 @@ async function record() {
 
 	// One encode, with its music. The page plays it behind controls rather than autoplaying, so
 	// there is no silent copy to keep: a reader who wants it quiet uses the mute button.
-	ffmpeg(["-i", path.join(frameDir, `${String(Math.round(11.6 * FPS)).padStart(5, "0")}.jpg`),
-		"-q:v", "3", path.join(outDir, "poster.jpg")])
+	// poster.png is what HeroVideo.vue shows before play
+	fs.copyFileSync(path.join(frameDir, `${String(Math.round(POSTER_AT * FPS)).padStart(5, "0")}.png`), path.join(outDir, "poster.png"))
 
 	console.log("wrote", outDir)
 }

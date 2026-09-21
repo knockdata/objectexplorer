@@ -1,0 +1,107 @@
+:root {
+	--bg: #0b0d10;
+	--text: #f2f4f8;
+	--dim: #9aa4b2;
+	--accent: #4dff9f;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #000; }
+#stage {
+	position: relative;
+	width: 1280px;
+	height: 720px;
+	overflow: hidden;
+	background: var(--bg);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	color: var(--text);
+}
+.layer {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	opacity: 0;
+}
+.frame {
+	position: absolute;
+	border-radius: 10px;
+	box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+	overflow: hidden;
+}
+.backdrop {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+}
+.backdrop img {
+	filter: blur(34px) brightness(0.45) saturate(0.8);
+	position: absolute;
+	transform: scale(1.15);
+}
+.layer img {
+	position: absolute;
+}
+.shade {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(6, 8, 11, 0.92) 0%, rgba(6, 8, 11, 0.55) 28%, rgba(6, 8, 11, 0) 60%);
+}
+.caption {
+	position: absolute;
+	left: 64px;
+	right: 64px;
+	bottom: 68px;
+}
+.line {
+	font-size: 52px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	line-height: 1.14;
+	opacity: 0;
+}
+.line.small {
+	font-size: 30px;
+	font-weight: 500;
+	color: var(--dim);
+	margin-top: 14px;
+}
+.line em { font-style: normal; color: var(--accent); }
+#flash {
+	position: absolute;
+	inset: 0;
+	background: #fff;
+	opacity: 0;
+	pointer-events: none;
+}
+#grid { position: absolute; inset: 0; display: none; }
+/* the end card: the squirrel from the comic's last panel beside the chalk e and the name */
+.card {
+	align-items: center;
+	background: radial-gradient(ellipse at 70% 45%, rgba(77, 255, 159, 0.10), rgba(11, 13, 16, 0) 60%), var(--bg);
+	display: flex;
+	gap: 64px;
+	inset: 0;
+	justify-content: center;
+	position: absolute;
+}
+.card-mascot {
+	border-radius: 14px;
+	box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+	height: 400px;
+	overflow: hidden;
+	position: relative;
+	width: 500px;
+}
+.card-mascot img { position: absolute; }
+.card-brand { display: flex; flex-direction: column; gap: 18px; }
+.card-name { align-items: center; display: flex; font-size: 66px; font-weight: 700; gap: 14px; letter-spacing: -0.02em; }
+.card-name img { height: 96px; position: static; width: 96px; }
+.card-name em { color: var(--accent); font-style: normal; }
+.card-tagline { color: var(--dim); font-size: 30px; font-weight: 500; }
+.card-url { color: var(--accent); font-size: 32px; font-weight: 600; margin-top: 18px; }
+#grid div {
+	position: absolute;
+	border: 2px solid #4dff9f;
+	color: #fff;
+	font: 700 20px/1 monospace;
+	background: rgba(0, 0, 0, 0.35);
+}

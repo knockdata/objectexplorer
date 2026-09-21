@@ -4,8 +4,8 @@ subtitle: "Play the session back, call by call."
 episode: 24
 runtime: null
 video: null
-poster: /screenshot/story-agent-audit.png
-caption: "One agent session opened as a tab: the question and the model's tool calls drawn as a sequence above, and the eleven calls that reached the app below, with rows, bytes and the rule that decided each. One was denied: reference/.env."
+poster: /screenshot/story-agent-replay.png
+caption: "A session replayed from its row in Settings → MCP sessions: the window opens again what the agent opened, in order — demo/, cars.sas7bdat, then the parquet file it queried — while the panel in the corner ticks off each step. The refused reference/.env opens nothing."
 today:
   - tool: "Editor"
     step: "scroll the transcript"
@@ -84,11 +84,13 @@ Half of it already exists. If the agent reads through a door that decides each c
 
 The other half is the transcript, and here I have to be careful. Nothing in the protocol joins a transcript to a session. The client never tells the door which conversation a call came from. So they are joined the only way they can be, by time and by content: a transcript counts a step only if the session has a call with the same tool and the same arguments within a minute of it. The transcript that agrees on the most steps is taken as that session's.
 
-<StoryPoster />
-
-That is one session, opened from the list of sessions as a tab. At the top is the conversation drawn as a sequence: the question, each request to the model, each tool call. Each call to the door carries what it actually reached. Below is the door's own table, eleven calls, one denied, and clicking an object opens it.
+A row in the list of sessions opens that session as a tab. At the top is the conversation drawn as a sequence: the question, each request to the model, each tool call. Each call to the door carries what it actually reached. Below is the door's own table, and clicking an object opens it.
 
 Then there is Replay, on the session's row and on the tab. It opens again, in this window and in order, everything the agent opened: a folder it listed, an object it read. It spends 700 milliseconds on each step, and a refused call opens nothing. It asks nothing of the rules. It is the window showing me what the agent saw. Escape stops it.
+
+<StoryPoster />
+
+That is Replay pressed on a session's row in MCP sessions. The dialog has closed and the window is opening what the agent opened: the demo folder, the SAS file it described and summarised, and now the parquet file it queried. The panel in the corner ticks off the steps as they go. reference/.env is crossed out. The agent was refused it, so there is nothing to open.
 
 ## Where it stops
 
