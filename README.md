@@ -43,11 +43,20 @@ npx @knockdata/objectexplorer
 
 ## What it does
 
-- **Preview instead of download.** 60+ formats render in place — Parquet, SPSS, SAS, office, PDF,
-  ebooks, images, audio, video — parsed in a worker on your machine.
-  → [previewing an object](https://objectexplorer.com/explore/preview)
-- **One window for every provider.** Every provider in the same tree, with the same keyboard. A folder
-  is a folder everywhere. → [connecting storage](https://objectexplorer.com/storage/connect)
+- **Preview instead of download.** More than 130 file extensions render in place — Parquet, SPSS, SAS,
+  office, ebooks, images, audio, video, SQLite and DuckDB files — parsed in a worker on your machine.
+  → [every format](https://objectexplorer.com/formats/)
+- **One window for every provider.** Every provider in the same tree, with the same keyboard, as a list
+  or as a grid of previews. A folder is a folder everywhere.
+  → [connecting storage](https://objectexplorer.com/storage/connect)
+- **A PDF reader with notes.** Its own renderer: select, find, bookmarks, thumbnails, and seven marks
+  plus text notes of your own. → [the PDF reader](https://objectexplorer.com/formats/pdf)
+- **CAD, 3D, textures and shaders.** STEP, SolidWorks, CATIA and DWG; glTF, FBX, Blender, obj and
+  Unity models; DDS, KTX2, HDR and EXR textures; WGSL and GLSL shaders running live.
+  → [CAD](https://objectexplorer.com/formats/cad) · [3D models](https://objectexplorer.com/formats/models)
+- **The bill, and how to cut it.** Every bucket priced on one disc, and Optimize for the cheaper
+  class, the single region, the old versions and the abandoned uploads — each a command you run.
+  → [optimize](https://objectexplorer.com/explore/optimize)
 - **SQL over the object, where it lives.** DuckDB queries the object in the bucket; nothing is staged
   and no table is created first. → [SQL](https://objectexplorer.com/analyze/sql)
 - **Column summaries.** A histogram, a box plot or a split bar under every column header.
@@ -58,6 +67,8 @@ npx @knockdata/objectexplorer
   deletes, schema evolution and time travel. → [data lake tables](https://objectexplorer.com/analyze/lake)
 - **Search across buckets.** Local folders and cloud prefixes in the same run.
   → [search](https://objectexplorer.com/explore/search)
+- **A writing assistant.** Markdown edited in place, with passages and phrases from writers you chose
+  beside it, and mechanical flags — never a score. → [writing](https://objectexplorer.com/analyze/writing)
 - **An access gateway for agents.** MCP for Claude Code and Codex: the agent holds no credential, PII
   is rewritten on the way out, and every call is logged. → [agents](https://objectexplorer.com/agents/)
 

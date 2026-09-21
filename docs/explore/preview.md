@@ -12,8 +12,8 @@ true of every format in the list, from a 40 KB parquet file to a multi-gigabyte 
 ## What decides the viewer
 
 The extension, and then the bytes. A file with no extension, or a wrong one, is sniffed: the first
-bytes decide, which is how a `.hoodie` folder is read as a Hudi timeline and a `.DS_Store` as the
-binary plist it is.
+bytes decide, which is how a `.hoodie` folder is read as a Hudi timeline, a `.db` as SQLite or
+DuckDB, and a `.hdr` as a texture rather than a text header.
 
 ## The toolbar
 

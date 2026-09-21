@@ -12,8 +12,8 @@
 ## Windows: SmartScreen shows a notice
 
 The `.msix` is signed with the company's certificate, but a new signature takes a while to build
-reputation. Choose **More info → Run anyway**, or install from the
-[Microsoft Store](https://apps.microsoft.com/detail/9PMCD8HJPCXH) when it is published there.
+reputation. Choose **More info → Run anyway**. ObjectExplorer is not in the
+[Microsoft Store](https://apps.microsoft.com/detail/9PMCD8HJPCXH) yet.
 
 ## Linux: it opened in my browser instead of a window
 

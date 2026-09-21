@@ -11,4 +11,4 @@ the rows — with the same [column summaries](/explore/column-summary) and the s
 That means a `.sav` from a survey and a `.parquet` from a warehouse join in one query, without
 either of them being converted first.
 
-Next: [documents](/formats/documents).
+Next: [databases](/formats/databases).

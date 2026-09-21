@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="800" height="560" role="img"
+	aria-label="How ObjectExplorer works: the window and any agent on your machine talk to one local server; the server signs requests straight to your storage, keeps what it remembers in ~/.objectexplorer, and calls objectexplorer.com only for updates, the licence and large share links.">
+<style>
+	.bg { fill: #10141a }
+	.zone { fill: none; stroke: #2b3644; stroke-width: 1; stroke-dasharray: 4 4 }
+	.box { fill: #171d26; stroke: #2b3644; stroke-width: 1 }
+	.hot { fill: #171d26; stroke: #3dcc70; stroke-width: 1.2 }
+	.disk { fill: #131a14; stroke: #2e5a3c; stroke-width: 1 }
+	.far { fill: #10141a; stroke: #4a5666; stroke-width: 1; stroke-dasharray: 3 3 }
+	.head { fill: #7d8998; font: 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; letter-spacing: 0.1em; text-transform: uppercase }
+	.title { fill: #e3eaf3; font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif }
+	.ink { fill: #c9d3e0; font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif }
+	.mid { fill: #7d8998; font: 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif }
+	.mono { fill: #9fb6d0; font: 11.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+	.green { fill: #3dcc70 }
+	.arrow { stroke: #4a5666; stroke-width: 1.2; fill: none }
+	.arrow-hot { stroke: #3dcc70; stroke-width: 1.4; fill: none }
+	.arrow-far { stroke: #4a5666; stroke-width: 1.2; fill: none; stroke-dasharray: 3 3 }
+</style>
+<defs>
+	<marker id="tip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+		<path d="M0,0 L10,5 L0,10" fill="none" stroke="#4a5666" stroke-width="1.6"/>
+	</marker>
+	<marker id="tip-hot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+		<path d="M0,0 L10,5 L0,10" fill="none" stroke="#3dcc70" stroke-width="1.6"/>
+	</marker>
+</defs>
+<rect class="bg" x="0" y="0" width="800" height="560" rx="8"/>
+
+<!-- your machine -->
+<rect class="zone" x="16" y="30" width="532" height="514" rx="10"/>
+<text class="head" x="32" y="52">Your machine — one executable</text>
+
+<!-- the window -->
+<rect class="box" x="32" y="72" width="164" height="112" rx="6"/>
+<text class="title" x="46" y="96">The window</text>
+<text class="mid" x="46" y="116">the OS's own webview</text>
+<text class="ink" x="46" y="140">every view and reader</text>
+<text class="ink" x="46" y="158">readers run in a worker</text>
+<text class="ink" x="46" y="176">3D drawn with WebGPU</text>
+
+<!-- an agent -->
+<rect class="box" x="32" y="208" width="164" height="102" rx="6"/>
+<text class="title" x="46" y="232">An agent</text>
+<text class="mid" x="46" y="252">Claude Code, Codex</text>
+<text class="ink" x="46" y="276">holds no cloud credential</text>
+<text class="ink" x="46" y="294">asks here, not the cloud</text>
+
+<!-- the local server -->
+<rect class="hot" x="222" y="72" width="310" height="238" rx="6"/>
+<text class="title" x="236" y="96">Local server</text>
+<text class="mono" x="330" y="96">127.0.0.1 only</text>
+
+<rect class="box" x="236" y="108" width="282" height="44" rx="5"/>
+<text class="ink" x="248" y="126">Providers</text>
+<text class="mid" x="248" y="143">signs every request with your own credentials</text>
+
+<rect class="box" x="236" y="158" width="282" height="44" rx="5"/>
+<text class="ink" x="248" y="176">Rule gate + PII rules</text>
+<text class="mid" x="248" y="193">what an agent may reach; what a share may carry</text>
+
+<rect class="box" x="236" y="208" width="282" height="44" rx="5"/>
+<text class="ink" x="248" y="226">DuckDB · Python · models</text>
+<text class="mid" x="248" y="243">queries run here, next to the file</text>
+
+<rect class="box" x="236" y="258" width="282" height="44" rx="5"/>
+<text class="ink" x="248" y="276">Cache</text>
+<text class="mid" x="248" y="293">a copy of each cloud object you opened</text>
+
+<!-- window and agent to the server -->
+<path class="arrow-hot" d="M196,128 L222,128" marker-start="url(#tip-hot)" marker-end="url(#tip-hot)"/>
+<path class="arrow-hot" d="M196,259 C212,259 214,180 236,180" marker-end="url(#tip-hot)"/>
+
+<!-- what is kept -->
+<rect class="disk" x="32" y="334" width="500" height="192" rx="6"/>
+<text class="title" x="46" y="358">~/.objectexplorer</text>
+<text class="mid" x="186" y="358">what is kept, and only here</text>
+<text class="mono" x="46" y="384">meta.db</text>
+<text class="ink" x="176" y="384">names, sizes, column statistics, notebook code</text>
+<text class="mono" x="46" y="406">gcs/ s3/ azure/</text>
+<text class="ink" x="176" y="406">cached copies of objects you opened</text>
+<text class="mono" x="46" y="428">mcp/</text>
+<text class="ink" x="176" y="428">every agent call, before its answer — never the rows</text>
+<text class="mono" x="46" y="450">connections.json</text>
+<text class="ink" x="176" y="450">credentials, encrypted to this machine</text>
+<text class="mono" x="46" y="472">mcp.yaml</text>
+<text class="ink" x="176" y="472">the rules an agent is held to</text>
+<text class="mid" x="46" y="506">not kept: query results, notebook outputs, the rows an agent was sent</text>
+<path class="arrow" d="M377,310 L377,334" marker-start="url(#tip)" marker-end="url(#tip)"/>
+
+<!-- your storage -->
+<text class="head" x="582" y="52">Your storage</text>
+<rect class="box" x="582" y="72" width="198" height="36" rx="5"/>
+<text class="ink" x="596" y="95">Amazon S3 · MinIO</text>
+<rect class="box" x="582" y="116" width="198" height="36" rx="5"/>
+<text class="ink" x="596" y="139">Google Cloud Storage</text>
+<rect class="box" x="582" y="160" width="198" height="36" rx="5"/>
+<text class="ink" x="596" y="183">Azure Blob · OneLake</text>
+<rect class="box" x="582" y="204" width="198" height="36" rx="5"/>
+<text class="ink" x="596" y="227">folders on your disks</text>
+<path class="arrow-hot" d="M518,130 L562,130"/>
+<path class="arrow-hot" d="M562,90 L562,222"/>
+<path class="arrow-hot" d="M562,90 L580,90" marker-end="url(#tip-hot)"/>
+<path class="arrow-hot" d="M562,134 L580,134" marker-end="url(#tip-hot)"/>
+<path class="arrow-hot" d="M562,178 L580,178" marker-end="url(#tip-hot)"/>
+<path class="arrow-hot" d="M562,222 L580,222" marker-end="url(#tip-hot)"/>
+<text class="mid" x="582" y="262">straight from your machine:</text>
+<text class="mid" x="582" y="278">no proxy, no relay, no copy</text>
+<text class="mid" x="582" y="294">anywhere but here</text>
+
+<!-- the one outside call -->
+<rect class="far" x="582" y="400" width="198" height="104" rx="6"/>
+<text class="title" x="596" y="424">objectexplorer.com</text>
+<text class="ink" x="596" y="446">version check · licence</text>
+<text class="ink" x="596" y="464">large share links, until they expire</text>
+<text class="green" x="596" y="490" style="font: 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">never an object you browse</text>
+<path class="arrow-far" d="M532,452 L582,452" marker-end="url(#tip)"/>
+</svg>

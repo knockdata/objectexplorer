@@ -12,16 +12,38 @@ object under it is.
 
 ## Decide column by column
 
-Every column goes as it is until you say otherwise. Beside each one: **Mask**, **Hash** or **FPE**.
+The [PII rules](/agents/pii) in Settings → PII protect two audiences with one set of rules: the
+person who opens a share link, and an agent calling over MCP. Every column opens on whatever those
+rules already say about it, so a column you decided once is never shared plainly by accident. A
+column no rule names opens on **None** — the value as it is. Beside each one: **None**, **Mask**,
+**Hash** or **FPE**.
 
-| | What it does |
-|---|---|
-| **Mask** | covers a range of characters with `*` — one slider, a handle at each end, so dragging over a name covers what you drag over |
-| **Hash** | SHA-1, so equal values stay equal and a hashed column still joins and still counts |
-| **FPE** | format-preserving: a digit becomes a digit and a letter a letter of the same case, so a phone number still reads as a phone number and still validates |
+| Method   | What it does                                                                                         |
+|----------|------------------------------------------------------------------------------------------------------|
+| **None** | the value as it is — also how you take one column back out of a rule                                 |
+| **Mask** | covers a range of characters with `*` — one slider, a handle at each end                             |
+| **Hash** | 16 hex characters of keyed SHA-256, so equal values stay equal and the column still joins and counts |
+| **FPE**  | format-preserving: a digit becomes a digit and a letter a letter of the same case                    |
 
-The FPE key is made when the dialog opens and never enters the link — **Copy key** is the only way it
-leaves your browser.
+A rule that says **drop** opens as **Hash** here: a share has no way to leave a column out.
+
+The free-text rules from Settings → PII hold over every share too, whatever you pick per column — an
+email address inside a note column is replaced even though no column is called `email`.
+
+What the share does to a column is decided by the same code an [agent's answer](/agents/pii) goes
+through, in the app's own server — the browser holds no cipher, so the preview below is the server's
+answer. The two audiences differ in three places:
+
+|                | A share link                                    | An agent over MCP                                 |
+|----------------|-------------------------------------------------|---------------------------------------------------|
+| **Per column** | you can change any column, for this share alone | the rules as written, with no way to ask for less |
+| **Drop**       | opens as **Hash**                               | the column is left out                            |
+| **Key**        | one made for this share when the dialog opens   | one per install, `~/.objectexplorer/mcp/key`      |
+
+The share's key never enters the link — **Copy key** is the only way it leaves your browser, and it
+is the key that share's Hash and FPE columns were made with, and nothing else. Because the keys
+differ, the same email hashed in two shares, or in a share and an agent's answer, comes back as two
+different values.
 
 The preview under the columns is the app's own grid, showing three rows sampled from the start, the
 middle and the end of the table — each one as it is and then as it goes, so what you are about to

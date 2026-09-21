@@ -9,7 +9,15 @@ inside a bucket is still just a table.
 Nothing is extracted to disk: the archive's directory is read, and an entry's bytes are decompressed
 when you open that entry.
 
-Browsable: `zip` `dmg` `apkg`, and the office formats — `pptx` `potx` `ppsx` `xlsx` `xltx` `docx`
-`dotx`.
+| Browsable as a folder | Formats                                                                |
+|-----------------------|------------------------------------------------------------------------|
+| Zips                  | `zip` `jar` `war` `ear` `apk` `ipa`                                    |
+| Office files          | `pptx` `potx` `ppsx` `xlsx` `xltx` `docx` `dotx`                       |
+| Disk images           | `dmg`                                                                  |
+| Anki decks            | `apkg`                                                                 |
+| CAD files             | `sldprt` `sldasm` `slddrw` `catpart` `dwg` — see [CAD](/formats/cad)   |
+| Databases             | `db` `sqlite` `sqlite3` `duckdb` — see [databases](/formats/databases) |
+
+`tar`, `gz`, `7z`, `rar` and the other archives that are not zips cannot be browsed yet.
 
 Next: [copy, move, rename, delete](/explore/file-management).

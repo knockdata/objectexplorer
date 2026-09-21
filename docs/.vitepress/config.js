@@ -1,6 +1,5 @@
 import { fileURLToPath, URL } from "node:url"
 import { defineConfig } from "vitepress"
-import storyMarkdown from "./storyMarkdown.js"
 
 // Where the built site is rooted. objectexplorer.com serves it at the domain root, which is the
 // default; GitHub Pages serves the same build under /objectexplorer/, and sets DOCS_BASE to say
@@ -36,11 +35,11 @@ const platformScript = `(function () {
 	document.documentElement.dataset.platform = platform;
 })()`
 
-// A story's page title is its question and its answer together: the question says what the page
-// is about, the answer is the reason anyone opens it. Every other page keeps its own title.
+// A story's page title is its question and its subtitle together: the question says what the page
+// is about, the subtitle is the reason anyone opens it. Every other page keeps its own title.
 function pageTitle(frontmatter) {
-	if (frontmatter.answer) {
-		return `${frontmatter.title} ${frontmatter.answer}`
+	if (frontmatter.subtitle) {
+		return `${frontmatter.title} ${frontmatter.subtitle}`
 	}
 	else {
 		return frontmatter.title
@@ -53,7 +52,7 @@ function pageTitle(frontmatter) {
 export default defineConfig({
 	base,
 	title: "ObjectExplorer",
-	description: "Browse, preview, query and search S3, GCS, Azure Blob and local folders in one window",
+	description: "Browse, preview, query and search S3, GCS, Azure Blob, MinIO, OneLake, Dropbox, OneDrive, Box and local folders in one window",
 	// force-dark, not "dark": "dark" is only the starting value, so a reader whose browser remembers
 	// light walks from the landing — which is dark whatever the setting — into a white page. The app
 	// is dark, every screenshot here was taken in it, and the site is one surface.
@@ -98,11 +97,6 @@ export default defineConfig({
 	sitemap: {
 		hostname: site,
 	},
-	markdown: {
-		config(md) {
-			md.use(storyMarkdown)
-		},
-	},
 	// Every page wears the landing's header and footer: VitePress's own VPNav and VPFooter are swapped
 	// for ThemeNav and ThemeFooter, the override VitePress documents for its internal components. Its
 	// outline item is swapped too, for ThemeOutlineItem, which lays a release out as version and date.
@@ -122,6 +116,7 @@ export default defineConfig({
 				items: [
 					{ text: "What is ObjectExplorer?", link: "/what-is-objectexplorer" },
 					{ text: "Why ObjectExplorer?", link: "/why-objectexplorer" },
+					{ text: "How it works", link: "/architecture" },
 					{ text: "Getting started", link: "/getting-started" },
 					{ text: "Your data stays here", link: "/privacy" },
 				],
@@ -134,8 +129,12 @@ export default defineConfig({
 					{ text: "Amazon S3", link: "/storage/s3" },
 					{ text: "Google Cloud Storage", link: "/storage/gcs" },
 					{ text: "Azure Blob Storage", link: "/storage/azure" },
+					{ text: "Microsoft OneLake", link: "/storage/onelake" },
 					{ text: "MinIO", link: "/storage/minio" },
 					{ text: "Local folders", link: "/storage/local" },
+					{ text: "Dropbox", link: "/storage/dropbox" },
+					{ text: "OneDrive", link: "/storage/onedrive" },
+					{ text: "Box", link: "/storage/box" },
 				],
 			},
 			{
@@ -144,6 +143,8 @@ export default defineConfig({
 				items: [
 					{ text: "The tree and the list", link: "/explore/tree" },
 					{ text: "Where the storage went", link: "/explore/usage" },
+					{ text: "Optimize", link: "/explore/optimize" },
+					{ text: "The cache", link: "/explore/cache" },
 					{ text: "Previewing an object", link: "/explore/preview" },
 					{ text: "Column summaries", link: "/explore/column-summary" },
 					{ text: "Search", link: "/explore/search" },
@@ -164,6 +165,7 @@ export default defineConfig({
 					{ text: "Models", link: "/analyze/model" },
 					{ text: "Data lake tables", link: "/analyze/lake" },
 					{ text: "Cloud Logging", link: "/analyze/logging" },
+					{ text: "Writing", link: "/analyze/writing" },
 				],
 			},
 			{
@@ -183,11 +185,22 @@ export default defineConfig({
 					{ text: "Every format", link: "/formats/" },
 					{ text: "Tabular", link: "/formats/tabular" },
 					{ text: "Statistics", link: "/formats/statistics" },
+					{ text: "Databases", link: "/formats/databases" },
 					{ text: "Documents", link: "/formats/documents" },
+					{ text: "The PDF reader", link: "/formats/pdf" },
+					{ text: "Text, code and notebooks", link: "/formats/text" },
+					{ text: "Drawings and diagrams", link: "/formats/diagrams" },
 					{ text: "Images", link: "/formats/images" },
 					{ text: "Audio and video", link: "/formats/media" },
 					{ text: "Ebooks", link: "/formats/ebooks" },
 					{ text: "Sprite sheets", link: "/formats/sprite-sheets" },
+					{ text: "CAD", link: "/formats/cad" },
+					{ text: "3D models", link: "/formats/models" },
+					{ text: "Textures", link: "/formats/textures" },
+					{ text: "Shaders", link: "/formats/shaders" },
+					{ text: "Apple files", link: "/formats/apple" },
+					{ text: "Anki decks", link: "/formats/anki" },
+					{ text: "Flame graphs", link: "/formats/flame-graphs" },
 				],
 			},
 			{
@@ -195,8 +208,8 @@ export default defineConfig({
 				collapsed: true,
 				items: [
 					{ text: "Keyboard shortcuts", link: "/reference/shortcuts" },
-					{ text: "Moving around a view", link: "/reference/view-controls" },
 					{ text: "Dragging things in and around", link: "/reference/drag-drop" },
+					{ text: "Moving around a view", link: "/reference/view-controls" },
 					{ text: "Where your data lives", link: "/reference/data-locations" },
 					{ text: "Updating", link: "/reference/updating" },
 					{ text: "Where the usage numbers come from", link: "/reference/usage-data" },

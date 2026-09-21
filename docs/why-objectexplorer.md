@@ -26,8 +26,8 @@ a `Downloads` folder full of data that should never have left the bucket.
 
 ObjectExplorer collapses that loop:
 
-- **One window for every provider.** S3, GCS, Azure Blob and your local disks in the same tree, with
-  the same keyboard shortcuts.
+- **One window for every provider.** S3, GCS, Azure Blob, MinIO, OneLake, Dropbox, OneDrive, Box and
+  your local disks in the same tree, with the same keyboard shortcuts.
 - **Preview instead of download.** Formats render in place — including the ones no console will ever
   open, like Parquet, SPSS and SAS.
 - **Search across buckets.** One query over local folders and cloud prefixes at the same time.
@@ -49,7 +49,7 @@ Point it at this app instead:
 - **It never holds a credential**, and never talks to a provider. It asks here, and here decides.
 - **It reaches only what you ticked** — one list of roots, one deny list that holds in every root.
 - **PII is rewritten on the way out**, by rules you wrote once: hash, mask, FPE or drop, on a column
-  name or on what a value says.
+  name or on what a value says. The same rules hold over a share link you send a person.
 - **Every call is written down** before the answer leaves, watchable live in the window and
   replayable afterwards.
 - **Limits cap what it can take**, per call, per session and per day — which is a security number
@@ -69,4 +69,4 @@ That is what makes it usable on data you are not allowed to copy — and it mean
 data-processing agreement to negotiate before anyone can look at a bucket. The whole argument, and
 what exactly does leave the machine, is on [your data stays here](/privacy).
 
-Next: [getting started](/getting-started).
+Next: [how it works](/architecture).

@@ -46,7 +46,7 @@ const next = computed(() => stories[position.value + 1] ?? null)
 				</svg>
 				<span>{{ shareTarget.name }}</span>
 			</a>
-			<ShareLink :url="pageUrl" :title="frontmatter.title" :text="frontmatter.answer" label="Share with…" />
+			<ShareLink :url="pageUrl" :title="frontmatter.title" :text="frontmatter.subtitle" label="Share with…" />
 		</div>
 		<nav class="story-footer-pager" aria-label="Episodes">
 			<a v-if="previous" class="story-footer-previous" :href="withBase(previous.url)">

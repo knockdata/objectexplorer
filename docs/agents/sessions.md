@@ -21,18 +21,33 @@ Two things split it, and they are the two things worth asking about:
 - **session** — one connection, from `initialize` to the socket closing. A new `claude` in a new
   terminal is a new session under the same agent.
 
-**Log history** in Settings → MCP is how long they are kept: 1D, 7D, 1M, 3M or 1Y.
+**Audit log history** in Settings → MCP is how long they are meant to be kept: 1D, 7D, 1M, 3M, 1Y
+or Indefinite, 30 days by default. It is written to `log.keepDays`; nothing deletes old session files
+yet, so today they stay until you remove them.
 
 ## Watching it happen
 
 **Observe** — *open what the agent opens*. While it is on, every object the agent touches is opened
-here, in the window, as it is touched. Debounced, with a dial, so a burst of forty calls does not
-flick through forty objects. **Escape** stops following; the log keeps recording either way.
+here, in the window, as it is touched. The first object of a burst opens at once; the ones behind it wait
+for **Wait before opening** (400 ms by default, 10 to 2000 ms), so a burst of forty calls does not
+flick through forty objects. A refused call opens nothing. **Escape** stops following; the log keeps
+recording either way.
 
-Under it, the **activity strip**: one line per agent, in its own colour, over the last ten minutes.
-The shape is the point rather than the number — a burst, a steady walk through a folder, an
-afternoon of nothing. Denied calls are drawn on the same line, so a run that is mostly refusals
-looks different from a run that is mostly work. That difference is the whole reason to watch.
+Following belongs to the window, and it starts off each time the window loads. Turn it on with
+**Enable** under Observe, or by clicking the dot.
+
+**The dot** sits in the top-right corner of the window whenever the door is open. It lights for
+600 ms on every call, so a run of calls keeps it lit and a single call is a blink; it turns orange
+when the window's event stream is down. Clicking it opens **the panel** and turns following on. The
+panel lists the last three sessions, oldest first, with the newest session open and up to 40 of its
+calls under it. A refusal says why on its own line — `✗ getObject: path denied` — and the rule that
+refused it is on the hover. Clicking an object on a line opens it. Escape or the ✕ closes the panel.
+
+Under Observe, and at the top of the panel, the **activity strip**: one line per agent, in its own
+colour, with one hill per session, as tall as that session was busy. It draws the calls this window
+has seen since it opened (the last 200). The shape is the point rather than the number — a burst, a
+steady walk through a folder, an afternoon of nothing. Denied calls are counted on the same line, so
+a run that is mostly refusals looks different from a run that is mostly work.
 
 The window is a mirror, never the source. It subscribes to the same records that were already
 written — a window that is closed, slow or looking somewhere else changes nothing about what the
@@ -60,7 +75,8 @@ claudeCode   2026-09-04 09:31        12    2MB
 codex        2026-09-03 16:44         7     0B        7
 ```
 
-A row opens that session as a **tab**, not a panel — a hooked session is thousands of lines of
+The session id is not a column; it is the tooltip on **Started**, and the title of the tab. A row
+opens that session as a **tab**, not a panel — a hooked session is thousands of lines of
 trace, and a modal is not where anyone reads one.
 
 ## One session, whole
@@ -71,7 +87,11 @@ The tab draws two accounts of the same work, because neither is enough alone.
 dispatched — drawn as a sequence diagram. Nothing in the protocol joins a transcript to a session;
 it is a file the client writes for itself, and MCP never mentions it. So they are matched the only
 way they can be: by time and by content. A transcript naming our tools with the same arguments,
-inside the minutes the session ran, is that session's.
+inside the minutes the session ran, is that session's. A step counts only when the session has a
+call with the same tool and the same arguments within a minute of it, and the transcript that agrees
+on the most steps wins. It is a match, not a proof: two runs a minute apart making the same calls can
+both be matched to one transcript. Today the only transcripts it reads are Claude Code's, under
+`~/.claude/projects`; for any other client the tab shows our log and a note.
 
 **Our log** — which of those calls reached this app, which rule decided each one, and how much data
 left — as a table under the diagram. Every MCP step in the diagram carries what it actually reached:
@@ -82,15 +102,15 @@ well, and the diagram shows those too.
 
 ## Replay
 
-**Replay**, on a session row, opens again — here, in the window, in the order it happened —
+**Replay**, on a session row or at the top of the session's tab, opens again — here, in the window, in the order it happened —
 everything the agent opened. A folder it listed is navigated to; an object it read or queried is
 opened; a call it was refused opens nothing, because there was never anything to see.
 
 It asks the rules for nothing. It is this app showing a person what an agent saw.
 
-The steps are listed in a panel in the top-right corner while it runs, marking the one it is on. The
-panel outlives the run: it stays until it is dismissed with Escape or the ✕, and Escape also stops a
-run in progress.
+It takes 700 ms per step. The steps are listed in the same top-right panel while it runs, titled
+`replay: <agent> · <session>` with a done/total count, each marked waiting, running, done or refused.
+Escape, the ✕, or **Stop** on the session's tab ends it, and the panel closes when the run is over.
 
 ## Recheck
 
@@ -102,6 +122,7 @@ listObjects  sales-lake  exports/          allowed → allowed
 query        sales-lake  delta/orders/     allowed → denied  (deny ^exports/hr/)
 ```
 
+There is no button for it in the window yet: it is `POST /api/mcp/recheck` with `{ agent, session }`.
 So a rule file that was just tightened can be checked against the traffic it will actually meet, and
 a denial that surprised someone can be reproduced on demand.
 
@@ -110,3 +131,5 @@ one it came from, and it obeys every limit and every approval the live path obey
 to re-run something the rules no longer permit.
 
 → the endpoints behind all of this: [the MCP endpoint](/reference/mcp-protocol#the-other-half-what-the-window-listens-to)
+
+Next: [every format](/formats/).

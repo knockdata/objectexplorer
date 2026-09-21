@@ -9,29 +9,44 @@ a worker on your own machine.
 - Objects are fetched **from your cloud provider to your computer**, and nowhere else. We run no
   backend that sees your data, because there is nothing for it to see.
 - Credentials stay local. Nothing is synced — see [where your data lives](/reference/data-locations).
-- The only call that is not to your own storage is a version check against the npm registry, so the
-  app can tell you an update exists.
+- The calls that are not to your own storage are few, listed below, and none of them carries an
+  object.
 - Nothing is uploaded for "processing", no file names are reported anywhere, and no account is
   needed to open a file.
 
 Which also means there is no data-processing agreement to negotiate before anyone can look at a
 bucket.
 
-## The two things that do leave
+## What does leave, and when
 
 **A share link, when you make one.** [Sharing a table](/explore/share) is the one feature that sends
 rows somewhere else, and it never happens on its own: you open the dialog, decide column by column
-what goes, and press Copy URL. Small shares travel inside the link's fragment, which no server ever
-sees.
+what goes — each column opening on what your [PII rules](/agents/pii) already say — and press Copy
+URL. Small shares travel inside the link's fragment, which no server ever
+sees. A bigger one, and every read-and-burn link, is stored on objectexplorer.com until it expires.
 
-**The version check.** One request to the npm registry asking what the latest published version is.
-It carries no path, no bucket name and no identifier of you.
+Everything else the app asks of the outside world is listed here. None of it carries a row of your
+data, and only the app log — which you send on purpose — names paths on this machine.
+
+| Call                                                 | When                                                                       |
+|------------------------------------------------------|----------------------------------------------------------------------------|
+| The npm registry: what is the newest version?        | when the desktop app starts, and when you open **Check for Updates**       |
+| The npm registry: the new version itself             | when there is one — see [updating](/reference/updating)                    |
+| unpkg.com: the FFmpeg WebAssembly core, about 32 MB  | the first time an audio file needs converting; it is kept afterwards       |
+| uv: a Python build, and the packages you name        | when you make a [Python environment](/analyze/python) or install into one  |
+| The web pages you added as style sources             | when you press **Reindex** in [the writing tool](/analyze/writing)         |
+| objectexplorer.com: your licence                     | at start, only once you have started a trial, showing a secret made for it |
+| objectexplorer.com: the trial sign-up                | when you start a trial                                                     |
+| objectexplorer.com: the last 1000 lines of `app.log` | when you press **share** on the app log, to quote it in a bug report       |
+
+The FFmpeg core is GPL software, which is why it is fetched rather than shipped; once it is here it
+stays in the browser's own storage, so the download happens once.
 
 ## What an agent sees
 
 An MCP client on this machine is not an exception to any of the above: it reaches storage only
 through this app, only at `127.0.0.1`, only in the roots you ticked, and only with PII already
-rewritten. It never holds a credential, and every call it made is on your disk in
+rewritten — by the same [PII rules](/agents/pii) a share link goes through. It never holds a credential, and every call it made is on your disk in
 `~/.objectexplorer/mcp/`. The door is shut until you open it — see
 [ObjectExplorer for agents](/agents/).
 

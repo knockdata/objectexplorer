@@ -57,3 +57,5 @@ Press `Esc` to call the drag off. The words go with it and nothing is moved.
 ## Turning the words off
 
 The label helps the first few times and is noise long after that. Turn it off and the outline around the target and the pointer's own copy-or-move mark are still there to read.
+
+Next: [moving around a view](/reference/view-controls).

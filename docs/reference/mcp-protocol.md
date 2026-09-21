@@ -28,10 +28,10 @@ bind it, and gets a `403` — the token buys the JSON-RPC door and nothing else.
 
 Three things are checked before a byte of JSON-RPC is parsed, and each is a plain HTTP failure:
 
-| Check                                        | Failure |
-|----------------------------------------------|---------|
-| `Authorization: Bearer <server.token>`       | `401`   |
-| the connection came from `127.0.0.1`         | `403`   |
+| Check                                         | Failure |
+|-----------------------------------------------|---------|
+| `Authorization: Bearer <server.token>`        | `401`   |
+| the connection came from `127.0.0.1`          | `403`   |
 | `Origin`, when present, is loopback or absent | `403`   |
 
 The `Origin` check is what stops a web page in the user's own browser from driving the agent
@@ -48,7 +48,7 @@ endpoint — a page can send a POST to localhost, and without this it would be a
 ← 200         Mcp-Session-Id: 3f9c1a7e
               {"jsonrpc":"2.0","id":1,"result":{
                  "protocolVersion":"2025-06-18",
-                 "serverInfo":{"name":"objectexplorer","version":"0.4.12"},
+                 "serverInfo":{"name":"objectexplorer","version":"<app version>"},
                  "capabilities":{"tools":{"listChanged":true}}}}
 
 → POST /api/mcp   {"jsonrpc":"2.0","method":"notifications/initialized"}
@@ -89,19 +89,21 @@ gave up, or the user pressed ctrl-c in it — closes the prompt and is logged as
 
 ## The tools
 
-Stage 1, the five in
-[what ships first](/reference/mcp-rules#what-the-app-can-offer-and-what-ships-first). Every one of
-them takes a `uri`, and it is the same URI the app writes into SQL — `gs://bucket/key`,
-`s3://bucket/key`, `az://account/container/key`, `abfss://…`, and `root/key` for a local folder the
-user mounted. One string for an agent to carry, and the one it would have typed into a query
-anyway. The gate turns it back into `providerType` + `root` + `path` and checks it there.
+Seven, the same seven [the rule file](/reference/mcp-rules#the-tools) ticks one by one — and a
+tool that is not ticked is not listed at all. Every one of them names its object by a `uri`, and it
+is the same URI the app writes into SQL — `gs://bucket/key`, `s3://bucket/key`,
+`az://account/container/key`, `abfss://…`, and `root/key` for a local folder the user mounted. One
+string for an agent to carry, and the one it would have typed into a query anyway. The gate turns it
+back into `providerType` + `root` + `path` and checks it there.
 
 ```
-listRoots     {}                → what is reachable at all
-listObjects   {uri, limit?}     → children of one path, and how many were hidden
-describeObject{uri}             → size, time, content type, columns
-columnSummary {uri}             → statistics per column, measured after the column rules
-query         {sql, limit?}     → rows
+listRoots      {}                         → what is reachable at all
+listObjects    {uri, limit?}              → children of one path, and how many were hidden
+describeObject {uri}                      → size, time, format, columns
+columnSummary  {uri}                      → statistics per column, measured after the column rules
+searchText     {uri, pattern, limit?}     → lines matching a regular expression, in one object or a folder
+query          {sql, limit?}              → rows
+getObject      {uri, offset?, limit?}     → rows, text, a tree or bytes, by what the object is
 ```
 
 Two of them, as they are listed:
@@ -140,8 +142,13 @@ listRoots      {roots: [{uri, providerType, root}]}
 listObjects    {uri, objects: [{uri, name, objectKind, size, mtime}], hidden, truncated}
 describeObject {uri, objectKind, size, mtime, contentType, columns: [{name, encrypted}]}
 columnSummary  {uri, rowsMeasured, columns: [{name, encrypted, …statistics}]}
+searchText     {uri, pattern, hits: [{uri, line, text}], searched} — searched: a folder only
 query          {columns: [{name, encrypted}], rows, rowCount, truncated}
+getObject      {uri, objectType, …} — rows, text, a tree or a window of bytes
 ```
+
+`getObject` counts `offset` and `limit` in rows for a table, lines for a text and bytes for anything
+else.
 
 `encrypted: true` is on every column a rule rewrote, in `describeObject`, in `columnSummary` and in
 `query` results. An agent holding a customer id that is not the customer id has to be told, or it
@@ -247,3 +254,5 @@ explorer/src/components/McpActivity.jsx  the sparkline strip, one colour per age
 
 The gate is the door, and everything behind it is the API this app already answers — see
 [one gate, not one per tool](/reference/mcp-rules#one-gate-not-one-per-tool).
+
+Next: [troubleshooting](/reference/troubleshooting).

@@ -1,6 +1,6 @@
 # Ebooks
 
-`epub` `mobi` `prc` `azw` `azw3` `fb2` `fbz` `cbz` `cbt`
+`epub` `mobi` `prc` `azw` `azw3` `fb2` `fbz` `cbz` `cbt` `cbr`
 
 <img src="/screenshot/ebook.png" alt="An epub opened as a book, showing its cover">
 

@@ -80,7 +80,8 @@ approve:
   onTimeout: deny
   remember: session            # never | session | day
 
-# The PII floor, by column name, for every agent and every root. `action` defaults to `fpe`.
+# The PII floor, by column name, for every agent, every root and every share link. `action`
+# defaults to `fpe`.
 # A pattern is not anchored: a column whose name has the word in it anywhere is caught, so one
 # rule covers email, emailAddress and billingEmail. Edited in Settings -> PII.
 columns:
@@ -126,15 +127,15 @@ roots:
 Every call — a listing, a query, a byte range — goes through the same seven steps, in this order.
 The first `deny` ends it.
 
-| # | Step             | Denied when                                                             |
-|---|------------------|-------------------------------------------------------------------------|
-| 1 | server           | `server.enabled` is false, or the request did not come from `127.0.0.1` |
-| 2 | agent            | the bearer token is not one this app issued                             |
-| 3 | tool             | the tool is not in `tools`                                              |
-| 4 | root             | no entry under `roots` names that `providerType` + `root`, for this agent |
-| 5 | path             | any regex in `deny` matches                                             |
-| 6 | limit            | this call, this session or today would go over a `limits` number         |
-| 7 | approve          | the human said no, or said nothing for `timeoutSeconds`                 |
+| #   | Step    | Denied when                                                               |
+|-----|---------|---------------------------------------------------------------------------|
+| 1   | server  | `server.enabled` is false, or the request did not come from `127.0.0.1`   |
+| 2   | agent   | the bearer token is not one this app issued                               |
+| 3   | tool    | the tool is not in `tools`                                                |
+| 4   | root    | no entry under `roots` names that `providerType` + `root`, for this agent |
+| 5   | path    | any regex in `deny` matches                                               |
+| 6   | limit   | this call, this session or today would go over a `limits` number          |
+| 7   | approve | the human said no, or said nothing for `timeoutSeconds`                   |
 
 Then the call runs, and on the way back the result passes through `columns`.
 
@@ -219,15 +220,15 @@ it hid.
 Counted on the way **out**: what the agent received, not what the app read. A cache hit costs the
 same budget as a download, because the agent got the same data.
 
-| Limit               | Counted per            |
-|---------------------|------------------------|
-| `rowsPerCall`       | one call               |
-| `bytesPerCall`      | one call               |
-| `bytesPerSession`   | one MCP connection     |
-| `bytesPerDay`       | agent, local midnight  |
-| `callsPerMinute`    | agent, sliding minute  |
-| `objectsPerListing` | one listing            |
-| `maxObjectBytes`    | the object itself      |
+| Limit               | Counted per           |
+|---------------------|-----------------------|
+| `rowsPerCall`       | one call              |
+| `bytesPerCall`      | one call              |
+| `bytesPerSession`   | one MCP connection    |
+| `bytesPerDay`       | agent, local midnight |
+| `callsPerMinute`    | agent, sliding minute |
+| `objectsPerListing` | one listing           |
+| `maxObjectBytes`    | the object itself     |
 
 A call over `rowsPerCall` is truncated and says so. A call that would cross `bytesPerSession` or
 `bytesPerDay` is denied rather than truncated — a budget that silently shrinks every answer is
@@ -236,18 +237,19 @@ worse than one that stops.
 ## Column rules — the PII floor
 
 Two lists, for every agent and every root, edited in Settings → PII: `columns` matches a **column's
-name**, and `text` matches **what a value says** — see [PII rules](/agents/pii). The rest of this
-section is `columns`. It is applied to every value leaving the app that has a
-column name: `query` results, `columnSummary`, the sample rows in `describeObject`. First matching
+name**, and `text` matches **what a value says** — see [PII rules](/agents/pii). A
+[share link](/explore/share) reads the same two lists. The rest of this section is `columns`. It is
+applied to every value leaving the app that has a column name: `query` results, `columnSummary`,
+the rows `getObject` reads from a table, and the column list `describeObject` answers with. First matching
 rule wins, matched case-insensitively against the column name, and a column matching nothing is
 returned as it is.
 
-| Action | What comes back                                      | Keeps          |
-|--------|------------------------------------------------------|----------------|
-| `fpe`  | same length, same alphabet, a different value        | format, joins  |
-| `hash` | 16 hex characters, `sha256(salt + value)`            | joins, counts  |
-| `mask` | the characters from `begin` up to `end` hidden, the rest kept | shape |
-| `drop` | the column is not in the result at all               | nothing        |
+| Action | What comes back                                               | Keeps         |
+|--------|---------------------------------------------------------------|---------------|
+| `fpe`  | same length, same alphabet, a different value                 | format, joins |
+| `hash` | 16 hex characters, `HMAC-SHA256(key, value)`                  | joins, counts |
+| `mask` | the characters from `begin` up to `end` hidden, the rest kept | shape         |
+| `drop` | the column is not in the result at all                        | nothing       |
 
 **`fpe` is the default**, and a rule that names no action gets it. It is the only one that leaves
 the data still looking like data: a masked column breaks a join and makes every distinct count
@@ -258,13 +260,14 @@ the equality — so a query still groups, still joins, still counts — and give
 Where it cannot preserve the format — a float, a timestamp, a blob — the value is hashed instead,
 which is the one place an action is decided for you. Every encrypted column is named as encrypted by
 `describeObject` and beside the results of `query`, so an agent knows an id it is holding is not the
-real id and never quotes it back to a human as one. The FPE key and the hash salt live in
-`~/.objectexplorer`, never in this file, and never leave the machine. They are per install, so a
-value is stable across sessions and means nothing anywhere else.
+real id and never quotes it back to a human as one. FPE and hash share one key, kept in
+`~/.objectexplorer/mcp/key` — never in this file, and never off the machine. It is per install, so a
+value is stable across sessions and means nothing anywhere else. A [share link](/explore/share) goes
+through the same rules under a key of its own, made for that one share.
 
-A column rule cannot touch raw bytes (`readObject`) and cannot touch a line of a text file
-(`search`) — for those there is no column name to key on. That is what `text` is for inside a value,
-and what shapes the tool list below: the tools returning either carry `approve` instead.
+A column rule cannot touch a line of a text file — there is no column name to key on. That is what
+`text` is for: `searchText` hits and the text `getObject` returns go through it. A tree or a window of
+bytes from `getObject` goes through neither, which is why a starting file leaves `getObject` off.
 
 ## Approve — the human in the loop
 
@@ -334,46 +337,39 @@ A recheck is an ordinary set of calls: it is logged as its own session, marked a
 one it came from, and it obeys every limit and every approval the live path obeys. It is not a way
 to re-run something the rules no longer permit.
 
-## What the app can offer, and what ships first
+## The tools
 
-Everything here already exists in the product. The question is only which of it an agent should
-reach first.
+Seven, each ticked on its own under `tools`.
 
-| Tool            | What it answers                                     | Built on                          | Stage |
-|-----------------|-----------------------------------------------------|-----------------------------------|-------|
-| `listRoots`     | which providers and roots are visible               | the storage routers               | 1     |
-| `listObjects`   | the children of one path, paged                     | `RouterStorage.getObjects`        | 1     |
-| `describeObject`| size, time, kind, sniffed format, schema            | `HEAD` + `base/sniff` + parquet   | 1     |
-| `columnSummary` | per-column statistics, already measured             | `base/ColumnSummary`, `meta.db`   | 1     |
-| `query`         | SQL over the objects, rows capped                   | `RouterDuckdb` + objectfs         | 1     |
-| `search`        | names and content across a root                     | `/api/search`                     | 2     |
-| `readObject`    | the bytes, or a range of them                       | `RouterStorage.get`               | 2     |
-| `parse`         | a format duckdb cannot read — sav, sas7bdat, zip, pdf | `base` parsers + converter      | 2     |
-| `plot`          | a chart of a result, as SVG                         | `base/plot`                       | 3     |
-| `model`         | fit and score a LightGBM model                      | `lgbmEngine`                      | 3     |
+| Tool             | What it answers                                       | Rules on the way out                             |
+|------------------|-------------------------------------------------------|--------------------------------------------------|
+| `listRoots`      | which providers and roots are reachable               | the gate                                         |
+| `listObjects`    | the children of one path, and how many were hidden    | the gate, per child                              |
+| `describeObject` | size, time, format and columns                        | `columns` (names)                                |
+| `columnSummary`  | per-column statistics, measured after the rules       | `columns`                                        |
+| `searchText`     | lines matching a pattern, in one object or one folder | `text`                                           |
+| `query`          | one SQL statement over objects named by URI           | `columns`                                        |
+| `getObject`      | one object: rows, text, a tree or a window of bytes   | `columns` or `text`, or none for a tree or bytes |
 
-**Stage 1 is the loop an agent actually runs**: find the data, learn its shape, aggregate it. All
-five are server-side already, all five return rows or facts rather than bytes, and every one of
-them caps naturally to `rowsPerCall`. Column rules cover the whole surface, so the PII floor holds
-without a single `approve` prompt.
+`maxObjectBytes` is checked with a HEAD before `getObject` or `searchText` reads anything that is not
+a table, so an object over the limit costs one metadata request rather than a download. A table is
+windowed by `rowsPerCall` instead.
 
-**Stage 2 is where raw content starts.** `readObject` and `search` both return bytes that never
-passed a column name, so the column rules cannot touch them — they need `approve` and a hard
-`maxObjectBytes`, and that machinery should be proven on the easy tools first. `parse` is stage 2
-only because it is a conversion path, not a new risk.
-
-**Stage 3 needs somewhere to run.** Plotting and LightGBM live in the page today, not in the
-server. Exposing them means either a headless render path or driving the observing window, which is
-a second architecture — worth doing once an agent is asking for it, not before.
+Plotting and model training live in the page, not in the server, so neither is a tool.
 
 ## When there is no file
 
-The server is off, the Settings pane offers to write a starting file, and that starting file is one
-root — the local folder in the window — with `tools: [listRoots, listObjects, describeObject,
-columnSummary]`, no `query`, and no cloud. Everything else is a deliberate line someone typed.
+The server is off, and Settings → MCP offers to write a starting file: every root already in the
+window, `tools: [listRoots, listObjects, describeObject, columnSummary, searchText]` — no `query` and
+no `getObject` — the four column rules and four text rules shown above, the deny list above, lower
+limits (1000 rows and 8 MB a call, 256 MB a session, 1 GB a day, 500 objects a listing), an empty
+`approve`, and the door shut with no client installed. Everything else is a deliberate line someone
+typed.
 
 ## Open questions
 
 1. **`callsPerMinute` on a denial.** A refused call still costs a rule evaluation. Counting denials
    toward the rate limit is what stops a probe; not counting them is friendlier to a confused
    agent. Proposal: count them.
+
+Next: [the MCP endpoint](/reference/mcp-protocol).

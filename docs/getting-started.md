@@ -20,8 +20,7 @@ The download is a signed `.msix`. Double-click it and Windows does the rest — 
 icon, and an entry in *Add or remove programs* that uninstalls cleanly. It is signed with the
 company's certificate; SmartScreen may still show a notice the first time.
 
-ObjectExplorer will also be published on the
-[Microsoft Store](https://apps.microsoft.com/detail/9PMCD8HJPCXH).
+ObjectExplorer is not in the [Microsoft Store](https://apps.microsoft.com/detail/9PMCD8HJPCXH) yet.
 
 ### Linux
 
@@ -77,4 +76,4 @@ parsers still run in your browser rather than on a server.
 3. Double-click a table and it opens as a [notebook](/analyze/notebook), already queried and
    plotted.
 
-Next: [connecting storage](/storage/connect).
+Next: [your data stays here](/privacy).

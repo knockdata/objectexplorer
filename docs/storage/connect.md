@@ -2,16 +2,27 @@
 
 <img src="/screenshot/settings.png" alt="Settings, with the connections list: local folder, Cloud Storage, S3, Blob Storage">
 
-Press **+** in the sidebar header, or open **Settings** from the activity bar, and every kind of
-storage is one row in the same list. A provider you have signed into carries a green check.
+Open **Settings** from the activity bar and every kind of storage is one row in the **Connections**
+list. The **+** in the sidebar header opens the same Settings on **Local folder**. A provider you have
+signed into carries a green check.
 
-| Provider | Connect with |
-|---|---|
-| <img src="/format/s3.svg" width="18"> [Amazon S3](/storage/s3) | an access key and secret, an `accessKeys.csv` you drop on the dialog, or whatever your AWS CLI already has |
-| <img src="/format/gcs.svg" width="18"> [Google Cloud Storage](/storage/gcs) | your Google account, through `gcloud` |
-| <img src="/format/cloud.svg" width="18"> [Azure Blob Storage](/storage/azure) | a connection string, a SAS URL, or a Microsoft sign-in |
-| <img src="/format/minio.svg" width="18"> [MinIO](/storage/minio) | your own endpoint, for self-hosted S3-compatible storage |
-| <img src="/format/folder.svg" width="18"> [Local folders](/storage/local) | the native folder picker — any disk, any mounted volume |
+| Provider                                                                       | Connect with                                                                                               |
+|--------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| <img src="/format/s3.svg" width="18"> [Amazon S3](/storage/s3)                 | an access key and secret, an `accessKeys.csv` you drop on the dialog, or whatever your AWS CLI already has |
+| <img src="/format/gcs.svg" width="18"> [Google Cloud Storage](/storage/gcs)    | your Google account, through `gcloud`                                                                      |
+| <img src="/format/cloud.svg" width="18"> [Azure Blob Storage](/storage/azure)  | a connection string, a SAS URL, or a Microsoft sign-in                                                     |
+| <img src="/format/cloud.svg" width="18"> [Microsoft OneLake](/storage/onelake) | a Microsoft sign-in — the same one Azure Blob uses                                                         |
+| <img src="/format/minio.svg" width="18"> [MinIO](/storage/minio)               | your own endpoint, for self-hosted S3-compatible storage                                                   |
+| <img src="/format/folder.svg" width="18"> [Local folders](/storage/local)      | the native folder picker — any disk, any mounted volume                                                    |
+| <img src="/format/folder.svg" width="18"> [Dropbox](/storage/dropbox)          | the folder the Dropbox app keeps on your disk, added as a local folder                                     |
+| <img src="/format/folder.svg" width="18"> [OneDrive](/storage/onedrive)        | the folder the OneDrive app keeps on your disk, added as a local folder                                    |
+| <img src="/format/folder.svg" width="18"> [Box](/storage/box)                  | the folder Box Drive keeps on your disk, added as a local folder                                           |
+
+Google Drive and iCloud Drive work the same way as Dropbox, OneDrive and Box — see
+[streaming folders](/storage/local#streaming-folders).
+
+**Settings → Cloud services** says how much of each cloud is offered. A cloud that is off leaves the
+Connections list.
 
 ## Roots, not accounts
 

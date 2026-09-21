@@ -7,7 +7,7 @@ defineProps({
 </script>
 
 <!-- The question is the headline, since it is the one a reader recognises as their own afternoon;
-     the answer is the line under it, in the card's own marker colour. -->
+     the subtitle is the line under it, in the card's own marker colour. -->
 <template>
 	<a class="story-card" :href="withBase(story.url)" :style="{ '--marker': `var(--marker-${story.marker})` }">
 		<span class="story-card-art">
@@ -16,7 +16,7 @@ defineProps({
 		</span>
 		<span class="story-card-text">
 			<span class="story-card-question">{{ story.title }}</span>
-			<span class="story-card-answer">{{ story.answer }}</span>
+			<span class="story-card-subtitle">{{ story.subtitle }}</span>
 		</span>
 	</a>
 </template>
@@ -91,7 +91,7 @@ defineProps({
 	line-height: 1.22;
 }
 
-.story-card-answer {
+.story-card-subtitle {
 	color: var(--marker);
 	font-size: 14px;
 	line-height: 1.42;

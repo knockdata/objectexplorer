@@ -21,4 +21,4 @@ a personal Microsoft account never appear on the default path.
 Blob and Data Lake Gen2 are the same provider here: a Data Lake account is a storage account with a
 hierarchical namespace, and the Blob endpoint reads both.
 
-Next: [MinIO](/storage/minio).
+Next: [Microsoft OneLake](/storage/onelake).

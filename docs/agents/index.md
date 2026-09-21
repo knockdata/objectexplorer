@@ -55,7 +55,8 @@ there are two kinds of data:
 FPE is the default because it is the only action that leaves the data still usable: same length,
 same alphabet, equal values still equal — so a query still joins, still groups, still counts.
 Every rewritten column is named as `encrypted` in the result, so an agent never quotes a fake id
-back to a person as a real one.
+back to a person as a real one. The same rules protect the other audience too: a person opening a
+[share link](/explore/share) gets what they say, under a key made for that one share.
 
 → [PII rules](/agents/pii)
 
@@ -79,7 +80,7 @@ what the app read, so a cache hit costs the same as a download.
 Two problems, one dial. An agent that walks a bucket one refusal at a time is stopped by the same
 number that stops an agent from pouring a 400 MB table into a context window you are paying for.
 
-→ [Limits](/reference/mcp-rules#limits-how-much-may-be-taken)
+→ [Limits](/reference/mcp-rules#limits-—-how-much-may-be-taken)
 
 ### Column summaries, so it looks before it reads
 
@@ -95,6 +96,6 @@ all of them.
 ## What it costs to try
 
 Settings → MCP, one toggle, one tick per client. The starting rule file grants the folders already
-in your window, turns `query` off, and leaves the door shut until you open it.
+in your window, turns `query` and `getObject` off, and leaves the door shut until you open it.
 
 Next: [connecting an agent](/agents/connect).

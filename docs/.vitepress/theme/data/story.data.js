@@ -12,8 +12,8 @@ export default createContentLoader("story/*.md", {
 		const stories = pages
 			.filter(page => page.url !== "/story/")
 			.map(function (page) {
-				const { title, answer, episode, runtime, video, poster, published, description } = page.frontmatter
-				return { url: page.url, title, answer, episode, runtime, video, poster, published, description }
+				const { title, subtitle, episode, runtime, video, poster, published, description } = page.frontmatter
+				return { url: page.url, title, subtitle, episode, runtime, video, poster, published, description }
 			})
 		return stories
 			.sort((left, right) => left.episode - right.episode)

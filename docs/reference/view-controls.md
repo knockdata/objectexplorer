@@ -84,6 +84,39 @@ flat, so looking around and panning are the same thing:
 | Wheel        | zoom in or out on the point under the pointer |
 | Double-click | fit the whole picture in the view             |
 
+## A PDF
+
+A `pdf` opens in ObjectExplorer's own reader, not the browser's, so it reads the same on every
+platform. It scrolls; the toolbar above it holds everything else.
+
+| Input                     | What it does                                                              |
+|---------------------------|---------------------------------------------------------------------------|
+| Drag over the page        | select text, which can then be copied like any other text                 |
+| `Ctrl`/`⌘` + `F`          | find: every hit is marked, `Enter` steps to the next, `⇧Enter` back       |
+| `↓` `↑` and `Space`       | move down or up the page, a screen at a time with Space, `⇧Space` back    |
+| `PageDown` `PageUp`       | the next page, the previous one; `→` and `←` do the same                  |
+| `Home` `End`              | the first page, the last one                                              |
+| `Ctrl`/`⌘` + `+` `−` `0`  | zoom in, zoom out, back to the width of the pane                          |
+| A mark, then select text  | underline, box, circle, highlight, strike through, crossed off or bracket |
+| The text mark, then click | type a note on the page, in the type and colour the row is set to         |
+| Click a link              | follow it: one inside the document jumps, one that leaves it opens        |
+| ☰                         | the panel beside the page: contents, thumbnails, and what the file says   |
+| `⟳`                       | turn the page a quarter turn                                              |
+| `−` `+` and `fit`         | zoom, or fit the page to the width of the pane                            |
+
+The marks are yours, not the file's: nothing is written into the pdf, and they are remembered
+for that file on this machine. Four controls in the row say what the next one will be - which
+mark, how thick, in what colour, and in what type - each showing what is picked now, with the
+rest under its chevron. The eraser at the end takes a mark off again, and the pointer at the
+start is the way back to plain reading.
+
+The page follows the light or dark theme the window is in - the switch in the toolbar above it -
+and it is not a filter over a white page: the text flips and the photographs do not.
+
+The text over the page is the file's own text, placed where its glyphs were painted, so a
+selection follows the lines even where the page was drawn out of order. A scanned page whose
+text was read by OCR selects too: that text is in the file, drawn invisibly behind the picture.
+
 ## Why Shift
 
 On a Mac, Ctrl-click is a right click. On many Linux desktops, Alt-drag moves the whole window.

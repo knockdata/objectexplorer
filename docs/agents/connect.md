@@ -9,10 +9,13 @@ pane and editing it in an editor are the same act.
 With no file, nothing is reachable and the pane says so. **Write a starting rule file** creates one:
 
 - the folders already in your window, as roots
-- `listRoots`, `listObjects`, `describeObject`, `columnSummary` — **no `query`**
-- the PII floor: email, phone, personal number, card and account numbers
-- the deny floor: `.env`, `*.pem`, `*.key`, `.git/`, `.ssh/`, `.aws/`, anything with `secret`,
-  `credential`, `password` or `token` in the path
+- `listRoots`, `listObjects`, `describeObject`, `columnSummary`, `searchText` — **no `query` and no
+  `getObject`**, the two that read a whole object rather than describe one
+- the PII floor: column rules for email, phone, national id, card and account numbers, and text rules
+  for an email address, a personal number, a US SSN and a phone number inside any value
+- the deny floor: `.env`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.kdbx`, `.git/`, `.ssh/`, `.aws/`,
+  `.azure/`, anything with `secret`, `credential`, `password` or `token` in the path
+- modest limits: 1000 rows and 8 MB a call, 256 MB a session, 1 GB a day
 - the door **shut**, and no client installed
 
 Everything past that is a line you set.
@@ -32,9 +35,9 @@ not.
 
 ## 3. Install into a client
 
-| Client          | Button writes                        |
-|-----------------|--------------------------------------|
-| **Claude Code** | `~/.claude.json`, `mcpServers.objectexplorer` |
+| Client          | Button writes                                          |
+|-----------------|--------------------------------------------------------|
+| **Claude Code** | `~/.claude.json`, `mcpServers.objectexplorer`          |
 | **Codex**       | `~/.codex/config.toml`, `[mcp_servers.objectexplorer]` |
 
 **Install** writes the entry, the URL and the token into that client's own config. Nobody types a
@@ -60,19 +63,22 @@ whose name is not ticked is refused at the handshake, in a sentence a person wil
 
 ## 4. Choose what may be called
 
-Five tools, ticked one by one.
+Seven tools, ticked one by one.
 
-| Tool             | Answers                                          |
-|------------------|--------------------------------------------------|
-| `listRoots`      | what is reachable at all — an agent starts here   |
-| `listObjects`    | the children of one folder                        |
-| `describeObject` | size, time, content type and columns of one object |
-| `columnSummary`  | per-column statistics of a tabular object          |
-| `query`          | one SQL statement, over objects named by URI       |
+| Tool             | Answers                                                             |
+|------------------|---------------------------------------------------------------------|
+| `listRoots`      | what is reachable at all — an agent starts here                     |
+| `listObjects`    | the children of one folder                                          |
+| `describeObject` | size, time, format and columns of one object                        |
+| `columnSummary`  | per-column statistics of a tabular object                           |
+| `searchText`     | a pattern in one object's text, or in every text object in a folder |
+| `query`          | one SQL statement, over objects named by URI                        |
+| `getObject`      | one object read whole: rows, text, a tree or bytes, by what it is   |
 
-`query` is the one worth thinking about, and the one a starting file leaves off: it is the only tool
-that reads a whole table. Turning it on is what makes the app an analysis engine for the agent
-rather than a catalogue.
+`query` and `getObject` are the two worth thinking about, and the two a starting file leaves off:
+they are the ones that read a whole object. Turning `query` on is what makes the app an analysis
+engine for the agent rather than a catalogue. `getObject` on a drawing or a binary answers with a
+tree or bytes, which no [PII rule](/agents/pii#what-the-rules-cannot-reach) can rewrite.
 
 An agent names everything by the same URI the app writes into SQL — `gs://bucket/key`,
 `s3://bucket/key`, `az://account/container/key`, and `root/key` for a local folder you mounted.
@@ -122,4 +128,4 @@ more ways, on your budget.
 A **listing** behaves differently: it hides what it may not show and reports how many it hid. An
 agent that cannot see `exports/hr/` should not learn the folder exists from a hole in the list.
 
-Next: [sessions, replay and audit](/agents/sessions), or [PII rules](/agents/pii).
+Next: [PII rules](/agents/pii).

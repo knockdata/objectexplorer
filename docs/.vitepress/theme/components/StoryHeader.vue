@@ -4,12 +4,12 @@ import { useData, withBase } from "vitepress"
 const { frontmatter } = useData()
 </script>
 
-<!-- The question, its answer, then the video once one is recorded — publishing it is filling in
-     `video:`. The poster is not drawn here: it stands before the closing line (StoryPoster). -->
+<!-- The question, its subtitle, then the video once one is recorded — publishing it is filling in
+     `video:`. The poster is not drawn here: the story places it in its Ideal (StoryPoster). -->
 <template>
 	<header class="story-header">
 		<h1>{{ frontmatter.title }}</h1>
-		<p class="story-header-answer">{{ frontmatter.answer }}</p>
+		<p class="story-header-subtitle">{{ frontmatter.subtitle }}</p>
 		<div v-if="frontmatter.video" class="story-header-media">
 			<video
 				:src="withBase(frontmatter.video)"
@@ -37,7 +37,7 @@ const { frontmatter } = useData()
 	margin: 0;
 }
 
-.story-header-answer {
+.story-header-subtitle {
 	color: var(--vp-c-brand-1);
 	font-size: 20px;
 	line-height: 1.4;

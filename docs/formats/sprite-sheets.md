@@ -8,4 +8,4 @@ sprite's bounding box overlaid and named, aligned to the real pixels however the
 Hover a box to read the frame name — no importing the sheet into an engine to find out which tile is
 `medievalTile_04`.
 
-Next: [keyboard shortcuts](/reference/shortcuts).
+Next: [CAD](/formats/cad).

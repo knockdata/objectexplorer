@@ -19,4 +19,4 @@ OpenTelemetry records both read as the same rows.
 - **Filter as you read** — severity chips and text search narrow the rows, never the shape of the
   timeline you are aiming at.
 
-Next: [every format](/formats/).
+Next: [writing](/analyze/writing).
