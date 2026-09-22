@@ -174,7 +174,7 @@ jobs:
       - if: env.SKIP != '1'
         uses: actions/checkout@v6
       - if: env.SKIP != '1'
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: candidate
       - if: env.SKIP != '1'
@@ -267,7 +267,7 @@ jobs:
         with:
           node-version: 24
       - run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           name: candidate
           path: candidate
@@ -364,7 +364,7 @@ jobs:
           node-version: 24
       - shell: bash
         run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           name: candidate
           path: candidate
@@ -519,7 +519,7 @@ jobs:
           node-version: 24
       - shell: bash
         run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           pattern: store-msix-*
           merge-multiple: true
@@ -556,7 +556,7 @@ jobs:
         with:
           node-version: 24
       - run: bash .github/set-version.sh "${{ needs.source.outputs.version }}"
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         with:
           name: candidate
           path: candidate
@@ -604,7 +604,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         with:
           name: candidate
       # deliberately no registry-url: it writes an .npmrc saying _authToken=${NODE_AUTH_TOKEN}, and
@@ -615,10 +615,28 @@ jobs:
           node-version: 24
       # trusted publishing needs npm 11.5.1 or newer; whatever node ships with is not a promise
       - run: npm install -g npm@latest
+      # a version already on npm is left alone: npm never takes the same version twice, so a
+      # re-run of this job would otherwise fail and force a version bump
       - name: publish
         run: |
           echo "npm $(npm --version), OIDC token endpoint ${ACTIONS_ID_TOKEN_REQUEST_URL:+available}"
-          npm publish objectexplorer.tgz --access public
+          version=${{ needs.source.outputs.version }}
+          existing=$(npm view "@knockdata/objectexplorer@$version" version 2>/dev/null || echo "")
+          if [ "$existing" = "$version" ]; then
+            echo "$version is already on npm, not publishing again"
+          else
+            npm publish objectexplorer.tgz --access public
+          fi
+
+  # Its own job, not a step of promote: when the registry is slow to show the version, re-running
+  # the failed jobs re-runs this check alone, not a publish npm would refuse.
+  verify:
+    needs: [source, promote]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
       # the registry is the only thing that can confirm a publish landed
       - name: verify
         run: |
@@ -640,8 +658,8 @@ jobs:
           exit 1
 
   release:
-    needs: [source, mac, windows, linux, promote]
-    # promote is skipped on a dispatch, and a skipped need skips its dependents — without this the
+    needs: [source, mac, windows, linux, promote, verify]
+    # promote and verify are skipped on a dispatch, and a skipped need skips its dependents — without this the
     # release would silently never happen. !cancelled() keeps the skip from counting as a reason to
     # stop; the failure check keeps it from releasing binaries a failed job never produced.
     if: ${{ !cancelled() && !contains(needs.*.result, 'failure') && needs.source.outputs.release == 'true' }}
@@ -657,7 +675,7 @@ jobs:
       # Store signs them, and `files: artifacts/**/*` below would publish them on the releases
       # page. They are downloaded by hand instead - see RELEASE.md. The signed direct msix does
       # ship, and arrives inside windows-<arch> next to the exe.
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         with:
           pattern: "{mac,windows,linux}-*"
           path: artifacts
