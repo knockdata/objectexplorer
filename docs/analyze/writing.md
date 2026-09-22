@@ -45,7 +45,7 @@ A flag points at the words and says what it noticed. It never suggests a rewrite
 The references and phrases come from web pages you add, and from nothing else: with no source, the
 sidebar says so and points here.
 
-**Settings → Writing tool**, paste an address — an index page, or a single article — and press
+**Settings → Writing tool** — in the desktop app and `npx`, not at objectexplorer.com/app — paste an address — an index page, or a single article — and press
 **+**. Adding fetches nothing yet; **Reindex** does, for one source or for all of them. From an
 index page, the articles it links to are read too.
 

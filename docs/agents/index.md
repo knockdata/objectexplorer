@@ -98,4 +98,7 @@ all of them.
 Settings → MCP, one toggle, one tick per client. The starting rule file grants the folders already
 in your window, turns `query` and `getObject` off, and leaves the door shut until you open it.
 
+MCP is in the desktop app and `npx`. The browser version has no agent on the machine to hand
+anything to, so it has no MCP pane at all.
+
 Next: [connecting an agent](/agents/connect).

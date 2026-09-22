@@ -41,6 +41,9 @@ Or run it with no install at all, if you have Node 20+:
 npx @knockdata/objectexplorer
 ```
 
+The Free plan is a real tool, not a trial: three cloud roots on every provider and five local
+folders. Pro lifts every cap — see [pricing](https://objectexplorer.com/pricing).
+
 ## What it does
 
 - **Preview instead of download.** More than 130 file extensions render in place — Parquet, SPSS, SAS,
@@ -54,8 +57,9 @@ npx @knockdata/objectexplorer
 - **CAD, 3D, textures and shaders.** STEP, SolidWorks, CATIA and DWG; glTF, FBX, Blender, obj and
   Unity models; DDS, KTX2, HDR and EXR textures; WGSL and GLSL shaders running live.
   → [CAD](https://objectexplorer.com/formats/cad) · [3D models](https://objectexplorer.com/formats/models)
-- **The bill, and how to cut it.** Every bucket priced on one disc, and Optimize for the cheaper
-  class, the single region, the old versions and the abandoned uploads — each a command you run.
+- **The bill, and how to cut it.** Every bucket priced on one disc — full of demo data until yours
+  has something on it — and Optimize for the cheaper class, the single region, the old versions and
+  the abandoned uploads — each a command you run.
   → [optimize](https://objectexplorer.com/explore/optimize)
 - **SQL over the object, where it lives.** DuckDB queries the object in the bucket; nothing is staged
   and no table is created first. → [SQL](https://objectexplorer.com/analyze/sql)

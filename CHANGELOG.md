@@ -4,8 +4,19 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
-## Unreleased
+## v0.7.4  —  2026-09-22
 
+- The Free plan adds three cloud roots per provider instead of one — three buckets on S3, three on Cloud Storage, three containers on Azure — and Settings → Plan and the pricing page say so
+- A Google account with hundreds of projects no longer lists every one of them: the add dialog shows the first five, the ones that answered last time first, and a **Show all** row for the rest; the filter box still searches them all
+- A project's buckets are asked for when you open it, not before, so a long project list costs nothing until you look inside one
+- A project that will not list its buckets says **No permission to list buckets** right under it, instead of a lock icon alone, and moves to the bottom of the list; what Google said is on hover
+- An object your account may not read opens on **No permission to read**, naming the account and the permission Google said is missing — before, it asked you to sign in again, which could never have helped
+- The storage usage disc opens full on its first days instead of empty: made-up data, with a new **Demo** switch that says so and turns it off
+- After seven days of use the disc opens on your own storage; the switch shows the demo again whenever you want to see what a full disc looks like
+- At objectexplorer.com/app the disc always opens on the demo, since nothing a visitor lists there is theirs to keep
+- objectexplorer.com/app no longer shows Settings panes it cannot serve — MCP, MCP sessions, Writing tool, About and Check for Updates — where each one only ever showed an error or did nothing; the desktop app and `npx` keep all of them
+- About shows what went wrong in words when it cannot read the build, rather than `[object Object]`
+- The app no longer stops when its log file disappears under it — a line that cannot reach the file still reaches the terminal
 - A folder dragged in from the desktop now works in the desktop app, where it used to do nothing: the window the app runs in cannot open a dropped folder on its own, so the app reads where the folder is instead and opens it the way every other program on the machine would
 - A folder dropped that way is kept the way the **Add folder** button keeps one, so it is there the next time the app opens and never asks to be confirmed again — in a browser the same drop is permission that has to be granted on every reload
 - SQL can read a dropped folder too, which it could not when the folder was only a browser's permission to look at it

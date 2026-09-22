@@ -67,6 +67,10 @@ If PowerShell refuses to run `npx`, see [troubleshooting](/reference/troubleshoo
 It reads what you give it — a local folder you pick, or a share link somebody sent you — and the
 parsers still run in your browser rather than on a server.
 
+What needs a machine of your own stays in the desktop app and `npx`: cloud connections, the MCP
+gateway for agents, the writing tool's sources, and Settings → About and Check for Updates. The
+browser version leaves those panes out rather than showing one that can only fail.
+
 ## First run
 
 1. The tree starts with a **demo** folder of sample objects: parquet, Delta, Iceberg, Hudi, SPSS,
