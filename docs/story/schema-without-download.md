@@ -5,6 +5,7 @@ episode: 19
 runtime: null
 video: null
 poster: /screenshot/story-parquet-structure.png
+focus: { x: 45, y: 50, width: 50 }
 caption: "nl_train_stations.parquet, 41,876 bytes, in Structure mode: the 4-byte header, one row group of 578 rows with its 11 column chunks, and the 1.2 KB footer at the end holding the schema."
 today:
   - tool: "Cloud console"

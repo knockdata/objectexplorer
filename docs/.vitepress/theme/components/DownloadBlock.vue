@@ -17,12 +17,13 @@ onMounted(function () {
 
 // the full filename, and its size once the release lookup has answered
 function downloadTitle(target) {
+	const name = release.value.names[target] ?? downloadName(target)
 	const size = release.value.sizes[target]
 	if (size) {
-		return `${downloadName(target)} · ${size}`
+		return `${name} · ${size}`
 	}
 	else {
-		return downloadName(target)
+		return name
 	}
 }
 
@@ -61,7 +62,7 @@ async function copyCommand() {
 							v-for="file in download.files"
 							:key="file.target"
 							class="download-package"
-							:href="downloadLink(file.target, channel)"
+							:href="downloadLink(file.target, channel, release.urls[file.target])"
 							:title="downloadTitle(file.target)"
 						>{{ file.extension }}</a>
 					</li>

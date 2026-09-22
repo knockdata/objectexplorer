@@ -5,6 +5,7 @@ episode: 18
 runtime: null
 video: null
 poster: /screenshot/story-on-disk.png
+focus: { x: 55, y: 40, width: 55 }
 caption: "A folder in iCloud Drive with ten files. Five show the bytes they occupy on this disk; the other five, the same size in the list, show a download icon: they are only in the cloud."
 today:
   - tool: "Sync client"

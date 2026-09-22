@@ -5,6 +5,7 @@ episode: 13
 runtime: null
 video: null
 poster: /screenshot/story-big-file.png
+focus: { x: 36, y: 50, width: 45 }
 caption: "A 2 GB csv from a local folder in the text view, scrolled to its last lines. The page holds a few thousand lines; the rest stays on disk."
 today:
   - tool: "Cloud console"

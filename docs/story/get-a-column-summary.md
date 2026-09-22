@@ -5,6 +5,7 @@ episode: 3
 runtime: null
 video: null
 poster: /screenshot/column-summary.png
+focus: { x: 20, y: 50, width: 30 }
 caption: "The nl_train_stations table with a summary drawn above every column header: id runs from 5 to 842, the name columns each have 578 unique values, and country shows NL as its most common value, 397 rows."
 today:
   - tool: "Cloud console"

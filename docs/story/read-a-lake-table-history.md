@@ -5,6 +5,7 @@ episode: 11
 runtime: null
 video: null
 poster: /screenshot/lake-metadata.png
+focus: { x: 35, y: 40, width: 40 }
 caption: "The _delta_log folder of demo/delta/sales opened as a history: v0 WRITE adds 4 rows in one file, v1 UPDATE swaps that file for a new one, v2 DELETE removes 2 rows, each commit with its time and the files it added (+) and removed (−)."
 today:
   - tool: "Cloud console"

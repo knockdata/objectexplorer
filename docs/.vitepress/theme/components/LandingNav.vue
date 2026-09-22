@@ -62,8 +62,9 @@ onUnmounted(function () {
 			<nav class="landing-nav-links" aria-label="Site">
 				<a v-for="headerLink in headerLinks" :key="headerLink.name" :href="linkOf(headerLink.link)">{{ headerLink.name }}</a>
 			</nav>
-			<a v-if="appLink" class="landing-nav-action desktop-only" :href="appLink">Open App</a>
-			<button v-else class="landing-nav-action desktop-only" type="button" @click="emit('open-app')">Open App</button>
+			<a v-if="appLink" class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink">Open App</a>
+			<button v-else class="landing-nav-action landing-nav-secondary desktop-only" type="button" @click="emit('open-app')">Open App</button>
+			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
 			<ShareLink
 				class="landing-nav-action mobile-only"
 				url="https://objectexplorer.com/"
@@ -164,6 +165,29 @@ onUnmounted(function () {
 
 .landing-nav .landing-nav-action:hover {
 	background: var(--brand-soft);
+}
+
+/* Download is the call to action; Open App sits beside it, muted */
+.landing-nav .landing-nav-primary {
+	background: var(--brand);
+	border-color: var(--brand);
+	color: var(--brand-text);
+	font-weight: 600;
+}
+
+.landing-nav .landing-nav-primary:hover {
+	background: var(--brand);
+	box-shadow: 0 0 16px -4px var(--brand-glow);
+}
+
+.landing-nav .landing-nav-secondary {
+	border-color: var(--rule);
+	color: var(--chalk-2);
+}
+
+.landing-nav .landing-nav-secondary:hover {
+	background: var(--rule-soft);
+	color: var(--chalk);
 }
 
 .landing-nav-menu-button {

@@ -5,8 +5,8 @@ import { data as stories } from "../data/story.data.js"
 import storyFeatured from "../data/storyFeatured.js"
 import StoryCard from "./StoryCard.vue"
 
-// One component, three layouts by width: a stack on a phone, two across on a tablet, a rail on a
-// desktop. `list` is the /story page, which shows every story in episode order; the landing shows
+// One component, two layouts: the landing is a rail of 9:16 cards at every width, the list a grid
+// of the same cards, 2, 3 or 5 across. `list` is the /story page, which shows every story in episode order; the landing shows
 // the ones named in storyFeatured.js, in that file's order, and ends with a More card.
 const props = defineProps({
 	list: { type: Boolean, default: false },
@@ -91,32 +91,35 @@ const visibleStories = computed(function () {
 }
 
 .story-rail {
-	display: grid;
 	gap: 18px;
-	grid-template-columns: minmax(0, 1fr);
+}
+
+/* the rail is the content box at every width: the first card snaps onto the heading's edge and the
+   last visible one is cut at the right edge, which says there is more */
+.story-landing .story-rail {
+	display: flex;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 4px 0 22px;
+	scroll-snap-type: x mandatory;
+	scrollbar-color: var(--rule) transparent;
+	scrollbar-width: thin;
+}
+
+.story-list .story-rail {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (min-width: 768px) {
-	.story-rail {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+	.story-list .story-rail {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 }
 
 @media (min-width: 1200px) {
-	/* the rail is the content box: the first card snaps onto the heading's edge and the last visible
-	   one is cut at the header's right edge, which says there is more */
-	.story-landing .story-rail {
-		display: flex;
-		overflow-x: auto;
-		overflow-y: hidden;
-		padding: 4px 0 22px;
-		scroll-snap-type: x mandatory;
-		scrollbar-color: var(--rule) transparent;
-		scrollbar-width: thin;
-	}
-
 	.story-list .story-rail {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(5, minmax(0, 1fr));
 	}
 }
 </style>

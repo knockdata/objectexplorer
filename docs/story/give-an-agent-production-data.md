@@ -5,6 +5,7 @@ episode: 14
 runtime: null
 video: null
 poster: /screenshot/story-agent-rules.png
+focus: { x: 56, y: 50, width: 50 }
 caption: "Settings, MCP: the roots an agent may reach, with only one ticked, and the deny rules that hold in every root, each tested against a path (reference/data/.env: denied)."
 today:
   - tool: "Cloud console"

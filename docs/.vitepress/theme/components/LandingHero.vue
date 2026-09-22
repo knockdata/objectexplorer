@@ -126,6 +126,18 @@ const emit = defineEmits(["open-app"])
 	transform: translateY(-1px);
 }
 
+/* on a desktop Download in the header is the call to action, so Open App is outlined only */
+.landing-hero button.landing-hero-primary {
+	background: transparent;
+	box-shadow: 0 0 0 1.5px var(--brand-glow);
+	color: var(--brand);
+}
+
+.landing-hero button.landing-hero-primary:hover {
+	background: var(--brand-soft);
+	box-shadow: 0 0 0 1.5px var(--brand);
+}
+
 .landing-hero-note {
 	color: var(--chalk-3);
 	font-size: 14.5px;

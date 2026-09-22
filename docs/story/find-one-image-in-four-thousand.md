@@ -5,6 +5,7 @@ episode: 8
 runtime: null
 video: null
 poster: /screenshot/story-image-grid.png
+focus: { x: 50, y: 50, width: 45 }
 caption: "A folder of 240 generated images in the grid view: every card is the picture itself, with its name under it. One of them, somewhere below, is a checkerboard."
 today:
   - tool: "Cloud console"

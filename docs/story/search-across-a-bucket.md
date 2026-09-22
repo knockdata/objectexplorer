@@ -5,6 +5,7 @@ episode: 2
 runtime: null
 video: null
 poster: /screenshot/search.png
+focus: { x: 22, y: 40, width: 45 }
 caption: "A search for \"station\": 18 results in 13 files, found inside a README, a Python script, a JSON file and the metadata of an HDF5 file, with the demo folder listed beside the results."
 today:
   - tool: "Cloud console"

@@ -5,6 +5,7 @@ episode: 9
 runtime: null
 video: null
 poster: /screenshot/share.png
+focus: { x: 45, y: 50, width: 55 }
 caption: "The share dialog for nl_train_stations.parquet: each column set to None, Mask, Hash or FPE (uic is FPE, name_long masked for characters 0 to 4, slug hashed to 16 hex characters), three sample rows shown before and after, an expiry of one week picked, and Copy URL, Email and Copy key."
 today:
   - tool: "Cloud console"

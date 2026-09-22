@@ -5,6 +5,7 @@ episode: 23
 runtime: null
 video: null
 poster: /screenshot/story-agent-observe.png
+focus: { x: 77, y: 40, width: 45 }
 caption: "An agent's session, watched live: the panel in the corner lists its seven calls as they arrived, one refused (reference/.env, path denied), and the window has opened what it read, ending on the parquet file its last query named."
 today:
   - tool: "Terminal"

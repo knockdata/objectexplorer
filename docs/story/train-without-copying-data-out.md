@@ -5,6 +5,7 @@ episode: 12
 runtime: null
 video: null
 poster: /screenshot/notebook-python.png
+focus: { x: 22, y: 50, width: 40 }
 caption: "A Python cell: oe.frame runs SELECT * on the open file, then pandas groups salary by jobcat into count, mean and max, three rows answered."
 today:
   - tool: "Email"

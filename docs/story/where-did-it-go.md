@@ -5,6 +5,7 @@ episode: 20
 runtime: null
 video: null
 poster: /screenshot/story-old-name.png
+focus: { x: 50, y: 30, width: 42 }
 caption: "Quick Open with the old name typed, forecast-final: it finds forecast-2026.csv, the file it became, with a line under it saying renamed from forecast-final-v2.csv."
 today:
   - tool: "Cloud console"

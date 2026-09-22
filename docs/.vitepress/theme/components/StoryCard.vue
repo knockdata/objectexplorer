@@ -4,14 +4,56 @@ import { withBase } from "vitepress"
 defineProps({
 	story: { type: Object, required: true },
 })
+
+// A card with a recorded video plays it in place while the pointer or focus is on it.
+function playVideo(event) {
+	const video = event.currentTarget.querySelector("video")
+	if (video) {
+		video.play().catch(() => {})
+	}
+}
+
+function pauseVideo(event) {
+	const video = event.currentTarget.querySelector("video")
+	if (video) {
+		video.pause()
+	}
+}
 </script>
 
 <!-- The question is the headline, since it is the one a reader recognises as their own afternoon;
-     the subtitle is the line under it, in the card's own marker colour. -->
+     the subtitle is the line under it, in the card's own marker colour. The art is 9:16 at every
+     width, the shape a recorded short plays in; `focus` in the frontmatter is the area of a wide
+     screenshot the card shows, placed at build time by posterPlacement.js. -->
 <template>
-	<a class="story-card" :href="withBase(story.url)" :style="{ '--marker': `var(--marker-${story.marker})` }">
+	<a
+		class="story-card"
+		:href="withBase(story.url)"
+		:style="{ '--marker': `var(--marker-${story.marker})` }"
+		@mouseenter="playVideo"
+		@mouseleave="pauseVideo"
+		@focus="playVideo"
+		@blur="pauseVideo"
+	>
 		<span class="story-card-art">
-			<img v-if="story.poster" class="story-card-poster" :src="withBase(story.poster)" alt="" loading="lazy">
+			<video
+				v-if="story.video"
+				class="story-card-poster"
+				:src="withBase(story.video)"
+				:poster="story.poster ? withBase(story.poster) : undefined"
+				muted
+				playsinline
+				loop
+				preload="none"
+			></video>
+			<img
+				v-else-if="story.poster"
+				class="story-card-poster"
+				:src="withBase(story.poster)"
+				:style="story.posterStyle"
+				alt=""
+				loading="lazy"
+			>
 			<span class="story-card-badge">{{ story.video ? `▶ ${story.runtime}` : "Read" }}</span>
 		</span>
 		<span class="story-card-text">
@@ -24,8 +66,9 @@ defineProps({
 <style>
 .story-card {
 	background: linear-gradient(180deg, rgba(234, 241, 248, 0.055), rgba(10, 12, 14, 0.5)), var(--ink);
-	border: 1px solid var(--rule);
+	border: 1px solid var(--rule-soft);
 	border-radius: 3px;
+	box-shadow: 0px 6px 10px -4px color-mix(in srgb, var(--marker) 60%, transparent);
 	color: var(--chalk);
 	display: flex;
 	flex-direction: column;
@@ -33,19 +76,19 @@ defineProps({
 	overflow: hidden;
 	scroll-snap-align: start;
 	text-decoration: none;
-	transition: border-color 0.2s ease, transform 0.2s ease;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .story-card:hover,
 .story-card:focus-visible {
 	border-color: rgba(234, 241, 248, 0.34);
+	box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--marker) 75%, transparent);
 	transform: translateY(-3px);
 }
 
 .story-card-art {
-	aspect-ratio: 4 / 3;
+	aspect-ratio: 9 / 16;
 	background: radial-gradient(120% 80% at 50% 8%, rgba(234, 241, 248, 0.07), transparent 62%);
-	border-top: 3px solid var(--marker);
 	display: block;
 	overflow: hidden;
 	position: relative;
@@ -54,10 +97,10 @@ defineProps({
 .story-card-art .story-card-poster {
 	border: 0;
 	border-radius: 0;
+	display: block;
 	height: 100%;
 	margin: 0;
 	object-fit: cover;
-	object-position: left top;
 	width: 100%;
 }
 
@@ -112,14 +155,8 @@ defineProps({
 	color: var(--brand);
 }
 
-@media (min-width: 1200px) {
-	.story-landing .story-card {
-		flex: 0 0 auto;
-		width: clamp(210px, 19vw, 248px);
-	}
-
-	.story-landing .story-card-art {
-		aspect-ratio: 9 / 16;
-	}
+.story-landing .story-card {
+	flex: 0 0 auto;
+	width: clamp(140px, 38vw, 248px);
 }
 </style>

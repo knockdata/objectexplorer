@@ -5,6 +5,7 @@ episode: 6
 runtime: null
 video: null
 poster: /screenshot/notebook-model.png
+focus: { x: 25, y: 50, width: 50 }
 caption: "A model cell predicting EVENT from nine ticked columns, with sliders for leaves (31), rate (0.1) and iterations (100). Left, the columns ranked by gain, START_DATE first. Right, row 0 explained one column at a time."
 today:
   - tool: "Notebook"

@@ -5,6 +5,7 @@ episode: 15
 runtime: null
 video: null
 poster: /screenshot/story-agent-session.png
+focus: { x: 56, y: 50, width: 50 }
 caption: "Settings, MCP sessions: every session an agent had with this machine, with when it started, how many calls it made, how much data left, and how many calls were denied."
 today:
   - tool: "Cloud console"

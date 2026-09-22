@@ -1,4 +1,5 @@
 import { createContentLoader } from "vitepress"
+import posterPlacement from "./posterPlacement.js"
 
 // The marker colours, cycled by position rather than chosen per story: the first card is always the
 // brand's own green, and no two cards in a row carry the same colour.
@@ -12,8 +13,9 @@ export default createContentLoader("story/*.md", {
 		const stories = pages
 			.filter(page => page.url !== "/story/")
 			.map(function (page) {
-				const { title, subtitle, episode, runtime, video, poster, published, description } = page.frontmatter
-				return { url: page.url, title, subtitle, episode, runtime, video, poster, published, description }
+				const { title, subtitle, episode, runtime, video, poster, focus, published, description } = page.frontmatter
+				const posterStyle = posterPlacement(poster, focus)
+				return { url: page.url, title, subtitle, episode, runtime, video, poster, posterStyle, published, description }
 			})
 		return stories
 			.sort((left, right) => left.episode - right.episode)

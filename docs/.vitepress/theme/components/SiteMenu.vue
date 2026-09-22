@@ -1,4 +1,5 @@
 <script setup>
+import { withBase } from "vitepress"
 import { copyright, footerLinks, headerLinks, linkOf, socialLinks } from "../data/siteLinks.js"
 import ShareLink from "./ShareLink.vue"
 
@@ -20,8 +21,9 @@ const menuLinks = [...headerLinks, ...footerLinks.filter(footerLink => headerLin
 			<a v-for="menuLink in menuLinks" :key="menuLink.name" :href="linkOf(menuLink.link)" @click="emit('close')">{{ menuLink.name }}</a>
 		</nav>
 		<div class="site-menu-action">
-			<a v-if="appLink" class="landing-nav-action desktop-only" :href="appLink">Open App</a>
-			<button v-else class="landing-nav-action desktop-only" type="button" @click="emit('open-app')">Open App</button>
+			<a v-if="appLink" class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink">Open App</a>
+			<button v-else class="landing-nav-action landing-nav-secondary desktop-only" type="button" @click="emit('open-app')">Open App</button>
+			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
 			<ShareLink
 				class="landing-nav-action mobile-only"
 				url="https://objectexplorer.com/"
@@ -72,6 +74,9 @@ const menuLinks = [...headerLinks, ...footerLinks.filter(footerLink => headerLin
 }
 
 .site-menu-action {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 	margin-top: 24px;
 }
 

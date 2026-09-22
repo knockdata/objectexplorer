@@ -5,6 +5,7 @@ episode: 21
 runtime: null
 video: null
 poster: /screenshot/archive.png
+focus: { x: 38, y: 30, width: 40 }
 caption: "reference/zip/sample.zip opened like a folder: inside its sample folder, DuckHouse.pptx (2 MB), README.md (3 KB), 2.jpg (103 KB) and TickLang.key._.pdf (1 MB), 4 files, 3 MB in all."
 today:
   - tool: "Cloud console"

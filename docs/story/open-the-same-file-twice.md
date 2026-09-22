@@ -5,6 +5,7 @@ episode: 16
 runtime: null
 video: null
 poster: /screenshot/story-cache-savings.png
+focus: { x: 57, y: 40, width: 50 }
 caption: "Settings, Cache: what the local copies hold per provider, and below it the reads the copies answered, 191 KB here, and the egress those reads would have cost."
 today:
   - tool: "Cloud console"

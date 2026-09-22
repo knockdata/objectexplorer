@@ -20,7 +20,7 @@ const release = useRelease()
 						<tr v-for="file in download.files" :key="file.target">
 							<td>{{ platform.name }}, {{ download.label }}</td>
 							<td>
-								<a :href="downloadLink(file.target, '')">{{ downloadName(file.target) }}</a>
+								<a :href="downloadLink(file.target, '', release.urls[file.target])">{{ release.names[file.target] ?? downloadName(file.target) }}</a>
 								<span v-if="release.sizes[file.target]" class="download-table-size"> · {{ release.sizes[file.target] }}</span>
 							</td>
 						</tr>

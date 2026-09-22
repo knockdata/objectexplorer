@@ -5,6 +5,7 @@ episode: 4
 runtime: null
 video: null
 poster: /screenshot/notebook-chart.png
+focus: { x: 32, y: 60, width: 50 }
 caption: "A chart cell on the train stations table: \"count by country\" drawn as bars, NL close to 400, the Plot source that draws it above, and a strip of eight suggested charts between them."
 today:
   - tool: "Email"

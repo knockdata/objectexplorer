@@ -5,6 +5,7 @@ episode: 10
 runtime: null
 video: null
 poster: /screenshot/lake-table.png
+focus: { x: 15, y: 50, width: 25 }
 caption: "A SQL cell reading SELECT * FROM 'demo/delta/sales' LIMIT 10000: a folder named as one table, answering 2 rows with columns id, region, product and amount, each with its summary above it."
 today:
   - tool: "Cloud console"
