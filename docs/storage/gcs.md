@@ -18,4 +18,18 @@ A bucket belongs to a project, and the dialog lists the projects your account ca
 the one whose buckets you want in the tree. The same project selection is what
 [Cloud Logging](/analyze/logging) tails.
 
+An organisation can hand out hundreds of projects, so the dialog shows the first five and a
+**Show all** row for the rest; the filter box finds one by name or id. A project's buckets are
+listed when you open it, not before, so a long list costs nothing until you look inside.
+
+A project that refuses to list its buckets says **No permission to list buckets** and moves to the
+bottom of the list, with what Google said on hover. Opening it again asks again, so a permission
+granted a minute ago shows up without a restart.
+
+## Objects you may not read
+
+Listing a bucket and reading an object are separate permissions. An object your account may not
+read opens on **No permission to read** with the account and permission Google named, rather than a
+sign-in prompt — signing in again would not change the answer.
+
 Next: [Azure Blob Storage](/storage/azure).

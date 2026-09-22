@@ -31,6 +31,9 @@ work in, so a thousand-bucket account still opens on the five you actually use. 
 unchecked in Settings to take it out of the tree without forgetting it, and checked again later
 without another trip through the picker.
 
+The Free plan adds up to three roots per provider — three buckets on S3, three on Cloud Storage, three
+containers on Azure, and so on. Pro lifts the cap; see [pricing](/pricing).
+
 ## Where the credentials go
 
 Nothing is stored in a file of ours that a provider's own tooling does not already hold, and nothing

@@ -136,7 +136,7 @@ which would say something untrue.
 
 ## A worked example
 
-The demo sample is seventeen roots across AWS, Google Cloud, Azure and this machine's own folders,
+The demo sample — what the **Demo** switch shows — is seventeen roots across AWS, Google Cloud, Azure and this machine's own folders,
 one of them never opened. The hub in the middle adds it up: **$162.72 a month** for 13,158 GB, 55%
 of it unchanged for over a year and 26% already on this machine. Reading it in order:
 
@@ -181,8 +181,14 @@ to let go.
 It fills the window whenever nothing else is open. **Settings → General** turns that off, and
 `⇧⌘P` → **View: Storage Usage** opens it as a tab whenever you want it.
 
-A fresh install has nothing to draw: the disc opens empty and says so, with **Add a connection…**
-under it. Add a connection, open it once, and a pole appears the next time it is drawn.
+A fresh install has nothing of its own to draw yet, so the disc opens on made-up data with the
+**Demo** switch on — the sample in the worked example above. Switch Demo off to see yours, and on again
+at any time to see what a full disc looks like. After seven days of use the disc opens on your own
+data instead; the switch still works. At [objectexplorer.com/app](https://objectexplorer.com/app/)
+the demo is always where it starts.
+
+With Demo off and nothing listed yet, the disc says so, with **Add a connection…** under it. Add a
+connection, open it once, and a pole appears the next time it is drawn.
 
 Every number on it is explained in
 [where the usage numbers come from](/reference/usage-data).

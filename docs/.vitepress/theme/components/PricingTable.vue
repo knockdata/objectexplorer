@@ -19,7 +19,7 @@ const plans = [
 		features: [
 			"Preview 60+ formats in place",
 			"SQL, charts and notebooks on your machine",
-			"1 cloud root per provider",
+			"3 cloud roots per provider",
 			"5 local folders",
 			"5 PII column rules and 5 full-text rules",
 			"7 days of audit log history",
