@@ -5,7 +5,8 @@ episode: 24
 runtime: null
 video: null
 poster: /screenshot/story-agent-replay.png
-focus: { x: 75, y: 40, width: 45 }
+focus: { x: 200, y: 10, width: 35 }
+background: "#202020"
 caption: "A session replayed from its row in Settings → MCP sessions: the window opens again what the agent opened, in order — demo/, cars.sas7bdat, then the parquet file it queried — while the panel in the corner ticks off each step. The refused reference/.env opens nothing."
 today:
   - tool: "Editor"

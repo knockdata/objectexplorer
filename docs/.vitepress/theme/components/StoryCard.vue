@@ -24,12 +24,13 @@ function pauseVideo(event) {
 <!-- The question is the headline, since it is the one a reader recognises as their own afternoon;
      the subtitle is the line under it, in the card's own marker colour. The art is 9:16 at every
      width, the shape a recorded short plays in; `focus` in the frontmatter is the area of a wide
-     screenshot the card shows, placed at build time by posterPlacement.js. -->
+     screenshot the card shows, placed at build time by posterPlacement.js; `background` fills the whole
+     card, so the picture and the card read as one area. -->
 <template>
 	<a
 		class="story-card"
 		:href="withBase(story.url)"
-		:style="{ '--marker': `var(--marker-${story.marker})` }"
+		:style="{ '--marker': `var(--marker-${story.marker})`, background: story.background }"
 		@mouseenter="playVideo"
 		@mouseleave="pauseVideo"
 		@focus="playVideo"
@@ -119,7 +120,7 @@ function pauseVideo(event) {
 }
 
 .story-card-text {
-	border-top: 1px solid var(--rule-soft);
+	/* border-top: 1px solid var(--rule-soft); */
 	display: flex;
 	flex: 1;
 	flex-direction: column;

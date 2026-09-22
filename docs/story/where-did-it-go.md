@@ -1,10 +1,11 @@
 ---
-title: "Find a file by its old name?"
+title: "Where did it go?"
 subtitle: "Rename a file. It's still that file."
 episode: 20
 runtime: null
 video: null
 poster: /screenshot/story-old-name.png
+background: "#0f0f0f"
 focus: { x: 50, y: 30, width: 42 }
 caption: "Quick Open with the old name typed, forecast-final: it finds forecast-2026.csv, the file it became, with a line under it saying renamed from forecast-final-v2.csv."
 today:

@@ -6,6 +6,7 @@ runtime: null
 video: null
 poster: /screenshot/story-cad-cloud.png
 focus: { x: 64, y: 50, width: 40 }
+background: "#202020"
 caption: "A 7 KB STEP part in a Cloud Storage bucket, opened where it sits: a washer 63 mm across, drawn from its 6 faces as 1,798 triangles."
 today:
   - tool: "Cloud console"

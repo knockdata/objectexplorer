@@ -5,6 +5,7 @@ episode: 7
 runtime: null
 video: null
 poster: /screenshot/tree-providers.png
+background: "#181818"
 caption: "One tree: a local demo folder open at the top, and below it two Google Cloud Storage buckets, an S3 bucket and an Azure storage account, side by side."
 today:
   - tool: "First cloud CLI"

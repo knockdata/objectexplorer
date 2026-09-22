@@ -4,6 +4,12 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.7.5  —  2026-09-22
+
+- able to truncate application log, and use syntax highlight
+- fallback to WebGL when webgpu is not available for usage visualization and model/cad rendering
+- remove close tab in oauth redirect, when it's in desktop app as it is not able to close wehn it's not opened by the same browser
+
 ## v0.7.4  —  2026-09-22
 
 - The Free plan adds three cloud roots per provider instead of one — three buckets on S3, three on Cloud Storage, three containers on Azure — and Settings → Plan and the pricing page say so
