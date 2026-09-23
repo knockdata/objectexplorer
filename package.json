@@ -1,6 +1,6 @@
 {
 	"name": "one",
-	"version": "0.7.5",
+	"version": "0.7.6",
 	"description": "ObjectExplorer: VSCode for cloud storage, explore, analytics and machine learning",
 	"private": true,
 	"type": "module",

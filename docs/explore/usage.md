@@ -17,8 +17,8 @@ listed, so it opens instantly, works with the network off, and costs nothing to 
 
 ## Reading one pole
 
-Read a pole from the floor up. The same key is on the disc itself, under **How to read it** in the
-corner, one line per mark.
+Read a pole from the floor up. The disc walks you through the same key itself: press **?** in the
+toolbar and choose **Tour this page**, and each mark is turned to the front and lit as it is named.
 
 | Part       | What it says                                                                                                                                                                | What to look for                                                                                                                      |
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
