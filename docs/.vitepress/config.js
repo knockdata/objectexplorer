@@ -10,6 +10,22 @@ const base = process.env.DOCS_BASE ?? "/"
 const site = "https://objectexplorer.com"
 const defaultDescription = "The VS Code for cloud storage. Every byte stays on your machine."
 
+// Who publishes the site, in the form search engines and URL classifiers read: a company with a
+// registration number, not an anonymous domain.
+const organization = JSON.stringify({
+	"@context": "https://schema.org",
+	"@type": "Organization",
+	name: "Knock Data AB",
+	legalName: "Knock Data AB",
+	url: site,
+	logo: `${site}/img/favicon.png`,
+	email: "rockie@knockdata.com",
+	vatID: "SE559229186701",
+	identifier: { "@type": "PropertyValue", propertyID: "Swedish organization number", value: "559229-1867" },
+	address: { "@type": "PostalAddress", addressCountry: "SE" },
+	sameAs: ["https://github.com/knockdata/objectexplorer", "https://www.npmjs.com/package/@knockdata/objectexplorer"],
+})
+
 // Which kind of machine is looking, written onto <html data-platform> before the first paint, so
 // a phone never sees a download grid that then swaps for a share button. The width decides the
 // layout; this decides whether an installer is any use. iPadOS says "Macintosh" exactly like a
@@ -62,6 +78,7 @@ export default defineConfig({
 	head: [
 		["link", { rel: "icon", type: "image/png", href: `${base}img/favicon.png` }],
 		["script", {}, platformScript],
+		["script", { type: "application/ld+json" }, organization],
 	],
 	// a story is an article: no sidebar and no outline beside it, and no documentation page as its
 	// previous or next — StoryFooter links the stories either side of it

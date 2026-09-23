@@ -14,10 +14,12 @@ export const footerLinks = [
 	{ name: "Pricing", link: "/pricing" },
 	{ name: "Changelog", link: "/changelog" },
 	{ name: "Privacy", link: "/privacy" },
+	{ name: "Terms", link: "/terms" },
+	{ name: "Company", link: "/company" },
 	{ name: "Contact", link: "mailto:rockie@knockdata.com" },
 ]
 
-export const copyright = "© Knock Data AB, Sweden 2026"
+export const copyright = "© 2026 Knock Data AB, Sweden · Org. no. 559229-1867"
 
 export const socialLinks = [
 	{

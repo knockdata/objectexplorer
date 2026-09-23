@@ -21,6 +21,11 @@ onMounted(function () {
 <template>
 	<section class="app-section landing-wrap">
 		<div class="app-section-frame">
+			<a v-if="canFrame" class="app-section-expand" :href="appUrl" title="Open full app" aria-label="Open full app">
+				<svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+					<path d="M1.5 5.5v-4h4M12.5 5.5v-4h-4M1.5 8.5v4h4M12.5 8.5v4h-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+				</svg>
+			</a>
 			<iframe
 				v-if="canFrame"
 				:src="appUrl"
@@ -46,9 +51,33 @@ onMounted(function () {
 .app-section-frame {
 	background: var(--ink);
 	border: 1px solid var(--rule);
-	border-radius: 10px;
+	border-radius: 1px;
 	height: min(80vh, 760px);
-	overflow: hidden;
+	overflow: visible;
+	position: relative;
+}
+
+.app-section-expand {
+	align-items: center;
+	background: rgba(10, 12, 14, 0.86);
+	border: 1px solid var(--rule);
+	border-radius: 6px;
+    color: var(--chalk-2);
+    cursor: pointer;
+    display: flex;
+    
+    justify-content: center;
+    position: absolute;
+    right: -15px;
+    top: -15px;
+	height: 30px;
+    width: 30px;
+    z-index: 1;
+	padding: 5px;
+}
+
+.app-section-expand:hover {
+	color: var(--brand);
 }
 
 .app-section-frame iframe,

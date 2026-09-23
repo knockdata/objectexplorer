@@ -55,4 +55,12 @@ rewritten — by the same [PII rules](/agents/pii) a share link goes through. It
 The same thing it would see if you used its own console: signed requests from your machine, for the
 objects you opened. ObjectExplorer adds no proxy, no relay and no third party in between.
 
+## Who is responsible
+
+Knock Data AB (organization number 559229-1867), Sweden, is the controller for the data
+described on this page — see [company](/company). This website sets no tracking cookies and runs no
+analytics. The server keeps an ordinary access log (address, time, page) for security, and a trial
+sign-up keeps the email you gave, encrypted. Ask [rockie@knockdata.com](mailto:rockie@knockdata.com) to see or
+delete what we hold about you.
+
 Next: [connecting storage](/storage/connect).
