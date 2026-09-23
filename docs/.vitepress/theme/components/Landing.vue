@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
+import AppSection from "./AppSection.vue"
 import AppStage from "./AppStage.vue"
 import DownloadBlock from "./DownloadBlock.vue"
 import LandingHero from "./LandingHero.vue"
@@ -11,9 +12,22 @@ import SiteFooter from "./SiteFooter.vue"
 // the glass, then wipes the pane away; "Back to the tour" brings it back.
 //   closed → loading (the app is arriving behind the glass) → open (the pane is wiped)
 const appState = ref("closed")
+// ?open=… pins a use case: the app becomes a section after the hero, with nothing behind the page
+const appQuery = ref("")
+
+onMounted(function () {
+	if (new URLSearchParams(location.search).has("open")) {
+		appQuery.value = location.search
+	}
+})
 
 function openApp() {
-	appState.value = "loading"
+	if (appQuery.value) {
+		location.href = "https://objectexplorer.com/app/" + appQuery.value
+	}
+	else {
+		appState.value = "loading"
+	}
 }
 
 function showApp() {
@@ -28,11 +42,12 @@ function closeApp() {
 
 <template>
 	<div class="landing" :class="`landing-app-${appState}`">
-		<AppStage :state="appState" @ready="showApp" @close="closeApp" />
+		<AppStage v-if="appQuery === ''" :state="appState" @ready="showApp" @close="closeApp" />
 		<div class="landing-pitch" :aria-hidden="appState === 'open' ? 'true' : undefined">
 			<LandingNav @open-app="openApp" />
 			<main>
-				<LandingHero @open-app="openApp" />
+				<LandingHero :pinned="appQuery !== ''" @open-app="openApp" />
+				<AppSection v-if="appQuery" :query="appQuery" />
 				<StoryGrid />
 				<DownloadBlock />
 			</main>

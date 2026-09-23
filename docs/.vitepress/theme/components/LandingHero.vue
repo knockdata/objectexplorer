@@ -2,6 +2,9 @@
 import HeroVideo from "./HeroVideo.vue"
 import ShareLink from "./ShareLink.vue"
 
+defineProps({
+	pinned: { type: Boolean, default: false },
+})
 const emit = defineEmits(["open-app"])
 </script>
 
@@ -42,7 +45,7 @@ const emit = defineEmits(["open-app"])
 				<b>Send the link to the computer you work on.</b>
 			</p>
 		</div>
-		<div class="landing-hero-demo">
+		<div v-if="pinned === false" class="landing-hero-demo">
 			<HeroVideo />
 			<p class="landing-hero-caption">The 40-second tour. Click it to play full screen, with sound.</p>
 		</div>
