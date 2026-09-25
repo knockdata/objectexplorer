@@ -11,17 +11,21 @@
 // mode= picks what the main thread does with the url: the native window by default,
 // browser for the default browser, server for neither. See README.
 //
+// `ObjectExplorer cli …` is none of that: it runs the bundle's command line, the same as
+// `npx @knockdata/objectexplorer …`, and is what the `oe` shell command calls (shellCommand.js).
+//
 // No JS bridge between the two: the UI reaches the backend over http://127.0.0.1 exactly as
 // it does in a browser. That is why the native binding needs only eight calls.
 import fs from "node:fs"
 import path from "node:path"
 import sea from "node:sea"
+import { pathToFileURL } from "node:url"
 import { Worker, SHARE_ENV } from "node:worker_threads"
 import { createWindow, applyWindowsArgs, showAlert } from "./webview.js"
 import { openBrowser } from "./browser.js"
 import { resolveBundleDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
 import { userData, logFile, launchGuardFile } from "./paths.js"
-import { log, logError } from "./log.js"
+import { log, logError, fileOnly } from "./log.js"
 import { version, bundleVersion } from "./version.js"
 
 // split each arg on the first "=" only, so a value may itself contain "="
@@ -36,16 +40,32 @@ const args = Object.fromEntries(process.argv.slice(2).map(function (arg) {
 
 const preferredPort = args.port ? +args.port : 9421
 
+// argv[2] on, both as a single executable and from sources: argv[1] is the binary or main.js
+const cli = process.argv[2] === "cli"
+
 async function main() {
+	if (cli) {
+		fileOnly()
+	}
+	else {
+		// the launcher's lines go to the terminal too
+	}
 	log("ObjectExplorer", version, "bundle", bundleVersion, process.platform, process.arch)
 	log("argv:", process.argv.slice(1).join(" "))
 
-	if (isDuplicateLaunch()) {
+	if (cli) {
+		await runCli(process.argv.slice(3))
+	}
+	else if (isDuplicateLaunch()) {
 		log("launched again within", launchGuardWindowMs + "ms", "of the previous launch, exiting")
 		process.exit(0)
-		return
 	}
+	else {
+		await runApp()
+	}
+}
 
+async function runApp() {
 	const bundleDir = await resolveBundleDir(readAsset)
 	const duckdbDir = await resolveDuckdbDir(readAsset)
 	const sqliteDir = await resolveSqliteDir(readAsset)
@@ -60,6 +80,41 @@ async function main() {
 		openBrowser(url)
 	} else {
 		openWindow(url)
+	}
+}
+
+// `ObjectExplorer cli …`, which is what the `oe` shell command runs (shellCommand.js): the bundle's
+// own cli.js, the same file `npx @knockdata/objectexplorer …` runs, with the engines this binary
+// unpacked. It runs in a worker because a worker can import() the bundle; its arguments are appended
+// to the worker's process.argv, after the two entries cli.js skips.
+async function runCli(cliArgs) {
+	const bundleDir = await resolveBundleDir(readAsset)
+	const duckdbDir = await resolveDuckdbDir(readAsset)
+	const sqliteDir = await resolveSqliteDir(readAsset)
+	const cliUrl = pathToFileURL(path.join(bundleDir, "cli.js")).href
+	const source = `import(require("node:worker_threads").workerData.cliUrl)`
+	const worker = new Worker(source, {
+		eval: true,
+		env: SHARE_ENV,
+		argv: [...cliArgs, `duckdbDir=${duckdbDir}`, `sqliteDir=${sqliteDir}`],
+		workerData: { cliUrl },
+	})
+	worker.on("error", function (error) {
+		console.error(error.message)
+		process.exit(1)
+	})
+	worker.on("exit", function (code) {
+		process.exit(code)
+	})
+}
+
+// What runs this binary again, for the `oe` script to name. An AppImage runs from a mount that
+// changes every launch; APPIMAGE is the file itself.
+function selfCommand() {
+	if (sea.isSea()) {
+		return [process.env.APPIMAGE ?? process.execPath]
+	} else {
+		return [process.execPath, path.resolve(process.argv[1])]
 	}
 }
 
@@ -132,7 +187,7 @@ function startServer(bundleDir, duckdbDir, sqliteDir) {
 		env: SHARE_ENV,
 		// the launch arguments go with it: a worker's own process.argv is [execPath, "[worker
 		// eval]"], and VersionManager restarts the app with the arguments it was started with
-		workerData: { bundleDir, duckdbDir, sqliteDir, port: preferredPort, launchArgs: launchArgs() },
+		workerData: { bundleDir, duckdbDir, sqliteDir, port: preferredPort, launchArgs: launchArgs(), selfCommand: selfCommand() },
 	})
 	// a worker that outlives the main thread's blocking run() keeps the process alive on its
 	// own, so nothing here needs to hold a reference

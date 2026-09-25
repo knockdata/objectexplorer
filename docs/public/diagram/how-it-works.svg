@@ -91,7 +91,7 @@
 <!-- your storage -->
 <text class="head" x="582" y="52">Your storage</text>
 <rect class="box" x="582" y="72" width="198" height="36" rx="5"/>
-<text class="ink" x="596" y="95">Amazon S3 · MinIO</text>
+<text class="ink" x="596" y="95">Amazon S3 · S3 compatible</text>
 <rect class="box" x="582" y="116" width="198" height="36" rx="5"/>
 <text class="ink" x="596" y="139">Google Cloud Storage</text>
 <rect class="box" x="582" y="160" width="198" height="36" rx="5"/>

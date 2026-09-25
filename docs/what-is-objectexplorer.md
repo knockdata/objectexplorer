@@ -1,19 +1,23 @@
 # What is ObjectExplorer?
 
-ObjectExplorer is a desktop file explorer for object storage — for you, and for the agent working
-beside you. It puts Amazon S3, Google Cloud Storage, Azure Blob Storage, MinIO, Microsoft OneLake,
-the Dropbox, OneDrive and Box folders on your disk, and every other folder you have, in one tree —
-and opens what is inside them, including the formats a cloud console will never render.
+ObjectExplorer is an explorer for cloud storage and local folders — for you, and for the agent working
+beside you. It puts Amazon S3 and any [S3 compatible provider](/storage/s3-compatible), Google Cloud
+Storage, Azure Blob Storage, Microsoft OneLake, the folders Dropbox, OneDrive, iCloud, Google Drive and
+Box keep on your disk, and every other folder you have, in one tree — and opens what is inside them,
+including the formats a cloud console will never render.
 
 <img src="/screenshot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it">
 
-It is one native binary: an HTTP server bound to `127.0.0.1` plus the operating system's own webview,
-both inside the same executable. There is no Electron and no Chromium, and there is no server of ours
-anywhere in the path between you and your bucket.
+The desktop app is able to install to Mac/Windows/Linux: It will have local HTTP server bound to `127.0.0.1` plus the operating system's own webview,
+both inside the same executable. 
+There is no Electron and no Chromium, and there is no server of ours anywhere in the path between you and your bucket.
+Everything stay at the machine you run. 
+
+It can also deploy on a server in enterprise setup. Refer to [deployment](/reference/deployment) for more detail
 
 ## How it fits together
 
-<img src="/diagram/how-it-works.svg" alt="The window and any agent on your machine talk to one local server. The server signs requests straight to your storage, keeps what it remembers in ~/.objectexplorer, and calls objectexplorer.com only for updates, the licence and large share links.">
+<AppDemo name="fitsTogether" />
 
 You and an agent ask the same local server, and only that server talks to your storage, with your
 own credentials. What it remembers — names and sizes, column statistics, notebook code, cached

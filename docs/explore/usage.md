@@ -1,6 +1,6 @@
 # Where the storage went
 
-<img src="/screenshot/usage-visualization.png" alt="The usage disc: a pole for every root and every kind of thing it holds, standing in a sector per kind of thing, each wearing its provider's colour">
+<AppDemo name="usage" />
 
 Open ObjectExplorer with nothing selected and this is what fills the window: every root you have
 added, drawn as one disc. A sector per kind of thing — media, documents, datasets, archives, code,

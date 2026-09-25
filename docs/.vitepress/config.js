@@ -68,7 +68,7 @@ function pageTitle(frontmatter) {
 export default defineConfig({
 	base,
 	title: "ObjectExplorer",
-	description: "Browse, preview, query and search S3, GCS, Azure Blob, MinIO, OneLake, Dropbox, OneDrive, Box and local folders in one window",
+	description: "Browse, preview, query and search S3 and S3 compatible storage, GCS, Azure Blob, OneLake, Dropbox, OneDrive, Box and local folders in one window",
 	// force-dark, not "dark": "dark" is only the starting value, so a reader whose browser remembers
 	// light walks from the landing — which is dark whatever the setting — into a white page. The app
 	// is dark, every screenshot here was taken in it, and the site is one surface.
@@ -76,7 +76,12 @@ export default defineConfig({
 	cleanUrls: true,
 	lastUpdated: true,
 	head: [
-		["link", { rel: "icon", type: "image/png", href: `${base}img/favicon.png` }],
+		// the favicon, by the colour scheme the tab bar is drawn in: on a dark one the mark alone, on a
+		// light one the filled tile the bare mark would fade into
+		["link", { rel: "icon", type: "image/png", href: `${base}img/favicon.png`, media: "(prefers-color-scheme: light)" }],
+		["link", { rel: "icon", type: "image/png", href: `${base}img/64.png`, media: "(prefers-color-scheme: dark)" }],
+		// Safari's one-colour icon: the mark alone, as a shape, painted in the colour given
+		["link", { rel: "mask-icon", href: `${base}safari-pinned-tab.svg`, color: "#20E298" }],
 		["script", {}, platformScript],
 		["script", { type: "application/ld+json" }, organization],
 	],
@@ -138,22 +143,7 @@ export default defineConfig({
 					{ text: "Your data stays here", link: "/privacy" },
 				],
 			},
-			{
-				text: "Storage",
-				collapsed: false,
-				items: [
-					{ text: "Connecting storage", link: "/storage/connect" },
-					{ text: "Amazon S3", link: "/storage/s3" },
-					{ text: "Google Cloud Storage", link: "/storage/gcs" },
-					{ text: "Azure Blob Storage", link: "/storage/azure" },
-					{ text: "Microsoft OneLake", link: "/storage/onelake" },
-					{ text: "MinIO", link: "/storage/minio" },
-					{ text: "Local folders", link: "/storage/local" },
-					{ text: "Dropbox", link: "/storage/dropbox" },
-					{ text: "OneDrive", link: "/storage/onedrive" },
-					{ text: "Box", link: "/storage/box" },
-				],
-			},
+
 			{
 				text: "Explore",
 				collapsed: false,
@@ -219,6 +209,21 @@ export default defineConfig({
 					{ text: "Anki decks", link: "/formats/anki" },
 					{ text: "Flame graphs", link: "/formats/flame-graphs" },
 				],
+			}, {
+				text: "Provider",
+				collapsed: true,
+				items: [
+					{ text: "Connecting storage", link: "/storage/connect" },
+					{ text: "Amazon S3", link: "/storage/s3" },
+					{ text: "Google Cloud Storage", link: "/storage/gcs" },
+					{ text: "Azure Blob Storage", link: "/storage/azure" },
+					{ text: "Microsoft OneLake", link: "/storage/onelake" },
+					{ text: "S3 compatible providers", link: "/storage/s3-compatible" },
+					{ text: "Local folders", link: "/storage/local" },
+					{ text: "Dropbox", link: "/storage/dropbox" },
+					{ text: "OneDrive", link: "/storage/onedrive" },
+					{ text: "Box", link: "/storage/box" },
+				],
 			},
 			{
 				text: "Reference",
@@ -229,6 +234,9 @@ export default defineConfig({
 					{ text: "Moving around a view", link: "/reference/view-controls" },
 					{ text: "Where your data lives", link: "/reference/data-locations" },
 					{ text: "Updating", link: "/reference/updating" },
+					{ text: "Deployments and start settings", link: "/reference/deployment" },
+					{ text: "Authentication with OIDC", link: "/reference/authentication-oidc" },
+					{ text: "Authentication with SAML", link: "/reference/authentication-saml" },
 					{ text: "Where the usage numbers come from", link: "/reference/usage-data" },
 					{ text: "The MCP rule file", link: "/reference/mcp-rules" },
 					{ text: "The MCP endpoint", link: "/reference/mcp-protocol" },

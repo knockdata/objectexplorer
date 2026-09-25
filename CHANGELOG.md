@@ -4,6 +4,20 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.7.7  —  2026-09-25
+
+- Enterprise mode: run `npx` as a team server with a licence or a 14-day trial, sign-in through OIDC or SAML (Okta tested), an admin list and an audit log; update only with `oe check` / `oe upgrade`, and `oe rollback` if needed
+- HTTPS certificates are fetched and renewed on their own, through a single CNAME record (dns-01)
+- An account icon on the desktop app, `npx` and objectexplorer.com/app, with sign-up and a **Download app** dialog
+- The desktop app can install the `oe` shell command from the command palette
+- Simpler run settings: one `deployment=` option (package, desktop, instant, enterprise), plus `host`, `domain`, `protocol`, `certificate` and `debug=true`
+
+## v0.7.6  —  2026-09-23
+
+- Guided onboarding: a welcome box, spotlight tours of the layout, left and right side, and a **?** menu to replay them
+- The storage usage disc opens as a tab
+- The app runs in place on the landing page, and can be expanded to full size
+
 ## v0.7.5  —  2026-09-22
 
 - able to truncate application log, and use syntax highlight

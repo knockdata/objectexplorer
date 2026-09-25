@@ -1,6 +1,6 @@
 # Column summaries
 
-<img src="/screenshot/column-summary.png" alt="A parquet grid with a summary under every column header">
+<AppDemo name="columnSummary" />
 
 Open a table and every column comes with its own shape: a histogram for numbers, a box plot for
 distributions, a split bar for categories, a unique count for identifiers, the range underneath. It

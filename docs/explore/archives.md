@@ -1,6 +1,6 @@
 # Archives
 
-<img src="/screenshot/archive.png" alt="A zip browsed as a folder, its entries listed like files">
+<AppDemo name="archive" />
 
 Step into a `.zip`, a `.dmg`, or an office file — `.pptx` and `.xlsx` are zips too — and browse the
 entries as if they were folders. Each entry previews with its own viewer, so a CSV inside a zip

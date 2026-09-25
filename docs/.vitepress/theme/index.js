@@ -1,5 +1,7 @@
 import DefaultTheme from "vitepress/theme"
+import AppDemo from "./components/AppDemo.vue"
 import ThemeLayout from "./ThemeLayout.vue"
+import DomainInput from "./components/DomainInput.vue"
 import DownloadBlock from "./components/DownloadBlock.vue"
 import DownloadTable from "./components/DownloadTable.vue"
 import Landing from "./components/Landing.vue"
@@ -18,6 +20,8 @@ export default {
 	extends: DefaultTheme,
 	Layout: ThemeLayout,
 	enhanceApp({ app }) {
+		app.component("AppDemo", AppDemo)
+		app.component("DomainInput", DomainInput)
 		app.component("DownloadBlock", DownloadBlock)
 		app.component("DownloadTable", DownloadTable)
 		app.component("Landing", Landing)

@@ -18,7 +18,7 @@ test.md
 *.map
 RELEASE.md
 objectexplorer-mockup-v4.html
-
+next.md
 
 # the docs site: .* above hides every dot-name, and .vitepress is one
 !docs/.vitepress/

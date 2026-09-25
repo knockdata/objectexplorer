@@ -29,7 +29,11 @@ Hive-partitioned exports and `YYYY/MM/DD` date prefixes read as one table the sa
 
 ## The metadata is readable too
 
-<img src="/screenshot/lake-metadata.png" alt="_delta_log opened as commit history: every version with the files it added and removed">
+<AppDemo name="delta" />
+
+<AppDemo name="hudi" />
+
+<AppDemo name="iceberg" />
 
 `_delta_log` opens as the commit history, every version with the files it added and removed
 underneath it. `.hoodie` opens as the timeline, including the requested and inflight instants a

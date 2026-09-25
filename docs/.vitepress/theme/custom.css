@@ -88,6 +88,12 @@ html:root {
 	}
 }
 
+@media (min-width: 960px) {
+	.content[data-v-10119189] {
+		padding: 0 16px 80px;
+	}
+}
+
 /* a documentation page and a story read in a column of about 80 characters (landing.css) */
 :root .Layout .VPContent .VPDoc .content-container {
 	max-width: var(--reading-width);

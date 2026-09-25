@@ -1,6 +1,6 @@
 # Hex
 
-<img src="/screenshot/hex.png" alt="The hex viewer: offsets, hex pairs and the ASCII column">
+<AppDemo name="hex" />
 
 Any file, any size, straight to bytes. Offsets, hex pairs and the ASCII column, virtualized so a
 multi-gigabyte object opens instantly instead of after a spinner — only the lines on screen are ever

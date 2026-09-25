@@ -12,7 +12,7 @@ signed into carries a green check.
 | <img src="/format/gcs.svg" width="18"> [Google Cloud Storage](/storage/gcs)    | your Google account, through `gcloud`                                                                      |
 | <img src="/format/cloud.svg" width="18"> [Azure Blob Storage](/storage/azure)  | a connection string, a SAS URL, or a Microsoft sign-in                                                     |
 | <img src="/format/cloud.svg" width="18"> [Microsoft OneLake](/storage/onelake) | a Microsoft sign-in — the same one Azure Blob uses                                                         |
-| <img src="/format/minio.svg" width="18"> [MinIO](/storage/minio)               | your own endpoint, for self-hosted S3-compatible storage                                                   |
+| <img src="/format/s3.svg" width="18"> [S3 compatible](/storage/s3-compatible)  | your own endpoint: R2, B2, Wasabi, MinIO and every other storage that speaks the S3 API                    |
 | <img src="/format/folder.svg" width="18"> [Local folders](/storage/local)      | the native folder picker — any disk, any mounted volume                                                    |
 | <img src="/format/folder.svg" width="18"> [Dropbox](/storage/dropbox)          | the folder the Dropbox app keeps on your disk, added as a local folder                                     |
 | <img src="/format/folder.svg" width="18"> [OneDrive](/storage/onedrive)        | the folder the OneDrive app keeps on your disk, added as a local folder                                    |

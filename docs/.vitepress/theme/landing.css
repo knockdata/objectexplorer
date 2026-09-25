@@ -20,7 +20,7 @@
 	--marker-violet: #9d8cff;
 	--mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 	/* about 80 characters a line: an average character is 0.47em of Inter and 0.46em of the system font */
-	--reading-width: 37em;
+	--reading-width: 45em;
 	--rule: rgba(234, 241, 248, 0.14);
 	--rule-soft: rgba(234, 241, 248, 0.08);
 }

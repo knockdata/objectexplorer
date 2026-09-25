@@ -1,6 +1,6 @@
 # Charts
 
-<img src="/screenshot/notebook-chart.png" alt="A chart cell: the plot source, the strip of suggestions, and the chart it drew">
+<AppDemo name="chart" />
 
 A chart cell writes its own first draft. The [column statistics](/explore/column-summary) say which
 column is a date, which is a category, which is a measure and which is an id that counts up once per

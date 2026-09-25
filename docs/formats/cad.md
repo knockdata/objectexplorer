@@ -2,7 +2,7 @@
 
 `step` `stp` `sldprt` `sldasm` `slddrw` `catpart` `dwg`
 
-<img src="/screenshot/format-cad.png" alt="A STEP part drawn in the CAD view, with its face count and size above it">
+<AppDemo name="cad" />
 
 A CAD part opens as the part, not as the text or the zip it is stored in. No CAD program is needed,
 and nothing is converted first: the reader runs in a worker on your machine, like every other one.

@@ -20,6 +20,8 @@ and talks to your storage with your own credentials. There is no service of ours
 
 ## Opening a file
 
+<AppDemo name="howItWorks" />
+
 1. You click a file. The window asks the local server for it.
 2. For a local file, the server reads it from your disk. For a cloud object, it looks in the cache;
    a copy younger than a day, with the same size the cloud reports, answers. Otherwise it signs a

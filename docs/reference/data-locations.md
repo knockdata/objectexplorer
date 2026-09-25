@@ -1,7 +1,7 @@
 # Where your data lives
 
-Everything ObjectExplorer keeps for itself is in one folder, on every platform and in every mode —
-the desktop app, `npx`, the browser front door:
+Everything ObjectExplorer keeps for itself is in one folder, on every platform and in every
+[deployment](/reference/deployment) — the desktop app, `npx`, an enterprise server:
 
 ```
 ~/.objectexplorer
@@ -20,7 +20,7 @@ that folder, so the next search reads only what changed.
 | `log.db`                | the [Cloud Logging](/analyze/logging) tail, so it survives a restart                                                                                                                                         |
 | `search.db`             | the index [search](/explore/search) reads                                                                                                                                                                    |
 | `connections.json`      | the credentials the app holds: a key you typed or dropped into a dialog, a Microsoft sign-in, what your AWS CLI exported. Every secret in it is encrypted with a key tied to this machine                    |
-| `folders.json`          | your [MinIO](/storage/minio) and other custom S3 endpoints                                                                                                                                                   |
+| `folders.json`          | your [S3 compatible](/storage/s3-compatible) endpoints                                                                                                                                                       |
 | `mcp.yaml`              | [the MCP rule file](/reference/mcp-rules) — roots, tools, limits and PII rules                                                                                                                               |
 | `mcp/key`               | the key [PII rules](/agents/pii) encrypt and hash an agent's answers with; it never leaves the machine, and a share uses a key of its own                                                                    |
 | `mcp/<agent>/`          | the access log of every MCP call, one file per session — see [sessions](/agents/sessions)                                                                                                                    |
@@ -33,6 +33,10 @@ that folder, so the next search reads only what changed.
 | `.app/`                 | the versions of the product the desktop app has downloaded for itself                                                                                                                                        |
 | `.bin/`                 | the native parts of the desktop app, unpacked once per version                                                                                                                                               |
 | `update/`               | where an `npx` install puts a newer version it downloaded                                                                                                                                                    |
+| `versions/` `current`   | an [enterprise server](/reference/deployment#updating-an-enterprise-server)'s installed versions, and the link to the one in use                                                                             |
+| `enterpriseTrial`       | when an enterprise server's [trial](/reference/deployment#the-trial) started                                                                                                                                 |
+| `server.json`           | the deployment and settings the server was last started with, which the admin commands read                                                                                                                  |
+| `acme/<domain>/`        | the certificate an [enterprise server](/reference/deployment#certificates) got from Let's Encrypt, its key, and the Let's Encrypt account that got it                                                        |
 
 The notes you draw on a [PDF](/formats/pdf), and the layout you drag a [grid](/explore/tree#the-grid)
 into, are kept in the browser's own storage instead.

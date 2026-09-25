@@ -1,6 +1,6 @@
 # Sprite sheets
 
-<img src="/screenshot/sprite-sheet.png" alt="A texture atlas with every sprite's bounding box overlaid and named">
+<AppDemo name="spriteSheet" />
 
 Open a TextureAtlas or SpriteSheet XML and ObjectExplorer draws it: the atlas image with every
 sprite's bounding box overlaid and named, aligned to the real pixels however the image is scaled.

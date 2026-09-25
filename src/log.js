@@ -17,13 +17,26 @@ function timestamp() {
 	return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
 }
 
+// `ObjectExplorer cli …` (the `oe` shell command) owns stdout: what it prints is the answer, so
+// the launcher's own lines go to the file only
+let toStdout = true
+
+export function fileOnly() {
+	toStdout = false
+}
+
 function write(level, parts) {
 	const line = `${timestamp()} ${level} ${parts.join(" ")}\n`
 	fs.appendFileSync(logFile, line)
-	try {
-		fs.writeSync(1, line)
-	} catch (error) {
-		// no console attached (packaged app launched from Finder) — the file is the record
+	if (toStdout) {
+		try {
+			fs.writeSync(1, line)
+		} catch (error) {
+			// no console attached (packaged app launched from Finder) — the file is the record
+		}
+	}
+	else {
+		// the command line's output is the command's alone
 	}
 }
 

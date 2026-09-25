@@ -26,7 +26,7 @@ a `Downloads` folder full of data that should never have left the bucket.
 
 ObjectExplorer collapses that loop:
 
-- **One window for every provider.** S3, GCS, Azure Blob, MinIO, OneLake, Dropbox, OneDrive, Box and
+- **One window for every provider.** S3 and S3 compatible storage, GCS, Azure Blob, OneLake, Dropbox, OneDrive, Box and
   your local disks in the same tree, with the same keyboard shortcuts.
 - **Preview instead of download.** Formats render in place — including the ones no console will ever
   open, like Parquet, SPSS and SAS.

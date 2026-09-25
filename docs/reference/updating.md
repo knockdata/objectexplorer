@@ -24,6 +24,10 @@ all it takes and nothing is overwritten in place.
   [releases page](https://github.com/knockdata/objectexplorer/releases).
 - **Microsoft Store** — ObjectExplorer is not in the Store yet. Once it is, a Store install updates the
   way any Store app does.
+- **An enterprise server** — never updates itself. An admin updates it on the server with
+  `npx @knockdata/objectexplorer check` and `npx @knockdata/objectexplorer upgrade`, and can go back with
+  `npx @knockdata/objectexplorer rollback`; see
+  [updating an enterprise server](/reference/deployment#updating-an-enterprise-server).
 
 ## What changed
 

@@ -56,4 +56,4 @@ SELECT * FROM 'abfss://sales@onelake.dfs.fabric.microsoft.com/sales.Lakehouse/Fi
 Fabric bills capacity, not bytes, so a OneLake row has no cost, storage class or region. The columns
 stay empty rather than showing a number that is wrong.
 
-Next: [MinIO](/storage/minio).
+Next: [S3 compatible providers](/storage/s3-compatible).

@@ -71,6 +71,23 @@ What needs a machine of your own stays in the desktop app and `npx`: cloud conne
 gateway for agents, the writing tool's sources, and Settings → About and Check for Updates. The
 browser version leaves those panes out rather than showing one that can only fail.
 
+The monitor icon above the account icon, at the bottom of the activity bar, is **Download app**: every
+installer, with your computer's platform already open.
+
+## Signing in
+
+The account icon at the bottom of the activity bar, above the settings gear, is where you sign in:
+with Google, or with an email address. The first sign-in turns on Pro for seven days, and any limit
+you run into, such as a fourth cloud root on the Free plan, offers the same sign-in. With Google the
+icon shows your Google picture; with an email address, your initials.
+
+Once signed in, the icon's menu shows your name and email, and **Plan…** with your plan beside it,
+which opens Settings → Plan. **Sign out** forgets your name and picture on this machine; your plan
+stays as it is.
+
+At objectexplorer.com/app the sign-in is kept in your browser: the week of Pro counts there, and
+signing out, or clearing the site's data, ends it.
+
 ## First run
 
 1. The tree starts with a **demo** folder of sample objects: parquet, Delta, Iceberg, Hudi, SPSS,

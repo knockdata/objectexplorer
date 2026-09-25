@@ -36,7 +36,9 @@ data, and only the app log — which you send on purpose — names paths on this
 | uv: a Python build, and the packages you name        | when you make a [Python environment](/analyze/python) or install into one  |
 | The web pages you added as style sources             | when you press **Reindex** in [the writing tool](/analyze/writing)         |
 | objectexplorer.com: your licence                     | at start, only once you have started a trial, showing a secret made for it |
-| objectexplorer.com: the trial sign-up                | when you start a trial                                                     |
+| objectexplorer.com: the trial sign-up                | when you first sign in                                                     |
+| Google: signing in                                   | when you sign in with Google                                               |
+| Google: your picture                                 | whenever the account icon shows it, after you signed in with Google        |
 | objectexplorer.com: the last 1000 lines of `app.log` | when you press **share** on the app log, to quote it in a bug report       |
 
 The FFmpeg core is GPL software, which is why it is fetched rather than shipped; once it is here it

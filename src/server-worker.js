@@ -14,11 +14,12 @@ import { pathToFileURL } from "node:url"
 import { parentPort, workerData } from "node:worker_threads"
 
 import VersionManager from "./VersionManager.js"
+import ShellCommand from "./shellCommand.js"
 import { userData } from "./paths.js"
 import { log, logError } from "./log.js"
 
 async function start() {
-	const { bundleDir, duckdbDir, sqliteDir, port, launchArgs } = workerData
+	const { bundleDir, duckdbDir, sqliteDir, port, launchArgs, selfCommand } = workerData
 	const appDir = path.join(bundleDir, "app")
 	const serverPath = path.join(bundleDir, "server", "WebServer.mjs")
 
@@ -42,9 +43,12 @@ async function start() {
 	// is the same call the dialog's Upgrade button makes.
 	const versionManager = VersionManager({ bundleDir, launchArgs })
 
+	// the `oe` script on PATH, when someone installed it from the command palette
+	const shellCommand = ShellCommand({ command: selfCommand })
+	shellCommand.refresh()
+
 	const server = await WebServer({
-		mode: "prod",
-		appMode: "desktop",
+		deployment: "desktop",
 		appDir,
 		publicDir: appDir,
 		demoPath,
@@ -54,6 +58,7 @@ async function start() {
 		port,
 		portRetry: true,
 		versionManager,
+		shellCommand,
 	})
 
 	const listenPort = await server.start()

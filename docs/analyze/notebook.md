@@ -1,6 +1,6 @@
 # The notebook
 
-<img src="/screenshot/notebook-sql.png" alt="A table cell: the SQL over the object, and the rows it returned with their column summaries">
+<AppDemo name="notebook" />
 
 Open a table and it opens as a notebook: a column of cells, each one a few lines of code over its own
 output. The first two are already written — a `SELECT *` over the object you clicked, and a chart of

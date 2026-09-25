@@ -2,6 +2,8 @@
 
 The engine is DuckDB, compiled into the app, reading the object where it lives.
 
+<AppDemo name="sql" />
+
 ```sql
 SELECT region, count(*), sum(amount)
 FROM 's3://sales-eu/orders/2026-08-24.parquet'

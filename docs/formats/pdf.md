@@ -2,7 +2,7 @@
 
 `pdf`
 
-<img src="/screenshot/pdf-reader.png" alt="A PDF open in the reader, with its contents panel beside the page and a highlight over a line">
+<AppDemo name="pdf" />
 
 A PDF is drawn by ObjectExplorer's own reader and painter, not by the browser's viewer, so it reads
 the same in the desktop app, in `npx` and at objectexplorer.com/app. Nothing is sent anywhere to be
