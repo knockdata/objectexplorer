@@ -1,6 +1,6 @@
 # The tree and the list
 
-<img src="/screenshot/tree-providers.png" alt="The tree with local and cloud roots, and a folder listing beside it">
+<img src="/screenshot/tree-providers.png" style="height: 400px" alt="The tree with local and cloud roots, and a folder listing beside it">
 
 The sidebar holds every [root](/storage/connect) you added — local folders and cloud buckets in one
 tree, in the order you added them. The pane beside it lists whatever is selected.
@@ -26,7 +26,7 @@ storage class — which the info button shows.
 
 ## The grid
 
-<img src="/screenshot/story-image-grid.png" alt="A folder of images in the grid view, every tile a thumbnail of the picture">
+<img src="/screenshot/story-image-grid.png" style="width: 80%" alt="A folder of images in the grid view, every tile a thumbnail of the picture">
 
 The **Grid** icon in the toolbar, beside the list icon, shows a folder as tiles instead of rows.
 Each tile is a preview of what the object is:

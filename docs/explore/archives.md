@@ -1,6 +1,6 @@
 # Archives
 
-<AppDemo name="archive" />
+<AppDemo open="folder/demo/archive/sample.zip/sample/" tree-path="folder/demo/archive/sample.zip/sample/" :off="['tour', 'auth']" image="/screenshot/archive.png" alt="A zip browsed as a folder, its entries listed like files" />
 
 Step into a `.zip`, a `.dmg`, or an office file — `.pptx` and `.xlsx` are zips too — and browse the
 entries as if they were folders. Each entry previews with its own viewer, so a CSV inside a zip

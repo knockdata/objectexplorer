@@ -1,11 +1,19 @@
 <script setup>
 import { withBase } from "vitepress"
+import { ref } from "vue"
 
 defineProps({
 	story: { type: Object, required: true },
 })
 
-// A card with a recorded video plays it in place while the pointer or focus is on it.
+// Play swaps the poster for the screen recording, which is 9:16 like the card, and plays it in place.
+const playing = ref(false)
+
+function playRecording() {
+	playing.value = true
+}
+
+// A card with a recorded video plays it in place while the pointer is on it.
 function playVideo(event) {
 	const video = event.currentTarget.querySelector("video")
 	if (video) {
@@ -27,41 +35,62 @@ function pauseVideo(event) {
      screenshot the card shows, placed at build time by posterPlacement.js; `background` fills the whole
      card, so the picture and the card read as one area. -->
 <template>
-	<a
+	<div
 		class="story-card"
-		:href="withBase(story.url)"
 		:style="{ '--marker': `var(--marker-${story.marker})`, background: story.background }"
 		@mouseenter="playVideo"
 		@mouseleave="pauseVideo"
-		@focus="playVideo"
-		@blur="pauseVideo"
 	>
 		<span class="story-card-art">
 			<video
-				v-if="story.video"
+				v-if="playing"
 				class="story-card-poster"
-				:src="withBase(story.video)"
-				:poster="story.poster ? withBase(story.poster) : undefined"
-				muted
+				:src="withBase(story.recording)"
+				autoplay
+				controls
 				playsinline
-				loop
-				preload="none"
 			></video>
-			<img
-				v-else-if="story.poster"
-				class="story-card-poster"
-				:src="withBase(story.poster)"
-				:style="story.posterStyle"
-				alt=""
-				loading="lazy"
-			>
-			<span class="story-card-badge">{{ story.video ? `▶ ${story.runtime}` : "Read" }}</span>
+			<a v-else class="story-card-art-link" :href="withBase(story.url)" tabindex="-1">
+				<video
+					v-if="story.video"
+					class="story-card-poster"
+					:src="withBase(story.video)"
+					:poster="story.poster ? withBase(story.poster) : undefined"
+					muted
+					playsinline
+					loop
+					preload="none"
+				></video>
+				<img
+					v-else-if="story.poster"
+					class="story-card-poster"
+					:src="withBase(story.poster)"
+					:style="story.posterStyle"
+					alt=""
+					loading="lazy"
+				>
+			</a>
+			<span v-if="playing === false" class="story-card-actions">
+				<a class="story-card-badge" :href="withBase(story.url)">
+					<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z" />
+						<path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z" />
+					</svg>
+					<span>Read</span>
+				</a>
+				<button v-if="story.recording" class="story-card-badge" type="button" @click="playRecording">
+					<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
+						<path d="M8 5v14l11-7z" />
+					</svg>
+					<span>Play</span>
+				</button>
+			</span>
 		</span>
-		<span class="story-card-text">
+		<a class="story-card-text" :href="withBase(story.url)">
 			<span class="story-card-question">{{ story.title }}</span>
 			<span class="story-card-subtitle">{{ story.subtitle }}</span>
-		</span>
-	</a>
+		</a>
+	</div>
 </template>
 
 <style>
@@ -81,7 +110,7 @@ function pauseVideo(event) {
 }
 
 .story-card:hover,
-.story-card:focus-visible {
+.story-card:focus-within {
 	border-color: rgba(234, 241, 248, 0.34);
 	box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--marker) 75%, transparent);
 	transform: translateY(-3px);
@@ -105,27 +134,53 @@ function pauseVideo(event) {
 	width: 100%;
 }
 
+.story-card-art-link {
+	display: block;
+	height: 100%;
+}
+
+.story-card-actions {
+	bottom: 14px;
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+	left: 14px;
+	position: absolute;
+	right: 14px;
+}
+
 .story-card-badge {
 	-webkit-backdrop-filter: blur(6px);
+	align-items: center;
 	backdrop-filter: blur(6px);
 	background: rgba(10, 12, 14, 0.74);
 	border: 1px solid var(--rule);
 	border-radius: 999px;
-	bottom: 14px;
 	color: var(--chalk-2);
+	cursor: pointer;
+	display: inline-flex;
+	font-family: inherit;
 	font-size: 12.5px;
-	left: 14px;
+	gap: 5px;
 	padding: 5px 11px;
-	position: absolute;
+	text-decoration: none;
+}
+
+.story-card-badge:hover,
+.story-card-badge:focus-visible {
+	border-color: var(--marker);
+	color: var(--chalk);
 }
 
 .story-card-text {
 	/* border-top: 1px solid var(--rule-soft); */
+	color: inherit;
 	display: flex;
 	flex: 1;
 	flex-direction: column;
 	gap: 6px;
 	padding: 15px 16px 18px;
+	text-decoration: none;
 }
 
 .story-card-question {

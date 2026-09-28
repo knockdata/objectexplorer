@@ -1,6 +1,6 @@
 # Where the storage went
 
-<AppDemo name="usage" />
+<AppDemo open="usage/" :component="{ insight: 'off' }" image="/screenshot/usage-visualization.png" alt="The usage disc: a pole for every root and every kind of thing it holds" />
 
 Open ObjectExplorer with nothing selected and this is what fills the window: every root you have
 added, drawn as one disc. A sector per kind of thing — media, documents, datasets, archives, code,
@@ -50,7 +50,7 @@ Nothing on the disc says how often anything was **written**. That is not recorde
 | A wide cap                    | many objects                         | compare the object count with the size                              |
 | A ring wider than its cap     | something reads it again and again   | check the base: pale is a person, dark is an agent                  |
 | An empty base and no ring     | paid for, never opened               |                                                                     |
-| An arch                       | the same bytes in two places         | click either end for the size, and **Draw insights** for the saving |
+| An arch                       | the same bytes in two places         | click either end for the size, and **Insight** for the saving       |
 | A post                        | nothing listed there yet             | open it once in the tree                                            |
 
 ## Sectors and colour
@@ -108,13 +108,13 @@ Along the bottom of the disc:
 | Button            | What it does                                                                                                                       |
 |-------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | **Size / Cost**   | what the heights measure                                                                                                           |
-| **Draw insights** | circles the poles the numbers single out and writes each finding beside it; press again to take them off                           |
+| **Insight**       | a toggle: circles the poles the numbers single out and writes each finding beside it; press again to take them off                 |
 | **Spin**          | turns the disc slowly until pressed again                                                                                          |
-| **Marker**        | draws on the glass over the disc: while it is on, a drag is a stroke instead of a turn                                             |
+| **Marker**        | draws on the glass over the disc: while it is on, a drag is a stroke that undraws a moment later; Esc or Marker again puts it down |
 | **Share**         | shares the disc as a table — one row per pole, with its kind, provider, size, objects, cost, bytes held here, cold bytes and reads |
 | **Reset**         | takes off the insights and the marker's strokes, lets go of what is picked, and puts the view back where it started                |
 
-**Draw insights** writes up to five findings, worked out from the numbers rather than written by
+**Insight** writes up to five findings, worked out from the numbers rather than written by
 anyone: where the money goes, warm storage holding cold data, one object that is most of a pole, a
 pole that is paid for and never opened, and the biggest thing held twice.
 
@@ -164,7 +164,7 @@ of it unchanged for over a year and 26% already on this machine. Reading it in o
 8. **Click to check.** Every card ends with the sum behind its headline, so the impression the
    picture gave can be held against the arithmetic before anyone acts on it.
 
-**Draw insights** in the toolbar writes the same findings — steps 1, 3, 4, 5 and 6 — over the disc,
+**Insight** in the toolbar writes the same findings — steps 1, 3, 4, 5 and 6 — over the disc,
 each pointing at its pole. That is six decisions from one screen, none of which a bucket listing would
 have offered.
 
@@ -179,7 +179,7 @@ to let go.
 ## Where it opens
 
 It fills the window whenever nothing else is open. **Settings → General** turns that off, and
-`⇧⌘P` → **View: Storage Usage** opens it as a tab whenever you want it.
+`⇧⌘P` → **View: Usage Visualization** opens it as a tab whenever you want it.
 
 A fresh install has nothing of its own to draw yet, so the disc opens on made-up data with the
 **Demo** switch on — the sample in the worked example above. Switch Demo off to see yours, and on again

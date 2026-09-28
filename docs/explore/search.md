@@ -1,6 +1,6 @@
 # Search
 
-<AppDemo name="search" />
+<AppDemo open="folder/demo/" search="station" :off="['tour', 'auth']" image="/screenshot/search.png" alt="Search results across the demo folder, grouped by file with the matching line" />
 
 Search local folders and cloud buckets in the same run: literal, whole word or regex, with include
 and exclude globs, and `.gitignore` honoured when you point it at a repo.

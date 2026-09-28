@@ -2,7 +2,14 @@
 
 The engine is DuckDB, compiled into the app, reading the object where it lives.
 
-<AppDemo name="sql" />
+<script setup>
+// the notebook cells the frame opens on, each "<type>:<code>"
+const cells = [
+	`table:SELECT country, type, count(*) AS stations FROM 'nl_train_stations.parquet' GROUP BY ALL ORDER BY stations DESC`,
+]
+</script>
+
+<AppDemo open="folder/demo/nl_train_stations.parquet" :cells="cells" image="/screenshot/notebook-sql.png" alt="A table cell: the SQL over the object, and the rows it returned with their column summaries" />
 
 ```sql
 SELECT region, count(*), sum(amount)

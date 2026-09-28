@@ -2,12 +2,12 @@
 import { withBase } from "vitepress"
 import { computed } from "vue"
 import { data as stories } from "../data/story.data.js"
-import storyFeatured from "../data/storyFeatured.js"
+import { featuredCount } from "../data/stories.js"
 import StoryCard from "./StoryCard.vue"
 
 // One component, two layouts: the landing is a rail of 9:16 cards at every width, the list a grid
-// of the same cards, 2, 3 or 5 across. `list` is the /story page, which shows every story in episode order; the landing shows
-// the ones named in storyFeatured.js, in that file's order, and ends with a More card.
+// of the same cards, 2, 3 or 5 across. `list` is the /story page, which shows every story in stories.js order; the landing shows
+// the first featuredCount of them and ends with a More card.
 const props = defineProps({
 	list: { type: Boolean, default: false },
 })
@@ -17,7 +17,7 @@ const visibleStories = computed(function () {
 		return stories
 	}
 	else {
-		return storyFeatured.map(url => stories.find(story => story.url === url)).filter(Boolean)
+		return stories.slice(0, featuredCount)
 	}
 })
 </script>

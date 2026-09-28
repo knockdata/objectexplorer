@@ -3,7 +3,7 @@
 `glb` `gltf` `fbx` `blend` `obj` `mtl`, and Unity's `unity` `prefab` `asset` `mesh` `mat` `anim`
 `controller`
 
-<AppDemo name="model3d" />
+<AppDemo open="folder/demo/model/City.glb" image="/screenshot/format-model.png" alt="City.glb in the model view: a low-poly city block, with the model toolbar above it" />
 
 A model opens as the model: its meshes, its materials and its textures, drawn in place. No Blender,
 no game engine and no importer — the file is read as it is, the way the program that wrote it wrote

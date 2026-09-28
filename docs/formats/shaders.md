@@ -3,7 +3,7 @@
 `wgsl`, GLSL as `glsl` `vert` `frag` `vsh` `fsh` `comp` `geom` `tesc` `tese`, Godot's `gdshader`, and
 `hlsl` `fx` `shader` as a diagram
 
-<AppDemo name="shader" />
+<AppDemo open="folder/demo/shader/lit.wgsl" image="/screenshot/format-shader.png" alt="lit.wgsl in the shader view: a lit sphere, its uniforms and pipeline diagram" />
 
 A shader opens as what it does: a live preview on the left, and on the right a control for each
 uniform above a diagram of the pipeline — what goes into each stage, what it reads, and what comes

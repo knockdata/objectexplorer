@@ -29,11 +29,11 @@ Hive-partitioned exports and `YYYY/MM/DD` date prefixes read as one table the sa
 
 ## The metadata is readable too
 
-<AppDemo name="delta" />
+<AppDemo open="folder/demo/delta/sales/_delta_log/" height="360px" image="/screenshot/lake-metadata.png" alt="_delta_log opened as commit history: every version with the files it added and removed" />
 
-<AppDemo name="hudi" />
+<AppDemo open="folder/demo/hudi/sales/.hoodie/" height="360px" image="/screenshot/lake-metadata.png" alt=".hoodie opened as the timeline of commits" />
 
-<AppDemo name="iceberg" />
+<AppDemo open="folder/demo/iceberg/sales/metadata/" height="360px" image="/screenshot/lake-metadata.png" alt="An Iceberg metadata folder opened as its chain of snapshots, manifests and files" />
 
 `_delta_log` opens as the commit history, every version with the files it added and removed
 underneath it. `.hoodie` opens as the timeline, including the requested and inflight instants a

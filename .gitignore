@@ -19,6 +19,8 @@ test.md
 RELEASE.md
 objectexplorer-mockup-v4.html
 next.md
+*.mov
+*.mp4
 
 # the docs site: .* above hides every dot-name, and .vitepress is one
 !docs/.vitepress/

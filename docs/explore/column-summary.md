@@ -1,6 +1,13 @@
 # Column summaries
 
-<AppDemo name="columnSummary" />
+<script setup>
+// the notebook cells the frame opens on, each "<type>:<code>"
+const cells = [
+	`table:SELECT * FROM 'demo/nl_train_stations.parquet' LIMIT 100`,
+]
+</script>
+
+<AppDemo open="folder/demo/nl_train_stations.parquet" :cells="cells" height="330px" image="/screenshot/column-summary.png" alt="A parquet grid with a summary under every column header" />
 
 Open a table and every column comes with its own shape: a histogram for numbers, a box plot for
 distributions, a split bar for categories, a unique count for identifiers, the range underneath. It

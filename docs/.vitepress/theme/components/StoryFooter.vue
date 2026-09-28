@@ -31,7 +31,7 @@ const shareTargets = computed(() => [
 	},
 ])
 
-const position = computed(() => stories.findIndex(story => story.episode === frontmatter.value.episode))
+const position = computed(() => stories.findIndex(story => story.url === `/${page.value.relativePath.replace(/\.md$/, "")}`))
 const previous = computed(() => stories[position.value - 1] ?? null)
 const next = computed(() => stories[position.value + 1] ?? null)
 </script>

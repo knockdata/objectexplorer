@@ -53,6 +53,7 @@ const plans = [
 		href: "mailto:rockie@knockdata.com?subject=ObjectExplorer%20Enterprise",
 		includes: "Everything in Pro and:",
 		features: [
+			"Single sign-on, OIDC & SAML",
 			"Hardware-bound encryption",
 			"Unlimited audit log history",
 			"Support within one business day",

@@ -15,7 +15,7 @@ What changed in each version. Every build is on the
 ## v0.7.6  —  2026-09-23
 
 - Guided onboarding: a welcome box, spotlight tours of the layout, left and right side, and a **?** menu to replay them
-- The storage usage disc opens as a tab
+- The usage visualization disc opens as a tab
 - The app runs in place on the landing page, and can be expanded to full size
 
 ## v0.7.5  —  2026-09-22
@@ -31,7 +31,7 @@ What changed in each version. Every build is on the
 - A project's buckets are asked for when you open it, not before, so a long project list costs nothing until you look inside one
 - A project that will not list its buckets says **No permission to list buckets** right under it, instead of a lock icon alone, and moves to the bottom of the list; what Google said is on hover
 - An object your account may not read opens on **No permission to read**, naming the account and the permission Google said is missing — before, it asked you to sign in again, which could never have helped
-- The storage usage disc opens full on its first days instead of empty: made-up data, with a new **Demo** switch that says so and turns it off
+- The usage visualization disc opens full on its first days instead of empty: made-up data, with a new **Demo** switch that says so and turns it off
 - After seven days of use the disc opens on your own storage; the switch shows the demo again whenever you want to see what a full disc looks like
 - At objectexplorer.com/app the disc always opens on the demo, since nothing a visitor lists there is theirs to keep
 - objectexplorer.com/app no longer shows Settings panes it cannot serve — MCP, MCP sessions, Writing tool, About and Check for Updates — where each one only ever showed an error or did nothing; the desktop app and `npx` keep all of them

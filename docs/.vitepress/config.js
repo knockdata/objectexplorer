@@ -123,6 +123,11 @@ export default defineConfig({
 	// for ThemeNav and ThemeFooter, the override VitePress documents for its internal components. Its
 	// outline item is swapped too, for ThemeOutlineItem, which lays a release out as version and date.
 	vite: {
+		// The app the docs frame: the live one unless APP_URL says otherwise, so a change can be
+		// tried against a local app before it ships — APP_URL=http://localhost:3034/ npm run docs:dev
+		define: {
+			__APP_URL__: JSON.stringify(process.env.APP_URL ?? "https://objectexplorer.com/app/"),
+		},
 		resolve: {
 			alias: [
 				{ find: /^.*\/VPNav\.vue$/, replacement: fileURLToPath(new URL("./theme/ThemeNav.vue", import.meta.url)) },

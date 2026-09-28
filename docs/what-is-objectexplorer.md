@@ -6,7 +6,9 @@ Storage, Azure Blob Storage, Microsoft OneLake, the folders Dropbox, OneDrive, i
 Box keep on your disk, and every other folder you have, in one tree — and opens what is inside them,
 including the formats a cloud console will never render.
 
-<img src="/screenshot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it">
+<!-- <img src="/screenshot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it"> -->
+
+<AppDemo open="usage/" :component="{ insight: 'off' }" image="/screenshot/usage-visualization.png" alt="The usage disc: a pole for every root and every kind of thing it holds" />
 
 The desktop app is able to install to Mac/Windows/Linux: It will have local HTTP server bound to `127.0.0.1` plus the operating system's own webview,
 both inside the same executable. 
@@ -15,9 +17,10 @@ Everything stay at the machine you run.
 
 It can also deploy on a server in enterprise setup. Refer to [deployment](/reference/deployment) for more detail
 
+
 ## How it fits together
 
-<AppDemo name="fitsTogether" />
+<AppDemo open="folder/demo/diagram/how-it-fits-together.excalidraw" height="400px" image="/diagram/how-it-works.svg" alt="The window and any agent talk to one local server, which signs requests straight to your storage" />
 
 You and an agent ask the same local server, and only that server talks to your storage, with your
 own credentials. What it remembers — names and sizes, column statistics, notebook code, cached

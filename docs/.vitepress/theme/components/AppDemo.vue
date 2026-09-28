@@ -1,60 +1,73 @@
 <script setup>
 import { withBase } from "vitepress"
 import { onMounted, ref } from "vue"
-import { appDemos } from "../data/appDemos.js"
 
-// The app itself, framed on the page, opened on the one demo object the page talks about. With
-// `focus` the frame shows only that object: no tree, no tabs, no toolbar, no status bar
-// (rock2/explorer/src/urlOptions.js reads the same parameters). The corner icon opens the full
-// app on whatever the frame shows now, so a reader who went somewhere inside it keeps going.
+// The app itself, framed on the page, opened on the one demo object the page talks about:
+//
+//   <AppDemo open="folder/demo/nl_train_stations.parquet" view="hex" :off="['tour', 'auth']" />
+//
+// The frame turns off the parts of the app the page is not about — by default all of them, so only
+// the object shows (rock2/explorer/query-parameters.md has every parameter). The corner icon opens
+// the full app on whatever the frame shows now, so a reader who went somewhere keeps going.
 const props = defineProps({
-	// a key of data/appDemos.js, which says what the frame opens and how
-	name: { type: String, required: true },
+	// an item in the public app's demo folder, the only root objectexplorer.com/app serves:
+	// "folder/demo/<path>", or "usage/" for the usage disc
+	open: { type: String, required: true },
+	// the render mode: hex, text, notebook, …
+	view: { type: String, default: "" },
+	// notebook cells, each "<type>:<code>"; long ones read best from a <script setup> in the page
+	cells: { type: Array, default: () => [] },
+	search: { type: String, default: "" },
+	// the tree opens down to this item
+	treePath: { type: String, default: "" },
+	// the parts of the window the frame turns off; a demo that needs the tree or the toolbar lists less
+	off: { type: Array, default: () => ["activity", "tree", "tab", "header", "footer", "tour", "auth"] },
+	// handed to the view as component.<name>: { insight: 'on' }; a frame also adds controls: 'off'
+	component: { type: Object, default: () => ({}) },
+	height: { type: String, default: "520px" },
+	// shown instead of the frame where the app will not be framed
+	image: { type: String, default: "/screenshot/hero.png" },
+	alt: { type: String, default: "ObjectExplorer" },
 })
 
-const demo = appDemos[props.name]
-const focus = demo.focus ?? true
-const height = demo.height ?? "520px"
-const image = demo.image ?? "/screenshot/hero.png"
-const alt = demo.alt ?? "ObjectExplorer"
+const framedComponent = { controls: "off", ...props.component }
 
-// framed: the frame's own URL, which shows no tours; the full app is left to offer them
+// framed: the frame's own URL, with its parts turned off; the full app has everything
 function query(framed) {
 	const params = new URLSearchParams()
-	params.set("open", "*" + demo.open)
-	if (demo.view) {
-		params.set("view", demo.view)
+	params.set("open", "*" + props.open)
+	if (props.view) {
+		params.set("view", props.view)
 	}
-	for (const cell of demo.cells ?? []) {
+	for (const cell of props.cells) {
 		params.append("cell", cell)
 	}
-	if (demo.search) {
-		params.set("search", demo.search)
+	if (props.search) {
+		params.set("search", props.search)
 	}
-	if (demo.reveal) {
-		params.set("reveal", "")
+	if (props.treePath) {
+		params.set("treePath", props.treePath)
 	}
-	if (framed && focus) {
-		params.set("focus", "")
+	const handed = framed ? framedComponent : props.component
+	for (const [name, value] of Object.entries(handed)) {
+		params.set("component." + name, value)
 	}
 	if (framed) {
-		params.set("tour", "off")
+		for (const part of props.off) {
+			params.set(part, "off")
+		}
 	}
 	return params.toString()
 }
 
 // Same rule as AppSection: the app only lets our own sites frame it (rock2/server/common/Headers.js).
-// `?app=http://localhost:3034/` on the page frames a local app instead, to try a change before it ships.
+// __APP_URL__ is the live app, or the one APP_URL named when the docs were started (config.js).
 const homeSites = ["https://objectexplorer.com", "https://knockdata.github.io"]
-const appUrl = ref("https://objectexplorer.com/app/")
+const appUrl = ref(__APP_URL__)
 const canFrame = ref(false)
 const $frame = ref(null)
 
 onMounted(function () {
-	const local = new URLSearchParams(location.search).get("app")
-	if (local) {
-		appUrl.value = local
-	}
 	canFrame.value = homeSites.includes(location.origin) || location.hostname === "localhost"
 })
 
@@ -65,10 +78,12 @@ function openFull(event) {
 	let search = query(false)
 	try {
 		const current = new URLSearchParams($frame.value.contentWindow.location.search)
-		const moved = current.get("open") !== "*" + demo.open
+		const moved = current.get("open") !== "*" + props.open
 		if (moved) {
-			current.delete("focus")
-			current.delete("tour")
+			for (const part of props.off) {
+				current.delete(part)
+			}
+			current.delete("component.controls")
 			search = current.toString()
 		}
 		else {

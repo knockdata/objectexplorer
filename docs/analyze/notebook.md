@@ -1,6 +1,21 @@
 # The notebook
 
-<AppDemo name="notebook" />
+<script setup>
+// the notebook cells the frame opens on, each "<type>:<code>"
+const cells = [
+	`markdown:# Stations per country
+A table cell asks, the chart cell under it draws what came back.`,
+	`table:SELECT country, count(*) AS stations FROM 'nl_train_stations.parquet' GROUP BY country ORDER BY stations DESC`,
+	`chart:Plot.plot({
+	width, height,
+	marginLeft: 60,
+	grid: true,
+	marks: [Plot.barY(rows, {x: "country", y: "stations", sort: {x: "-y"}, tip: true})],
+})`,
+]
+</script>
+
+<AppDemo open="folder/demo/nl_train_stations.parquet" :cells="cells" height="680px" image="/screenshot/notebook-sql.png" alt="A notebook: a note, a query over the parquet, and a chart of its rows" />
 
 Open a table and it opens as a notebook: a column of cells, each one a few lines of code over its own
 output. The first two are already written — a `SELECT *` over the object you clicked, and a chart of

@@ -107,8 +107,7 @@ this repository packages into the desktop builds. That bundle is proprietary sof
 AB, under the terms in the package's `LICENSE.md`. Versions up to and including 0.7.0 were published
 under MIT.
 
-The app bundles work by other people, each under its own terms — Excalifont under the SIL Open
-Font License, Seti UI's file-type icons and DuckDB under MIT, VS Code's codicons under CC BY 4.0,
+The app bundles work by other people, each under its own terms — Seti UI's file-type icons and DuckDB under MIT, VS Code's codicons under CC BY 4.0,
 SQLite in the public domain, and Google's Cloud service icons under Google's own icon terms. Every
 one of them is named, with its licence text, in `LICENSES.md` inside the app: open
 [objectexplorer.com/app/LICENSES.md](https://objectexplorer.com/app/LICENSES.md), or find the same
