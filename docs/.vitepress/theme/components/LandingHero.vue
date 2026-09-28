@@ -11,8 +11,8 @@ const emit = defineEmits(["open-app"])
 <template>
 	<section class="landing-hero landing-wrap">
 		<div class="landing-hero-copy">
-			<h1>
-				This Shouldn't Be That Hard
+			<h1 class="rock">
+				<span style="font-weight: bold">This Shouldn't Be That Hard</span>
 				<span class="landing-hero-sub">to work with cloud storage.</span>
 			</h1>
 			<!-- the one drawn mark on the page: a squeegee stroke, echoing the wipe -->

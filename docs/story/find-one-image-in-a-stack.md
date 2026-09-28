@@ -1,5 +1,5 @@
 ---
-title: "Find one image in four thousand?"
+title: "Find one image in a stack"
 subtitle: "The folder is a grid of pictures."
 episode: 8
 runtime: null
@@ -76,7 +76,7 @@ So I synced the whole prefix to my laptop from the terminal. Four gigabytes. Whe
 
 Nobody did anything wrong. The console showed the objects the way it shows all objects. The sync command did exactly what it says. The shared assumption was that looking at a picture in a bucket requires the whole folder to be on my disk first.
 
-## Ideal
+## Ideal Solution
 
 So what did I actually want? To see the pictures, a screenful at a time, and pick. A folder of images should look like a folder of images, the way it does on every phone.
 

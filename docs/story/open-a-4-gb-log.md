@@ -1,5 +1,5 @@
 ---
-title: "Open a 4 GB log?"
+title: "Open a 4 GB log"
 subtitle: "Line nine million, as fast as line one."
 episode: 13
 runtime: null
@@ -78,7 +78,7 @@ The second attempt was smarter, or felt smarter. I piped the cloud's copy comman
 
 None of those tools did anything wrong. Each did exactly what it was built to do. The problem is the shape of the walk: every step assumed the whole file had to be here before any of it could be looked at.
 
-## Ideal
+## Ideal Solution
 
 So I tried to start from what I actually wanted. Not the file. Fifty lines. A screen holds about fifty lines of log, and I can only read one screen at a time.
 

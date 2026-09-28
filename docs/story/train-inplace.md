@@ -1,5 +1,5 @@
 ---
-title: "Train without copying data out?"
+title: "Train inplace"
 subtitle: "The rows stay. The answer leaves."
 episode: 12
 runtime: null
@@ -78,7 +78,7 @@ Three weeks later I had my extract. I downloaded it and trained on it. And now t
 
 Everyone acted sensibly. The review protected the data. The person who built the extract did careful work. The shared assumption was that to compute on data, the data has to come to where the code is.
 
-## Ideal
+## Ideal Solution
 
 So I compared the sizes. My training code was a few kilobytes. The table was many gigabytes. Moving the big thing to the small thing is the expensive direction, in time, in money, and in risk. Code is small. Data is big. Send the small thing.
 

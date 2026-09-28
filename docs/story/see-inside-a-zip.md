@@ -1,5 +1,5 @@
 ---
-title: "See inside a zip without downloading?"
+title: "See inside a zip"
 subtitle: "Every zip has a packing list. Show it."
 episode: 21
 runtime: null
@@ -76,7 +76,7 @@ So I copied a path, went to the terminal, downloaded the zip, and listed its con
 
 Nothing misbehaved. The console lists objects; a zip is an object. The command line downloaded what I asked for, and the zip tool listed it. The shared assumption was that to see what is in a box, you have to carry the whole box home first.
 
-## Ideal
+## Ideal Solution
 
 So I looked at how a zip is laid out. It is a box of files with a packing list at the end. Each file is stored one after another, and after all of them comes the central directory: one entry per file, with its name, its size, its date and where in the zip it starts. At the very end is a short record, 22 bytes when there is no comment, that says where the central directory begins and how many entries it has.
 

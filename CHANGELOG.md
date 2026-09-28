@@ -4,6 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.8.0  —  2026-09-28
+
+- Our own hand-drawn font, Rock, in drawings, presentations and the usage visualization disc, replacing Excalifont
+- The page URL sets how the window starts: `<part>=off` hides the activity bar, tree, tabs, header, footer, tour or account; `view=`, `search=`, `cell=` and `treePath=` pick what opens first; `component.<name>=` is handed to the view
+- `treePath=` opens the tree down to an object and selects it
+- The usage visualization disc can open with its insights already drawn (`component.insight=on`)
+- The demo folder has a sample of each kind of file: a STEP part, a 3D city, a PDF, an ebook, a photo with GPS, a shader, a sprite sheet, a zip and two diagrams
+
 ## v0.7.7  —  2026-09-25
 
 - Enterprise mode: run `npx` as a team server with a licence or a 14-day trial, sign-in through OIDC or SAML (Okta tested), an admin list and an audit log; update only with `oe check` / `oe upgrade`, and `oe rollback` if needed

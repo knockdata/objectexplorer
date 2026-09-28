@@ -1,6 +1,6 @@
 ---
-title: "Share a result without the PII?"
-subtitle: "Rewrite the columns, send the link."
+title: "Safe share without the PII"
+subtitle: "Remove sensative information"
 episode: 9
 runtime: null
 video: null
@@ -77,7 +77,7 @@ Now it lives in my sent folder and in their inbox, and there is no way to take i
 
 I don't think I did anything wrong, and neither did the spreadsheet or the email. The shared assumption was that sharing a result means sending a file: a whole copy, edited by hand, with no rules attached to it once it leaves. And what I decided about the email column lived in one spreadsheet, where the agent would never see it.
 
-## Ideal
+## Ideal Solution
 
 So I tried to start from what I was really doing. I wasn't sending a file. I was answering a question, and the answer needed some columns and not others.
 

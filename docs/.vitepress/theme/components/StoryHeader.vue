@@ -8,7 +8,7 @@ const { frontmatter } = useData()
      `video:`. The poster is not drawn here: the story places it in its Ideal (StoryPoster). -->
 <template>
 	<header class="story-header">
-		<h1>{{ frontmatter.title }}</h1>
+		<h1 class="rock"><span>{{ frontmatter.title }}</span><span> shouldn't be that hard</span></h1>
 		<p class="story-header-subtitle">{{ frontmatter.subtitle }}</p>
 		<div v-if="frontmatter.video" class="story-header-media">
 			<video
@@ -30,7 +30,7 @@ const { frontmatter } = useData()
 
 .story-header h1 {
 	color: var(--vp-c-text-1);
-	font-size: 32px;
+	font-size: 40px;
 	font-weight: 700;
 	letter-spacing: -0.02em;
 	line-height: 1.2;

@@ -105,8 +105,8 @@ function appLink() {
 
 /* the recording is 9:16 over a wide picture: as tall as the picture, in its middle */
 .vp-doc .story-poster-recording {
-	background: #000;
-	border: 1px solid var(--vp-c-divider);
+	background: transparent;
+	/* border: 1px solid transparent; */
 	border-radius: 12px;
 	display: block;
 	height: 100%;

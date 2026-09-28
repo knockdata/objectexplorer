@@ -30,7 +30,7 @@ const { frontmatter } = useData()
 	background: #0e0f12;
 	border: 1px solid var(--vp-c-divider);
 	border-radius: 12px;
-	font-family: "Rock", "Comic Sans MS", cursive;
+	font-family: "Rock", "Comic Sans MS", "Segoe Print", "Chalkboard SE", "Chalkduster", cursive, sans-serif;
 	margin: 28px 0;
 	padding: 24px 20px 20px;
 }

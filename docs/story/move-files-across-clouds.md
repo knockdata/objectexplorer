@@ -1,5 +1,5 @@
 ---
-title: "Move files across clouds?"
+title: "Move files across clouds"
 subtitle: "Drag and copy."
 episode: 7
 runtime: null
@@ -79,7 +79,7 @@ So I copied the whole prefix down, and waited. Then I copied it up, and waited a
 
 None of that was a mistake. Both command lines did what they promise. The shared assumption was that a copy between two places has to go through a third place that I control, and the only such place was my laptop's disk.
 
-## Ideal
+## Ideal Solution
 
 So I tried to think about what I actually asked for: these files, over there. Both ends do the same three things. They list, they read, and they write. A read from one side is a stream of bytes, and a write to the other side takes a stream of bytes. Nothing in between needs to keep them.
 

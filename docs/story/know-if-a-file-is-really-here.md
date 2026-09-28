@@ -1,5 +1,5 @@
 ---
-title: "Know if a file is really here?"
+title: "Know if a file is really here"
 subtitle: "A file is here, or it isn't."
 episode: 18
 runtime: null
@@ -76,7 +76,7 @@ Without a network, opening it failed. A mounted bucket behaves the same way: it 
 
 The sync client wasn't wrong to stream. Keeping every file of a large drive on a small disk would be worse. The file browser wasn't wrong to show the size it was given. The shared assumption was that a file shown in a list is a file on the machine, and for most of computing history that was true.
 
-## Ideal
+## Ideal Solution
 
 So I tried to think about what I needed to know. A file is either on this machine or it isn't. That is one bit, and it is the one fact about the file my own computer can answer exactly, without asking anyone.
 

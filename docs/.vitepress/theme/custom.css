@@ -118,3 +118,7 @@ html:root {
 .VPDoc .VPDocAsideOutline .content {
 	width: fit-content;
 }
+
+.rock {
+	font-family: "Rock", "Comic Sans MS", "Segoe Print", "Chalkboard SE", "Chalkduster", cursive, sans-serif;
+}

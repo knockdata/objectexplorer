@@ -1,5 +1,5 @@
 ---
-title: "Give an agent production data?"
+title: "Agent access prod data"
 subtitle: "An agent gets rows, never keys."
 episode: 14
 runtime: null
@@ -77,7 +77,7 @@ From then on the agent could read every bucket that role could read, for as long
 
 Nobody was careless. The console issued a key, which is what it is for. The agent used it as intended. The shared assumption was that giving an agent data means giving it a credential, and a credential is close to all or nothing.
 
-## Ideal
+## Ideal Solution
 
 So I tried to start from what the agent wanted. Not a key. It wanted answers to questions: what is in this folder, what are the columns of this file, how many rows match this. Every one of those is a small, specific request.
 

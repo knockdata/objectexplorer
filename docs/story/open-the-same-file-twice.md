@@ -1,5 +1,5 @@
 ---
-title: "Open the same file twice?"
+title: "Open the same file twice"
 subtitle: "The second look is free."
 episode: 16
 runtime: null
@@ -74,7 +74,7 @@ Nobody files a ticket about this. It is just working. Each time I went back to t
 
 The console did nothing wrong. It hands over a file when asked. The shared assumption was that every look at a file in the cloud is a new download, as if the file might have changed since a minute ago.
 
-## Ideal
+## Ideal Solution
 
 So I tried to think about what actually needed to happen. The file came down once already. My disk had room for it. The file didn't change while I was looking at it. What I needed on the second look was not the file again. It was an answer to a much smaller question: is the copy I have still the right one?
 

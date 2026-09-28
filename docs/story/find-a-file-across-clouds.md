@@ -1,5 +1,5 @@
 ---
-title: "Find a file across four clouds?"
+title: "Find a file across clouds"
 subtitle: "A folder is a folder. Learn it once."
 episode: 17
 runtime: null
@@ -77,7 +77,7 @@ None of them agree on what a folder is, either. In object storage there are no f
 
 Each console is well made for its own cloud. The problem is that I don't work in one cloud. The shared assumption was that each storage service is its own world, with its own vocabulary, so a person who uses four of them learns four worlds.
 
-## Ideal
+## Ideal Solution
 
 So I asked what all of these things are. A bucket, a container, a share. As far as I can tell, to the person looking for a file, they are one thing: a place that holds files, some of them in folders. That picture is older than any of these services, and every person who has used a computer already knows how it works. You click it and it opens.
 

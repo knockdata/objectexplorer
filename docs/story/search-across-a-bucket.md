@@ -1,5 +1,5 @@
 ---
-title: "Search across a bucket?"
+title: "Search across a bucket"
 subtitle: "Type, search, every match."
 episode: 2
 runtime: null
@@ -78,7 +78,7 @@ So I went to the terminal, listed the whole bucket, and grepped the names. That 
 
 Nobody did anything wrong. The console showed me what a prefix listing can show. The command line listed what I asked it to list. The shared assumption was that searching a bucket means searching the names in it, one cloud at a time.
 
-## Ideal
+## Ideal Solution
 
 What I wanted is what my laptop has done for as long as I can remember: type a word, get every file with that word in it, names and contents, from everywhere I keep files, in one list.
 

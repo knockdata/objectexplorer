@@ -1,5 +1,5 @@
 ---
-title: "Usage visualization"
+title: "Visualize usage"
 subtitle: "See where our money goes"
 episode: 5
 runtime: null
@@ -82,7 +82,7 @@ Billing tools are there, but the purpose certainly not help us to reduce cost. W
 
 <StoryToday />
 
-## Ideal
+## Ideal Solution
 
 The answers I want to have are. 
 

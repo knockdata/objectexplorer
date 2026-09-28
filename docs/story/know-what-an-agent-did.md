@@ -1,5 +1,5 @@
 ---
-title: "Replay what an agent did?"
+title: "Know what an agent did"
 subtitle: "Play the session back, call by call."
 episode: 24
 runtime: null
@@ -78,7 +78,7 @@ The other record was the cloud's access log. I queried it in the console for the
 
 Nobody did anything wrong. The transcript is the client's diary, written for the client. The access log is the storage's, written for the storage. The assumption they share is that the story of a run gets pieced together afterwards, by a person, from records that were never meant to meet.
 
-## Ideal
+## Ideal Solution
 
 So I started from the question I had: what did it see, in the order it saw it? That is a sequence, and a sequence is something you can play.
 

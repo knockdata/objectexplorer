@@ -1,5 +1,5 @@
 ---
-title: "Where did it go?"
+title: "Find a file by its old name"
 subtitle: "Rename a file. It's still that file."
 episode: 20
 runtime: null
@@ -77,7 +77,7 @@ So I browsed folders by hand, opening the ones that seemed right and reading the
 
 Nothing malfunctioned. Object storage has no rename, only copy and delete, and the console and the command line reported exactly what was there. The shared assumption was that a name is the identity of a file, so when the name changes, the old identity is gone with it.
 
-## Ideal
+## Ideal Solution
 
 So I asked what a name is. It is a label I put on some bytes. When I renamed the file, I peeled one label off and stuck another on. The bytes didn't change. What they meant to me didn't change. Only the label did.
 

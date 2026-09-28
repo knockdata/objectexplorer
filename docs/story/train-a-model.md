@@ -1,5 +1,5 @@
 ---
-title: "Train a model?"
+title: "Train a model"
 subtitle: "Choose data, one click to train."
 episode: 6
 runtime: null
@@ -79,7 +79,7 @@ The answer was useful. I took a screenshot of the chart and pasted it into the t
 
 None of the tools were bad. The libraries are excellent. The notebook worked once it had what it needed. The shared assumption was that training a model is a separate activity, done in a separate place, by someone who first builds that place.
 
-## Ideal
+## Ideal Solution
 
 So I tried to start from what fitting a model is. For this kind of question, a gradient boosted tree model is the usual answer: it builds a few hundred small decision trees, each one correcting the last. That is arithmetic over rows. A lot of it, but a laptop does a lot of arithmetic.
 

@@ -1,5 +1,5 @@
 ---
-title: "Plot a binary file?"
+title: "Plot a binary file"
 subtitle: "Click file, choose your chart."
 episode: 4
 runtime: null
@@ -79,7 +79,7 @@ I couldn't open the format on my laptop. So I wrote a ticket. Someone who could 
 
 Nobody was slow. The analyst did the work in less time than the ticket waited. The console did what consoles do. The assumption every step shared was that a chart is something produced by a person with the right tools, rather than something you look at.
 
-## Ideal
+## Ideal Solution
 
 So I tried to think about what a chart is. It is rows, drawn. A bar chart of counts per category is a group and a count, then one rectangle per group. There is nothing in that operation a laptop finds hard, even over a million rows.
 

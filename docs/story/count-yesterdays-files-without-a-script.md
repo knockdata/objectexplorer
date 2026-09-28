@@ -1,5 +1,5 @@
 ---
-title: "Count yesterday's files without a script?"
+title: "Count yesterday's files without a script"
 subtitle: "Ask the question. Get the answer."
 episode: 22
 runtime: null
@@ -78,7 +78,7 @@ First the keys: I found the credentials, and put them where the SDK would find t
 
 Nothing was wrong with the SDK or the console. The listing API is well designed for what it is. The shared assumption was that a question about a bucket has to be translated into a program before the bucket can answer it.
 
-## Ideal
+## Ideal Solution
 
 So I tried to start from what I had. Before I touched the keyboard, I had the whole question in plain words. The words were the job. Everything after them was translation, into the language the storage API happens to speak: keys, pages, timestamps.
 

@@ -1,5 +1,5 @@
 ---
-title: "Read a lake table's history?"
+title: "Read a lake table's history"
 subtitle: "Every commit, on a timeline."
 episode: 11
 runtime: null
@@ -78,7 +78,7 @@ So I downloaded the last few and opened them in an editor. Each one is a file of
 
 Nobody did anything wrong. The table format did exactly what it was designed to do, and did it well. The console showed the files it had. The shared assumption was that a table's history is an internal detail that needs an engine to read, rather than a document written for people too.
 
-## Ideal
+## Ideal Solution
 
 So I looked at what that folder actually is. It is not an accident of storage. The table writes down every change it makes, in order, on purpose, so that any reader can replay it and agree on what the table contains. Commit zero, commit one, commit two. Each says what it added and what it removed. That is a history already, in the most literal sense.
 

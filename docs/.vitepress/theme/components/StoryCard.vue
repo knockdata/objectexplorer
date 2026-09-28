@@ -87,7 +87,7 @@ function pauseVideo(event) {
 			</span>
 		</span>
 		<a class="story-card-text" :href="withBase(story.url)">
-			<span class="story-card-question">{{ story.title }}</span>
+			<span class="story-card-question">{{ story.title }} ?</span>
 			<span class="story-card-subtitle">{{ story.subtitle }}</span>
 		</a>
 	</div>
@@ -184,7 +184,7 @@ function pauseVideo(event) {
 }
 
 .story-card-question {
-	font-size: 16.5px;
+	font-size: 15px;
 	font-weight: 600;
 	letter-spacing: -0.014em;
 	line-height: 1.22;
@@ -192,6 +192,7 @@ function pauseVideo(event) {
 
 .story-card-subtitle {
 	color: var(--marker);
+	font-family: "Rock", "Comic Sans MS", "Segoe Print", "Chalkboard SE", "Chalkduster", cursive, sans-serif;
 	font-size: 14px;
 	line-height: 1.42;
 }

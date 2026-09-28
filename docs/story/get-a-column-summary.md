@@ -1,5 +1,5 @@
 ---
-title: "Get a column summary?"
+title: "Get a column summary"
 subtitle: "One click, full stats."
 episode: 3
 runtime: null
@@ -78,7 +78,7 @@ The answer was short. The work to get it was not. And then I closed the notebook
 
 Nothing went wrong in any of that. The notebook is a fine place to do analysis. The problem is that I wasn't doing analysis. I was looking. Every step assumed that learning the shape of a file means writing a program about it.
 
-## Ideal
+## Ideal Solution
 
 So where do those numbers come from? The rows. The smallest value and the largest, how many are empty, how many are different from each other, which ones come up most. None of it needs a model or a formula. It is counting.
 

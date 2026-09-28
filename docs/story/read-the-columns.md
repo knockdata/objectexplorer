@@ -1,5 +1,5 @@
 ---
-title: "Read the columns without downloading?"
+title: "Read the columns without downloading"
 subtitle: "Read the label. Not the whole jar."
 episode: 19
 runtime: null
@@ -76,7 +76,7 @@ So I copied the path, went to the terminal, and ran the cloud's copy command. I 
 
 None of the tools were wrong. The console doesn't read file formats. The copy command copies. The notebook loaded what I pointed it at. The shared assumption was that to learn anything about a file, you first need all of it.
 
-## Ideal
+## Ideal Solution
 
 So I looked at where the column names actually live in a parquet file. The format is laid out on purpose for this question. A file starts with the four bytes PAR1. Then come the row groups, which are the data. At the very end sits the footer: the schema, the row counts, and where each column chunk starts. After the footer come four bytes giving its length, and then PAR1 again.
 

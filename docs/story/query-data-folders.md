@@ -1,5 +1,5 @@
 ---
-title: "Query three thousand date folders?"
+title: "Query data folders"
 subtitle: "One prefix, one table."
 episode: 10
 runtime: null
@@ -78,7 +78,7 @@ Then I listed the two days from the terminal to get their full paths, and loaded
 
 Nothing misbehaved. The console lists a prefix a page at a time because that is how every one of these clouds lists objects: S3 and Google hand back at most a thousand keys per request. The terminal listed what I asked for. The shared assumption was that three thousand folders are three thousand things, to be walked one at a time.
 
-## Ideal
+## Ideal Solution
 
 So I asked why there were three thousand folders. Because whoever wrote the data wrote a day at a time, and put each day in its own folder so that a reader could skip the days it doesn't want. They never meant three thousand things. It was one table the whole time, and the folder names are a column in it. That is what "year=2024" says: a column called year, with the value 2024, for every row underneath.
 

@@ -1,5 +1,5 @@
 ---
-title: "Watch an agent work?"
+title: "Watch an agent work"
 subtitle: "See what it reads, while it reads."
 episode: 23
 runtime: null
@@ -78,7 +78,7 @@ So I did what I would do for any other program touching storage. I opened the cl
 
 Nobody did anything wrong. The terminal shows what the agent decided to do. The access log records what storage was asked for, when it gets round to it. The assumption both of them share is that watching an agent is something you do after it has finished.
 
-## Ideal
+## Ideal Solution
 
 I tried to start from what I wanted while it worked. Not a list of tool names. I wanted to see the thing it was reading, the way I would see it if I had opened it myself.
 

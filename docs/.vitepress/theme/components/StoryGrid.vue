@@ -26,7 +26,7 @@ const visibleStories = computed(function () {
 	<section class="story" :class="list ? 'story-list' : 'story-landing'">
 		<div class="landing-wrap">
 			<div v-if="list" class="story-list-head">
-				<h1>This Shouldn't Be That Hard</h1>
+				<h1 class="rock">This Shouldn't Be That Hard</h1>
 				<p>
 					Each one is an afternoon it happens in: how it goes today, and how it goes in ObjectExplorer.
 					Articles for now; the lightboard video joins each one as it is recorded.
@@ -34,7 +34,7 @@ const visibleStories = computed(function () {
 			</div>
 			<div v-else class="story-head">
 				<h2 style="text-transform: uppercase;">This Shouldn't Be That Hard</h2>
-				<p>ONE at a time</p>
+				<p class="rock">ONE at a time</p>
 			</div>
 			<div class="story-rail">
 				<StoryCard v-for="story in visibleStories" :key="story.url" :story="story" />
@@ -73,13 +73,14 @@ const visibleStories = computed(function () {
 
 .story-list-head h1 {
 	color: var(--vp-c-text-1);
-	font-size: 32px;
-	font-weight: 700;
+	font-size: 42px;
+	font-weight: bold;
+
 	letter-spacing: -0.02em;
 	line-height: 1.2;
 	margin: 0 0 12px;
 	word-spacing: 4px;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 
 .story-list-head p {

@@ -1,5 +1,5 @@
 ---
-title: "Prove what the agent read?"
+title: "Prove what the agent read"
 subtitle: "Every call, written down first."
 episode: 15
 runtime: null
@@ -76,7 +76,7 @@ That is a lot less than the question. It told me the agent's key had touched a s
 
 The logs did what they were built for, which is auditing access to storage. Nobody did anything wrong. The shared assumption was that the record of what an agent read can be reconstructed afterwards, from the outside, by the storage.
 
-## Ideal
+## Ideal Solution
 
 So I asked who actually knows what the agent read. Not the storage. The storage saw requests for bytes. The thing that knew was whatever stood between the agent and the data at the moment it answered. It saw the question. It decided whether the rules allowed it, and which rule. It picked the rows. It measured the answer. At that moment it knew everything the auditor would later want, and in most setups it then threw it away.
 
