@@ -85,12 +85,9 @@ export function clearRunning() {
 }
 
 // In the server worker, which has an event loop while the main thread is blocked in the window's.
-// Resolves with the port it listens on, loopback only.
-export function listenForOpen(addonFile, token) {
-	const holder = { exports: {} }
-	process.dlopen(holder, addonFile)
-	const addon = holder.exports
-
+// openFiles is handed the paths of each accepted request. Resolves with the port it listens on,
+// loopback only, and the server, so a test can close it.
+export function listenForOpen(openFiles, token) {
 	const server = http.createServer(function (req, res) {
 		const allowed = req.method === "POST" && req.url === "/open" && req.headers["x-token"] === token
 		if (allowed) {
@@ -99,7 +96,7 @@ export function listenForOpen(addonFile, token) {
 			req.on("end", function () {
 				const paths = parsePaths(body)
 				log("open: a second launch handed over", paths.join(", "))
-				addon.openFiles(JSON.stringify(paths))
+				openFiles(paths)
 				res.end("ok")
 			})
 		} else {
@@ -108,7 +105,7 @@ export function listenForOpen(addonFile, token) {
 		}
 	})
 	return new Promise(function (resolve) {
-		server.listen(0, "127.0.0.1", () => resolve(server.address().port))
+		server.listen(0, "127.0.0.1", () => resolve({ port: server.address().port, server }))
 	})
 }
 

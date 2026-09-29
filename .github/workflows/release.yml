@@ -262,6 +262,7 @@ jobs:
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/drop-mac.h native/drop-mac.m native/drop-linux.h native/drop-linux.c
           ls -l native/applog.h native/applog.c
+          ls -l native/open.h native/open-mac.h native/open-mac.m native/open-linux.h native/open-linux.c native/open-windows.h native/open-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
       - uses: actions/setup-node@v6
         with:
@@ -303,6 +304,8 @@ jobs:
       - run: npm run build
         env:
           OBJECTEXPLORER_TARBALL: ${{ github.workspace }}/candidate/objectexplorer.tgz
+      # the Open With lists and the addon's openFiles, on the platform that compiled it
+      - run: npm test
 
       - name: Check the signature
         run: |
@@ -358,6 +361,7 @@ jobs:
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/drop-mac.h native/drop-mac.m native/drop-linux.h native/drop-linux.c
           ls -l native/applog.h native/applog.c
+          ls -l native/open.h native/open-mac.h native/open-mac.m native/open-linux.h native/open-linux.c native/open-windows.h native/open-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
       - uses: actions/setup-node@v6
         with:
@@ -391,6 +395,8 @@ jobs:
       - run: npm run build
         env:
           OBJECTEXPLORER_TARBALL: ${{ github.workspace }}/candidate/objectexplorer.tgz
+      # the Open With lists and the addon's openFiles, on the platform that compiled it
+      - run: npm test
       - shell: bash
         run: ls -la dist
 
@@ -551,6 +557,7 @@ jobs:
           ls -l native/webview-mac.m native/webview-linux.c native/webview-windows.c
           ls -l native/drop-mac.h native/drop-mac.m native/drop-linux.h native/drop-linux.c
           ls -l native/applog.h native/applog.c
+          ls -l native/open.h native/open-mac.h native/open-mac.m native/open-linux.h native/open-linux.c native/open-windows.h native/open-windows.c
           ls -l native/napi/node_api.h native/napi/node_api.def
       - uses: actions/setup-node@v6
         with:
@@ -567,6 +574,8 @@ jobs:
       - run: npm run build
         env:
           OBJECTEXPLORER_TARBALL: ${{ github.workspace }}/candidate/objectexplorer.tgz
+      # the Open With lists and the addon's openFiles, on the platform that compiled it
+      - run: npm test
 
       # the whole point of the dlopen backend: nothing links webkit, so nothing requires it.
       # Without this the dependency could come back and only a user without webkit would find out.

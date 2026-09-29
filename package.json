@@ -16,6 +16,7 @@
 		"msix:store": "node scripts/msix.mjs store",
 		"msix:bundle": "node scripts/msix-bundle.mjs",
 		"smoke": "node scripts/smoke.mjs",
+		"test": "node --test \"test/*.test.js\"",
 		"docs:dev": "APP_URL=http://localhost:3004/ vitepress dev docs",
 		"docs:build": "vitepress build docs",
 		"docs:preview": "vitepress preview docs"

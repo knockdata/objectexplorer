@@ -67,7 +67,12 @@ async function start() {
 	// only with a window: a second launch's files go to it, and there is none to go to otherwise
 	let openPort = null
 	if (addonFile) {
-		openPort = await listenForOpen(addonFile, openToken)
+		// the window's own addon, loaded a second time: one process shares its native state, so
+		// this reaches the window the main thread made
+		const holder = { exports: {} }
+		process.dlopen(holder, addonFile)
+		const listening = await listenForOpen(paths => holder.exports.openFiles(JSON.stringify(paths)), openToken)
+		openPort = listening.port
 	} else {
 	}
 	parentPort.postMessage({ port: listenPort, openPort })

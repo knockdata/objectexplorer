@@ -19,8 +19,7 @@ export function loadAddon(name, readAsset) {
 }
 
 // The file, for a thread that cannot read the SEA's assets itself: the server worker loads the
-// window's addon from here to hand it files (openFiles.js). One process loading one .node twice
-// shares its native state, which is the point — the worker reaches the window the main thread made.
+// window's addon from here to hand it files (server-worker.js).
 export function extractAddon(name, readAsset) {
 	const assetName = `${name}-${process.platform}-${process.arch}.node`
 	// Keyed by the asset's own bytes, not by the app version. The version now comes from the npm
