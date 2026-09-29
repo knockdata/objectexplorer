@@ -10,6 +10,7 @@
 #import <WebKit/WebKit.h>
 #include "webview.h"
 #import "drop-mac.h"
+#import "open-mac.h"
 #include "applog.h"
 
 struct Webview {
@@ -155,6 +156,8 @@ Webview *webviewCreate(void) {
 	[window setContentView:view];
 	[bridge setView:view];
 	buildMenu(bridge);
+	// files opened from Finder, and from a second launch — see open-mac.m
+	openMacAttach(window, view);
 
 	Webview *webview = (Webview *)calloc(1, sizeof(Webview));
 	webview->window = window;

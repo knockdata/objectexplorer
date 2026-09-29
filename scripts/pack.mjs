@@ -15,6 +15,7 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { appimageCpu, fetchAppimageTool } from "./appimage-tool.mjs"
 import { exePath } from "./sea.mjs"
+import { macDocumentTypes, readFileTypes } from "./fileTypes.mjs"
 import { targetArch, targetPlatform } from "./target.mjs"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
@@ -343,7 +344,7 @@ function infoPlist() {
 	<string>11.0</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
-</dict>
+${macDocumentTypes(readFileTypes())}</dict>
 </plist>
 `
 }
@@ -353,9 +354,10 @@ function desktopEntry() {
 Type=Application
 Name=${appName}
 Comment=The VSCode for Cloud Storage
-Exec=${appName}
+Exec=${appName} %F
 Icon=icon
 Categories=Utility;
 Terminal=false
+MimeType=${[...new Set(readFileTypes().map(fileType => fileType.mime))].join(";")};
 `
 }

@@ -74,7 +74,7 @@ Our cloud storage bill has been going up month by month. High mangers are asking
 
 For sure there is billing console and command line tool for every cloud provider.
 We can click here and there, plenty of graphs. 
-Often after an hour passed away, we still could not get concreate action points. 
+Often after an hour passed away, we still could not get concrete action points. 
 
 Why? Cloud provider don't have any incentive to help reducing cost, do they?
 

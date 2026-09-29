@@ -17,9 +17,10 @@ import VersionManager from "./VersionManager.js"
 import ShellCommand from "./shellCommand.js"
 import { userData } from "./paths.js"
 import { log, logError } from "./log.js"
+import { listenForOpen } from "./openFiles.js"
 
 async function start() {
-	const { bundleDir, duckdbDir, sqliteDir, port, launchArgs, selfCommand } = workerData
+	const { bundleDir, duckdbDir, sqliteDir, port, launchArgs, selfCommand, addonFile, openToken } = workerData
 	const appDir = path.join(bundleDir, "app")
 	const serverPath = path.join(bundleDir, "server", "WebServer.mjs")
 
@@ -63,7 +64,13 @@ async function start() {
 
 	const listenPort = await server.start()
 	log("server listening on", listenPort)
-	parentPort.postMessage({ port: listenPort })
+	// only with a window: a second launch's files go to it, and there is none to go to otherwise
+	let openPort = null
+	if (addonFile) {
+		openPort = await listenForOpen(addonFile, openToken)
+	} else {
+	}
+	parentPort.postMessage({ port: listenPort, openPort })
 
 	// the window is up by now, so a slow registry call costs the user nothing
 	await versionManager.upgrade()

@@ -8,7 +8,7 @@
 // webview", and webviewCreate says that by returning NULL — src/main.js turns it into an alert
 // and exits. Everything after a successful create is a call that cannot fail.
 //
-// Eight calls, nothing more. The explorer UI talks to the Node backend over HTTP on localhost,
+// Eight calls, and the two in open.h for files the OS asks the app to open. The explorer UI talks to the Node backend over HTTP on localhost,
 // so there is no JS bridge to build: no bind, no eval, no init, no dispatch.
 //
 // Two things happen outside that contract, neither of them a call and neither of them something

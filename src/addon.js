@@ -13,6 +13,15 @@ import { binDir } from "./paths.js"
 import { log } from "./log.js"
 
 export function loadAddon(name, readAsset) {
+	const holder = { exports: {} }
+	process.dlopen(holder, extractAddon(name, readAsset))
+	return holder.exports
+}
+
+// The file, for a thread that cannot read the SEA's assets itself: the server worker loads the
+// window's addon from here to hand it files (openFiles.js). One process loading one .node twice
+// shares its native state, which is the point — the worker reaches the window the main thread made.
+export function extractAddon(name, readAsset) {
 	const assetName = `${name}-${process.platform}-${process.arch}.node`
 	// Keyed by the asset's own bytes, not by the app version. The version now comes from the npm
 	// package, so a rebuilt addon can ship under a version that already exists on a user's machine —
@@ -27,8 +36,5 @@ export function loadAddon(name, readAsset) {
 		fs.writeFileSync(target, bytes)
 		log("addon extracted:", target)
 	}
-
-	const holder = { exports: {} }
-	process.dlopen(holder, target)
-	return holder.exports
+	return target
 }

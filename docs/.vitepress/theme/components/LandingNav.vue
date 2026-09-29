@@ -62,7 +62,7 @@ onUnmounted(function () {
 			<nav class="landing-nav-links" aria-label="Site">
 				<a v-for="headerLink in headerLinks" :key="headerLink.name" :href="linkOf(headerLink.link)">{{ headerLink.name }}</a>
 			</nav>
-			<a v-if="appLink" class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink">Open App</a>
+			<a v-if="appLink" class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
 			<button v-else class="landing-nav-action landing-nav-secondary desktop-only" type="button" @click="emit('open-app')">Open App</button>
 			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
 			<ShareLink

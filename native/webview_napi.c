@@ -3,14 +3,16 @@
 // Two headers, no node-addon-api, no bindings package: the SEA loads this file with
 // process.dlopen, so nothing may go looking for a build folder at runtime.
 //
-// Eight calls, one per function in webview.h. Only create can fail, and it fails by returning
+// Eight calls, one per function in webview.h, plus the two in open.h. Only create can fail, and it fails by returning
 // NULL — see that file. The dragged-folder reader in drop-mac.m / drop-linux.c adds none: it
 // talks to the page, never to Node.
 //
 // webviewRun blocks the calling thread until the window closes. That is the whole reason the
 // HTTP server lives in a worker thread — see src/main.js.
+#include <stdlib.h>
 #include <node_api.h>
 #include "webview.h"
+#include "open.h"
 
 // window titles and localhost urls; nothing here is ever close to this long
 #define TEXT_SIZE 2048
@@ -110,6 +112,30 @@ static napi_value destroy(napi_env env, napi_callback_info info) {
 	return NULL;
 }
 
+// Takes no handle, because the server worker calls it and the handle lives on the main thread:
+// open.h keeps its own reference to the one window. The paths are a JSON array, and a long one
+// is fine — this is not a TEXT_SIZE string.
+static napi_value openFiles(napi_env env, napi_callback_info info) {
+	size_t count = 1;
+	napi_value args[1];
+	napi_get_cb_info(env, info, &count, args, NULL, NULL);
+
+	size_t length = 0;
+	napi_get_value_string_utf8(env, args[0], NULL, 0, &length);
+	char *paths = malloc(length + 1);
+	napi_get_value_string_utf8(env, args[0], paths, length + 1, &length);
+	webviewOpenFiles(paths);
+	free(paths);
+	return NULL;
+}
+
+static napi_value allowForeground(napi_env env, napi_callback_info info) {
+	(void)env;
+	(void)info;
+	webviewAllowForeground();
+	return NULL;
+}
+
 // takes no handle: this is what the caller reaches for when there is no handle to be had
 static napi_value alert(napi_env env, napi_callback_info info) {
 	size_t count = 2;
@@ -139,5 +165,7 @@ NAPI_MODULE_INIT() {
 	addFunction(env, exports, "run", run);
 	addFunction(env, exports, "destroy", destroy);
 	addFunction(env, exports, "alert", alert);
+	addFunction(env, exports, "openFiles", openFiles);
+	addFunction(env, exports, "allowForeground", allowForeground);
 	return exports;
 }

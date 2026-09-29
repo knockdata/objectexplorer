@@ -20,6 +20,7 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { targetPlatform, targetArch } from "./target.mjs"
 import { extractTarToDir } from "../src/tar.js"
+import { writeFileTypes } from "./fileTypes.mjs"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const outDir = path.join(root, "out")
@@ -95,6 +96,8 @@ export async function downloadBundle(source = {}) {
 	console.log("bundle:", packageName, manifest.version, tarball.length, "bytes")
 
 	fs.writeFileSync(path.join(outDir, "objectexplorer.tgz"), tarball)
+	// what the .app, the msix and the AppImage register as "Open with"
+	await writeFileTypes(tarball)
 
 	const duckdbVersion = await downloadEngine(manifest, duckdbName, "duckdb")
 	const sqliteVersion = await downloadEngine(manifest, sqliteName, "sqlite")

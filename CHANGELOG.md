@@ -4,6 +4,13 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.8.1  —  2026-09-29
+
+- **Open with ObjectExplorer**: the desktop app shows up in Finder's, Explorer's and the file manager's Open With menu for every kind of file it can open. The file opens in a tab, in the window that is already open when there is one
+- Sign in with Google on objectexplorer.com/app, not only in the desktop app
+- The **Open App** link in the header of the docs pages no longer shows a 404 page
+- The demo folder has an architecture diagram of ObjectExplorer itself, `ObjectExplorer/architecture.excalidraw`
+
 ## v0.8.0  —  2026-09-28
 
 - Our own hand-drawn font, Rock, in drawings, presentations and the usage visualization disc, replacing Excalifont

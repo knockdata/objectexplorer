@@ -7,7 +7,7 @@ import LandingNav from "./components/LandingNav.vue"
      sidebar and the content are offset from. -->
 <template>
 	<div class="theme-nav">
-		<LandingNav app-link="https://objectexplorer.com/app" />
+		<LandingNav app-link="https://objectexplorer.com/app/" />
 	</div>
 </template>
 

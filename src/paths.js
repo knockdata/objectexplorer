@@ -13,6 +13,8 @@ export const logFile = path.join(userData, "app.log")
 // main.js debounces Windows' install-time double launch against this file's mtime, and
 // VersionManager clears it so a restart is not taken for one
 export const launchGuardFile = path.join(userData, "objectexplorer.last-launch")
+// the window that is open right now, so "Open with" on a second file goes to it (openFiles.js)
+export const runningFile = path.join(userData, "objectexplorer.running.json")
 
 fs.mkdirSync(appDir, { recursive: true })
 fs.mkdirSync(binDir, { recursive: true })

@@ -21,10 +21,14 @@ import path from "node:path"
 import sea from "node:sea"
 import { pathToFileURL } from "node:url"
 import { Worker, SHARE_ENV } from "node:worker_threads"
-import { createWindow, applyWindowsArgs, showAlert } from "./webview.js"
+import { createWindow, applyWindowsArgs, showAlert, allowForeground } from "./webview.js"
+import { extractAddon } from "./addon.js"
+import { filesFromArgs, handOver, newToken, writeRunning, clearRunning } from "./openFiles.js"
+import { registerLinuxDesktop } from "./linuxDesktop.js"
 import { openBrowser } from "./browser.js"
 import { resolveBundleDir, resolveDuckdbDir, resolveSqliteDir } from "./bundle.js"
-import { userData, logFile, launchGuardFile } from "./paths.js"
+import { userData, logFile } from "./paths.js"
+import { isDuplicateLaunch, launchGuardWindowMs } from "./launchGuard.js"
 import { log, logError, fileOnly } from "./log.js"
 import { version, bundleVersion } from "./version.js"
 
@@ -43,6 +47,11 @@ const preferredPort = args.port ? +args.port : 9421
 // argv[2] on, both as a single executable and from sources: argv[1] is the binary or main.js
 const cli = process.argv[2] === "cli"
 
+// "Open with ObjectExplorer" on Windows and linux: the files this launch was started on
+const openPaths = filesFromArgs(process.argv.slice(2))
+// what a second launch has to show before this window opens its files (openFiles.js)
+const openToken = newToken()
+
 async function main() {
 	if (cli) {
 		fileOnly()
@@ -56,6 +65,11 @@ async function main() {
 	if (cli) {
 		await runCli(process.argv.slice(3))
 	}
+	// before the debounce: a second file opened right after the first is not a double launch
+	else if (openPaths.length > 0 && await handOverToRunning()) {
+		log("the running window took the files, exiting")
+		process.exit(0)
+	}
 	else if (isDuplicateLaunch()) {
 		log("launched again within", launchGuardWindowMs + "ms", "of the previous launch, exiting")
 		process.exit(0)
@@ -65,11 +79,20 @@ async function main() {
 	}
 }
 
+// The launch that owns the foreground lets the running window take it, then hands the files over.
+async function handOverToRunning() {
+	allowForeground(readAsset)
+	return await handOver(openPaths)
+}
+
 async function runApp() {
 	const bundleDir = await resolveBundleDir(readAsset)
 	const duckdbDir = await resolveDuckdbDir(readAsset)
 	const sqliteDir = await resolveSqliteDir(readAsset)
-	const port = await startServer(bundleDir, duckdbDir, sqliteDir)
+	// the file manager's Open With, which an AppImage has to put there itself
+	registerLinuxDesktop(bundleDir, readAsset)
+	const windowed = args.mode !== "server" && args.mode !== "browser"
+	const { port, openPort } = await startServer(bundleDir, duckdbDir, sqliteDir, windowed)
 	const url = `http://127.0.0.1:${port}`
 	log("app url:", url)
 
@@ -79,7 +102,7 @@ async function runApp() {
 		log("mode=browser, skipping the native window")
 		openBrowser(url)
 	} else {
-		openWindow(url)
+		openWindow(url, openPort)
 	}
 }
 
@@ -118,39 +141,6 @@ function selfCommand() {
 	}
 }
 
-// ObjectExplorer allows as many instances as a user opens — this is not a single-instance
-// app. The one case worth guarding is Windows handing out two live processes for what looks
-// like one launch: MSIX's App Installer auto-opens the app the moment install finishes, while
-// its own UI is at that same moment inviting a click on the Start tile — the ordinary thing to
-// do right after installing something. So the guard is a debounce, not a lock: a launch that
-// lands within launchGuardWindowMs of the previous one is treated as that same install-time
-// double-fire and exits quietly; anything after the window — a minute later, or a deliberate
-// second window opened five seconds apart — runs normally alongside whatever is already open.
-//
-// No lock is held for the session and nothing is cleaned up on exit: window.run() blocks this
-// thread in native code for as long as the window is open, so a timer-based cleanup would never
-// fire until close. Comparing against the guard file's mtime instead needs no timer at all —
-// the next launch, whenever it comes, does the one comparison and overwrites the timestamp for
-// whichever launch comes after it.
-const launchGuardWindowMs = 3000
-
-function isDuplicateLaunch() {
-	let previousAge = null
-	try {
-		previousAge = Date.now() - fs.statSync(launchGuardFile).mtimeMs
-	} catch (error) {
-		previousAge = null
-	}
-
-	try {
-		fs.writeFileSync(launchGuardFile, String(process.pid))
-	} catch (error) {
-		// non-fatal — worst case this debounce just doesn't fire this time
-	}
-
-	return previousAge !== null && previousAge < launchGuardWindowMs
-}
-
 // Reads a file embedded in the binary. Running the sources from plain node has no SEA to
 // read from, so the same files are taken off disk out of out/ — the folder scripts/sea.mjs
 // builds them into. Development only, hence the plain relative path.
@@ -173,7 +163,7 @@ function launchArgs() {
 	}
 }
 
-function startServer(bundleDir, duckdbDir, sqliteDir) {
+function startServer(bundleDir, duckdbDir, sqliteDir, windowed) {
 	const source = Buffer.from(readAsset("worker.js")).toString("utf8")
 	// SHARE_ENV, because the backend publishes OBJECTFS_SERVER into the environment once it knows
 	// which port it settled on (server/WebServer.js startAndPublishAddress), and duckdb's objectfs
@@ -187,7 +177,13 @@ function startServer(bundleDir, duckdbDir, sqliteDir) {
 		env: SHARE_ENV,
 		// the launch arguments go with it: a worker's own process.argv is [execPath, "[worker
 		// eval]"], and VersionManager restarts the app with the arguments it was started with
-		workerData: { bundleDir, duckdbDir, sqliteDir, port: preferredPort, launchArgs: launchArgs(), selfCommand: selfCommand() },
+		//
+		// addonFile: with a window, the worker loads the window's addon too, to hand it the files a
+		// second launch opens (openFiles.js)
+		workerData: {
+			bundleDir, duckdbDir, sqliteDir, port: preferredPort, launchArgs: launchArgs(), selfCommand: selfCommand(),
+			addonFile: windowed ? extractAddon("webview_napi", readAsset) : null, openToken,
+		},
 	})
 	// a worker that outlives the main thread's blocking run() keeps the process alive on its
 	// own, so nothing here needs to hold a reference
@@ -196,7 +192,7 @@ function startServer(bundleDir, duckdbDir, sqliteDir) {
 			if (message.error) {
 				reject(new Error(message.error))
 			} else {
-				resolve(message.port)
+				resolve(message)
 			}
 		})
 		worker.once("error", reject)
@@ -208,7 +204,7 @@ function startServer(bundleDir, duckdbDir, sqliteDir) {
 // here: navigate and run used to sit inside this try as well, which turned a hiccup anywhere in
 // the session — including at window close — into a browser tab nobody asked for. A desktop app
 // that opens a tab by itself is a bug, so the failure is now told to the user and that is all.
-function openWindow(url) {
+function openWindow(url, openPort) {
 	applyWindowsArgs(path.join(userData, "webview2-args.txt"), readFileOrNull)
 
 	let window = null
@@ -225,10 +221,16 @@ function openWindow(url) {
 	}
 
 	if (window) {
+		writeRunning(openPort, openToken)
+		if (openPaths.length > 0) {
+			window.openFiles(openPaths)
+		} else {
+		}
 		window.navigate(url)
 		log("entering the window loop, this thread blocks until the window closes")
 		window.run()
 		log("window closed")
+		clearRunning()
 		process.exit(0)
 	} else {
 		showAlert({ title: "ObjectExplorer cannot open its window", text: noWindowMessage(url), readAsset })

@@ -56,7 +56,7 @@ function batch({ nativeDir, arch, buildDir, sdk, nodeLib, target }) {
 		"cl /nologo /O2 /W3 /MT /DUNICODE /D_UNICODE",
 		`/I "${path.join(nativeDir, "napi")}" /I "${sdk.include}"`,
 		`/Fo"${objects}"`,
-		"webview_napi.c webview-windows.c delay-load-hook.c",
+		"webview_napi.c webview-windows.c open-windows.c delay-load-hook.c",
 		"/link /DLL",
 		`/OUT:"${target}"`,
 		`"${nodeLib}" "${sdk.loader}"`,

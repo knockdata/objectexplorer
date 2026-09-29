@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include "WebView2.h"
 #include "webview.h"
+#include "open-windows.h"
 
 // A cold first launch on a slow machine — a Windows ARM VM with no GPU — spends a long time in
 // WebView2's own unpacking before the environment handler is called. There is no browser fallback
@@ -119,6 +120,9 @@ static HRESULT STDMETHODCALLTYPE controllerInvoke(ICoreWebView2CreateCoreWebView
 		GetClientRect(webview->window, &bounds);
 		ICoreWebView2Controller_put_Bounds(controller, bounds);
 		ICoreWebView2Controller_put_IsVisible(controller, TRUE);
+
+		// a file opened from Explorer, and from a second launch — see open-windows.c
+		openWindowsAttach(webview->window, webview->view);
 	} else {
 		webview->failed = 1;
 	}
@@ -140,6 +144,9 @@ static LRESULT CALLBACK windowProcedure(HWND window, UINT message, WPARAM wparam
 		RECT bounds;
 		GetClientRect(window, &bounds);
 		ICoreWebView2Controller_put_Bounds(webview->controller, bounds);
+		return 0;
+	} else if (message == WM_OPEN_FILES) {
+		openWindowsDeliver((char *)lparam);
 		return 0;
 	} else if (message == WM_DESTROY) {
 		PostQuitMessage(0);

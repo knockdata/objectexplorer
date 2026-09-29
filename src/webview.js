@@ -21,10 +21,24 @@ export function createWindow({ title, icon, width, height, readAsset }) {
 		navigate: function (url) {
 			addon.navigate(handle, url)
 		},
+		// held natively until the page has loaded, so a cold start's file is not lost
+		openFiles: function (paths) {
+			addon.openFiles(JSON.stringify(paths))
+		},
 		run: function () {
 			addon.run(handle)
 			addon.destroy(handle)
 		},
+	}
+}
+
+// Windows lets the running window come to the front only when the launch that owns the
+// foreground says so; a no-op elsewhere. Failing to load is the same as not asking.
+export function allowForeground(readAsset) {
+	try {
+		loadAddon("webview_napi", readAsset).allowForeground()
+	} catch (error) {
+		logError("could not allow the foreground:", error)
 	}
 }
 

@@ -20,6 +20,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { targetArch, targetPlatform } from "./target.mjs"
+import { msixFileTypes, readFileTypes } from "./fileTypes.mjs"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const distDir = path.join(root, "dist")
@@ -152,7 +153,7 @@ function manifest(publisher) {
 				BackgroundColor="#1E1F24"
 				Square150x150Logo="Assets\\Square150x150Logo.png"
 				Square44x44Logo="Assets\\Square44x44Logo.png" />
-		</Application>
+${msixFileTypes(readFileTypes())}		</Application>
 	</Applications>
 </Package>
 `
