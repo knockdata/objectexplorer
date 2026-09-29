@@ -9,7 +9,7 @@ const props = defineProps({
 })
 
 const appUrl = "https://objectexplorer.com/app" + props.query
-// Same rule as AppStage: the app only lets our own sites frame it (rock2/server/common/Headers.js).
+// The app only lets our own sites frame it (rock2/server/common/Headers.js).
 const homeSites = ["https://objectexplorer.com", "https://knockdata.github.io"]
 const canFrame = ref(false)
 

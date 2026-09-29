@@ -6,13 +6,12 @@ import { headerLinks, linkOf } from "../data/siteLinks.js"
 import ShareLink from "./ShareLink.vue"
 import SiteMenu from "./SiteMenu.vue"
 
-// Every page wears this header. On the landing "Open App" opens the app behind the glass; every
-// other page (ThemeNav) passes `appLink`, and there it is a plain link to the app.
+// Every page wears this header. "Open App" is a plain link that leaves the site for the app, so the
+// address bar is the app's own from then on and follows every tab it opens. The landing passes the
+// `?open=` it was given along with it.
 defineProps({
-	appLink: { type: String, default: "" },
+	appLink: { type: String, default: "https://objectexplorer.com/app/" },
 })
-
-const emit = defineEmits(["open-app"])
 
 // On a phone the header's links, its app action and the footer fold into one menu (SiteMenu). While it is open the
 // page under it stays put (the class on <html>); Escape or following a link closes it.
@@ -24,11 +23,6 @@ function toggleMenu() {
 
 function closeMenu() {
 	menuOpen.value = false
-}
-
-function openApp() {
-	closeMenu()
-	emit("open-app")
 }
 
 function closeOnEscape(event) {
@@ -62,8 +56,8 @@ onUnmounted(function () {
 			<nav class="landing-nav-links" aria-label="Site">
 				<a v-for="headerLink in headerLinks" :key="headerLink.name" :href="linkOf(headerLink.link)">{{ headerLink.name }}</a>
 			</nav>
-			<a v-if="appLink" class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
-			<button v-else class="landing-nav-action landing-nav-secondary desktop-only" type="button" @click="emit('open-app')">Open App</button>
+			<!-- target: VitePress's router leaves a link with one alone, so this is a real page load -->
+			<a class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
 			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
 			<ShareLink
 				class="landing-nav-action mobile-only"
@@ -79,7 +73,7 @@ onUnmounted(function () {
 				</svg>
 			</button>
 		</div>
-		<SiteMenu v-if="menuOpen" :app-link="appLink" @close="closeMenu" @open-app="openApp" />
+		<SiteMenu v-if="menuOpen" :app-link="appLink" @close="closeMenu" />
 	</header>
 </template>
 

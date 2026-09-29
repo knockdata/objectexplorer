@@ -1,19 +1,16 @@
 <script setup>
-import { onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import AppSection from "./AppSection.vue"
-import AppStage from "./AppStage.vue"
 import DownloadBlock from "./DownloadBlock.vue"
 import LandingHero from "./LandingHero.vue"
 import LandingNav from "./LandingNav.vue"
 import StoryGrid from "./StoryGrid.vue"
 import SiteFooter from "./SiteFooter.vue"
 
-// The page is a lightboard pane standing in front of the app. "Open App" loads the app behind
-// the glass, then wipes the pane away; "Back to the tour" brings it back.
-//   closed → loading (the app is arriving behind the glass) → open (the pane is wiped)
-const appState = ref("closed")
-// ?open=… pins a use case: the app becomes a section after the hero, with nothing behind the page
+// ?open=… pins a use case: the app becomes a section after the hero, and "Open App" takes the same
+// query to the app itself
 const appQuery = ref("")
+const appLink = computed(() => "https://objectexplorer.com/app/" + appQuery.value)
 
 onMounted(function () {
 	if (new URLSearchParams(location.search).has("open")) {
@@ -21,32 +18,14 @@ onMounted(function () {
 	}
 })
 
-function openApp() {
-	if (appQuery.value) {
-		location.href = "https://objectexplorer.com/app/" + appQuery.value
-	}
-	else {
-		appState.value = "loading"
-	}
-}
-
-function showApp() {
-	appState.value = "open"
-}
-
-function closeApp() {
-	appState.value = "closed"
-	window.scrollTo({ top: 0 })
-}
 </script>
 
 <template>
-	<div class="landing" :class="`landing-app-${appState}`">
-		<AppStage v-if="appQuery === ''" :state="appState" @ready="showApp" @close="closeApp" />
-		<div class="landing-pitch" :aria-hidden="appState === 'open' ? 'true' : undefined">
-			<LandingNav @open-app="openApp" />
+	<div class="landing">
+		<div class="landing-pitch">
+			<LandingNav :app-link="appLink" />
 			<main>
-				<LandingHero :pinned="appQuery !== ''" @open-app="openApp" />
+				<LandingHero :pinned="appQuery !== ''" :app-link="appLink" />
 				<AppSection v-if="appQuery" :query="appQuery" />
 				<StoryGrid />
 				<DownloadBlock />

@@ -75,23 +75,8 @@ html:not([data-platform="mobile"]) .mobile-only {
 	padding-inline: var(--landing-gutter);
 }
 
-/* The pane of glass the pitch is written on. "Open App" wipes it upward off the app. */
 .landing-pitch {
-	clip-path: inset(0 0 0 0);
 	position: relative;
-	transition: clip-path 0.85s cubic-bezier(0.72, 0, 0.2, 1), opacity 0.5s ease 0.1s;
-	z-index: 2;
-}
-
-.landing-app-open {
-	height: 100vh;
-	overflow: hidden;
-}
-
-.landing-app-open .landing-pitch {
-	clip-path: inset(0 0 100% 0);
-	opacity: 0;
-	pointer-events: none;
 }
 
 /* on a phone each story lands whole on the screen as it is scrolled to */

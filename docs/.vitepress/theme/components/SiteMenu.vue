@@ -4,10 +4,10 @@ import { copyright, footerLinks, headerLinks, linkOf, socialLinks } from "../dat
 import ShareLink from "./ShareLink.vue"
 
 defineProps({
-	appLink: { type: String, default: "" },
+	appLink: { type: String, default: "https://objectexplorer.com/app/" },
 })
 
-const emit = defineEmits(["close", "open-app"])
+const emit = defineEmits(["close"])
 
 // the header's pages, then the footer's that the header does not already carry
 const menuLinks = [...headerLinks, ...footerLinks.filter(footerLink => headerLinks.every(headerLink => headerLink.link !== footerLink.link))]
@@ -21,8 +21,7 @@ const menuLinks = [...headerLinks, ...footerLinks.filter(footerLink => headerLin
 			<a v-for="menuLink in menuLinks" :key="menuLink.name" :href="linkOf(menuLink.link)" @click="emit('close')">{{ menuLink.name }}</a>
 		</nav>
 		<div class="site-menu-action">
-			<a v-if="appLink" class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
-			<button v-else class="landing-nav-action landing-nav-secondary desktop-only" type="button" @click="emit('open-app')">Open App</button>
+			<a class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
 			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
 			<ShareLink
 				class="landing-nav-action mobile-only"

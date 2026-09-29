@@ -4,8 +4,8 @@ import ShareLink from "./ShareLink.vue"
 
 defineProps({
 	pinned: { type: Boolean, default: false },
+	appLink: { type: String, default: "https://objectexplorer.com/app/" },
 })
-const emit = defineEmits(["open-app"])
 </script>
 
 <template>
@@ -26,7 +26,7 @@ const emit = defineEmits(["open-app"])
 				Agent is just another user, full control with audit
 			</p>
 			<div class="landing-hero-actions" style="display: flex;">
-				<button class="landing-hero-primary desktop-only" type="button" @click="emit('open-app')">Open App</button>
+				<a class="landing-hero-primary desktop-only" :href="appLink" target="_self">Open App</a>
 				<p class="landing-hero-note desktop-only">
 					<span style="display: block;">It opens right here.</span>
 					<span style="display: block;">Nothing leaves your browser.</span>
@@ -121,6 +121,7 @@ const emit = defineEmits(["open-app"])
 	gap: 10px;
 	letter-spacing: -0.008em;
 	padding: 15px 26px;
+	text-decoration: none;
 	transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
 
