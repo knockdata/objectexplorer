@@ -25,6 +25,8 @@ import { msixFileTypes, readFileTypes } from "./fileTypes.mjs"
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const distDir = path.join(root, "dist")
 const assetsDir = path.join(root, "assets")
+const documentDir = path.join(assetsDir, "document")
+const previewDll = path.join(root, "out", `ObjectExplorerPreview-win32-${targetArch}.dll`)
 const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version
 const appName = "ObjectExplorer"
 
@@ -88,6 +90,16 @@ function pack(variant) {
 	// StoreLogo is only used by a few system dialogs; the listing icons are uploaded to Partner
 	// Center by hand, so the 150x150 doubles as this one rather than adding a third asset
 	fs.copyFileSync(path.join(assetsDir, "icon-150x150.png"), path.join(stageDir, "Assets", "StoreLogo.png"))
+	// the thumbnail and preview handler (native/preview-windows.c), which the manifest names only when it is here
+	if (fs.existsSync(previewDll)) {
+		fs.copyFileSync(previewDll, path.join(stageDir, "ObjectExplorerPreview.dll"))
+	} else {
+		console.log("msix: no preview handler dll for", targetArch, "- the package ships without previews")
+	}
+	// each file type association's uap:Logo (scripts/documentIcons.mjs)
+	for (const file of fs.readdirSync(documentDir).filter(name => name.endsWith(".png"))) {
+		fs.copyFileSync(path.join(documentDir, file), path.join(stageDir, "Assets", file))
+	}
 	fs.writeFileSync(path.join(stageDir, "AppxManifest.xml"), manifest(publisher))
 
 	execFileSync(findSdkTool("makeappx.exe"), ["pack", "/d", stageDir, "/p", msix, "/o"], { stdio: "inherit" })
@@ -123,7 +135,9 @@ function manifest(publisher) {
 	xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
 	xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
 	xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-	IgnorableNamespaces="uap rescap">
+	xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+	xmlns:desktop2="http://schemas.microsoft.com/appx/manifest/desktop/windows10/2"
+	IgnorableNamespaces="uap rescap com desktop2">
 
 	<Identity Name="${identityName}" Publisher="${publisher}" Version="${packageVersion}" ProcessorArchitecture="${targetArch}" />
 
@@ -153,7 +167,7 @@ function manifest(publisher) {
 				BackgroundColor="#1E1F24"
 				Square150x150Logo="Assets\\Square150x150Logo.png"
 				Square44x44Logo="Assets\\Square44x44Logo.png" />
-${msixFileTypes(readFileTypes())}		</Application>
+${msixFileTypes(readFileTypes(), fs.existsSync(previewDll))}		</Application>
 	</Applications>
 </Package>
 `

@@ -12,6 +12,10 @@ import os from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { extractTarToDir } from "../src/tar.js"
+import { genericFamily, groupByFamily, previewExtensions } from "../src/documentFamilies.js"
+
+// native/preview-windows.c, the thumbnail and preview handler the msix registers
+export const previewClsid = "6A1D3B1E-4F2A-4C8B-9E5D-0B7F3C2A9E41"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const outDir = path.join(root, "out")
@@ -24,6 +28,13 @@ export async function writeFileTypes(tarball) {
 	const unpacked = fs.mkdtempSync(path.join(os.tmpdir(), "objectexplorer-file-types-"))
 	await extractTarToDir(tarball, unpacked)
 	const source = path.join(unpacked, "server", "fileTypes.json")
+	// and the preview bundle the Quick Look extensions load (scripts/quicklook.mjs), from the same package
+	const previewScript = path.join(unpacked, "server", "preview-jsc.js")
+	if (fs.existsSync(previewScript)) {
+		fs.copyFileSync(previewScript, path.join(outDir, "preview-jsc.js"))
+	} else {
+		fs.rmSync(path.join(outDir, "preview-jsc.js"), { force: true })
+	}
 	if (fs.existsSync(source)) {
 		fs.copyFileSync(source, fileTypesFile)
 		console.log("file types:", JSON.parse(fs.readFileSync(source, "utf8")).length)
@@ -51,37 +62,37 @@ export function readFileTypes() {
 export function macDocumentTypes(fileTypes) {
 	if (fileTypes.length > 0) {
 		const resolved = resolveUtis(fileTypes.map(fileType => fileType.ext))
-		const contentTypes = []
 		const imported = []
-		for (const fileType of fileTypes) {
-			const system = resolved.get(fileType.ext)
-			if (system && system.dynamic === false) {
-				contentTypes.push(system.identifier)
-			} else {
+		const claimed = new Set()
+		const entries = []
+		// one entry per document family, so each carries the icon its files wear in Finder
+		for (const [family, members] of groupByFamily(fileTypes)) {
+			const contentTypes = []
+			for (const fileType of members) {
+				const system = resolved.get(fileType.ext)
+				if (system && system.dynamic === false) {
+					contentTypes.push(system.identifier)
+				} else {
+				}
+				const systemOwned = system && system.dynamic === false && /^(public|com\.apple)\./.test(system.identifier)
+				if (systemOwned) {
+				} else {
+					const identifier = `${appId}.${fileType.ext}`
+					contentTypes.push(identifier)
+					imported.push(importedType(identifier, fileType))
+				}
 			}
-			const systemOwned = system && system.dynamic === false && /^(public|com\.apple)\./.test(system.identifier)
-			if (systemOwned) {
+			// a UTI two extensions share is claimed once, by the first family that names it
+			const unique = [...new Set(contentTypes)].filter(identifier => claimed.has(identifier) === false)
+			unique.forEach(identifier => claimed.add(identifier))
+			if (unique.length > 0) {
+				entries.push(documentType(family, unique))
 			} else {
-				const identifier = `${appId}.${fileType.ext}`
-				contentTypes.push(identifier)
-				imported.push(importedType(identifier, fileType))
 			}
 		}
-		const unique = [...new Set(contentTypes)]
 		return `	<key>CFBundleDocumentTypes</key>
 	<array>
-		<dict>
-			<key>CFBundleTypeName</key>
-			<string>Files ObjectExplorer opens</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>LSItemContentTypes</key>
-			<array>
-${unique.map(identifier => `				<string>${identifier}</string>`).join("\n")}
-			</array>
-		</dict>
+${entries.join("\n")}
 	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
@@ -90,6 +101,50 @@ ${imported.join("\n")}
 `
 	} else {
 		return ""
+	}
+}
+
+// the icon is assets/document/doc-<family>.icns, which pack.mjs copies into Contents/Resources
+function documentType(family, contentTypes) {
+	return `		<dict>
+			<key>CFBundleTypeName</key>
+			<string>${family.toUpperCase()} files ObjectExplorer opens</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>doc-${family}</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+${contentTypes.map(identifier => `				<string>${identifier}</string>`).join("\n")}
+			</array>
+		</dict>`
+}
+
+// The UTIs a previewable file has on a mac, for the Quick Look extensions: ours for an extension
+// the system does not know, and one another app declared too. A system-owned type (public.csv) is
+// left to the system's own preview.
+export function macPreviewContentTypes(fileTypes) {
+	const previewable = fileTypes.filter(fileType => previewExtensions.includes(fileType.ext))
+	if (previewable.length > 0) {
+		const resolved = resolveUtis(previewable.map(fileType => fileType.ext))
+		const identifiers = []
+		for (const fileType of previewable) {
+			const system = resolved.get(fileType.ext)
+			const systemOwned = system && system.dynamic === false && /^(public|com\.apple)\./.test(system.identifier)
+			if (systemOwned) {
+			} else {
+				identifiers.push(`${appId}.${fileType.ext}`)
+				if (system && system.dynamic === false) {
+					identifiers.push(system.identifier)
+				} else {
+				}
+			}
+		}
+		return [...new Set(identifiers)]
+	} else {
+		return []
 	}
 }
 
@@ -136,28 +191,52 @@ function resolveUtis(exts) {
 const windowsReserved = new Set(("accountpicture-ms appx application appref-ms bat cer chm cmd com cpl crt dll drv exe fon "
 	+ "gadget hlp hta inf ins jse lnk msi msp ocx pif ps1 reg scf scr shb shs sys ttf url vbe vbs ws wsc wsf wsh").split(" "))
 
-// One uap:FileTypeAssociation per 100 extensions: a group has a ceiling, and several groups
-// behave exactly like one.
-export function msixFileTypes(fileTypes) {
-	const exts = fileTypes.map(fileType => fileType.ext).filter(ext => windowsReserved.has(ext) === false)
-	if (exts.length > 0) {
+// One uap:FileTypeAssociation per document family, and within one per 100 extensions: a group
+// has a ceiling, and several groups behave exactly like one. Each carries its family's icon,
+// assets/document/doc-<family>.png, which msix.mjs copies into Assets.
+//
+// With previewHandlers, a family whose every extension the preview renderer reads also names the
+// handler DLL as its thumbnail and preview-pane handler, and the DLL is declared as a COM server
+// run in a surrogate process — Explorer never loads it into itself.
+export function msixFileTypes(fileTypes, previewHandlers = false) {
+	const allowed = fileTypes.filter(fileType => windowsReserved.has(fileType.ext) === false)
+	if (allowed.length > 0) {
 		const groups = []
-		for (let start = 0; start < exts.length; start += 100) {
-			const group = exts.slice(start, start + 100)
-			groups.push(`				<uap:Extension Category="windows.fileTypeAssociation">
-					<uap:FileTypeAssociation Name="objectexplorer${groups.length + 1}">
-						<uap:DisplayName>ObjectExplorer</uap:DisplayName>
-						<uap:SupportedFileTypes>
-${group.map(ext => `							<uap:FileType>.${ext}</uap:FileType>`).join("\n")}
-						</uap:SupportedFileTypes>
-					</uap:FileTypeAssociation>
-				</uap:Extension>`)
+		for (const [family, members] of groupByFamily(allowed)) {
+			const exts = members.map(fileType => fileType.ext)
+			// never the generic page: it gathers every other type, and csv or json keep the system's own
+			const handled = previewHandlers && family !== genericFamily && exts.every(ext => previewExtensions.includes(ext))
+			for (let start = 0; start < exts.length; start += 100) {
+				groups.push(fileTypeAssociation(groups.length + 1, family, exts.slice(start, start + 100), handled))
+			}
 		}
+		const server = previewHandlers ? `
+				<com:Extension Category="windows.comServer">
+					<com:ComServer>
+						<com:SurrogateServer DisplayName="ObjectExplorer preview">
+							<com:Class Id="${previewClsid}" Path="ObjectExplorerPreview.dll" ThreadingModel="STA" />
+						</com:SurrogateServer>
+					</com:ComServer>
+				</com:Extension>` : ""
 		return `			<Extensions>
-${groups.join("\n")}
+${groups.join("\n")}${server}
 			</Extensions>
 `
 	} else {
 		return ""
 	}
+}
+
+function fileTypeAssociation(index, family, group, handled) {
+	return `				<uap:Extension Category="windows.fileTypeAssociation">
+					<uap:FileTypeAssociation Name="objectexplorer${index}">
+						<uap:DisplayName>ObjectExplorer</uap:DisplayName>
+						<uap:Logo>Assets\\doc-${family}.png</uap:Logo>
+						<uap:SupportedFileTypes>
+${group.map(ext => `							<uap:FileType>.${ext}</uap:FileType>`).join("\n")}
+						</uap:SupportedFileTypes>${handled ? `
+						<desktop2:ThumbnailHandler Clsid="${previewClsid}" />
+						<desktop2:DesktopPreviewHandler Clsid="${previewClsid}" />` : ""}
+					</uap:FileTypeAssociation>
+				</uap:Extension>`
 }

@@ -15,7 +15,8 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { appimageCpu, fetchAppimageTool } from "./appimage-tool.mjs"
 import { exePath } from "./sea.mjs"
-import { macDocumentTypes, readFileTypes } from "./fileTypes.mjs"
+import { macDocumentTypes, macPreviewContentTypes, readFileTypes } from "./fileTypes.mjs"
+import { buildQuickLook } from "./quicklook.mjs"
 import { targetArch, targetPlatform } from "./target.mjs"
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
@@ -23,6 +24,7 @@ const distDir = path.join(root, "dist")
 // assets/, not build/: build is output and is gitignored, so an icon living there never
 // reaches a CI runner — which is exactly how 0.3.5 failed on mac and windows
 const assetsDir = path.join(root, "assets")
+const documentDir = path.join(assetsDir, "document")
 const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version
 const appName = "ObjectExplorer"
 const appId = "com.knockdata.objectexplorer"
@@ -82,11 +84,17 @@ function buildApp() {
 	fs.copyFileSync(exePath, path.join(macosDir, appName))
 	fs.chmodSync(path.join(macosDir, appName), 0o755)
 	fs.copyFileSync(path.join(assetsDir, "icon.icns"), path.join(resourcesDir, "icon.icns"))
+	// the document icons Info.plist names per family (scripts/documentIcons.mjs)
+	for (const file of fs.readdirSync(documentDir).filter(name => name.endsWith(".icns"))) {
+		fs.copyFileSync(path.join(documentDir, file), path.join(resourcesDir, file))
+	}
 	fs.writeFileSync(path.join(appPath, "Contents", "Info.plist"), infoPlist())
 
 	// an identity means a real Developer ID build; "-" is the ad-hoc signature an Apple
 	// Silicon mac needs just to let the binary run at all
 	const identity = process.env.CODESIGN_IDENTITY || "-"
+	// the Quick Look extensions, each signed with its own sandbox before the app is signed around them
+	buildQuickLook({ appPath, contentTypes: macPreviewContentTypes(readFileTypes()), version, identity })
 	execFileSync("codesign", [
 		"--force",
 		"--timestamp",

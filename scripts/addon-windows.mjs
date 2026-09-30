@@ -66,10 +66,33 @@ function batch({ nativeDir, arch, buildDir, sdk, nodeLib, target }) {
 
 	// no @echo off: this only ever runs in CI, and the command that failed is the first thing
 	// anyone wants out of the log
+	// the thumbnail and preview handler Explorer loads for a data file: its own DLL, not part of
+	// the addon, because a COM server is loaded by a surrogate process that has no node in it
+	const previewHandler = [
+		"cl /nologo /O2 /W3 /MT /DUNICODE /D_UNICODE",
+		`/Fo"${objects}"`,
+		"preview-windows.c preview-windows-image.c",
+		"/link /DLL /DEF:preview-windows.def",
+		`/OUT:"${path.join(buildDir, "ObjectExplorerPreview.dll")}"`,
+		"ole32.lib user32.lib gdi32.lib shlwapi.lib windowscodecs.lib uuid.lib",
+	].join(" ")
+	// and the harness .github/thumbnail.sh drives it with, the way Explorer would
+	const previewTest = [
+		"cl /nologo /O2 /W3 /MT /DUNICODE /D_UNICODE",
+		`/Fo"${objects}"`,
+		"preview-windows-test.c",
+		`/link /OUT:"${path.join(buildDir, "preview-windows-test.exe")}"`,
+		"ole32.lib gdi32.lib shlwapi.lib uuid.lib",
+	].join(" ")
+
 	return [
 		`call "${vcvarsall()}" ${arch} || exit /b 1`,
 		`lib /nologo /def:"${path.join(buildDir, "node_api.def")}" /machine:${machine} /out:"${nodeLib}" || exit /b 1`,
 		`${compile} || exit /b 1`,
+		// best effort until it has shipped once: a handler that does not build leaves the msix without
+		// previews (msix.mjs names the dll only when it is there) instead of stopping the release
+		`${previewHandler} || echo ::warning::the preview handler dll did not build, the msix ships without previews`,
+		`${previewTest} || echo ::warning::the preview handler test harness did not build`,
 		"",
 	].join("\r\n")
 }

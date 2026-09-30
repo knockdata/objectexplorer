@@ -320,6 +320,7 @@ jobs:
         run: |
           if arch -x86_64 /usr/bin/true 2> /dev/null || [ "${{ matrix.arch }}" = "arm64" ]; then
             bash .github/smoke.sh dist/ObjectExplorer.app/Contents/MacOS/ObjectExplorer smoke/test
+            bash .github/thumbnail.sh dist/ObjectExplorer.app/Contents/MacOS/ObjectExplorer
           else
             echo "no rosetta on this runner, skipping the x64 smoke test"
           fi
@@ -406,7 +407,9 @@ jobs:
 
       - name: Smoke test
         shell: bash
-        run: bash .github/smoke.sh "$(ls dist/*.exe)" smoke/test
+        run: |
+          bash .github/smoke.sh "$(ls dist/*.exe)" smoke/test
+          bash .github/thumbnail.sh "$(ls dist/*.exe)"
 
       # The single unsigned .exe is exactly what Defender quarantines — 0.2.1 installed a
       # folder with no ObjectExplorer.exe in it. Signing is not optional here.
@@ -424,6 +427,22 @@ jobs:
           files-folder-filter: exe
           # false is the default, but here it is load-bearing: the store package sits in
           # dist\store and has to stay unsigned, because Partner Center signs that one
+          files-folder-recurse: false
+
+      # the thumbnail and preview handler goes into the msix beside the exe, and Explorer loads it
+      # into a surrogate process on every user's machine: signed like the exe, before the packs
+      - name: Sign the preview handler
+        if: env.AZURE_CLIENT_ID != ''
+        uses: azure/trusted-signing-action@v0
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: https://neu.codesigning.azure.net/
+          trusted-signing-account-name: knockdata
+          certificate-profile-name: KnockData
+          files-folder: ${{ github.workspace }}\out
+          files-folder-filter: dll
           files-folder-recurse: false
 
       # An unsigned build used to upload in silence. Defender holding a 107 MB unsigned exe is
@@ -590,7 +609,9 @@ jobs:
         run: bash .github/test-driver.sh candidate/objectexplorer-test.tgz
 
       - name: Smoke test
-        run: APPIMAGE_EXTRACT_AND_RUN=1 bash .github/smoke.sh "$(ls dist/*.AppImage)" smoke/test
+        run: |
+          APPIMAGE_EXTRACT_AND_RUN=1 bash .github/smoke.sh "$(ls dist/*.AppImage)" smoke/test
+          APPIMAGE_EXTRACT_AND_RUN=1 bash .github/thumbnail.sh "$(ls dist/*.AppImage)"
 
       - uses: actions/upload-artifact@v6
         with:

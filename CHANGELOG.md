@@ -4,9 +4,19 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.8.3  —  2026-09-30
+- instant mode can New File and Folder
+- using icon for supported file types
+- preview in os
+
 ## v0.8.2  —  2026-09-30
 
 - **New File ...** and **New Folder ...** head a folder's context menu: type the name in the tree, the way VSCode asks, and a new file's extension decides what kind it is. `.md` and `.excalidraw` for now, the kinds ObjectExplorer can edit, with more to follow. The new file opens for editing, a name already taken is refused, and Undo removes a new file. New Folder works in local folders
+- On objectexplorer.com/app, a folder you open from your own disk can be written to: New File and New Folder work there, and markdown and drawings in it are saved back into the file itself. The demo folder stays read-only
+- Data files show what is in them in Finder, Explorer and the linux file managers: a parquet, arrow, avro, orc, SAS or SPSS file's thumbnail is its row count over its first rows, and the space bar on a Mac or the preview pane in Explorer shows a page of those rows
+- Every file type the app opens wears its own mark on a full page in Finder, Explorer and the file manager, instead of a small app badge on a blank one
+- `oe thumbnail <file> <out.png> [size]` draws that thumbnail from the command line
+- A .dmg made on a recent Mac opens like a folder: its APFS volume is listed and every file in it can be opened, where before only older HFS+ disk images could. A file the file system stored compressed is listed but not opened yet
 - A markdown file in a local folder opens in a block editor: edit a paragraph, heading, list or table where it is, type `/` for a new block, and the file keeps its exact text wherever you did not touch it
 - A drawing can live inside a markdown file: `/excalidraw` adds one, edited in place and saved in the same file
 - Drawings are saved shorter, leaving out every field that is at its default, and still open in Excalidraw

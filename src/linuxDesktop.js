@@ -8,17 +8,25 @@
 // Mime types the system already knows are only named. One it does not know (parquet, duckdb, …)
 // is declared too, with its extension, so a file manager can tell the file is one. A type the
 // system knows is never redeclared: a second glob for *.go would change what a .go file is.
+//
+// A mime type's icon is looked up by its name, the mime with its slash made a dash, so the document
+// icons (src/documentFamilies.js) go in as hicolor mimetype icons under that name — only for the
+// families with a mark of their own. The generic page is never put on text/csv or json: that would
+// restyle files every other app on the desktop shows too.
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { execFile } from "node:child_process"
 import { log, logError } from "./log.js"
+import { familyOf, genericFamily, previewExtensions } from "./documentFamilies.js"
 
 const dataHome = process.env.XDG_DATA_HOME || path.join(os.homedir(), ".local", "share")
 const desktopFile = path.join(dataHome, "applications", "objectexplorer.desktop")
 const mimeDir = path.join(dataHome, "mime")
 const mimeFile = path.join(mimeDir, "packages", "objectexplorer.xml")
-const iconFile = path.join(dataHome, "icons", "hicolor", "512x512", "apps", "objectexplorer.png")
+const hicolorDir = path.join(dataHome, "icons", "hicolor")
+const thumbnailerFile = path.join(dataHome, "thumbnailers", "objectexplorer.thumbnailer")
+const iconFile = path.join(hicolorDir, "512x512", "apps", "objectexplorer.png")
 
 export function registerLinuxDesktop(bundleDir, readAsset) {
 	const appImage = process.env.APPIMAGE
@@ -27,8 +35,13 @@ export function registerLinuxDesktop(bundleDir, readAsset) {
 		try {
 			const fileTypes = JSON.parse(fs.readFileSync(fileTypesFile, "utf8"))
 			writeIcon(readAsset)
+			if (writeMimeIcons(fileTypes, readAsset)) {
+				runQuietly("gtk-update-icon-cache", ["-f", "-t", hicolorDir])
+			} else {
+			}
 			const mimesChanged = writeIfChanged(mimeFile, mimeXml(fileTypes.filter(fileType => isUnknownMime(fileType.mime))))
 			const entryChanged = writeIfChanged(desktopFile, desktopEntry(appImage, fileTypes))
+			writeIfChanged(thumbnailerFile, thumbnailerEntry(appImage, fileTypes))
 			if (mimesChanged) {
 				runQuietly("update-mime-database", [mimeDir])
 			} else {
@@ -56,6 +69,18 @@ Exec="${appImage}" %F
 Icon=${iconFile}
 Categories=Utility;
 Terminal=false
+MimeType=${mimes.join(";")};
+`
+}
+
+// Nautilus, Nemo, Caja and Thunar (tumbler) run this for a file of one of these types to get its
+// thumbnail: `oe thumbnail` inside the AppImage, which exits 1 when it cannot draw one and the file
+// keeps its icon. GNOME runs thumbnailers in a sandbox; see objectexplorer/command/thumbnail.js.
+function thumbnailerEntry(appImage, fileTypes) {
+	const mimes = [...new Set(fileTypes.filter(fileType => previewExtensions.includes(fileType.ext)).map(fileType => fileType.mime))]
+	return `[Thumbnailer Entry]
+TryExec=${appImage}
+Exec="${appImage}" cli thumbnail %i %o %s
 MimeType=${mimes.join(";")};
 `
 }
@@ -89,6 +114,29 @@ function writeIcon(readAsset) {
 		fs.mkdirSync(path.dirname(iconFile), { recursive: true })
 		fs.writeFileSync(iconFile, Buffer.from(readAsset("logo-full.png")))
 	}
+}
+
+// mime -> the family of the first extension that names it, leaving out the generic page
+function mimeFamilies(fileTypes) {
+	const families = new Map()
+	for (const fileType of fileTypes) {
+		const family = familyOf(fileType.ext)
+		if (family !== genericFamily && families.has(fileType.mime) === false) {
+			families.set(fileType.mime, family)
+		} else {
+		}
+	}
+	return families
+}
+
+function writeMimeIcons(fileTypes, readAsset) {
+	const icons = JSON.parse(Buffer.from(readAsset("document-icons.json")).toString("utf8"))
+	let changed = false
+	for (const [mime, family] of mimeFamilies(fileTypes)) {
+		const file = path.join(hicolorDir, "scalable", "mimetypes", `${mime.replace("/", "-")}.svg`)
+		changed = writeIfChanged(file, icons[family]) || changed
+	}
+	return changed
 }
 
 function writeIfChanged(file, text) {

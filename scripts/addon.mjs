@@ -32,6 +32,17 @@ export async function buildAddon() {
 		const built = await compile()
 		fs.copyFileSync(built, target)
 		console.log("addon:", target, fs.statSync(target).size, "bytes")
+		// Windows builds the thumbnail and preview handler beside the addon (native/preview-windows.c)
+		const previewDll = path.join(path.dirname(built), "ObjectExplorerPreview.dll")
+		if (fs.existsSync(previewDll)) {
+			fs.copyFileSync(previewDll, path.join(outDir, `ObjectExplorerPreview-${targetPlatform}-${targetArch}.dll`))
+			const harness = path.join(path.dirname(built), "preview-windows-test.exe")
+			if (fs.existsSync(harness)) {
+				fs.copyFileSync(harness, path.join(outDir, "preview-windows-test.exe"))
+			} else {
+			}
+		} else {
+		}
 	} else if (fs.existsSync(target)) {
 		// the backends call Cocoa, WebKitGTK or WebView2, so building for another platform needs
 		// that platform's own SDK. Reuse an addon someone else compiled.

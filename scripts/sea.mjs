@@ -38,6 +38,7 @@ export async function buildSea() {
 	// the window icon is read at runtime like any other asset, so it goes through out/ too —
 	// that is the folder src/main.js falls back to when there is no SEA to read from
 	fs.copyFileSync(path.join(root, "assets", "logo-full.png"), path.join(outDir, "logo-full.png"))
+	writeDocumentIcons()
 	writeConfig()
 
 	execFileSync(process.execPath, ["--experimental-sea-config", path.join(outDir, "sea-config.json")], { stdio: "inherit" })
@@ -91,6 +92,7 @@ function writeConfig() {
 			"duckdb.tgz": path.join(outDir, "duckdb.tgz"),
 			"sqlite.tgz": path.join(outDir, "sqlite.tgz"),
 			"logo-full.png": path.join(outDir, "logo-full.png"),
+			"document-icons.json": path.join(outDir, "document-icons.json"),
 			[addonName]: path.join(outDir, addonName),
 		},
 	}
@@ -128,4 +130,15 @@ function inject() {
 		args.push("--macho-segment-name", "NODE_SEA")
 	}
 	execFileSync(process.execPath, args, { stdio: "inherit" })
+}
+
+// The linux document icons, family -> svg, read at runtime by src/linuxDesktop.js: one asset
+// rather than eighteen, and svg because an icon theme scales it to every size itself.
+function writeDocumentIcons() {
+	const documentDir = path.join(root, "assets", "document")
+	const icons = {}
+	for (const file of fs.readdirSync(documentDir).filter(name => name.endsWith(".svg"))) {
+		icons[file.replace(/^doc-|\.svg$/g, "")] = fs.readFileSync(path.join(documentDir, file), "utf8")
+	}
+	fs.writeFileSync(path.join(outDir, "document-icons.json"), JSON.stringify(icons))
 }

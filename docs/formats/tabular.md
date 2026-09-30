@@ -24,4 +24,21 @@ list of datasets it holds, in the same notebook grid: each one's path, type, sha
 storage and filters, and a preview of its values. **Structure** mode holds the decoded values. Which of the two
 formats it is, the first bytes decide.
 
+## In Finder, Explorer and the file manager
+
+With the desktop app installed, a data file shows what is in it before it is opened: the row and
+column count over its first rows, drawn as the file's thumbnail, and a page of those rows in the
+system's own preview.
+
+|             | Thumbnail                            | Preview                                          |
+|-------------|--------------------------------------|--------------------------------------------------|
+| **macOS**   | Finder icon, gallery and column view | the space bar, Finder's preview pane (macOS 12+) |
+| **Windows** | Explorer's medium and large icons    | the preview pane, Alt+P                          |
+| **Linux**   | Nautilus, Nemo, Caja, Thunar         | —                                                |
+
+`parquet` `arrow` `feather` `ipc` `avro` `orc` and the statistics files `sas7bdat` `xpt` `sav` are
+drawn; csv on linux too. A file larger than 64 MB keeps its icon, and so does every other type —
+each one with its own mark on the page rather than a small app badge. The same drawing is one
+command away: `oe thumbnail <file> <out.png> [size]`.
+
 Next: [statistics](/formats/statistics).
