@@ -20,7 +20,7 @@ It can also deploy on a server in enterprise setup. Refer to [deployment](/refer
 
 ## How it fits together
 
-<AppDemo open="folder/demo/diagram/how-it-fits-together.excalidraw" height="400px" image="/diagram/how-it-works.svg" alt="The window and any agent talk to one local server, which signs requests straight to your storage" />
+<AppDemo open="folder/demo/ObjectExplorer/how-it-fits-together.excalidraw" height="400px" image="/diagram/how-it-works.svg" alt="The window and any agent talk to one local server, which signs requests straight to your storage" />
 
 You and an agent ask the same local server, and only that server talks to your storage, with your
 own credentials. What it remembers — names and sizes, column statistics, notebook code, cached

@@ -13,7 +13,7 @@ const cells = [
 ]
 </script>
 
-<AppDemo open="folder/demo/nl_train_stations.parquet" :cells="cells" height="640px" image="/screenshot/notebook-chart.png" alt="A chart cell: stations per country, drawn from the rows above" />
+<AppDemo open="folder/demo/table/nl_train_stations.parquet" :cells="cells" height="640px" image="/screenshot/notebook-chart.png" alt="A chart cell: stations per country, drawn from the rows above" />
 
 A chart cell writes its own first draft. The [column statistics](/explore/column-summary) say which
 column is a date, which is a category, which is a measure and which is an id that counts up once per

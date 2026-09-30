@@ -20,7 +20,7 @@ and talks to your storage with your own credentials. There is no service of ours
 
 ## Opening a file
 
-<AppDemo open="folder/demo/diagram/how-it-works.excalidraw" height="400px" image="/diagram/how-it-works.svg" alt="Opening a file: the local server, the cache or the provider, a reader in a worker, the view" />
+<AppDemo open="folder/demo/ObjectExplorer/how-it-works.excalidraw" height="400px" image="/diagram/how-it-works.svg" alt="Opening a file: the local server, the cache or the provider, a reader in a worker, the view" />
 
 1. You click a file. The window asks the local server for it.
 2. For a local file, the server reads it from your disk. For a cloud object, it looks in the cache;

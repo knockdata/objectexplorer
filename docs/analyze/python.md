@@ -112,7 +112,7 @@ prefix and nothing to configure:
 ```python
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.getOrCreate()
-spark.sql("SELECT * FROM `demo/nl_train_stations.parquet` LIMIT 10000")
+spark.sql("SELECT * FROM `demo/table/nl_train_stations.parquet` LIMIT 10000")
 ```
 
 The backticks are needed — `:` and `/` are not characters an unquoted SQL name may contain — and

@@ -4,6 +4,16 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.8.2  —  2026-09-30
+
+- **New File ...** and **New Folder ...** head a folder's context menu: type the name in the tree, the way VSCode asks, and a new file's extension decides what kind it is. `.md` and `.excalidraw` for now, the kinds ObjectExplorer can edit, with more to follow. The new file opens for editing, a name already taken is refused, and Undo removes a new file. New Folder works in local folders
+- A markdown file in a local folder opens in a block editor: edit a paragraph, heading, list or table where it is, type `/` for a new block, and the file keeps its exact text wherever you did not touch it
+- A drawing can live inside a markdown file: `/excalidraw` adds one, edited in place and saved in the same file
+- Drawings are saved shorter, leaving out every field that is at its default, and still open in Excalidraw
+- The demo folder is sorted into one folder per kind of file, each with a README that says what is inside and what to try
+- New in the demo folder: `ObjectExplorer/architecture.md`, how ObjectExplorer works with its diagrams drawn inside; the stations as a DuckDB and a SQLite database; the same CAD part as SolidWorks and CATIA files, and an AutoCAD drawing
+- The demo's 3D model and photo are replaced with ones made for it, so everything in the folder can be passed on freely
+
 ## v0.8.1  —  2026-09-29
 
 - **Open with ObjectExplorer**: the desktop app shows up in Finder's, Explorer's and the file manager's Open With menu for every kind of file it can open. The file opens in a tab, in the window that is already open when there is one

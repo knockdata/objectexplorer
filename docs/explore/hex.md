@@ -1,6 +1,6 @@
 # Hex
 
-<AppDemo open="folder/demo/nl_train_stations.parquet" view="hex" tree-path="folder/demo/nl_train_stations.parquet" :off="['tour', 'auth', 'tree', 'activity', 'header', 'footer']" image="/screenshot/hex.png" alt="The hex viewer: offsets, hex pairs and the ASCII column" />
+<AppDemo open="folder/demo/table/nl_train_stations.parquet" view="hex" tree-path="folder/demo/table/nl_train_stations.parquet" :off="['tour', 'auth', 'tree', 'activity', 'header', 'footer']" image="/screenshot/hex.png" alt="The hex viewer: offsets, hex pairs and the ASCII column" />
 
 Any file, any size, straight to bytes. Offsets, hex pairs and the ASCII column, virtualized so a
 multi-gigabyte object opens instantly instead of after a spinner — only the lines on screen are ever

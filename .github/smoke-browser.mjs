@@ -48,7 +48,7 @@ try {
 	// desktop app answered "No files found that match the pattern" for files that were plainly there,
 	// while the same build under npx read them all. The package suite runs on the main thread and can
 	// never see it, so it is caught here or not at all.
-	const query = "SELECT * FROM 'demo/nl_train_stations.parquet' LIMIT 1"
+	const query = "SELECT * FROM 'demo/table/nl_train_stations.parquet' LIMIT 1"
 	const answer = await (await fetch(`${url}/api/duckdb/query`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },

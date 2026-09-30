@@ -9,7 +9,7 @@ const cells = [
 ]
 </script>
 
-<AppDemo open="folder/demo/nl_train_stations.parquet" :cells="cells" image="/screenshot/notebook-sql.png" alt="A table cell: the SQL over the object, and the rows it returned with their column summaries" />
+<AppDemo open="folder/demo/table/nl_train_stations.parquet" :cells="cells" image="/screenshot/notebook-sql.png" alt="A table cell: the SQL over the object, and the rows it returned with their column summaries" />
 
 ```sql
 SELECT region, count(*), sum(amount)
