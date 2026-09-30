@@ -432,7 +432,8 @@ jobs:
       # the thumbnail and preview handler goes into the msix beside the exe, and Explorer loads it
       # into a surrogate process on every user's machine: signed like the exe, before the packs
       - name: Sign the preview handler
-        if: env.AZURE_CLIENT_ID != ''
+        # only when it built: a handler that did not is a warning above, and there is nothing to sign
+        if: env.AZURE_CLIENT_ID != '' && hashFiles('out/ObjectExplorerPreview-*.dll') != ''
         uses: azure/trusted-signing-action@v0
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}

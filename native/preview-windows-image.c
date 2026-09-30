@@ -19,8 +19,10 @@ static BOOL streamToFile(IStream *stream, const wchar_t *path) {
 		ULONG read = 0;
 		ULONGLONG total = 0;
 		LARGE_INTEGER start = { 0 };
-		IStream_Seek(stream, start, STREAM_SEEK_SET, NULL);
-		while (ok && SUCCEEDED(IStream_Read(stream, buffer, sizeof buffer, &read)) && read > 0) {
+		// through the vtable: shlwapi.h has its own three-argument IStream_Read that shadows the
+		// COBJMACROS one, and it reads exactly the count asked for or fails
+		stream->lpVtbl->Seek(stream, start, STREAM_SEEK_SET, NULL);
+		while (ok && SUCCEEDED(stream->lpVtbl->Read(stream, buffer, sizeof buffer, &read)) && read > 0) {
 			DWORD written = 0;
 			total += read;
 			ok = total <= MAX_PREVIEW_BYTES && WriteFile(file, buffer, read, &written, NULL) && written == read;
