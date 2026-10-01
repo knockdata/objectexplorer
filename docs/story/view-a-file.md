@@ -4,9 +4,10 @@ subtitle: "One click, rendered."
 episode: 1
 runtime: null
 video: null
-poster: /screenshot/story-cad-cloud.png
+poster: /screenshot/open-a-file.png
+recording: /video/view-a-file.mp4
 open: folder/demo/cad/nist_ftc_11_asme1_rb.stp
-focus: { x: 64, y: 50, width: 40 }
+# focus: { x: 64, y: 50, width: 40 }
 background: "#202020"
 caption: "A 7 KB STEP part in a Cloud Storage bucket, opened where it sits: a washer 63 mm across, drawn from its 6 faces as 1,798 triangles."
 today:
@@ -70,24 +71,21 @@ So the thing showing you the folder can read those bytes too. A picture is a pic
 One click, rendered.
 -->
 
-There are lots of treasure in our cloud storage. Where are they exactly located?
+There are lots of treasure in our cloud storage. But where are they exactly located? How do we find them?
 
 ## Today
 
-Find what we want on cloud storage is like looking a gold on a beach. 
+Find what we want on cloud storage is like looking a gold on a beach, you know it's there but take hours to find it.
 
-Go to cloud storage, click around for a bunch, download it, try to open. Hopefully the file is what your computer already support it. 
-While for quite some of the time, they are just special binary format, a parquet file, a sas file, a sqlite database, a blender model, a solidworks design. 
-We then need to find and install proper tool. After stuggling for a half hour, we finally made it. 
+We normally go to cloud console, click here and there in a bunch tabs, download it, try to open. Hopefully the file type is what your computer already support it. While for quite some of the time, they are just special binary format, a parquet file, a SAS file, a sqlite database, a Blender model, a SolidWorks design. We then need to find and install proper tool if we have lucky to have the license. After struggling for a half hour, we finally made it.
 
 <StoryToday />
 
 ## Ideal Solution
 
-If we think an ideal solution without any constraint, what could be possibly be?
+If we think an ideal solution without any external constraints, what could be possibly be?
 
-We can open a cloud storage like normal tree. Click the one we want it. 
-Then bomb, it just open. 
+We can open a cloud storage like normal tree. Click the one we want it. Then boom, it just open.
 
 We shall not care about what format it is. That's the system's responsibility. Isn't it?
 

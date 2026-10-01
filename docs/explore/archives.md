@@ -16,7 +16,11 @@ when you open that entry.
 | Disk images           | `dmg`                                                                  |
 | Anki decks            | `apkg`                                                                 |
 | CAD files             | `sldprt` `sldasm` `slddrw` `catpart` `dwg` — see [CAD](/formats/cad)   |
+| Power BI files        | `pbix` `pbit` — see [Power BI](/formats/powerbi)                       |
 | Databases             | `db` `sqlite` `sqlite3` `duckdb` — see [databases](/formats/databases) |
+
+A zip with no extension, or with one that says something else, is browsed all the same: the bytes
+say it is a zip.
 
 `tar`, `gz`, `7z`, `rar` and the other archives that are not zips cannot be browsed yet.
 

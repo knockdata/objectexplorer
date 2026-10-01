@@ -199,6 +199,7 @@ export default defineConfig({
 					{ text: "Statistics", link: "/formats/statistics" },
 					{ text: "Databases", link: "/formats/databases" },
 					{ text: "Documents", link: "/formats/documents" },
+					{ text: "Power BI", link: "/formats/powerbi" },
 					{ text: "The PDF reader", link: "/formats/pdf" },
 					{ text: "Text, code and notebooks", link: "/formats/text" },
 					{ text: "Drawings and diagrams", link: "/formats/diagrams" },

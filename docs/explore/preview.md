@@ -13,7 +13,9 @@ true of every format in the list, from a 40 KB parquet file to a multi-gigabyte 
 
 The extension, and then the bytes. A file with no extension, or a wrong one, is sniffed: the first
 bytes decide, which is how a `.hoodie` folder is read as a Hudi timeline, a `.db` as SQLite or
-DuckDB, and a `.hdr` as a texture rather than a text header.
+DuckDB, and a `.hdr` as a texture rather than a text header. A zip is told apart by what it holds:
+a Power BI report, a Word, Excel or PowerPoint file or an epub opens as that, and any other zip as a
+folder. A PNG, JPEG, GIF, WebP or PDF with no extension opens as itself too.
 
 ## The toolbar
 

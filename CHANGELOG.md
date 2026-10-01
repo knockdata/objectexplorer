@@ -4,6 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.8.4  —  2026-10-01
+
+- **Power BI reports open as the report**: a `.pbix` shows its pages with every visual drawn — bar, column, line, area and combo charts, pie, donut, treemap, funnel, gauge, scatter, cards, tables, matrices, slicers, text, images and shapes — and the numbers in them are worked out from the data inside the file, under the report's own filters and slicer selections. Measures written in DAX are evaluated; one that uses something not covered yet shows as blank rather than a wrong number. No Power BI Desktop, and nothing leaves your machine
+- A report's **Data** tab lists its tables and their first rows; **Model** shows the columns, the measures with their DAX, the relationships and the Power Query behind each table
+- Reports in the new PBIR format (Power BI's default since 2026), reports from 2016 on, templates (`.pbit`) and live-connection reports all open. Maps and custom visuals show as a box naming the visual and its fields
+- A file is recognised by what is in it, not only by its name: a report renamed to `.bin` or saved without an extension still opens as a report, any zip opens as a folder whatever it is called, and a PNG, JPEG, GIF, WebP or PDF with no extension opens as itself
+
+
 ## v0.8.3  —  2026-09-30
 - instant mode can New File and Folder
 - using icon for supported file types

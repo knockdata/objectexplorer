@@ -11,4 +11,4 @@ Because the office formats are zips, the same objects can also be
 [browsed as folders](/explore/archives): open the `.pptx` as an archive and the slide XML, the media
 and the theme are entries you can open one at a time.
 
-Next: [the PDF reader](/formats/pdf).
+Next: [Power BI](/formats/powerbi).
