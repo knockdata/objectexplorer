@@ -4,13 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
-## v0.8.4  —  2026-10-01
-
-- **Power BI reports open as the report**: a `.pbix` shows its pages with every visual drawn — bar, column, line, area and combo charts, pie, donut, treemap, funnel, gauge, scatter, cards, tables, matrices, slicers, text, images and shapes — and the numbers in them are worked out from the data inside the file, under the report's own filters and slicer selections. Measures written in DAX are evaluated; one that uses something not covered yet shows as blank rather than a wrong number. No Power BI Desktop, and nothing leaves your machine
-- A report's **Data** tab lists its tables and their first rows; **Model** shows the columns, the measures with their DAX, the relationships and the Power Query behind each table
-- Reports in the new PBIR format (Power BI's default since 2026), reports from 2016 on, templates (`.pbit`) and live-connection reports all open. Maps and custom visuals show as a box naming the visual and its fields
-- A file is recognised by what is in it, not only by its name: a report renamed to `.bin` or saved without an extension still opens as a report, any zip opens as a folder whatever it is called, and a PNG, JPEG, GIF, WebP or PDF with no extension opens as itself
-
+## v0.8.4  —  2026-10-02
+- cloud bill for every service: disc Services sector, forecast, budgets, commitments, chargeback
+- BigQuery tables open as a local sample, SQL cells run in BigQuery
+- draw.io diagrams open as a drawing
+- Google Docs/Sheets/Slides stubs open from Drive
+- Power BI reports open with visuals, data and model
+- file type sniffed from content, not only extension
+- Pro lifetime €300
 
 ## v0.8.3  —  2026-09-30
 - instant mode can New File and Folder
@@ -18,302 +19,145 @@ What changed in each version. Every build is on the
 - preview in os
 
 ## v0.8.2  —  2026-09-30
-
-- **New File ...** and **New Folder ...** head a folder's context menu: type the name in the tree, the way VSCode asks, and a new file's extension decides what kind it is. `.md` and `.excalidraw` for now, the kinds ObjectExplorer can edit, with more to follow. The new file opens for editing, a name already taken is refused, and Undo removes a new file. New Folder works in local folders
-- On objectexplorer.com/app, a folder you open from your own disk can be written to: New File and New Folder work there, and markdown and drawings in it are saved back into the file itself. The demo folder stays read-only
-- Data files show what is in them in Finder, Explorer and the linux file managers: a parquet, arrow, avro, orc, SAS or SPSS file's thumbnail is its row count over its first rows, and the space bar on a Mac or the preview pane in Explorer shows a page of those rows
-- Every file type the app opens wears its own mark on a full page in Finder, Explorer and the file manager, instead of a small app badge on a blank one
-- `oe thumbnail <file> <out.png> [size]` draws that thumbnail from the command line
-- A .dmg made on a recent Mac opens like a folder: its APFS volume is listed and every file in it can be opened, where before only older HFS+ disk images could. A file the file system stored compressed is listed but not opened yet
-- A markdown file in a local folder opens in a block editor: edit a paragraph, heading, list or table where it is, type `/` for a new block, and the file keeps its exact text wherever you did not touch it
-- A drawing can live inside a markdown file: `/excalidraw` adds one, edited in place and saved in the same file
-- Drawings are saved shorter, leaving out every field that is at its default, and still open in Excalidraw
-- The demo folder is sorted into one folder per kind of file, each with a README that says what is inside and what to try
-- New in the demo folder: `ObjectExplorer/architecture.md`, how ObjectExplorer works with its diagrams drawn inside; the stations as a DuckDB and a SQLite database; the same CAD part as SolidWorks and CATIA files, and an AutoCAD drawing
-- The demo's 3D model and photo are replaced with ones made for it, so everything in the folder can be passed on freely
+- New File / New Folder in the tree context menu (`.md`, `.excalidraw`)
+- objectexplorer.com/app can write to a folder opened from your disk
+- OS thumbnails and previews for parquet, arrow, avro, orc, SAS, SPSS
+- own icon per file type in Finder, Explorer and linux file managers
+- `oe thumbnail` command
+- APFS `.dmg` opens as a folder
+- markdown block editor, with excalidraw drawings inline
+- drawings saved shorter
+- demo folder sorted by kind, with READMEs and new samples
 
 ## v0.8.1  —  2026-09-29
-
-- **Open with ObjectExplorer**: the desktop app shows up in Finder's, Explorer's and the file manager's Open With menu for every kind of file it can open. The file opens in a tab, in the window that is already open when there is one
-- Sign in with Google on objectexplorer.com/app, not only in the desktop app
-- **Open App** goes to objectexplorer.com/app from every page, landing included, so the address bar follows the file that is open and can be shared; the docs pages no longer show a 404 for it
-- The demo folder has an architecture diagram of ObjectExplorer itself, `ObjectExplorer/architecture.excalidraw`
+- Open With ObjectExplorer in Finder, Explorer and linux file managers
+- Google sign-in on objectexplorer.com/app
+- Open App goes to objectexplorer.com/app from every page
+- architecture diagram in the demo folder
 
 ## v0.8.0  —  2026-09-28
-
-- Our own hand-drawn font, Rock, in drawings, presentations and the usage visualization disc, replacing Excalifont
-- The page URL sets how the window starts: `<part>=off` hides the activity bar, tree, tabs, header, footer, tour or account; `view=`, `search=`, `cell=` and `treePath=` pick what opens first; `component.<name>=` is handed to the view
-- `treePath=` opens the tree down to an object and selects it
-- The usage visualization disc can open with its insights already drawn (`component.insight=on`)
-- The demo folder has a sample of each kind of file: a STEP part, a 3D city, a PDF, an ebook, a photo with GPS, a shader, a sprite sheet, a zip and two diagrams
+- own hand-drawn font, Rock, replacing Excalifont
+- URL options set how the window starts (`<part>=off`, `view=`, `treePath=`, `component.<name>=`)
+- usage disc can open with insights drawn
+- demo folder has a sample of each kind of file
 
 ## v0.7.7  —  2026-09-25
-
-- Enterprise mode: run `npx` as a team server with a licence or a 14-day trial, sign-in through OIDC or SAML (Okta tested), an admin list and an audit log; update only with `oe check` / `oe upgrade`, and `oe rollback` if needed
-- HTTPS certificates are fetched and renewed on their own, through a single CNAME record (dns-01)
-- An account icon on the desktop app, `npx` and objectexplorer.com/app, with sign-up and a **Download app** dialog
-- The desktop app can install the `oe` shell command from the command palette
-- Simpler run settings: one `deployment=` option (package, desktop, instant, enterprise), plus `host`, `domain`, `protocol`, `certificate` and `debug=true`
+- enterprise mode: licence or 14-day trial, OIDC/SAML sign-in, admins, audit log, `oe check/upgrade/rollback`
+- automatic HTTPS certificates via one CNAME (dns-01)
+- account icon with sign-up and Download app dialog
+- install the `oe` shell command from the palette
+- one `deployment=` run setting
 
 ## v0.7.6  —  2026-09-23
-
-- Guided onboarding: a welcome box, spotlight tours of the layout, left and right side, and a **?** menu to replay them
-- The usage visualization disc opens as a tab
-- The app runs in place on the landing page, and can be expanded to full size
+- onboarding: welcome box, spotlight tours, **?** menu
+- usage disc opens as a tab
+- app runs in place on the landing page
 
 ## v0.7.5  —  2026-09-22
-
-- able to truncate application log, and use syntax highlight
-- fallback to WebGL when webgpu is not available for usage visualization and model/cad rendering
-- remove close tab in oauth redirect, when it's in desktop app as it is not able to close wehn it's not opened by the same browser
+- truncate application log, with syntax highlight
+- WebGL fallback when WebGPU is not available
+- no close-tab after OAuth redirect in the desktop app
 
 ## v0.7.4  —  2026-09-22
-
-- The Free plan adds three cloud roots per provider instead of one — three buckets on S3, three on Cloud Storage, three containers on Azure — and Settings → Plan and the pricing page say so
-- A Google account with hundreds of projects no longer lists every one of them: the add dialog shows the first five, the ones that answered last time first, and a **Show all** row for the rest; the filter box still searches them all
-- A project's buckets are asked for when you open it, not before, so a long project list costs nothing until you look inside one
-- A project that will not list its buckets says **No permission to list buckets** right under it, instead of a lock icon alone, and moves to the bottom of the list; what Google said is on hover
-- An object your account may not read opens on **No permission to read**, naming the account and the permission Google said is missing — before, it asked you to sign in again, which could never have helped
-- The usage visualization disc opens full on its first days instead of empty: made-up data, with a new **Demo** switch that says so and turns it off
-- After seven days of use the disc opens on your own storage; the switch shows the demo again whenever you want to see what a full disc looks like
-- At objectexplorer.com/app the disc always opens on the demo, since nothing a visitor lists there is theirs to keep
-- objectexplorer.com/app no longer shows Settings panes it cannot serve — MCP, MCP sessions, Writing tool, About and Check for Updates — where each one only ever showed an error or did nothing; the desktop app and `npx` keep all of them
-- About shows what went wrong in words when it cannot read the build, rather than `[object Object]`
-- The app no longer stops when its log file disappears under it — a line that cannot reach the file still reaches the terminal
-- A folder dragged in from the desktop now works in the desktop app, where it used to do nothing: the window the app runs in cannot open a dropped folder on its own, so the app reads where the folder is instead and opens it the way every other program on the machine would
-- A folder dropped that way is kept the way the **Add folder** button keeps one, so it is there the next time the app opens and never asks to be confirmed again — in a browser the same drop is permission that has to be granted on every reload
-- SQL can read a dropped folder too, which it could not when the folder was only a browser's permission to look at it
-- Dragging a folder onto a bucket now copies it from the machine itself rather than reading every file into the page first
-- Two folders of the same name dragged in from two different places stay two folders; before, the second was read as the first
-- A rebuilt app under a version already on the machine now actually replaces what is there: the unpacked copy is keyed on the bytes it came from rather than on the version alone, so a build carrying different code no longer runs the old one for good
+- Free plan: three cloud roots per provider
+- Google project list shows five first, with Show all
+- buckets listed only when a project is opened
+- clear "No permission to list buckets" and "No permission to read" messages
+- usage disc opens on demo data, with a Demo switch
+- objectexplorer.com/app hides Settings panes it cannot serve
+- folder drag-in works in the desktop app, is remembered, and is readable by SQL
+- fixed: app stopped when its log file disappeared
+- fixed: rebuilt app at the same version kept running old code
 
 ## v0.7.0  —  2026-09-12
-
-- ObjectExplorer is MIT licensed, and says so: the public repository had no LICENSE file at all, which by default means all rights reserved — the opposite of what was intended, on the page everyone reads first
-- The npm package said ISC while the repository said nothing, so the two halves of the same product disagreed about their own terms; both now say MIT
-- Every font, icon set and engine this app ships with now has its licence written down, in one `LICENSES.md` that travels with the app — in the npm package, inside the desktop binary, and served at `/LICENSES.md` by any of them
-- The hand-drawn font in a drawing is Excalifont, under the SIL Open Font License, which asks that its text go wherever the font goes; that text is in `licenses/OFL-1.1.txt` now instead of nowhere
-- The same file names the rest of what came from other people: Seti UI's file-type icons and DuckDB, both MIT; VS Code's codicons, CC BY 4.0; SQLite, which is in the public domain and asks for nothing
-- Google's Cloud service icons are named there too, as what they are — Google's own marks, shown so a bucket looks like a bucket, and not ours to hand on under an open licence
-- FFmpeg is no longer inside the app at all: its WebAssembly core is GPL, and rather than carry that, the browser now fetches the core from unpkg the first time an audio file needs converting and keeps it after that
-- The download is one pinned version, cached in the browser, and it only ever happens for a format the browser cannot decode on its own — every other audio file plays without it
-- The desktop binary is 32 MB smaller for it, and the npm package has one dependency fewer
-- Converting audio also stopped going through a worker of our own: the ffmpeg library already runs its core in one, so the second worker was moving the same bytes an extra time
-- The demo song a synthesia keyboard loaded on its own is gone — it was somebody else's sequence, filed under the wrong title, and the keyboard was never meant to open with a tune nobody asked for
-- The drum kit is played on instruments that do not exist: every hit is built out of oscillators and filtered noise instead of a recording, so there is nothing left in the app whose origin cannot be answered
-- It is meant to sound struck rather than triggered — nothing starts at full volume, every decay curves, the toms and the kick glide down in pitch the way a real head does, and each hit ends in a few quiet reflections so it lands in a room rather than in a vacuum
-- The kit is balanced by how loud each piece sounds rather than how tall its waveform is, which is the difference between a hi-hat you can hear under a tom and one you cannot
-- The old sampled kit is gone from the build entirely — not in the npm package, the desktop binary or the hosted app — because a build that cannot say where a recording came from should not be handing it out
+- MIT licence, and `LICENSES.md` for every bundled font, icon set and engine
+- FFmpeg core fetched on demand instead of bundled (desktop binary 32 MB smaller)
+- synthesized drum kit replaces sampled one; demo song removed
 
 ## v0.6.5 — 2026-09-10
-
-- A Google Drive, OneDrive or iCloud folder in streaming mode is a tree of placeholders — the row says 20 MB and not a byte of it is here — and the app tells the difference now
-- ON DISK, a column beside SIZE, is what an object takes up on this machine rather than what it is
-- It appears only where the bytes might not be here: a synced folder, and a bucket, whose objects are cached rather than stored — an ordinary local folder is neither, and the column stays away
-- An object that is not here shows a download icon in that cell, and clicking it fetches that one file without opening it, the gesture Finder puts in the same place
-- A folder never gets the icon: what is under it is the SIZE cell's question
-- Opening an object the provider is still holding asks first, above 5 MB — under that it is simply fetched, because a prompt in front of a document is only a door to open twice
-- The panel names the provider holding it and says how big it is, and a spinner runs until the bytes land
-- iCloud hands a file over whole, in one step, so there is no percentage to report and the spinner is the entire answer; a provider that materialises progressively shows its bytes climbing instead
-- Scanning a streaming folder no longer downloads it — reading a file's first 64 bytes to sniff what it is was enough to make the provider fetch the whole object, so that read is refused before it starts
-- A mount takes the name Finder gives it: "iCloud Drive" and "Google Drive", not `com~apple~CloudDocs` or `GoogleDrive-someone@gmail.com`
-- A folder inside a mount keeps its own name — that one you chose
-- What each object has on disk is remembered, so a listing drawn from the database reads the same as one drawn from a fresh scan
-- A file dragged in from the desktop no longer reports that it no longer exists on disk: it arrives carrying its own bytes, which is better proof than a lookup in the registry of folders you have opened
-- A large PDF opens again — its decoded page images are bigger than the file they came from and were being copied to the window rather than handed to it, which a 20 MB document had no memory for
-- A PDF over 5 MB is not read apart at all now: the pages on screen are drawn by the browser from the same bytes, and the parse only ever fed the extra modes
-- The database this all lives in gains three columns and is built again from scratch, so the folders and cloud favourites you added are added back once
+- streaming Google Drive / OneDrive / iCloud placeholders detected
+- ON DISK column, with per-file download
+- ask before opening a large file not yet downloaded
+- scanning no longer downloads streaming files
+- mounts named as Finder names them
+- fixed: large PDFs open again
+- database rebuilt from scratch
 
 ## v0.6.3 — 2026-09-10
-
-- Spark in a python cell: install `pyspark`, and a session reads your objects by name with nothing to configure
-- The name is the same URI a SQL cell is written with, in backticks — `:` and `/` are not characters an unquoted SQL name may hold
-- The sign-in the app already has is reused, the object is cached once, and a format Spark has no reader for — `.sav`, `.sas7bdat`, `.xpt`, `.xlsx` — is converted to parquet first
-- There is no cloud connector to set up, no key to hand Spark and no `spark.hadoop.*` line to write
-- A name that is not one of ours is left alone, so your own tables, views and direct file reads behave exactly as they did
-- Settings → Python grows two sliders once pyspark is in an environment: the cores a session may use, and the memory its driver may take
-- Each slider runs the length of the machine and stops where the machine keeps something back — memory at three quarters, with the end of the track shaded
-- A JVM's heap is fixed when it starts, which is before any `.config()` in your builder is read, so this is the one place the size can be set
-- Every environment keeps its own `spark-defaults.conf`, and a terminal joins by pointing `SPARK_CONF_DIR` at it
-- Stopping a kernel stops its Spark session; a JVM that has stopped answering is killed about eight seconds later
-- Every JVM this app starts is named after its environment, so one found in `ps` is identifiable — and it is what the app checks before killing one
-- A session whose JVM died is replaced on the next cell instead of handed back dead forever
-- It needs a JDK 17 or 21, found wherever your package manager put it, including Homebrew's `openjdk`
-- The ⓘ icon beside Run opens everything else about a python cell: which kernel and venv it ran on, what is in that namespace, and anything it printed
-- The icon is struck through while the panel is shut, the way a crossed-out eye reads — there is something in there and you are not seeing it
-- A cell whose last line is not a value — an assignment, an import, a bare `print` — draws nothing at all
-- The venv picker is gone from the cell: a cell runs in whichever environment its kernel was started on
-- A second kernel comes from `new kernel…` in the toolbar, which asks which environment only when there is more than one
-- Settings → Python asks for a name and a version instead of listing every interpreter to read, and pyspark joins the one-click badges
-- An agent's tools are this app's own routes now: `getObject` is what the window calls and what an agent calls, and `readObject` is gone
-- The gate is the only thing that decides — behind it there is no second implementation of the app to keep in sync with the first
-- A refusal says which step said no, on the line — `getObject: over size limit` — with the rule from the file on hover
-- Hash, mask and FPE live in one place, so a share and an agent's answer are rewritten by the same code
-- The share dialog's preview is the server's own answer, which is what the receiver will read; the browser holds no cipher at all
-- Sanitization is a field of a request rather than a property of who is asking, so a program on this machine calling the local API is not an agent and is not held to `mcp.yaml`
+- Spark in python cells, reading objects by URI with no config
+- Settings → Python: Spark cores and memory sliders
+- python cell info panel: kernel, venv, namespace, output
+- new kernel from the toolbar
+- agent tools reuse the app's own routes; refusals name the step
 
 ## v0.6.2 — 2026-09-08
-
-- An agent reaches every object now, not only the ones duckdb can read: a `.docx`, an `.excalidraw` and a `.png` all answer
-- Every object is one of four things, sniffed from the object itself — tabular, textual, structure or raw
-- `readObject` reads any of them: rows for a table, words for a document, the tree for a drawing, bytes for the rest
-- `offset` and `limit` walk whichever of those it is — rows, lines or bytes — so a 2 GB file is read a window at a time
-- `searchText` finds a pattern in one object, or in every textual object in one folder
-- A `.docx` is read by the same parser the app's own viewer uses, so an agent gets the words rather than a zip
-- `describeObject` and `listObjects` say what each object is, and a table is the only thing asked for columns
-- What is sanitized follows what the object is: a table gets the column rules, a document gets the text rules, a tree and a blob get neither
-- A tree is handed over untouched on purpose — a rewritten value in an `.excalidraw` is a file that no longer opens
-- `maxObjectBytes` is checked against the file before it is opened, not against the answer after
-- The MCP overlay: a green dot in the corner that lights when an agent calls, and opens the panel when clicked
-- The panel groups the last three sessions oldest to newest, with the one being worked on expanded
-- The activity strip is one hill per session, as tall as that session was busy
-- Following opens the first object of a burst at once, and only the ones behind it wait
+- agents read any object: tabular, textual, structure or raw
+- `readObject` windows with offset/limit; `searchText`
+- sanitization follows the object kind
+- MCP overlay dot and session panel
 
 ## v0.6.1 — 2026-09-07
-
-- A notebook cell that runs Python, against a venv this app made and a kernel it keeps running
-- The Python sees the same objects the rest of the app sees: `oe.path(uri)` downloads a cloud object and hands back a local path
-- `oe.query(sql)` and `oe.frame(sql)` run through the same duckdb the SQL cells use, so a URI means one thing everywhere
-- `oe.current` and `oe.uri()` name the object the cell was run from
-- The last value is the answer — a DataFrame draws a grid, a matplotlib figure draws a PNG, and there is no `print` to write
-- Rows from a python cell feed the cells below it, so a chart cell plots them with nothing written to a file in between
-- One kernel is shared across notebooks by default; a second is started by naming one, and the cell says which it is on
-- A kernel belongs to one venv — asking for it on another restarts it, and the cell says so out loud
-- Which venv and kernel a notebook uses is remembered per object
-- The toolbar lists what is in the kernel: name, type and a one-line summary
-- Settings → Python finds every interpreter on this machine, and says so plainly when there is none
-- Venvs are made by `uv` under `~/.objectexplorer/venvs`, and packages are installed from the pane
-- Markdown has a filter box: type, and only the lines that match stay, with the hit marked
+- Python notebook cells on an app-managed venv and kernel
+- `oe.path`, `oe.query`, `oe.frame`, `oe.current`
+- DataFrames and matplotlib figures render as results
+- Settings → Python: venvs via `uv`, package install
+- markdown filter box
 
 ## v0.6.0 — 2026-09-06
-
-- ObjectExplorer answers agents too: an MCP server for Claude Code, Codex and any client that speaks Streamable HTTP
-- The agent never holds a credential and never talks to a provider — it asks the app, and the app decides
-- Five tools: `listRoots`, `listObjects`, `describeObject`, `columnSummary` and `query`, ticked one by one
-- Settings → MCP: the door, the endpoint, the token, and Copy Connection for a client the app cannot write to
-- Install writes the entry into Claude Code's `~/.claude.json` or Codex's `~/.codex/config.toml`, so no token is typed anywhere
-- Nothing is reachable until it is written down: `~/.objectexplorer/mcp.yaml`, and no file means the door is shut
-- Allow roots is one tick per root, reachable in full; Deny rules is one list that holds in every root
-- Approve rules stop a call and ask a person in the window — no answer within the timeout is a no
-- Test a rule answers with the verdict and the content in the form it would go to the agent, reading nothing
-- Settings → PII: hash, mask, FPE or drop, by column name for tabular data and by what a value says for free text
-- FPE is the default — same length, same alphabet, a different value, so a query still joins and still counts
-- Every rewritten column is marked `encrypted`, so an agent never quotes a made-up id back as a real one
-- The share dialog opens on the PII rules, so a column decided once is decided everywhere
-- Data access limits: rows and bytes per call, per session and per day, calls per minute, objects per listing
-- Every call is written and flushed before the answer leaves — the rule that decided it, the rows, the bytes
-- Observe opens what the agent opens, in the window, as it happens; Escape stops following
-- The activity strip draws each agent's calls in its own colour, refusals on the same line
-- Settings → MCP sessions lists every session, and a row opens it as a tab: the agent's own transcript beside what it reached
-- Replay opens again, in order, everything an agent opened, with a step panel in the corner
-- Log history keeps calls for 1D, 7D, 1M, 3M or 1Y
+- MCP server for Claude Code, Codex and Streamable HTTP clients
+- tools: listRoots, listObjects, describeObject, columnSummary, query
+- access rules in `~/.objectexplorer/mcp.yaml`: allow, deny, approve
+- PII rules: hash, mask, FPE or drop
+- data access limits and audit log
+- observe, replay and session history for agent activity
 
 ## v0.5.10 — 2026-09-05
-
-- Microsoft Fabric OneLake is a connection of its own, with its workspaces in the side tree
-- Keynote `.key` files open as slides; a `.key` holding a private key opens as text instead
-- Text and hex read a file in windows, so a 2 GB csv opens at any line
-- The line-number gutter widens to the numbers on screen instead of overlapping the text
-- Query a spreadsheet with SQL — a sheet is read into a table duckdb can run against
-- Settings → Cache shows what the cache holds and what the disk has, with a capacity you drag
-- The cache evicts least-recently-used copies once it passes that capacity
-- Clear Cache, and a per-provider breakdown of what is held
-- Fixed: a plain text file was coloured as SQL — `user`, `by` and `case` drawn as keywords
-- Fixed: a PNG sat hard left instead of centred like every other picture
-- Fixed: a folder of parquet was queried as `*.ds_store` when a `.DS_Store` sat beside the data
+- Microsoft Fabric OneLake connection
+- Keynote `.key` opens as slides
+- windowed text/hex reading for 2 GB files
+- SQL over spreadsheets
+- Settings → Cache with capacity and LRU eviction
+- fixed: plain text coloured as SQL; PNG not centred; `.DS_Store` broke folder queries
 
 ## v0.5.9 — 2026-09-04
-
-- Add any S3-compatible endpoint — MinIO, R2, Ceph — from a + on the Connections heading
-- Connect tests the URL and the key pair by listing the endpoint's buckets
-- A connection that fails keeps what you typed and shows what the endpoint said
-- Key pair may be pasted inside the URL: `http://key:secret@localhost:9000`
-- Tick a bucket on a connected endpoint to put it in the side tree
-- Forget removes an endpoint, its key pair and its buckets
+- S3-compatible endpoints (MinIO, R2, Ceph)
 
 ## v0.5.7 — 2026-09-04
-
-- The Google Cloud dialog lists projects, with a filter box past ten
-- A project that refuses says what Google said, and stays clickable
-- Projects that worked last time are scanned first, and rows arrive as they are found
-- All pages of a project's buckets are read, not only the first
-- One rule list picks which reader a file opens in, for the pane and the grid tiles
-- Unknown binary formats open as picture, audio or hex instead of decoded text
-- Video containers are probed: a sound in a `.3gpp` plays as sound, unsupported codecs go through ffmpeg
-- Fixed: `.mov`, `.mkv`, `.webm`, `.avi` and `.mpg` rendered as text
-- Fixed: audio over 30 MB from a server played nothing
-- Fixed: refresh on a service listing returned the cached answer
+- Google Cloud project list with filter and error messages
+- all pages of buckets listed
+- one rule list picks the viewer for a file
+- video containers probed; ffmpeg for unsupported codecs
+- fixed: video rendered as text; large audio silent; refresh returned cache
 
 ## v0.5.6 — 2026-09-03
-
-- The app may be framed by objectexplorer.com, its GitHub Pages copy and localhost
-- Video on the site seeks, and plays on iPhone
+- app can be framed by objectexplorer.com
+- site video seeks and plays on iPhone
 
 ## v0.5.4 — 2026-09-03
-
-- Share a table or a trained model as a link that opens in the app at objectexplorer.com/app
-- Mask, Hash or FPE per column, chosen before anything is sent
-- Preview shows three sampled rows as they are and as they go
-- Link expiry of 1D, 1W, 1M, 3M or 1Y, plus Read and burn
-- Copy URL, or Email
-- A shared model carries LightGBM's text format, loadable in Python
-- Column headers sit over their own values; the unused sort-arrow space is gone
-- Fixed: a text coordinate column no longer breaks the grid
+- share a table or model as a link, with per-column Mask/Hash/FPE
+- link expiry and read-and-burn
+- fixed: text coordinate column broke the grid
 
 ## v0.5.3 — 2026-09-02
-
-- Copy, cut, paste, drag, rename and delete across local disks and all three clouds
-- Drop in the same root moves, another root copies; ⌥ forces copy, ⌘ forces move
-- Delete moves to `.trash`, emptied after 30 days
-- ⌘Z takes back the last operation
-- Rename on F2, with the extension left alone
-- A name clash asks once — Keep both, Replace, Skip, Cancel — before a byte moves
-- Copies within one provider run server-side and never touch this machine
-- Shift for a range, ⌘ for one more, ⌘A for all; drag a band over empty space
-- Copy name button on any row or card
-- Σ in the SIZE cell counts a folder, cached in `meta.db` with a TTL you set
-- Cloud folder sizes are priced by storage class, Glacier minimums included
-- Sorting by SIZE compares folders and files together
-- Show Cache Savings lists reads, cache hits, bytes pulled and what they cost
-- Settings is one dialog: favourites, cloud sign-ins, About and Check for Updates as panes
-- Grid zoom in five steps, per folder, on ⌘⇧= / ⌘⇧-
-- Grid previews are laid-out documents; drag cards to keep an arrangement
-- Fixed: the ACTIVITY sparkline emptied on cloud rows after a refresh
-- Fixed: a visit drew a range instead of one point
-- Fixed: a refresh that changed nothing looked like nothing happened
-- Fixed: a build with no version claimed an upgrade was waiting
+- copy, cut, paste, drag, rename, delete across local and cloud
+- trash with 30-day expiry, ⌘Z undo
+- multi-select
+- folder size Σ, priced by storage class
+- Cache Savings report
+- Settings as one dialog
+- grid zoom and arrangeable cards
 
 ## v0.5.2 — 2026-08-30
-
-- ⇧⌘P opens every command in the app, including the object's own context menu
-- Preferences are commands: show deleted objects, show hidden files, cloud switches
-- Open Dev Tools on all three desktop engines
-- The license file is gone; each cloud is turned on from the palette
-- Two levels per cloud: the whole provider, or storage alone
-- One shape for every cloud sign-in: status, login, cancel, connect, revoke
-- Revoke, in the dialog, states per cloud what it clears
-- Google signs in with `gcloud auth login --update-adc`
-- The dialog says whether the credentials file is there, and where it is written
-- Check for Updates in the App menu and the palette
-- Open Application Log puts the tail of `app.log` in a tab
-- Share Application Log uploads the last 1000 lines and hands back a link
-- Fixed: a refused listing emptied the pane instead of keeping stale children
-- Fixed: the install card showed a command that could not run
+- command palette ⇧⌘P
+- unified cloud sign-in dialog with revoke
+- Check for Updates
+- open and share application log
 
 ## v0.5.1 — 2026-08-25
-
-- A table opens as a notebook, with a `SELECT *` and a chart already written
-- DuckDB queries the object where it lives: parquet, csv, tsv, json, jsonl, xlsx, avro, sav, sas7bdat, xpt
-- ORC, Arrow and HDF5 open as grids and charts
-- Delta, Iceberg, Hudi, Hive partitions and date prefixes read as one table
-- Suggested charts come from the column statistics, and write their own source
-- Five cell kinds: Table, Chart, Model, Code and Text
-- Cells are piped from the nearest cell above that produced rows
-- Notebooks are kept per object
-- A model cell trains LightGBM in WebAssembly over those rows
-- Label, task and feature columns are set up from the column statistics
-- Leaves, learning rate and iterations are sliders that print their JavaScript
-- Feature importance by gain, and a TreeSHAP waterfall for one row
+- tables open as notebooks: Table, Chart, Model, Code, Text cells
+- DuckDB over parquet, csv, json, xlsx, avro, SAS, SPSS and more
+- Delta, Iceberg, Hudi and Hive partitions read as one table
+- LightGBM model cell with feature importance and SHAP
 
 ## Earlier versions
 

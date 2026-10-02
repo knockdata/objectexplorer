@@ -32,7 +32,7 @@ const plans = [
 		tagline: "For the window you leave open all day",
 		price: "€20",
 		period: "per month",
-		// lifetime: "Or €300 once, for life. It pays for itself in 15 months.",
+		lifetime: "€300",
 		includes: "Everything in Free and:",
 		features: [
 			"Unlimited cloud roots per provider",
@@ -56,7 +56,7 @@ const plans = [
 			"Single sign-on, OIDC & SAML",
 			"Hardware-bound encryption",
 			"Unlimited audit log history",
-			"Support within one business day",
+			"Support within 1 business day",
 		],
 	},
 ]
@@ -82,8 +82,7 @@ function linkOf(href) {
 				<div class="pricing-plan-head">
 					<h2>{{ plan.name }}</h2>
 					<p class="pricing-tagline">{{ plan.tagline }}</p>
-					<p class="pricing-price">{{ plan.price }}<span v-if="plan.period"> {{ plan.period }}</span></p>
-					<p v-if="plan.lifetime" class="pricing-lifetime">{{ plan.lifetime }}</p>
+					<p class="pricing-price">{{ plan.price }}<span v-if="plan.period"> {{ plan.period }}</span><template v-if="plan.lifetime"><span>/</span> {{ plan.lifetime }}<span>lifetime</span></template></p>
 					<PricingSignup v-if="plan.id === 'pro'" />
 					<a v-else class="pricing-action" :href="linkOf(plan.href)">{{ plan.action }}</a>
 				</div>
@@ -128,7 +127,7 @@ function linkOf(href) {
 }
 
 /* Each card spans two rows of the outer grid and shares them (subgrid), so the buttons and the
-   feature lists line up across the three cards even though only Pro carries a lifetime box. */
+   feature lists line up across the three cards. */
 .pricing-plans {
 	display: grid;
 	gap: 18px;
@@ -187,17 +186,6 @@ function linkOf(href) {
 	font-weight: 400;
 	letter-spacing: 0;
 	margin-left: 6px;
-}
-
-.pricing-lifetime {
-	background: var(--vp-c-bg-alt);
-	border: 1px solid var(--vp-c-divider);
-	border-radius: 8px;
-	color: var(--vp-c-text-1);
-	font-size: 14px;
-	line-height: 1.5;
-	margin: -8px 0 24px;
-	padding: 10px 12px;
 }
 
 /* margin-top auto sends the button to the bottom of the shared row, level with its neighbours */
