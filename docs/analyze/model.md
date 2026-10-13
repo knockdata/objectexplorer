@@ -7,7 +7,7 @@ const cells = [
 ]
 </script>
 
-<AppDemo open="folder/demo/statistics/synthetic-survival.xpt" :cells="cells" height="640px" image="/screenshot/notebook-model.png" alt="A model cell: the label and feature chips, the rails for leaves, rate and iterations, the row slider, the copy button, and the training and explaining source" />
+<AppDemo open="folder/demo/statistics/synthetic-survival.xpt" :cells="cells" height="640px" image="/screenshot/notebook-model.png" alt="A trained model cell: the label and feature chips, the rails for leaves, rate and iterations, the row slider, the features by share of gain, and the TreeSHAP waterfall of one row" />
 
 A model cell is gradient boosting — LightGBM's algorithm, built into the app — over the rows the cell
 above produced.
