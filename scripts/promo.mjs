@@ -175,10 +175,6 @@ async function record() {
 			const shot = await send(socket, "Page.captureScreenshot", { format: "jpeg", quality: 90 }, sessionId)
 			fs.writeFileSync(path.join(previewDir, `${String(index).padStart(2, "0")}.jpg`), Buffer.from(shot.data, "base64"))
 		}
-		await evaluate(socket, sessionId, "window.drawGrid()")
-		await wait(1200)
-		const grid = await send(socket, "Page.captureScreenshot", { format: "jpeg", quality: 90 }, sessionId)
-		fs.writeFileSync(path.join(previewDir, "grid.jpg"), Buffer.from(grid.data, "base64"))
 		socket.close()
 		chrome.kill()
 		console.log("wrote", previewDir)
