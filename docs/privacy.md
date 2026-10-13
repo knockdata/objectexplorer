@@ -50,9 +50,12 @@ each file took to open, what its memory was made of — stays in `~/.objectexplo
 **Your window sessions.** The desktop window records each session as it happens: what you clicked,
 the keys you pressed, the text you typed, and the messages the app printed. It is kept so a session
 can be played back after something went wrong. Only the last 20 are kept, and never more than 50 MB
-in all, in `~/.objectexplorer/replay`; nothing of it is sent anywhere. Start with `record=false` to
-record nothing — see [recording a session](/reference/session-recording). The browser version
-records nothing.
+in all, in `~/.objectexplorer/replay`; nothing of it is sent anywhere. Each file is encrypted with a
+key kept in your system's keychain (made the first time, never shown), so what you typed cannot be
+read from the file, by another program or from a copy of your disk. To give a session to someone,
+for a bug report, `oe replay export <file> <out>` writes a readable copy; it holds what you typed,
+so look at it first. Start with `record=false` to record nothing — see
+[recording a session](/reference/session-recording). The browser version records nothing.
 
 ## What an agent sees
 

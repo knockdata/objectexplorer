@@ -15,6 +15,16 @@ One line per event, in the order they came:
 Nothing in it is sent anywhere. A recording is written as it goes, so a crash loses nothing that was
 already written.
 
+## Encrypted on disk
+
+Each recording is encrypted as it is written, line by line, with a key of this install. The key is
+made the first time a session is recorded and kept in the system's keychain: the macOS Keychain, the
+Windows Credential Manager, or the Secret Service on Linux (where there is none, such as on a
+server, a file only you can read in `~/.objectexplorer/keychain`). The app reads it without asking
+for a password. So the text you typed cannot be read from the file: not by another program, not
+from a backup or a copy of the disk. Playing a session back decrypts it on the way; a recording
+from another computer or another install cannot be played, and says so.
+
 ## Where it goes
 
 Each window session is a file of its own in `~/.objectexplorer/replay`, named by when it started.
@@ -44,6 +54,16 @@ app, and says which element it looked for.
 | `replay_speed=1`    | real time, as it was recorded; `2` twice as fast, and so on         |
 
 A session played back is not recorded over the one it plays; give it `record=<file>` to record it.
+
+## Sending one with a bug report
+
+```sh
+oe replay export ~/.objectexplorer/replay/2026-10-11T17-36-44.166Z.replay session.replay
+```
+
+writes a decrypted copy, `session.replay`, that plays on any computer. It is written on this
+machine and nothing is sent. It holds everything the session recorded, the text you typed too, so
+read it before you attach it.
 
 This is the window's own session. An agent's calls are kept and replayed apart — see
 [sessions, replay and audit](/agents/sessions).
