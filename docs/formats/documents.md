@@ -1,21 +1,22 @@
 # Documents and presentations
 
-`pdf` `docx` `dotx` `pptx` `potx` `ppsx` `ppt` `pot` `pps` `key` `xlsx` `xlsm` `xltx` `enex`, and
-`doc` `odt` `rtf` for search
+`pdf` `docx` `dotx` `doc` `odt` `pptx` `potx` `ppsx` `ppt` `pot` `pps` `key` `xlsx` `xlsm` `xltx`
+`enex`, and `rtf` as text
 
 <img src="/screenshot/presentation.png" alt="A pptx rendered slide by slide">
 
 A PDF opens in [the PDF reader](/formats/pdf), with selectable text, find and notes. A Word file
-renders as its text with its structure, one column of prose. A presentation is painted slide by
+renders as its text with its structure, one column of prose — the old binary `.doc` and an
+OpenDocument `.odt` too: headings, lists, tables, links, pictures in an `.odt`, and the bold,
+italic, underline, colour and size of the words. A presentation is painted slide by
 slide — including the old binary `.ppt` and Keynote's `.key` — with a strip of thumbnails beside
 the slide on show; the arrow keys, `PageUp` and `PageDown` move between them.
 
 A workbook opens a sheet at a time, with a tab for each sheet under it. A large sheet is read a
 page of rows at a time rather than all at once.
 
-The older word processors' files — `.doc`, `.odt` and `.rtf` — are read for their words, so
-[search](/explore/search) finds what is in them. An `.rtf` opens as its text; the other two open in
-[hex](/explore/hex).
+The older word processors' files — `.doc`, `.odt` and `.rtf` — are also read for their words, so
+[search](/explore/search) finds what is in them. An `.rtf` opens as its text.
 
 Because the office formats are zips, the same objects can also be
 [browsed as folders](/explore/archives): open the `.pptx` as an archive and the slide XML, the media

@@ -1,7 +1,7 @@
 # Images
 
-`png` `jpg` `jpeg` `webp` `gif` `tiff` `tif` `svg` `ico`, and on a Mac `heic` `avif` `bmp` `psd` and
-camera raw
+`png` `jpg` `jpeg` `webp` `gif` `tiff` `tif` `svg` `ico` `cur` `bmp`, and on a Mac `heic` `avif` `psd`
+and camera raw
 
 <AppDemo open="folder/demo/image/archipelago-dusk.jpg" image="/screenshot/image-exif.png" alt="An image with its EXIF and GPS metadata beside it" />
 
@@ -17,7 +17,8 @@ only the largest.
 
 An SVG is painted by the app's own painter, not handed to a browser, and its text is a click away.
 
-On Windows and Linux the app's own decoders draw PNG, JPEG, GIF, WebP and TIFF. On a Mac the
-system's decoder draws those and more — HEIC, AVIF, BMP, Photoshop and camera raw files among them.
+On Windows and Linux the app's own decoders draw PNG, JPEG, GIF, WebP, TIFF, BMP (every depth, RLE
+too) and icons. On a Mac the system's decoder draws those and more — HEIC, AVIF, Photoshop and camera
+raw files among them.
 
 Next: [audio and video](/formats/media).

@@ -15,9 +15,12 @@ answers what a player never shows: how the file is actually put together.
 
 ## MIDI
 
-A MIDI file is read as its events. Its **table** holds a row for each: the track, the tick and the
-time, what kind of event it is, the channel, the note and its velocity, a controller and its value,
-and any text. **Structure** mode shows its header — the format, the track count, the ticks to a
-quarter note — and every track with its name and how many events of each kind it holds.
+A MIDI file opens **playing**: the app's own synthesizer sounds its notes at the file's tempos, a
+piano-like tone for every instrument and drums on the percussion channel, on every platform.
+
+Its **table** holds a row for each event: the track, the tick and the time, what kind of event it
+is, the channel, the note and its velocity, a controller and its value, and any text.
+**Structure** mode shows its header — the format, the track count, the ticks to a quarter note — and
+every track with its name and how many events of each kind it holds.
 
 Next: [fonts](/formats/fonts).
