@@ -72,7 +72,7 @@
 	justify-content: flex-end;
 }
 
-/* pushes the packages to the right edge, where .dmg is as wide as .AppImage */
+/* pushes the packages to the right edge, where .app is as wide as .appinstaller */
 .download-architecture-name {
 	color: var(--chalk-2);
 	font-size: 15px;
@@ -88,8 +88,8 @@
 	padding: 6px 8px;
 	text-align: center;
 	white-space: nowrap;
-	/* the widest of them, .AppImage, decides it — every package box is that wide */
-	width: 88px;
+	/* the widest of them, .appinstaller, decides it — every package box is that wide */
+	width: 116px;
 }
 
 .download .download-package:hover,
@@ -185,6 +185,14 @@ html[data-platform="windows"] .download .download-platform-windows li:first-chil
 	color: var(--chalk-3);
 	font-size: 14px;
 	margin: 0;
+}
+
+/* one command or more, one under the other */
+.download-commands {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 100%;
 }
 
 .download-command {

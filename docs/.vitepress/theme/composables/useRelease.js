@@ -1,11 +1,11 @@
 import { onMounted, ref } from "vue"
-import { assetSuffix, downloadTargets } from "../data/downloadPlatforms.js"
+import { downloadName, downloadTargets } from "../data/downloadPlatforms.js"
 
 const releaseUrl = "https://api.github.com/repos/knockdata/objectexplorer/releases/latest"
 let request = null
 
-// The newest release's version and, per installer, its asset's name, URL and size, so a download
-// link points straight at ObjectExplorer-<version>-<architecture>.<extension> on GitHub. When this
+// The newest release's version and, per download, its asset's name, URL and size, so a download
+// link points straight at objectexplorer-<target> of that release on GitHub. When this
 // request fails (a rate limit, offline, scripts off) the links stay objectexplorer.com/download/<target>,
 // which the host resolves. One request per page load, shared by every component that asks.
 export default function useRelease() {
@@ -33,9 +33,10 @@ async function readRelease() {
 			const names = {}
 			const urls = {}
 			for (const target of downloadTargets()) {
-				const asset = body.assets.find(candidate => candidate.name.endsWith(assetSuffix(target)))
+				const asset = body.assets.find(candidate => candidate.name === downloadName(target))
 				if (asset) {
-					sizes[target] = `${Math.round(asset.size / 1048576)} MB`
+					// an .appinstaller is a few hundred bytes
+					sizes[target] = asset.size < 1048576 ? `${Math.max(1, Math.round(asset.size / 1024))} KB` : `${Math.round(asset.size / 1048576)} MB`
 					names[target] = asset.name
 					urls[target] = asset.browser_download_url
 				}

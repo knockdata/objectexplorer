@@ -1,13 +1,18 @@
 <script setup>
 import { onMounted, ref } from "vue"
 import useRelease from "../composables/useRelease.js"
-import { downloadLink, downloadName, downloadPlatforms, releasesPage } from "../data/downloadPlatforms.js"
+import { brewCommands, downloadLink, downloadName, downloadPlatforms, releasesPage } from "../data/downloadPlatforms.js"
 import ShareLink from "./ShareLink.vue"
 
-const command = "npx @knockdata/objectexplorer"
+// the commands under the download cards: npx, and Homebrew's formula and cask
+const runs = [
+	{ title: "Run in Command Line", text: "Use in your browser", commands: ["npx @knockdata/objectexplorer"] },
+	{ title: "Install with Homebrew", text: "macOS and Linux: the command line, then the desktop app", commands: brewCommands },
+]
 const release = useRelease()
 const channel = ref("")
-const copied = ref(false)
+// the command last put on the clipboard, while its tick shows
+const copied = ref("")
 
 // A visitor who came through objectexplorer.com/youtube arrives with ?channel=youtube, and the
 // download links carry it on.
@@ -27,12 +32,12 @@ function downloadTitle(target) {
 	}
 }
 
-async function copyCommand() {
+async function copyCommand(text) {
 	try {
-		await navigator.clipboard.writeText(command)
-		copied.value = true
+		await navigator.clipboard.writeText(text)
+		copied.value = text
 		setTimeout(function () {
-			copied.value = false
+			copied.value = ""
 		}, 1600)
 	}
 	catch (error) {
@@ -83,22 +88,24 @@ async function copyCommand() {
 			/>
 		</div>
 
-		<div class="download-run">
+		<div v-for="run in runs" :key="run.title" class="download-run">
 			<div class="download-run-text">
-				<h3>Run in Command Line</h3>
-				<p>Use in your browser</p>
+				<h3>{{ run.title }}</h3>
+				<p>{{ run.text }}</p>
 			</div>
-			<div class="download-command">
-				<code>{{ command }}</code>
-				<button type="button" :aria-label="copied ? 'Copied' : 'Copy the command'" :title="copied ? 'Copied' : 'Copy'" @click="copyCommand">
-					<svg v-if="copied" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<polyline points="20 6 9 17 4 12" />
-					</svg>
-					<svg v-else viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-						<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-					</svg>
-				</button>
+			<div class="download-commands">
+				<div v-for="line in run.commands" :key="line" class="download-command">
+					<code>{{ line }}</code>
+					<button type="button" :aria-label="copied === line ? 'Copied' : 'Copy the command'" :title="copied === line ? 'Copied' : 'Copy'" @click="copyCommand(line)">
+						<svg v-if="copied === line" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<polyline points="20 6 9 17 4 12" />
+						</svg>
+						<svg v-else viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+						</svg>
+					</button>
+				</div>
 			</div>
 		</div>
 

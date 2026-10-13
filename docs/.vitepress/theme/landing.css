@@ -37,7 +37,7 @@
 /* Two questions, kept apart. The width decides the layout — the media queries in each component,
    mobile first: under 768px a phone, 768–1199px a tablet, 1200px and up a desktop. The platform
    decides whether an installer is any use: html[data-platform] is written by the head script in
-   config.js before the first paint. A narrow window on a Mac still gets its .dmg; an iPad in
+   config.js before the first paint. A narrow window on a Mac still gets its .app; an iPad in
    landscape never does. With scripts off there is no attribute, and the desktop view shows. */
 html[data-platform="mobile"] .desktop-only {
 	display: none !important;
