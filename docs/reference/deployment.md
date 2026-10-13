@@ -99,9 +99,8 @@ Behind a home or office router, forward 80 to 8080 and 443 to 8443, and start wi
 The internet cannot reach the machine, so Let's Encrypt's web check cannot either. Use
 [your own certificate](#with-your-own-certificate), from your company CA.
 
-<!-- dns-01: S9n -->
-A certificate from Let's Encrypt for a server the internet cannot reach, through a DNS record, is on
-its way.
+Or get one from Let's Encrypt anyway, through one DNS record:
+[dns-01](#a-server-the-internet-cannot-reach-dns-01).
 
 ### Behind a load balancer or reverse proxy
 
@@ -243,7 +242,23 @@ kept in `~/.objectexplorer/certs/<domain>/`. A start that finds one that has not
 without asking. The server looks a minute after it starts and every 12 hours after, renews 30 days
 before the end, and swaps the new certificate in without a restart.
 
-<!-- dns-01: S9n -->
+### A server the internet cannot reach: dns-01
+
+Nothing of the internet needs to reach the machine; the domain may point at an address of your
+private network. Add one DNS record, once:
+
+```
+_acme-challenge.data.example.com  CNAME  data.example.com.acme.objectexplorer.com
+```
+
+Then install a licence issued for `data.example.com` and add `"acme": { "challenge": "dns-01" }`
+beside `"tls": "auto"` in the config file. At each issue the server puts Let's Encrypt's check
+value on objectexplorer.com with its licence (the licence proves the domain is yours), waits up to
+two minutes until public DNS sees it, lets Let's Encrypt look, and removes it again. Renewal works
+as above. Until the record exists, the server waits and prints the record to add.
+
+Refused at start: dns-01 without a licence for the domain, and dns-01 with `aliases` (one name
+only).
 
 The `acme` key of the config tunes it:
 
@@ -253,9 +268,12 @@ The `acme` key of the config tunes it:
 | `directory` | `production`              | `staging` uses Let's Encrypt's test CA, whose certificates browsers do not trust |
 | `http_port` | the server's `http_port`  | where the check is answered                                                      |
 | `folder`    | `~/.objectexplorer/certs` | where certificates are kept                                                      |
+| `challenge` | `http-01`                 | `dns-01`: through the CNAME above, for a server the internet cannot reach        |
+| `licence`   | the licence installed     | dns-01's proof that the domain is yours: a licence issued for `domain`           |
 
-What leaves the server: the domain name, to Let's Encrypt. The certificate's private key is made on
-the server and never leaves it.
+What leaves the server: the domain name, to Let's Encrypt; with dns-01 also the check value and
+the licence, to objectexplorer.com. The certificate's private key is made on the server and never
+leaves it.
 
 ## What other machines may reach
 
