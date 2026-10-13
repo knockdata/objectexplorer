@@ -3,8 +3,6 @@
 The film is built by `scripts/promo.mjs` from `promo/promo.html`:
 
 ```sh
-uv run --with torch --with spandrel --with pillow --with numpy python scripts/promo-comic.py
-                                   # the comic, upscaled and rebranded, into promo/oe@4x.jpg
 node scripts/promo.mjs --preview   # one still per cut, into promo/preview
 node scripts/promo.mjs             # the whole film at 1080p, into docs/public/video
 ```
@@ -13,9 +11,9 @@ node scripts/promo.mjs             # the whole film at 1080p, into docs/public/v
 
 | | |
 |---|---|
-| The squirrel comic | `assets/oe.png`, ours — upscaled 4× by [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) (`RealESRGAN_x4plus`, BSD-3-Clause) and rebranded green by `scripts/promo-comic.py` |
+| The squirrel and the nut | `promo/squirrel.js`, ours — drawn as SVG, one pose per frame; `promo/poses.html` shows every pose |
 | The chalk e | `assets/mark.png`, ours — the master mark from the app |
-| Every app screenshot | `docs/public/screenshot/*.png`, captured from the running app by `explorer/test/docShot.js` in the rock2 workspace |
+| Every app screenshot | `docs/public/screenshot/*.png`, captured from foldone's explorer (FO_SCREENSHOT) |
 
 ## Music
 

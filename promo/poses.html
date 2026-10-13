@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- every pose of the drawn squirrel and the nut on one sheet, to check a change to squirrel.js -->
+<html><body style="margin:0;background:#1d3a2a;display:flex;flex-wrap:wrap;width:1600px">
+<script type="module">
+import { squirrel, nut } from "./squirrel.js"
+const poses = [
+	{ mood: "curious", look: 0.8 },
+	{ mood: "happy", tool: "hammer", swing: 0.2 },
+	{ mood: "happy", tool: "wrench", swing: 1 },
+	{ mood: "excited", tool: "drill" },
+	{ mood: "happy", tool: "torch", blink: 1 },
+	{ mood: "tired", sweat: 1, tail: -1 },
+	{ mood: "excited", bulb: 1, bounce: 20 },
+	{ mood: "happy", wave: 0.1, tail: 1 },
+]
+for (const pose of poses) {
+	document.body.insertAdjacentHTML("beforeend", `<div style="width:400px;height:460px">${squirrel(pose)}</div>`)
+}
+for (const crack of [0, 0.5, 1]) {
+	document.body.insertAdjacentHTML("beforeend", `<svg width="300" height="300" viewBox="-150 -150 300 300">${nut({ crack, glow: crack })}</svg>`)
+}
+</script></body></html>

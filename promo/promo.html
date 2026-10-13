@@ -11,58 +11,34 @@
 	<div class="shade"></div>
 	<div class="caption" id="caption"></div>
 	<div id="flash"></div>
-	<div id="grid"></div>
 </div>
-<script>
+<script type="module">
 // The promotion film, as one function of time. Nothing animates on its own: the recorder in
 // scripts/promo.mjs sets the clock frame by frame and screenshots each one, so a slow machine
 // cannot drop a frame and the film is the same every time it is built.
 //
-// Open it with ?t=12.5 to look at one second of it, or ?grid=1 to check the crop boxes over the
-// squirrel comic. The comic is promo/oe@4x.jpg, made by scripts/promo-comic.py: assets/oe.png
-// upscaled four times by Real-ESRGAN and rebranded green, because a single panel of the original
-// is only ~340px wide and the film shows it ~900px tall on a 1080p frame.
+// Open it with ?t=12.5 to look at one moment of it. The squirrel is drawn by ./squirrel.js, a
+// pure function of its pose, so the cartoon cuts are drawn again on every frame.
 //
 // The page is laid out at 1280x720 and recorded at a device scale of 1.5, so the film is 1080p
-// with text drawn at that size and every picture sampled from its own full resolution.
+// with text drawn at that size and every screenshot sampled from its own full resolution.
+import { squirrel, nut } from "./squirrel.js"
 
-const COMIC = "./oe@4x.jpg"
-
-// A panel of the comic, as fractions of the whole picture, so the numbers survive a re-export at
-// another size. Row 1 is panels 1-5, row 2 is 6-10, row 3 is 11 and the wide 12, row 4 is the
-// end card with the wordmark.
-// The numbers come from the white gutters in the picture itself, measured once: the horizontal
-// ones sit at y 283, 530 and 768 of 1024, and each row has its own column gutters.
-const panels = {
-	found:    { x: 0.0310, y: 0.0040, w: 0.1940, h: 0.2680 },
-	nut:      { x: 0.2577, y: 0.0040, w: 0.1731, h: 0.2680 },
-	open:     { x: 0.4625, y: 0.0040, w: 0.1627, h: 0.2680 },
-	hammer:   { x: 0.6582, y: 0.0040, w: 0.1740, h: 0.2680 },
-	driver:   { x: 0.8599, y: 0.0040, w: 0.1383, h: 0.2680 },
-	wrench:   { x: 0.0276, y: 0.2823, w: 0.1714, h: 0.2313 },
-	pliers:   { x: 0.2340, y: 0.2823, w: 0.1844, h: 0.2313 },
-	drill:    { x: 0.4490, y: 0.2823, w: 0.1592, h: 0.2313 },
-	torch:    { x: 0.6407, y: 0.2823, w: 0.1697, h: 0.2313 },
-	giveUp:   { x: 0.8406, y: 0.2823, w: 0.1575, h: 0.2313 },
-	idea:     { x: 0.0267, y: 0.5235, w: 0.1653, h: 0.2226 },
-	inside:   { x: 0.2130, y: 0.5330, w: 0.7830, h: 0.2050 },
-	// the squirrel alone from the end card, clear of its panel number, for the film's own end card
-	mascot:   { x: 0.0280, y: 0.7830, w: 0.1780, h: 0.2130 },
-}
-
-// One entry per cut. `at` is when it starts, `hold` how long it is on screen, `crop` a panel of
-// the comic or nothing at all for a screenshot, `zoom` how much it pushes in while it plays, and
-// `anchor` which part of a filled panel survives the crop — 0 keeps its top, 0.5 its middle.
-// `card` is the end card, drawn by the page rather than cut from a picture.
 const SHOT = "../docs/public/screenshot/"
+// the formats that pour out of the nut when it opens
+const FORMATS = ["PARQUET", "DELTA", "ICEBERG", "CSV", "PDF", "DWG", "FBX", "JSON", "SQLITE", "PPTX"]
+
+// One entry per cut. `at` is when it starts, `hold` how long it is on screen. A cartoon cut has
+// `cartoon`, the name of its drawing below; a screenshot has `src` and `zoom`, how far it pulls
+// back while it plays. `bubble` is what the squirrel says, `lines` the caption under a screenshot.
 const scenes = [
-	{ at: 0.0,  hold: 2.4, src: COMIC, crop: panels.found,   zoom: 1.10, lines: [] },
-	{ at: 2.4,  hold: 1.3, src: COMIC, crop: panels.hammer,  zoom: 1.12, lines: [] },
-	{ at: 3.7,  hold: 1.1, src: COMIC, crop: panels.pliers,  zoom: 1.12, lines: [] },
-	{ at: 4.8,  hold: 1.1, src: COMIC, crop: panels.drill,   zoom: 1.12, lines: [] },
-	{ at: 5.9,  hold: 1.1, src: COMIC, crop: panels.torch,   zoom: 1.12, lines: [] },
-	{ at: 7.0,  hold: 1.8, src: COMIC, crop: panels.giveUp,  zoom: 1.10, lines: [] },
-	{ at: 8.8,  hold: 2.2, src: COMIC, crop: panels.idea, anchor: 0.18, zoom: 1.10, lines: [] },
+	{ at: 0.0,  hold: 2.6, cartoon: "found",  bubble: "What's this?" },
+	{ at: 2.6,  hold: 1.2, cartoon: "tool",   tool: "hammer", bubble: "Hammer? <em>Nope.</em>" },
+	{ at: 3.8,  hold: 1.2, cartoon: "tool",   tool: "wrench", bubble: "Wrench? <em>Nope.</em>" },
+	{ at: 5.0,  hold: 1.2, cartoon: "tool",   tool: "drill",  bubble: "Drill? <em>Nope.</em>" },
+	{ at: 6.2,  hold: 1.2, cartoon: "tool",   tool: "torch",  bubble: "Blowtorch? <em>Nope.</em>" },
+	{ at: 7.4,  hold: 1.6, cartoon: "tired",  bubble: "Still can't open it…" },
+	{ at: 9.0,  hold: 2.0, cartoon: "idea",   bubble: "Wait! I have <em>ObjectExplorer!</em>" },
 	{ at: 11.0, hold: 3.2, src: SHOT + "hero.png",                zoom: 1.08, lines: ["One window.", "S3, GCS, Azure, OneLake, local."], small: 1 },
 	{ at: 14.2, hold: 2.8, src: SHOT + "column-summary.png",      zoom: 1.10, lines: ["See the shape", "before you read a row."] },
 	{ at: 17.0, hold: 2.8, src: SHOT + "notebook-chart.png",      zoom: 1.08, lines: ["SQL and a chart,", "where the data lives."] },
@@ -73,12 +49,12 @@ const scenes = [
 	{ at: 31.0, hold: 2.8, src: SHOT + "story-agent-observe.png", zoom: 1.08, lines: ["Watch an agent", "read your data."] },
 	{ at: 33.8, hold: 2.8, src: SHOT + "story-agent-replay.png",  zoom: 1.08, lines: ["Then replay", "every step it took."] },
 	{ at: 36.6, hold: 2.8, src: SHOT + "share.png",               zoom: 1.08, lines: ["Share it masked,", "hashed, and expiring."] },
-	{ at: 39.4, hold: 2.6, src: COMIC, crop: panels.inside, wide: true, zoom: 1.08, lines: [] },
-	{ at: 42.0, hold: 4.5, card: true, lines: [], end: true },
+	{ at: 39.4, hold: 2.8, cartoon: "inside", bubble: "So many great things inside!" },
+	{ at: 42.2, hold: 4.5, cartoon: "card", end: true },
 ]
 
 // the cut into the product half gets one white blink, so the two halves are told apart
-const PRODUCT_AT = scenes.find((scene) => !scene.crop && !scene.card).at
+const PRODUCT_AT = scenes.find((scene) => scene.src).at
 
 const DURATION = scenes.at(-1).at + scenes.at(-1).hold
 const stage = { width: 1280, height: 720 }
@@ -87,136 +63,180 @@ const caption = document.getElementById("caption")
 const flash = document.getElementById("flash")
 const shade = document.querySelector(".shade")
 
-// one layer per scene, all built once so a frame is only a matter of setting styles. The frame
-// inside it is the crop window: without it a fitted panel would show the panels around it, since
-// they are all one picture.
-const built = scenes.map((scene) => (scene.card ? buildCard(scene) : buildPicture(scene)))
-
-function buildPicture(scene) {
+// one layer per scene, built once: a screenshot only has its styles set per frame, a cartoon has
+// its drawing written again
+const built = scenes.map(function build(scene) {
 	const layer = document.createElement("div")
 	layer.className = "layer"
-	const backdrop = document.createElement("div")
-	backdrop.className = "backdrop"
-	const backdropImage = document.createElement("img")
-	backdropImage.src = scene.src
-	backdrop.appendChild(backdropImage)
-	layer.appendChild(backdrop)
-	const frame = document.createElement("div")
-	frame.className = "frame"
-	const image = document.createElement("img")
-	image.src = scene.src
-	frame.appendChild(image)
-	layer.appendChild(frame)
 	layers.appendChild(layer)
-	return { scene, layer, frame, image, backdropImage }
+	let entry = { scene, layer }
+	if (scene.src) {
+		layer.innerHTML = `<div class="backdrop"><img src="${scene.src}"></div><div class="frame"><img src="${scene.src}"></div>`
+		entry = { scene, layer, frame: layer.querySelector(".frame"), image: layer.querySelector(".frame img"), backdropImage: layer.querySelector(".backdrop img") }
+	}
+	return entry
+})
+
+function easeOut(fraction) {
+	return 1 - Math.pow(1 - fraction, 3)
 }
 
-function buildCard(scene) {
-	const layer = document.createElement("div")
-	layer.className = "layer"
-	layer.innerHTML = `
-		<div class="card">
-			<div class="card-mascot"><img src="${COMIC}"></div>
+function clamp(value) {
+	return Math.max(0, Math.min(1, value))
+}
+
+// a blink every few seconds, a quarter of a second long, the same at every build
+function blinkAt(time) {
+	const into = (time + 0.7) % 2.9
+	return into < 0.16 ? Math.sin(into / 0.16 * Math.PI) : 0
+}
+
+// the forest the cartoon cuts stand in: a soft sky, two rows of trees, and the ground
+function forest() {
+	const trees = [80, 260, 470, 690, 900, 1110, 1240].map(function tree(x, index) {
+		const height = 380 + (index % 3) * 70
+		return `<path d="M${x} ${560 - height} L ${x - 90} 560 L ${x + 90} 560 Z" fill="#1f5a3c" opacity="0.55"/>`
+	}).join("")
+	return `
+	<svg class="forest" viewBox="0 0 1280 720" width="1280" height="720">
+		<defs>
+			<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+				<stop offset="0" stop-color="#bfe8d0"/><stop offset="1" stop-color="#e9f7e4"/>
+			</linearGradient>
+		</defs>
+		<rect width="1280" height="720" fill="url(#sky)"/>
+		<circle cx="1050" cy="130" r="70" fill="#fff6c8"/>
+		${trees}
+		<path d="M0 540 C 300 510, 700 560, 1280 520 V 720 H 0 Z" fill="#7cc576"/>
+		<path d="M0 600 C 400 580, 900 620, 1280 590 V 720 H 0 Z" fill="#5fae5d"/>
+	</svg>`
+}
+
+function bubble(text, x, y, local) {
+	const grow = easeOut(clamp((local - 0.15) / 0.3))
+	return text ? `<div class="bubble" style="left:${x}px;top:${y}px;transform:scale(${grow});opacity:${grow}">${text}</div>` : ""
+}
+
+// one cartoon cut at `local` seconds into it, `time` the film's clock (for the blink)
+function cartoon(scene, local, time) {
+	const sway = Math.sin(time * 2.4)
+	const blink = blinkAt(time)
+	let pose = { blink, tail: sway, mood: "happy", look: 0.6 }
+	let squirrelX = 300
+	let nutState = { crack: 0, glow: 0, shake: 0 }
+	let nutX = 820
+	let extra = ""
+	let speech = bubble(scene.bubble, 560, 120, local)
+	if (scene.cartoon === "found") {
+		// hops in from the left, stops, leans to look
+		const arrive = easeOut(clamp(local / 1.0))
+		squirrelX = -200 + arrive * 500
+		pose = { blink, tail: sway, mood: "curious", look: 1, bounce: Math.abs(Math.sin(local * 9)) * 30 * (1 - arrive) }
+	}
+	else if (scene.cartoon === "tool") {
+		// two blows a cut; the nut jumps at each hit and does not care
+		const swing = Math.abs(Math.sin(local * Math.PI * 1.8))
+		const hit = Math.max(0, 1 - Math.abs(local * 1.8 % 1 - 0.5) * 6)
+		squirrelX = 340
+		nutX = 770
+		pose = { blink, tail: sway, mood: "happy", look: 1, tool: scene.tool, swing }
+		nutState = { crack: 0, glow: 0, shake: Math.sin(local * 60) * hit }
+		if (scene.tool === "torch") {
+			extra = `<div class="spark" style="left:680px;top:490px;opacity:${0.6 + 0.4 * Math.sin(local * 40)}"></div>`
+		}
+	}
+	else if (scene.cartoon === "tired") {
+		squirrelX = 340
+		nutX = 770
+		pose = { blink: 0, tail: sway * 0.3, mood: "tired", look: 0, sweat: clamp(local / 0.5) }
+	}
+	else if (scene.cartoon === "idea") {
+		squirrelX = 340
+		nutX = 770
+		const lit = clamp((local - 0.2) / 0.3)
+		pose = { blink, tail: sway * 1.4, mood: "excited", look: 1, bulb: lit, bounce: Math.abs(Math.sin(local * 7)) * 22 * lit }
+	}
+	else if (scene.cartoon === "inside") {
+		// the nut cracks open, glows, and the formats pour out in an arc
+		squirrelX = 40
+		nutX = 780
+		const crack = easeOut(clamp(local / 0.6))
+		nutState = { crack, glow: crack, shake: local < 0.3 ? Math.sin(local * 80) : 0 }
+		pose = { blink, tail: sway * 1.4, mood: "excited", look: 1, bounce: Math.abs(Math.sin(local * 6)) * 14 }
+		speech = bubble(scene.bubble, 380, 70, local)
+		extra = FORMATS.map(function chip(name, index) {
+			const start = 0.45 + index * 0.1
+			const out = easeOut(clamp((local - start) / 0.6))
+			const angle = Math.PI * (1.05 + index / (FORMATS.length - 1) * 0.9)
+			const x = nutX + Math.cos(angle) * 330 * out
+			const y = 520 + Math.sin(angle) * 300 * out
+			return `<div class="chip" style="left:${x}px;top:${y}px;opacity:${out}">${name}</div>`
+		}).join("")
+	}
+	else if (scene.cartoon === "card") {
+		pose = { blink, tail: sway, mood: "happy", look: 0.3, wave: clamp(local / 1.4) * 0.98 + 0.02 }
+		return `<div class="card">
+			<div class="card-mascot">${squirrel(pose)}</div>
 			<div class="card-brand">
 				<div class="card-name"><img src="../assets/mark.png"><span>Object<em>Explorer</em></span></div>
 				<div class="card-tagline">Open anything. Explore everything.</div>
 				<div class="card-url">objectexplorer.com</div>
 			</div>
 		</div>`
-	layers.appendChild(layer)
-	const mascot = layer.querySelector(".card-mascot")
-	return { scene, layer, mascot, image: mascot.querySelector("img"), mark: layer.querySelector(".card-name img") }
+	}
+	return `${forest()}
+		<div class="actor" style="left:${squirrelX}px;top:180px">${squirrel(pose)}</div>
+		<svg class="actor" style="left:${nutX - 150}px;top:390px" width="300" height="300" viewBox="-150 -150 300 300">${nut(nutState)}</svg>
+		${extra}
+		${speech}`
 }
 
-// the squirrel fills its frame, cropped from the comic the way a panel is
-function placeMascot(entry, scale) {
-	const image = entry.image
-	const crop = panels.mascot
-	const frameWidth = 500
-	const frameHeight = 400
-	const cover = Math.max(frameWidth / (image.naturalWidth * crop.w), frameHeight / (image.naturalHeight * crop.h)) * scale
-	const width = image.naturalWidth * cover
-	const height = image.naturalHeight * cover
-	image.style.width = `${width}px`
-	image.style.height = `${height}px`
-	image.style.left = `${-crop.x * width - (image.naturalWidth * crop.w * cover - frameWidth) / 2}px`
-	image.style.top = `${-crop.y * height - (image.naturalHeight * crop.h * cover - frameHeight) / 2}px`
-}
-
-function easeOut(fraction) {
-	return 1 - Math.pow(1 - fraction, 3)
-}
-
-// everything is shown whole now — a comic panel filling a 1280x720 frame was a four-times blow-up
-// of a 340px picture. The blurred backdrop behind it is what fills the frame instead.
-function fitsInside(scene) {
-	return true
-}
-
-// the crop, in stage pixels: the frame is the cropped part, centred on the stage, and the picture
-// inside it is pulled up and left so that part is what shows through
-function fill(image, scene) {
+// a screenshot, fitted inside the frame and held a little above centre so the caption band under
+// it lands on empty ground; it pulls back while it plays, so the app ends whole on screen
+function place(frame, image, scale) {
 	const naturalWidth = image.naturalWidth || 1
 	const naturalHeight = image.naturalHeight || 1
-	const crop = scene.crop ?? { x: 0, y: 0, w: 1, h: 1 }
-	const cover = Math.max(stage.width / (naturalWidth * crop.w), stage.height / (naturalHeight * crop.h))
-	const width = naturalWidth * cover
-	const height = naturalHeight * cover
-	image.style.width = `${width}px`
-	image.style.height = `${height}px`
-	image.style.left = `${-crop.x * width + (stage.width - naturalWidth * crop.w * cover) / 2}px`
-	image.style.top = `${-crop.y * height + (stage.height - naturalHeight * crop.h * cover) / 2}px`
+	const fit = Math.min(stage.width / naturalWidth, stage.height / naturalHeight) * 0.86 * scale
+	frame.style.width = `${naturalWidth * fit}px`
+	frame.style.height = `${naturalHeight * fit}px`
+	frame.style.left = `${(stage.width - naturalWidth * fit) / 2}px`
+	frame.style.top = `${(stage.height - naturalHeight * fit) / 2 - 48}px`
+	image.style.width = `${naturalWidth * fit}px`
+	image.style.height = `${naturalHeight * fit}px`
+	image.style.left = "0px"
+	image.style.top = "0px"
 }
 
-function place(frame, image, scene, scale) {
+// the blurred copy behind a screenshot fills the frame
+function cover(image) {
 	const naturalWidth = image.naturalWidth || 1
 	const naturalHeight = image.naturalHeight || 1
-	const crop = scene.crop ?? { x: 0, y: 0, w: 1, h: 1 }
-	const cropWidth = naturalWidth * crop.w
-	const cropHeight = naturalHeight * crop.h
-	// a comic panel fills the frame; a screenshot, and the two wide banner panels, are fitted
-	// inside it, because what a crop would cut off is what the caption is talking about
-	const fit = fitsInside(scene) ? Math.min(stage.width / cropWidth, stage.height / cropHeight)
-		: Math.max(stage.width / cropWidth, stage.height / cropHeight)
-	// a fitted picture is held a little above centre, so the caption band under it lands on
-	// empty ground rather than over what is being pointed at
-	const inset = scene.crop ? (scene.wide ? 0.94 : 0.82) : 0.86
-	const lift = scene.crop ? (scene.wide ? 34 : 44) : 48
-	const fill = fit * inset * scale
-	const width = naturalWidth * fill
-	const height = naturalHeight * fill
-	frame.style.width = `${cropWidth * fill}px`
-	frame.style.height = `${cropHeight * fill}px`
-	frame.style.left = `${(stage.width - cropWidth * fill) / 2}px`
-	frame.style.top = `${(stage.height - cropHeight * fill) * (scene.anchor ?? 0.5) - lift}px`
-	image.style.width = `${width}px`
-	image.style.height = `${height}px`
-	image.style.left = `${-crop.x * width}px`
-	image.style.top = `${-crop.y * height}px`
+	const scale = Math.max(stage.width / naturalWidth, stage.height / naturalHeight)
+	image.style.width = `${naturalWidth * scale}px`
+	image.style.height = `${naturalHeight * scale}px`
+	image.style.left = `${(stage.width - naturalWidth * scale) / 2}px`
+	image.style.top = `${(stage.height - naturalHeight * scale) / 2}px`
 }
 
 function renderFrame(time) {
 	const at = Math.max(0, Math.min(time, DURATION))
 	let current = built[0]
 	for (const entry of built) {
-		const { scene, layer, image } = entry
+		const { scene, layer } = entry
 		const local = at - scene.at
-		const inScene = local >= 0 && local < scene.hold
-		if (inScene) {
+		if (local >= 0 && local < scene.hold) {
 			current = entry
 			// a 0.35s cross-fade in, and out only at the very end
 			const fadeIn = Math.min(1, local / 0.35)
 			const fadeOut = scene.end ? Math.min(1, (scene.hold - local) / 0.8) : 1
 			layer.style.opacity = String(Math.min(fadeIn, fadeOut))
-			// a panel pushes in, a screenshot pulls back — so the app ends whole on screen
-			const through = local / scene.hold
-			if (scene.card) {
-				placeMascot(entry, 1 + 0.06 * through)
+			if (scene.src) {
+				const through = local / scene.hold
+				place(entry.frame, entry.image, scene.zoom - (scene.zoom - 1) * through)
+				cover(entry.backdropImage)
 			}
 			else {
-				const scale = scene.crop ? 1 + (scene.zoom - 1) * through : scene.zoom - (scene.zoom - 1) * through
-				place(entry.frame, image, scene, scale)
-				fill(entry.backdropImage, scene)
+				layer.innerHTML = cartoon(scene, local, at)
 			}
 		}
 		else {
@@ -224,67 +244,38 @@ function renderFrame(time) {
 		}
 	}
 	drawCaption(current.scene, at - current.scene.at)
-	shade.style.opacity = current.scene.lines.length ? "1" : "0"
+	shade.style.opacity = current.scene.lines ? "1" : "0"
 	const blink = at - PRODUCT_AT
 	flash.style.opacity = blink >= 0 && blink < 0.22 ? String(0.8 * (1 - blink / 0.22)) : "0"
 }
 
 function drawCaption(scene, local) {
+	const lines = scene.lines ?? []
 	if (caption.dataset.at !== String(scene.at)) {
 		caption.dataset.at = String(scene.at)
-		caption.innerHTML = scene.lines
+		caption.innerHTML = lines
 			.map((line, index) => `<div class="line ${scene.small === index ? "small" : ""}">${line}</div>`)
 			.join("")
 	}
-	const lines = [...caption.children]
-	lines.forEach((line, index) => {
+	;[...caption.children].forEach(function show(line, index) {
 		const start = 0.18 + index * 0.16
-		const fraction = Math.max(0, Math.min(1, (local - start) / 0.5))
-		const eased = easeOut(fraction)
+		const eased = easeOut(clamp((local - start) / 0.5))
 		const leaving = scene.hold - local < 0.3 ? (scene.hold - local) / 0.3 : 1
 		line.style.opacity = String(eased * Math.max(0, leaving))
 		line.style.transform = `translateY(${(1 - eased) * 26}px)`
 	})
 }
 
-// ?grid=1 draws the crop boxes over the whole comic, which is how the fractions above were checked
-function drawGrid() {
-	const image = document.createElement("img")
-	image.src = COMIC
-	image.style.width = `${stage.width}px`
-	image.style.position = "absolute"
-	const grid = document.getElementById("grid")
-	grid.style.display = "block"
-	grid.appendChild(image)
-	image.onload = () => {
-		const height = stage.width * image.naturalHeight / image.naturalWidth
-		for (const [name, crop] of Object.entries(panels)) {
-			const box = document.createElement("div")
-			box.style.left = `${crop.x * stage.width}px`
-			box.style.top = `${crop.y * height}px`
-			box.style.width = `${crop.w * stage.width}px`
-			box.style.height = `${crop.h * height}px`
-			box.textContent = name
-			grid.appendChild(box)
-		}
-	}
-}
-
 const params = new URLSearchParams(location.search)
 window.promoDuration = DURATION
 window.promoScenes = scenes.map((scene) => scene.at)
 window.renderFrame = renderFrame
-window.drawGrid = drawGrid
-if (params.has("grid")) {
-	drawGrid()
-}
-else {
-	// every picture has to be decoded before the first frame is asked for, or a cut lands on an
-	// empty box
-	const pictures = built.flatMap((entry) => (entry.mark ? [entry.image, entry.mark] : [entry.image]))
-	window.promoReady = Promise.all(pictures.map((picture) => picture.decode().catch(() => null)))
-		.then(() => renderFrame(Number(params.get("t") ?? 0)))
-}
+renderFrame(Number(params.get("t") ?? 0))
+// every picture has to be decoded before the first frame is asked for, or a cut lands on an
+// empty box
+const pictures = built.filter((entry) => entry.image).flatMap((entry) => [entry.image, entry.backdropImage])
+window.promoReady = Promise.all(pictures.map((picture) => picture.decode().catch(() => undefined)))
+	.then(() => renderFrame(Number(params.get("t") ?? 0)))
 </script>
 </body>
 </html>
