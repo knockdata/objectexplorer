@@ -241,6 +241,7 @@ export default defineConfig({
 					{ text: "Where your data lives", link: "/reference/data-locations" },
 					{ text: "Updating", link: "/reference/updating" },
 					{ text: "Deployments and start settings", link: "/reference/deployment" },
+					{ text: "Command line", link: "/reference/command-line" },
 					{ text: "Authentication with OIDC", link: "/reference/authentication-oidc" },
 					{ text: "Authentication with SAML", link: "/reference/authentication-saml" },
 					{ text: "Where the usage numbers come from", link: "/reference/usage-data" },
