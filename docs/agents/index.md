@@ -43,18 +43,20 @@ re-issues the recorded calls against today's rules and reports which decisions m
 
 ### PII is sanitized on the way out, by configuration
 
-A rule says which values it catches and what happens to them: **FPE** (a different value of the same
-shape), **Hash**, **Mask** (a range of characters), or **Drop**. Two ways to name a value, because
-there are two kinds of data:
+A rule says which values it catches and what happens to them: a **Token** (`<PERSON_17>`, the same
+for the same person in every file and session), **FPE** (a different value of the same shape),
+**Hash**, **Mask** (a range of characters), or **Drop**. Two ways to name a value, because there are
+two kinds of data:
 
 - **Tabular** — matched on the column name, anywhere in it, so one `email` rule catches
   `emailAddress` and `billingEmail`. Every value in that column goes through it.
 - **Full text** — matched on what a value *says*. A note with a customer's address and personal
   number in it comes back as the same note with those gone, and the rest of the sentence intact.
 
-FPE is the default because it is the only action that leaves the data still usable: same length,
-same alphabet, equal values still equal — so a query still joins, still groups, still counts.
-Every rewritten column is named as `encrypted` in the result, so an agent never quotes a fake id
+A token is the default because it leaves the data still usable and honest: equal values stay equal
+— so a query still joins, still groups, still counts — and an agent can follow one person across
+documents without ever holding a real name. The owner of the machine can turn a token back into the
+value after the system's login, and every such look-up is logged. Every rewritten column is named as `encrypted` in the result, so an agent never quotes a fake id
 back to a person as a real one. The same rules protect the other audience too: a person opening a
 [share link](/explore/share) gets what they say, under a key made for that one share.
 

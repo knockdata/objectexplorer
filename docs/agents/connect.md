@@ -22,12 +22,32 @@ Everything past that is a line you set.
 
 ## 2. Open the door
 
-One toggle: *The door is shut* / *The door is open*. Under it, the two things any client needs:
+One toggle: *The door is shut* / *The door is open*. Under it, the endpoint every client calls:
 
 ```
 Endpoint   http://127.0.0.1:3417/mcp
-Token      7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83
 ```
+
+**Each agent has a token of its own, and the token is who it is.** Install (below) makes one for
+the client it installs; **Add agent** under *Tokens* makes one for anything else, by a name you give
+it (`reportBot`). The log, the budgets and the agent's own lines in the rule file follow the token,
+never the name a client gives itself, and **Remove** (or Uninstall) takes the token away so a copy
+of it left anywhere opens nothing. The tokens live in the rule file:
+
+```yaml
+agents:
+  reportBot:
+    token: 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83
+    tools: [listRoots, listObjects, query]   # instead of tools, for this agent
+    limits: { rowsPerCall: 100 }             # over limits
+    deny: ["^hr/"]                           # added to deny
+    columns: [...]                           # PII rules tried before the file's
+    text: [...]
+```
+
+A root can be one agent's (`agents: [reportBot]`) and only part of it
+(`prefixes: [exports/2024/]`). An older rule file's one `server.token` still works, the old way: whoever
+holds it names itself, and the name must be ticked under `install`.
 
 The server binds the loopback address, in every mode — the desktop app, `npx objectexplorer`, the
 browser front door. It is never mounted on the public host, for the same reason `/api/duckdb` is
@@ -57,9 +77,8 @@ block on the clipboard, already shaped:
 }
 ```
 
-Ticking a client does two things, and they are different: the client's config learns where to call,
-and the rule file learns that this client may `initialize` at all. A client holding a valid token
-whose name is not ticked is refused at the handshake, in a sentence a person will read.
+Each token's own **Copy Connection** puts the address and that agent's token on the clipboard.
+Budgets — bytes per session and per day — are counted per agent and kept across a restart.
 
 ## 4. Choose what may be called
 

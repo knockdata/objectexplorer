@@ -187,10 +187,13 @@ Two things are recorded, and they are what the log is split by:
 ```
 
 One line per call, written and flushed before the answer is sent, so a killed process still has
-everything it answered. The line holds the call as it arrived, the decision and which rule made it,
-and the counted rows and bytes — never the payload itself, and nothing that says what was redacted
-in it. The arguments are kept as the agent sent them, so a search pattern or a SQL literal with a
-name in it is in the log as typed. The UI is
+everything it answered. The line holds the call, the decision and which rule made it, the counted
+rows and bytes, `digest` (the SHA-256 of the answer exactly as it was sent, so a copy found later
+can be matched to the call that gave it) and `redactions`, what the PII rules changed in it:
+`[{ type: "EMAIL", action: "pseudonym", rule: "…", count: 3 }]`. The arguments go through the
+full-text rules before they are written, so a search pattern or a SQL literal with a name in it is
+logged as `<PERSON_17>`, not as typed. The answer itself is kept only with `log.keepAnswers: true`,
+and then as it was sent: redacted. The UI is
 not in this path at all: it subscribes to the same events and draws them, and a window that is
 closed, slow or observing something else changes nothing about what was written.
 
@@ -246,19 +249,22 @@ the rows `getObject` reads from a table, and the column list `describeObject` an
 rule wins, matched case-insensitively against the column name, and a column matching nothing is
 returned as it is.
 
-| Action | What comes back                                               | Keeps         |
-|--------|---------------------------------------------------------------|---------------|
-| `fpe`  | same length, same alphabet, a different value                 | format, joins |
-| `hash` | 16 hex characters, `HMAC-SHA256(key, value)`                  | joins, counts |
-| `mask` | the characters from `begin` up to `end` hidden, the rest kept | shape         |
-| `drop` | the column is not in the result at all                        | nothing       |
+| Action      | What comes back                                               | Keeps                 |
+|-------------|---------------------------------------------------------------|-----------------------|
+| `pseudonym` | a typed token from the vault, `<EMAIL_3>`                     | identity, joins, type |
+| `fpe`       | same length, same alphabet, a different value                 | format, joins         |
+| `hash`      | 16 hex characters, `HMAC-SHA256(key, value)`                  | joins, counts         |
+| `mask`      | the characters from `begin` up to `end` hidden, the rest kept | shape                 |
+| `drop`      | the column is not in the result at all                        | nothing               |
 
-**`fpe` is the default**, and a rule that names no action gets it. It is the only one that leaves
-the data still looking like data: a masked column breaks a join and makes every distinct count
-`1`, a hashed one turns a card number into something no analysis can sanity-check, and both make an
-agent ask for the raw file instead. Format-preserving encryption keeps the length, the alphabet and
-the equality — so a query still groups, still joins, still counts — and gives up nothing real.
+**`pseudonym` is the default**, and a rule that names no action gets it: a typed token,
+`<PERSON_17>`, from the vault (`~/.objectexplorer/mcp/vault.db`, values encrypted under a key in the
+system keychain), the same for one value in every file, session and agent. `type:` names the token
+(`PERSON`, `EMAIL`, `ID` …); without it the type is read off the pattern. A text rule whose `match`
+starts with `@` (`@person`, `@address`, `@id`, `@card`, `@iban`, `@email`, `@phone`) uses a
+detector instead of a pattern ([PII rules](/agents/pii)).
 
+`fpe` keeps the length, the alphabet and the equality, for a column whose shape must survive.
 Where it cannot preserve the format — a float, a timestamp, a blob — the value is hashed instead,
 which is the one place an action is decided for you. Every encrypted column is named as encrypted by
 `describeObject` and beside the results of `query`, so an agent knows an id it is holding is not the
@@ -268,8 +274,8 @@ value is stable across sessions and means nothing anywhere else. A [share link](
 through the same rules under a key of its own, made for that one share.
 
 A column rule cannot touch a line of a text file — there is no column name to key on. That is what
-`text` is for: `searchText` hits and the text `getObject` returns go through it. A tree or a window of
-bytes from `getObject` goes through neither, which is why a starting file leaves `getObject` off.
+`text` is for: `searchText` hits and the text `getObject` returns go through it. A tree from
+`getObject` goes through both, its keys as column names; bytes with no text are refused.
 
 ## Approve — the human in the loop
 

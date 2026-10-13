@@ -43,26 +43,31 @@ rules for email, phone, national id and card or account number, and text rules f
 a personal number, a US SSN and an international phone number — because a file with only column
 rules looks like it works right up until the day it does not.
 
-## Four methods
+## Five methods
 
-| Method   | What comes back                                                 | Keeps                 |
-|----------|-----------------------------------------------------------------|-----------------------|
-| **FPE**  | a different value of the same shape                             | format, joins, counts |
-| **Hash** | 16 hex characters of keyed SHA-256 (HMAC)                       | joins, counts         |
-| **Mask** | a range of characters hidden, the rest kept                     | shape                 |
-| **Drop** | the value never leaves — the column is not in the result at all | nothing               |
+| Method    | What comes back                                                 | Keeps                         |
+|-----------|-----------------------------------------------------------------|-------------------------------|
+| **Token** | a typed pseudonym, `<PERSON_17>`, `<EMAIL_3>`                   | identity, joins, counts, type |
+| **FPE**   | a different value of the same shape                             | format, joins, counts         |
+| **Hash**  | 16 hex characters of keyed SHA-256 (HMAC)                       | joins, counts                 |
+| **Mask**  | a range of characters hidden, the rest kept                     | shape                         |
+| **Drop**  | the value never leaves — the column is not in the result at all | nothing                       |
 
 **Drop** is for an agent. The share dialog offers **None**, **Mask**, **Hash** and **FPE**, and a
 column a rule drops opens there as **Hash** — see the table above.
 
-**FPE is the default**, and a rule that names no method gets it. It is the only one that leaves the
-data still looking like data: a masked column breaks a join and makes every distinct count `1`, and
-a hashed card number is something no analysis can sanity-check — so an agent handed either of them
-asks for the raw file instead. Format-preserving encryption keeps the length, the alphabet and the
-equality, and gives up nothing real.
+**Token is the default**, and a rule that names no method gets it. The same value is the same token
+in every file, every session and every agent's answers — `Anna.Berg@Example.com ` and
+`anna.berg@example.com` are one `<EMAIL_3>`, `19790224-5678` and `197902245678` one `<ID_1>` — so an
+agent can still follow one person across documents, and it is never in doubt that it holds a stand-in.
+A rule's `type` names the token (`type: PERSON`); without one it is read off the pattern.
 
-Where there is no format to preserve — a float, a timestamp, a blob — the value is hashed instead.
-That is the one place a method is decided for you.
+The tokens live in a vault, `~/.objectexplorer/mcp/vault.db`: SQLite, each real value encrypted
+(AES-256-GCM) under a key kept in the system keychain, never in the file. The file copied elsewhere
+holds nothing readable.
+
+**FPE** stays for a column that must keep its shape — a format check downstream, a fixed-width id.
+Where there is no format to preserve — a float, a timestamp, a blob — FPE hashes instead.
 
 **Mask** carries a range, dragged on a two-handle slider: the characters between the handles become
 stars and the rest is kept. The range can never close to nothing — a mask that hides no character is
@@ -70,7 +75,16 @@ a rule that reads as set and does nothing.
 
 Every rule shows its own sample, rewritten as you change it by the same code a call or a share goes
 through. The sample uses this install's key, so it is exactly what an agent gets; a share's Hash
-and FPE values read differently, because a share has a key of its own.
+and FPE values read differently, because a share has a key of its own. A Token sample is never put
+in the vault: it shows the type and a digest, `<EMAIL_bdd8e64f>`, where an agent gets `<EMAIL_3>`.
+
+## Reveal
+
+**Settings → PII → Reveal** turns a token back into the real value, for the person who owns this
+machine: the system asks for the login first (Touch ID or the password on macOS), and every ask —
+answered or not — is a line in `~/.objectexplorer/mcp/reveal.ndjson`, with the token, who asked and
+what the login said, never the value. Windows and Linux cannot ask for the login yet, so there
+nothing is revealed.
 
 ## Where the key lives
 
@@ -94,22 +108,33 @@ told, or it will hand it to a person as a real one.
 `columnSummary` is measured **after** the rules, never before. The top values of the real column
 would be precisely the leak the rules exist to stop.
 
-## What the rules cannot reach
+## What the rules reach, and what they cannot
 
 `getObject` reads a whole object and answers as what it is: rows for a table, which go through the
 column rules; text for a document, which goes through the full-text rules; a tree for JSON, YAML,
 XML or a notebook, where a key is treated as a column name (an `ssn` key anywhere in the tree is
-caught by the `ssn` column rule) and every other string goes through the full-text rules. Anything
-else — an image, an archive, a model — is refused: bytes no rule can read are not sent.
+caught by the `ssn` column rule) and every other string goes through the full-text rules.
+
+Documents are PDF, Word (`.docx` and the older `.doc`), OpenDocument, RTF, PowerPoint, EPUB, HTML and
+plain text. A picture, and a PDF page with no text in it (a scan), is read by the system's own text
+recognition on macOS before the rules see it; on Windows and Linux a picture is refused, saying so.
+Anything else — an archive, a model — is refused: bytes no rule can read are not sent.
 
 A `query` cannot step around the column rules by renaming a column: each object it names is read
 through a copy where the caught columns are already rewritten, so `SELECT ssn AS x`, `upper(ssn)`
 and `WHERE ssn LIKE '1979%'` all see the rewritten value, and a dropped column is simply not there.
 
-What the rules cannot reach is what they do not describe. They are patterns: an email, a phone
-number, a personal number in a known shape. A person's name or a street address in free text has no
-such shape, and the starting rules let it through. Text inside an image or a scanned PDF page is not
-read at all.
+A full-text rule whose match starts with `@` is a detector rather than a pattern: `@id` finds a
+Swedish personnummer, a US SSN, a Danish CPR or a Finnish henkilötunnus only when its date and check
+digit are right; `@card` and `@iban` likewise check Luhn and mod 97, so an order number of the same
+length is left alone; `@person` finds a name from lists of given and family names in a dozen
+languages, or any capitalised name after a title or greeting (*Mr*, *Frau*, *Hej*, *Dear*);
+`@address` a number and a street (*Street*, *-gatan*, *-straße*, *rue* …) with its postcode and
+town. The starting rules use all of them.
+
+The name detector is lists and context, not a language model: a name it has no list entry for, with
+no title before it and no known family name after it, gets through. It is measured on a test set of
+planted fake people in six languages, and that is where it is improved.
 
 That is why a starting rule file leaves `getObject` and `query` off, and why a root holding raw
 exports is a place for an [approve rule](/agents/connect#_5-tick-the-roots).
