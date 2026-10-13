@@ -7,6 +7,8 @@ Instant mode is ObjectExplorer with nothing to set up and nothing to sign in to.
 objectexplorer mode=instant
 ```
 
+<img src="/screenshot/instant-mode.png" alt="Instant mode in a browser: the demo folder in the tree, a photo open, and Download app above the account icon">
+
 An instant server:
 
 - serves one folder, read-only: the `demo/` folder of its `base=` folder. The page sees it as

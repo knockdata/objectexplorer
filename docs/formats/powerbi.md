@@ -2,7 +2,7 @@
 
 `pbix` `pbit`
 
-<img src="/screenshot/format-powerbi.png" alt="A Power BI report opened as its first page: cards, bar charts, a treemap and a column and line chart, each drawn with the numbers from the report's own data">
+<img src="/screenshot/format-powerbi.png" alt="A Power BI report opened at its Risk Analytics page: a map of products by country, a bar chart of risk by factor and a table, each drawn with the numbers from the report's own data, the other pages as tabs below">
 
 A Power BI report opens as the report: its pages, laid out where the author put every visual, with
 the numbers each one shows worked out from the data the file carries. Power BI Desktop is not

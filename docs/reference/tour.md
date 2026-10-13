@@ -2,6 +2,8 @@
 
 ## The tour
 
+<img src="/screenshot/tour.png" alt="The tour's first card beside the activity bar, the rest of the window darkened">
+
 The first time the window opens, a short tour shows you around. Each card lights up one part of the
 window and darkens the rest:
 

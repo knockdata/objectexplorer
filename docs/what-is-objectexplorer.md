@@ -21,7 +21,7 @@ runs it in your browser with nothing installed.
 
 ## How it fits together
 
-<AppDemo open="folder/demo/ObjectExplorer/how-it-fits-together.excalidraw" height="400px" image="/diagram/how-it-works.svg" alt="The window and any agent talk to one local server, which signs requests straight to your storage" />
+<AppDemo open="folder/demo/ObjectExplorer/how-it-fits-together.excalidraw" height="400px" image="/diagram/how-it-works.svg" alt="The window and any agent reach one program, which signs requests straight to your storage, with no local server in between" />
 
 You and an agent ask the same app, and only the app talks to your storage, with your own
 credentials. What it remembers — names and sizes, notebook code, cached copies of cloud objects you

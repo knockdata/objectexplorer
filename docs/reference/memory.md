@@ -4,6 +4,8 @@ The **Memory** item in the activity bar shows what the app's memory was made of 
 opened: how much a file cost to open, what it still holds, and what was given back when its tab was
 put away.
 
+<img src="/screenshot/memory.png" alt="The Memory activity: the snapshots around tour.pdf in the side panel, and the map of what opening it cost, a band per region of memory">
+
 ## The side panel
 
 Every file opened in a tab is measured three times: just before it opens (**A**), once its first

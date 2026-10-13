@@ -3,7 +3,7 @@
 `png` `jpg` `jpeg` `webp` `gif` `tiff` `tif` `svg` `ico` `cur` `bmp`, and on a Mac `heic` `avif` `psd`
 and camera raw
 
-<AppDemo open="folder/demo/image/archipelago-dusk.jpg" image="/screenshot/image-exif.png" alt="An image with its EXIF and GPS metadata beside it" />
+<AppDemo open="folder/demo/image/archipelago-dusk.jpg" image="/screenshot/image-exif.png" alt="A photo fitted to the pane, with a card over its top right corner: its description, camera settings and GPS position" />
 
 The picture, fitted to the pane, with what the file carries in a card over its top right corner:
 the EXIF tags of the image and of the camera and its settings, and the GPS position worked out in

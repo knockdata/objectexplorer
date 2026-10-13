@@ -1,6 +1,6 @@
 # Connecting storage
 
-<img src="/screenshot/settings.png" alt="Settings, with the connections list: local folder, Cloud Storage, S3, Blob Storage">
+<img src="/screenshot/settings.png" alt="Settings: the Sign-ins and Locations groups on the left, and S3 with the account's buckets, the two in the tree ticked">
 
 Open **Settings** from the activity bar, or the **+** in the sidebar header, which opens it on
 **Local folder**. Two groups on the left do the work:

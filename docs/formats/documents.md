@@ -3,7 +3,7 @@
 `pdf` `docx` `dotx` `doc` `odt` `pptx` `potx` `ppsx` `ppt` `pot` `pps` `key` `xlsx` `xlsm` `xltx`
 `enex`, and `rtf` as text
 
-<img src="/screenshot/presentation.png" alt="A pptx rendered slide by slide">
+<img src="/screenshot/presentation.png" alt="A pptx: every slide as a thumbnail down the side, the one picked drawn large beside them">
 
 A PDF opens in [the PDF reader](/formats/pdf), with selectable text, find and notes. A Word file
 renders as its text with its structure, one column of prose — the old binary `.doc` and an

@@ -2,7 +2,7 @@
 
 **Settings → PII.** What never leaves this machine as it stands.
 
-<img src="/screenshot/pii-rules.png" alt="Settings → PII: four column rules, one each of FPE, Mask, Hash and Drop, and four full-text rules, every rule with a sample as it is and as it goes">
+<img src="/screenshot/pii-rules.png" alt="Settings → PII: four column rules, one each of FPE, Mask, Hash and Drop, and the full-text rules under them, every rule with a sample as it is and as it goes">
 
 One set of rules protects two audiences: **an agent calling over MCP**, and **a person opening a
 [share link](/explore/share)**. Both are data leaving this machine, and both go through the same

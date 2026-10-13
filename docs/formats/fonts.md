@@ -2,6 +2,8 @@
 
 `ttf` `otf` `ttc` `otc` `woff` `woff2` `pfb` `pfa` `cff`
 
+<img src="/screenshot/format-font.png" alt="A WOFF2 font opened as its glyphs: a row each with its number, the character it draws, its advance, contours and points">
+
 A font file opens as its glyphs, a row each: the glyph's number, its name, the Unicode character it
 draws, how far it advances the pen, and how many contours and points its outline has. The app reads
 the outlines itself, so no font has to be installed to look inside one.

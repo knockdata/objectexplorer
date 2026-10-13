@@ -1,6 +1,6 @@
 # Python
 
-<img src="/screenshot/notebook-python.png" alt="A Python cell: oe.frame over the object, and the DataFrame it returned as a grid">
+<img src="/screenshot/notebook-python.png" alt="A Python cell: pandas reading oe.path of an object in a bucket, its session and venv under it, and the DataFrame it returned as a grid">
 
 A **Python** cell runs real Python — in a real interpreter, in a virtual environment you made, with
 pandas or polars or whatever else you installed. It sits in the same notebook as the SQL and the

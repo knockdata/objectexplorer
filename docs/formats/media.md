@@ -18,6 +18,8 @@ answers what a player never shows: how the file is actually put together.
 A MIDI file opens **playing**: the app's own synthesizer sounds its notes at the file's tempos, a
 piano-like tone for every instrument and drums on the percussion channel, on every platform.
 
+<img src="/screenshot/midi.png" alt="A MIDI file's table: a row per event, with its track, tick, time, type, channel, note and velocity">
+
 Its **table** holds a row for each event: the track, the tick and the time, what kind of event it
 is, the channel, the note and its velocity, a controller and its value, and any text.
 **Structure** mode shows its header — the format, the track count, the ticks to a quarter note — and

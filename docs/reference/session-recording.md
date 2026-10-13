@@ -27,6 +27,8 @@ from another computer or another install cannot be played, and says so.
 
 ## Where it goes
 
+<img src="/screenshot/session-recording.png" alt="The replay folder in the tree and listed beside it, a recording per session named by when it started">
+
 Each window session is a file of its own in `~/.objectexplorer/replay`, named by when it started.
 The last 20 sessions are kept, and never more than 50 MB in all; one session stops growing at 50 MB.
 The browser version records nothing.
