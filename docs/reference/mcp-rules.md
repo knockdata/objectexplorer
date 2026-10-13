@@ -41,7 +41,7 @@ version: 1
 server:
   enabled: false
   host: 127.0.0.1
-  port: 0                      # 0 = ride the app's own port, at /api/mcp
+  port: 3417                   # its own listener; 0 is 3417 too
   token: 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83   # generated on the first write; the app's only secret
   install:
     claudeCode: true           # write the entry into that client's own MCP config
@@ -124,7 +124,7 @@ roots:
 
 ## How one call is decided
 
-Every call — a listing, a query, a byte range — goes through the same seven steps, in this order.
+Every call — a listing, a query, a read — goes through the same seven steps, in this order.
 The first `deny` ends it.
 
 | #   | Step    | Denied when                                                               |
@@ -145,15 +145,15 @@ rather than a set of patterns per root: a rule about `.env` is the same rule whe
 
 ### One gate, not one per tool
 
-The check sits at the door, before anything is read — not in each tool. A tool is a request to this
-app's own REST API and nothing more, so there is nothing in one to bypass: what it may ask for was
-decided before it asked. That matters most for `query`, which names its objects inside SQL — a
-statement naming a denied path is denied at the same step 5 as a byte range would be. There is no
-second rule engine to keep in sync with the first.
+The check sits at the door, before anything is read — not in each tool. Every object a call names
+is decided before a tool runs, so there is nothing in one to bypass. That matters most for `query`,
+which names its objects inside SQL: every quoted path, every quoted file name, and whatever follows
+`FROM`, `JOIN` or a `read_…(` is an object, and a statement naming a denied one is denied whole, at
+the same step 5 a `getObject` would be. There is no second rule engine to keep in sync with the
+first.
 
-What the gate binds is `/api/mcp`. A program on this machine calling `/api/read` or
-`/api/duckdb/query` itself is not an agent and is not held to this file — the local API has always
-been the app's own, and only this machine can reach it.
+What the gate binds is the MCP listener. A program on this machine using the app's own API is not
+an agent and is not held to this file.
 
 ### What a denial looks like
 
@@ -188,7 +188,9 @@ Two things are recorded, and they are what the log is split by:
 
 One line per call, written and flushed before the answer is sent, so a killed process still has
 everything it answered. The line holds the call as it arrived, the decision and which rule made it,
-the counted rows and bytes, and a digest of what went back — never the payload itself. The UI is
+and the counted rows and bytes — never the payload itself, and nothing that says what was redacted
+in it. The arguments are kept as the agent sent them, so a search pattern or a SQL literal with a
+name in it is in the log as typed. The UI is
 not in this path at all: it subscribes to the same events and draws them, and a window that is
 closed, slow or observing something else changes nothing about what was written.
 

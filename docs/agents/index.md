@@ -66,10 +66,14 @@ An agent with a shell and a cloud SDK can fetch bytes. What it does with a `sas7
 ORC file, a Hudi folder or a 3 GB Parquet file is the actual problem — and "pip install something
 and write a script" is where the tokens and the mistakes go.
 
-Every parser this app has is on the other side of that door: Parquet, Avro, ORC, Arrow, SPSS, SAS,
-Delta, Iceberg, Hudi, archives, spreadsheets, documents. An agent asks in SQL and gets rows. The
-range of data it can reach at all is the whole [format list](/formats/), not the subset it happens
-to have a library for.
+Three kinds of reader are on the other side of that door. **Tables** — CSV, Parquet, Avro, ORC,
+Arrow, SPSS, SAS, spreadsheets, SQLite and DuckDB files — go through the SQL engine: an agent asks
+in SQL and gets rows. **Documents** — PDF, Word, PowerPoint, EPUB, HTML, Markdown and plain text —
+come back as their text. **Structured files** — JSON, JSON Lines, YAML, XML, notebooks — come back as
+their tree. Every answer passes the PII rules on the way.
+
+That is not the whole [format list](/formats/). An image, an archive, a 3D model or anything else
+with no text to check is refused rather than sent as bytes no rule has looked at.
 
 ### Limits, for safety and for cost
 

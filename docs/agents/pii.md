@@ -97,9 +97,19 @@ would be precisely the leak the rules exist to stop.
 ## What the rules cannot reach
 
 `getObject` reads a whole object and answers as what it is: rows for a table, which go through the
-column rules; text for a document, which goes through the full-text rules; a tree for a drawing, and
-a window of bytes for anything else. Those last two go through neither — there is no column to name
-and no sentence to find an address in, and scrambling them would only break the file.
+column rules; text for a document, which goes through the full-text rules; a tree for JSON, YAML,
+XML or a notebook, where a key is treated as a column name (an `ssn` key anywhere in the tree is
+caught by the `ssn` column rule) and every other string goes through the full-text rules. Anything
+else — an image, an archive, a model — is refused: bytes no rule can read are not sent.
+
+A `query` cannot step around the column rules by renaming a column: each object it names is read
+through a copy where the caught columns are already rewritten, so `SELECT ssn AS x`, `upper(ssn)`
+and `WHERE ssn LIKE '1979%'` all see the rewritten value, and a dropped column is simply not there.
+
+What the rules cannot reach is what they do not describe. They are patterns: an email, a phone
+number, a personal number in a known shape. A person's name or a street address in free text has no
+such shape, and the starting rules let it through. Text inside an image or a scanned PDF page is not
+read at all.
 
 That is why a starting rule file leaves `getObject` and `query` off, and why a root holding raw
 exports is a place for an [approve rule](/agents/connect#_5-tick-the-roots).

@@ -6,33 +6,29 @@ What an agent talks to, and what it may call. The rules that decide the answers 
 ## One endpoint
 
 ```
-POST   http://127.0.0.1:<appPort>/api/mcp      a JSON-RPC message
-GET    http://127.0.0.1:<appPort>/api/mcp      the server's own stream
-DELETE http://127.0.0.1:<appPort>/api/mcp      end this session
+POST   http://127.0.0.1:3417/mcp      a JSON-RPC message
+GET    http://127.0.0.1:3417/mcp      405: no server stream is offered
+DELETE http://127.0.0.1:3417/mcp      end this session
 ```
 
-MCP's Streamable HTTP transport, protocol version `2025-06-18`, on the port the app is already
-serving — the desktop app, `npx objectexplorer` and the browser front door all bind a local port,
-and this rides it. `server.port` in the rule file gives it one of its own instead, for the case
-where a client cannot be told the app's port.
+MCP's Streamable HTTP transport, protocol version `2025-06-18`, on **a listener of its own**:
+`server.host` and `server.port` in the rule file, `127.0.0.1:3417` unless you change them. It is not
+the port the window or `npx objectexplorer` serves on, and it is open only while `server.enabled` is
+on and a token is written. `/api/mcp` on the same listener is answered the same way, for client
+configs written by an older version.
 
-It sits under `/api` with everything else this app answers, and it is never mounted on the public
-host, for the same reason `/api/duckdb` is not: this is the door to local storage, and only this
-machine may knock.
+The listener answers the agent and nothing else. The window does not talk to it: it reaches the MCP
+service the way it reaches every other service of the app, so there is no settings route a token
+could be pointed at.
 
-The bare path is the agent's, and **everything under it is the window's** — `/api/mcp/events`,
-`/api/mcp/rules` and the rest, listed at the bottom of this page. One prefix, one router, and one
-line that keeps them apart: a request carrying the bearer token is answered only at `/api/mcp`
-itself. An agent that has the token and tries `/api/mcp/rules` is asking to rewrite the rules that
-bind it, and gets a `403` — the token buys the JSON-RPC door and nothing else.
-
-Three things are checked before a byte of JSON-RPC is parsed, and each is a plain HTTP failure:
+Four things are checked before a byte of JSON-RPC is parsed, and each is a plain HTTP failure:
 
 | Check                                         | Failure |
 |-----------------------------------------------|---------|
-| `Authorization: Bearer <server.token>`        | `401`   |
-| the connection came from `127.0.0.1`          | `403`   |
+| `server.enabled` and a token in the rule file | `403`   |
+| the connection came from this machine         | `403`   |
 | `Origin`, when present, is loopback or absent | `403`   |
+| `Authorization: Bearer <server.token>`        | `401`   |
 
 The `Origin` check is what stops a web page in the user's own browser from driving the agent
 endpoint — a page can send a POST to localhost, and without this it would be an agent.
@@ -40,10 +36,10 @@ endpoint — a page can send a POST to localhost, and without this it would be a
 ## A session
 
 ```
-→ POST /api/mcp   {"jsonrpc":"2.0","id":1,"method":"initialize","params":{
-                 "protocolVersion":"2025-06-18",
-                 "clientInfo":{"name":"claude-code","version":"2.1.88"},
-                 "capabilities":{}}}
+→ POST /mcp   {"jsonrpc":"2.0","id":1,"method":"initialize","params":{
+             "protocolVersion":"2025-06-18",
+             "clientInfo":{"name":"claude-code","version":"2.1.88"},
+             "capabilities":{}}}
 
 ← 200         Mcp-Session-Id: 3f9c1a7e
               {"jsonrpc":"2.0","id":1,"result":{
@@ -51,7 +47,7 @@ endpoint — a page can send a POST to localhost, and without this it would be a
                  "serverInfo":{"name":"objectexplorer","version":"<app version>"},
                  "capabilities":{"tools":{"listChanged":true}}}}
 
-→ POST /api/mcp   {"jsonrpc":"2.0","method":"notifications/initialized"}
+→ POST /mcp   {"jsonrpc":"2.0","method":"notifications/initialized"}
 ```
 
 Every request after that carries `Mcp-Session-Id` and `MCP-Protocol-Version`. The session id is
@@ -68,24 +64,14 @@ session not found` re-initializes — the same recovery every Streamable HTTP cl
 
 ## Answering: JSON, or a stream
 
-A `tools/call` that runs and returns is answered with `Content-Type: application/json` — one
-JSON-RPC response, no stream, because that is a smaller thing to get right and most calls finish in
-milliseconds.
+Every message is answered with `Content-Type: application/json` — one JSON-RPC response, never a
+stream, because that is a smaller thing to get right and most calls finish in milliseconds.
 
-A call that has to wait — an `approve` prompt in the window, a query on a cold object that has to be
-downloaded first — is answered with `text/event-stream`, and progress goes out on it while it
-waits:
-
-```
-event: message
-data: {"jsonrpc":"2.0","method":"notifications/progress","params":{
-        "progressToken":7,"progress":1,"message":"waiting for approval (4:31 left)"}}
-```
-
-Progress every ten seconds, for the whole five minutes. Without it a client's own timeout decides
-the answer instead of the human, and the human is the point. `notifications/cancelled` — the agent
-gave up, or the user pressed ctrl-c in it — closes the prompt and is logged as
-`decision: cancelled`, which is not the same fact as a timeout.
+A call that has to wait — an `approve` prompt in the window — holds its response open until a
+person answers or `approve.timeoutSeconds` runs out. No progress is sent while it waits, so a client
+whose own timeout is shorter gives up first; the prompt then stays until it times out here.
+`notifications/cancelled` — the agent gave up, or the user pressed ctrl-c in it — closes the prompt
+and is logged as `decision: cancelled`, which is not the same fact as a timeout.
 
 ## The tools
 
@@ -103,7 +89,7 @@ describeObject {uri}                      → size, time, format, columns
 columnSummary  {uri}                      → statistics per column, measured after the column rules
 searchText     {uri, pattern, limit?}     → lines matching a regular expression, in one object or a folder
 query          {sql, limit?}              → rows
-getObject      {uri, offset?, limit?}     → rows, text, a tree or bytes, by what the object is
+getObject      {uri, offset?, limit?}     → rows, text or a tree, by what the object is; raw bytes refused
 ```
 
 Two of them, as they are listed:
@@ -144,15 +130,19 @@ describeObject {uri, objectKind, size, mtime, contentType, columns: [{name, encr
 columnSummary  {uri, rowsMeasured, columns: [{name, encrypted, …statistics}]}
 searchText     {uri, pattern, hits: [{uri, line, text}], searched} — searched: a folder only
 query          {columns: [{name, encrypted}], rows, rowCount, truncated}
-getObject      {uri, objectType, …} — rows, text, a tree or a window of bytes
+getObject      {uri, objectType, …} — rows, text or a tree
 ```
 
-`getObject` counts `offset` and `limit` in rows for a table, lines for a text and bytes for anything
-else.
+`getObject` counts `offset` and `limit` in rows for a table and lines for a text. An object with no
+text this app can read (an image, an archive, a model) is refused with `step: "type"`: bytes no
+rule has checked are not sent.
 
-`encrypted: true` is on every column a rule rewrote, in `describeObject`, in `columnSummary` and in
-`query` results. An agent holding a customer id that is not the customer id has to be told, or it
-will hand it to a human as one.
+`encrypted: true` is on every column a rule rewrote, in `describeObject` and in `columnSummary`. A
+`query` never sees a real value of such a column: each object it names is read through a view where
+those columns are already rewritten (a dropped one is not there), so `SELECT ssn AS x` or
+`upper(email)` gets the rewritten value too, and its result marks a column `encrypted` when its name
+is one a rule catches. An agent holding a customer id that is not the customer id has to be told, or
+it will hand it to a human as one.
 
 Every result is returned twice, as the protocol asks: `structuredContent` is the object above, and
 `content[0]` is the same thing as text, so a client that reads neither schemas nor structured
@@ -191,7 +181,7 @@ parse, a session that is gone.
 
 Ticking a client in Settings writes that client's own config, with the token from the rule file.
 
-**Claude Code** — `claude mcp add --transport http objectexplorer http://127.0.0.1:<port>/api/mcp
+**Claude Code** — `claude mcp add --transport http objectexplorer http://127.0.0.1:3417/mcp
 --header "Authorization: Bearer <token>"`, which lands in `~/.claude.json`. The app writes the same
 entry itself rather than shelling out, so it works when the CLI is not on PATH.
 
@@ -205,54 +195,29 @@ puts the address and the token on the clipboard as one block, already shaped the
 config wants them. A client that speaks only stdio needs a bridge, and there is none in the app
 today.
 
-## The other half: what the window listens to
+## The other half: what the window uses
 
-The agent's side is above, at the bare `/api/mcp`. The window's side is everything under it: our
-own API, deliberately not MCP, and refused to anyone holding the bearer token.
-
-```
-GET  /api/mcp/events                     SSE: one event per call, as it is decided
-GET  /api/mcp/status                     on or off, which clients, what is waiting
-GET  /api/mcp/sessions                   the sessions each agent has performed
-GET  /api/mcp/session?agent=&session=    one session's calls, for replay and for reading
-GET  /api/mcp/transcript?agent=&session= the client's own account of the same work
-POST /api/mcp/recheck  {agent, session}  run that session's calls again against today's rules
-POST /api/mcp/approve  {callId, ok}      the answer to a prompt
-GET  /api/mcp/rules                      the parsed rule file, its text, and any error in it
-POST /api/mcp/rules    {text}            write it back
-POST /api/mcp/enable   {on}              one line of the rule file, comments kept
-POST /api/mcp/install  {client, on, url} tick a client: the rule file, then its own config
-POST /api/mcp/starter  {roots}           write a first rule file when there is none
-POST /api/mcp/settings {…}               one setting, written back into the file's own text
-POST /api/mcp/try      {…}               run the gate and the column plan, reading nothing
-GET  /api/mcp/transcriptFile             the client's own transcript, as it is on disk
-```
-
-`/api/mcp/events` is what observing is: the window follows what it sees, debounced, and Escape
-stops following. The stream is a mirror of the log, never its source — the log is written and
-flushed before the answer leaves the server, whether or not a window is listening.
+The window never calls the agent's listener. Settings → MCP and the session tabs reach the same MCP
+service in the app's own process: the rule file read and written (comments kept), Install, the
+sessions and their calls, the client's transcript, Recheck, the answer to an approval, and a live
+feed of every call as it is decided. That feed is what observing is: the window follows what it
+sees, debounced, and Escape stops following. It is a mirror of the log, never its source — the log
+is written before the answer leaves, whether or not a window is listening.
 
 ## Where it lives
 
 ```
-server/src/router/RouterMcp.js     the endpoint: sessions, JSON-RPC, SSE
-server/src/mcp/rules.js            read and watch mcp.yaml, parse it into one rule set
-server/src/mcp/gate.js             the seven steps, one function, and the only thing that decides
-server/src/mcp/call.js             one call, from the rules to the record
-server/src/mcp/budget.js           what an agent has taken, and whether it may take more
-server/src/mcp/approve.js          the prompt, and what a timeout means
-server/src/mcp/transcript.js       the client's own account, matched to a session
-server/src/mcp/tools.js            each tool as a request to this app's own REST API
-server/src/apiCall.js              that request, made in process, through the same routers
-server/src/router/RouterRead.js    /api/read — one object as what it is, a window at a time
-server/src/pii/columns.js          fpe / hash / mask / drop
-server/src/pii/sanitize.js         the floor a request asks for: sanitization=tabular,textual
-server/src/mcp/log.js              one ndjson file per agent per session, flushed on write
-explorer/src/components/McpPane.jsx   the Settings pane
-explorer/src/components/McpActivity.jsx  the sparkline strip, one colour per agent
+service/mcp/door.js        the listener: the four checks, sessions, JSON-RPC
+service/mcp/rules.js       mcp.yaml, read again whenever it changed
+service/mcp/gate.js        the steps that decide a call, and the only thing that does
+service/mcp/call.js        one call, from the rules to the record
+service/mcp/budget.js      what an agent has taken, and whether it may take more
+service/mcp/approve.js     the prompt, and what a timeout means
+service/mcp/tools.js       each tool, over the app's storage, database and readers
+service/mcp/log.js         one ndjson file per agent per session, written before the answer
+service/mcp/transcript.js  the client's own account, matched to a session
+service/pii/columns.js     fpe / hash / mask / drop
+service/pii/sanitize.js    the floor every answer goes through
 ```
-
-The gate is the door, and everything behind it is the API this app already answers — see
-[one gate, not one per tool](/reference/mcp-rules#one-gate-not-one-per-tool).
 
 Next: [troubleshooting](/reference/troubleshooting).

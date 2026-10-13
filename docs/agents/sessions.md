@@ -22,8 +22,9 @@ Two things split it, and they are the two things worth asking about:
   terminal is a new session under the same agent.
 
 **Audit log history** in Settings → MCP is how long they are meant to be kept: 1D, 7D, 1M, 3M, 1Y
-or Indefinite, 30 days by default. It is written to `log.keepDays`; nothing deletes old session files
-yet, so today they stay until you remove them.
+or Indefinite, 30 days by default. It is written to `log.keepDays`, and a session file last written
+longer ago than that is deleted when the app starts and whenever the sessions are listed. Indefinite
+(`keepDays: null`) keeps every one.
 
 ## Watching it happen
 
@@ -122,7 +123,7 @@ listObjects  sales-lake  exports/          allowed → allowed
 query        sales-lake  delta/orders/     allowed → denied  (deny ^exports/hr/)
 ```
 
-There is no button for it in the window yet: it is `POST /api/mcp/recheck` with `{ agent, session }`.
+It is the **Recheck** button on a session in Settings → MCP → Sessions.
 So a rule file that was just tightened can be checked against the traffic it will actually meet, and
 a denial that surprised someone can be reproduced on demand.
 

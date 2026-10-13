@@ -25,7 +25,7 @@ Everything past that is a line you set.
 One toggle: *The door is shut* / *The door is open*. Under it, the two things any client needs:
 
 ```
-Endpoint   http://127.0.0.1:<port>/api/mcp
+Endpoint   http://127.0.0.1:3417/mcp
 Token      7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83
 ```
 
@@ -51,7 +51,7 @@ block on the clipboard, already shaped:
 {
   "objectexplorer": {
     "type": "http",
-    "url": "http://127.0.0.1:7788/api/mcp",
+    "url": "http://127.0.0.1:3417/mcp",
     "headers": { "Authorization": "Bearer 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83" }
   }
 }
