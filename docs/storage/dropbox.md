@@ -11,13 +11,11 @@ from a terminal, which serves the app to your browser — and only from that ser
 
 1. Create an app in the Dropbox App Console, and add the server's redirect address to it:
    `http://127.0.0.1:9421/oauth/callback`, with the port your server listens on.
-2. Put the app's key in the server's config, `server.json` in the app's folder, with a file to keep
-   the link in:
+2. Put the app's key in the server's config, `server.json` in the app's folder:
 
    ```json
    {
-     "storage": { "dropbox": { "client_id": "<app key>", "client_secret": "<app secret>" } },
-     "oauth": { "tokens_file": "/home/me/.objectexplorer/drive-tokens.json" }
+     "storage": { "dropbox": { "client_id": "<app key>", "client_secret": "<app secret>" } }
    }
    ```
 
@@ -26,7 +24,7 @@ from a terminal, which serves the app to your browser — and only from that ser
 
 Add it to the tree with `oe folder add dropbox://` on the server's machine, or a folder below it
 such as `dropbox://Reports`. Every client of the server then reads that Dropbox account, within the
-roots the owner shares. Without a tokens file, the link lasts until the server stops.
+roots the owner shares. The link's refresh token is kept in the system keychain, never in a file, so it survives a restart.
 
 A `storage` section in the server's config holds every provider of that server, so the clouds it
 reads go there too; Settings then cannot change them.

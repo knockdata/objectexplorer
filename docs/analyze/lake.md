@@ -19,7 +19,7 @@ are the table now, not every file in the folder.
 |             | What it takes to be right                                                                                                                                                                                                          |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Delta**   | the adds and removes are replayed in version order; partition columns live in the log rather than in the parquet, column mapping names the physical columns, and a deletion vector marks rows inside a file that is otherwise live |
-| **Iceberg** | the newest metadata.json names the current snapshot, whose manifest list and manifests name the live data files; delete files are not applied yet                                                                                  |
+| **Iceberg** | the newest metadata.json names the current snapshot, whose manifest list and manifests name the live data files; position deletes, equality deletes and deletion vectors take their rows out, and a renamed column is read by its field id |
 | **Hudi**    | a merge-on-read slice stacks its base file under the log files written over it, and the last write of each record key wins                                                                                                         |
 
 A table with none of that — the common one — comes out as a single scan over a file list, which is
@@ -28,8 +28,10 @@ all it should ever have been.
 A folder laid out as `column=value` partitions reads as one table the same way, with the partition
 columns taken from the folder names.
 
-A lake table is read from a folder on this machine, or on the server you are connected to. Click
-one in the tree and it opens as a notebook over its rows now, with its history as the next view.
+A lake table is read from a folder on this machine, on the server you are connected to, or in a
+bucket (`s3://`, `gs://`, `az://`). Click one in the tree and it opens as a notebook over its rows
+now, with its history as the next view. A bucket's table is copied to this machine first, file for
+file, and read again only where it changed; a table of more than 2 GB is refused.
 
 ## The metadata is readable too
 

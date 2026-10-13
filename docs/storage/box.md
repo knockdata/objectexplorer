@@ -12,13 +12,11 @@ terminal, which serves the app to your browser — and only from that server's o
 1. Create an app with OAuth 2.0 user authentication in the Box Developer Console, and add the
    server's redirect address to it: `http://127.0.0.1:9421/oauth/callback`, with the port your
    server listens on.
-2. Put the app's client ID and secret in the server's config, `server.json` in the app's folder,
-   with a file to keep the link in:
+2. Put the app's client ID and secret in the server's config, `server.json` in the app's folder:
 
    ```json
    {
-     "storage": { "box": { "client_id": "<client id>", "client_secret": "<client secret>" } },
-     "oauth": { "tokens_file": "/home/me/.objectexplorer/drive-tokens.json" }
+     "storage": { "box": { "client_id": "<client id>", "client_secret": "<client secret>" } }
    }
    ```
 
@@ -30,7 +28,7 @@ as `box://Reports`. Every client of the server then reads that Box account, with
 owner shares.
 
 Box hands out a new refresh token each time one is used and retires the old one. The server keeps
-the newest in the tokens file; without one, the link lasts until the server stops.
+the newest in the system keychain, never in a file, so the link survives a restart.
 
 A `storage` section in the server's config holds every provider of that server, so the clouds it
 reads go there too; Settings then cannot change them.

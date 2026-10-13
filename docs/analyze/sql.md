@@ -22,6 +22,7 @@ ORDER BY 2 DESC
 A quoted path names the data, starting with the name of a folder or bucket in your tree. It can be:
 
 - a file in a local folder, or an object in a bucket you added;
+- a bucket's own path — `'s3://sales-eu/orders/2026-08-24.parquet'`, `'gs://…'`, `'az://…'`;
 - a file inside an archive — `'demo/archive/sample.zip/sample/test.csv'`;
 - a table of an SQLite or DuckDB file — `'demo/stations.duckdb/main/stations'`;
 - a sheet of a workbook, by its name after the workbook's path;
@@ -32,7 +33,7 @@ A quoted path names the data, starting with the name of a folder or bucket in yo
 
 A local file is read where it is. An object in a bucket is copied once into the
 [cache](/explore/cache), through the same signed requests the explorer uses, and read from there
-until it changes. There is no upload anywhere and no scratch folder to clean up.
+until it changes. A lake table in a bucket is copied the same way, file for file, beside the cache. There is no upload anywhere and no scratch folder to clean up.
 
 ## What is queryable
 

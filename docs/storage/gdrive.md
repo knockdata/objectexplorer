@@ -12,13 +12,11 @@ browser — and only from that server's own machine:
 
 1. Create an OAuth client in the Google Cloud console, and add the server's redirect address to it:
    `http://127.0.0.1:9421/oauth/callback`, with the port your server listens on.
-2. Put its client ID and secret in the server's config, `server.json` in the app's folder, with a
-   file to keep the link in:
+2. Put its client ID and secret in the server's config, `server.json` in the app's folder:
 
    ```json
    {
-     "storage": { "gdrive": { "client_id": "<client id>", "client_secret": "<client secret>" } },
-     "oauth": { "tokens_file": "/home/me/.objectexplorer/drive-tokens.json" }
+     "storage": { "gdrive": { "client_id": "<client id>", "client_secret": "<client secret>" } }
    }
    ```
 
@@ -26,8 +24,8 @@ browser — and only from that server's own machine:
    Under **Drives**, click **link** beside Google Drive and sign in with Google.
 
 Add it to the tree with `oe folder add gdrive://` on the server's machine, or a folder below it.
-Every client of the server then reads it, within the roots the owner shares. Without a tokens file,
-the link lasts until the server stops.
+Every client of the server then reads it, within the roots the owner shares.
+The link's refresh token is kept in the system keychain, never in a file, so it survives a restart.
 
 For a machine with no person in front of it, leave out the client ID: the entry `"gdrive": {}` reads
 as the service account in `GOOGLE_APPLICATION_CREDENTIALS`, with nothing to link.

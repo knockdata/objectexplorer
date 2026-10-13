@@ -17,6 +17,12 @@ single stream.
 Any `.log` file opens in the same viewer: Cloud Logging entries, an OpenTelemetry export, JSON lines,
 or a plain text log.
 
+Log files that a sink already exported to a bucket open the same way. Click one NDJSON object, or any
+level of the export — the log id, a year, a month or a `YYYY/MM/DD` day — and the viewer walks it
+newest first, showing the lines as each file arrives. It reads at most 20 files or 50,000 lines, so a
+year of retention is not downloaded. Cloud Logging entries and OpenTelemetry records both read as the
+same rows.
+
 ## The viewer
 
 - **A timeline you can grab** — one bar per slot, grey for ordinary lines, orange for warnings, red

@@ -58,6 +58,15 @@ made of their expiry and their own digest, and swept when that expiry passes. A 
 
 **Copy URL**, or **Email**, which opens your own mail app with the link in it.
 
+## Opening a link
+
+The link opens objectexplorer.com/app on the shared table and nothing else — no tree, no storage, no
+sign-in. A line says how many rows there are, which columns were masked, hashed or encrypted and
+how, and until when the link lives; the rows are exactly as they were sent. A stored link is read
+from the site, and a read-and-burn one is gone after that read: opened again, it says there is
+nothing behind it. An expired link says when it expired. The desktop app opens a link too, given as
+`share=<link>`.
+
 ## Sharing a model
 
 A trained model is not shared by link. The [model cell](/analyze/model)'s **copy** button puts it

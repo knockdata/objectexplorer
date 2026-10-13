@@ -13,12 +13,11 @@ app to your browser — and only from that server's own machine:
 1. Register an app in Microsoft Entra ID, and add the server's redirect address to it:
    `http://127.0.0.1:9421/oauth/callback`, with the port your server listens on.
 2. Put its client ID in the server's config, `server.json` in the app's folder, with its secret if
-   it has one and a file to keep the link in:
+   it has one:
 
    ```json
    {
-     "storage": { "onedrive": { "client_id": "<application id>" } },
-     "oauth": { "tokens_file": "/home/me/.objectexplorer/drive-tokens.json" }
+     "storage": { "onedrive": { "client_id": "<application id>" } }
    }
    ```
 
@@ -27,8 +26,8 @@ app to your browser — and only from that server's own machine:
 
 The sign-in goes to the `common` tenant unless the entry names a `tenant_id`. Add the drive to the
 tree with `oe folder add onedrive://` on the server's machine, or a folder below it. Every client of
-the server then reads it, within the roots the owner shares. Without a tokens file, the link lasts
-until the server stops.
+the server then reads it, within the roots the owner shares.
+The link's refresh token is kept in the system keychain, never in a file, so it survives a restart.
 
 A `storage` section in the server's config holds every provider of that server, so the clouds it
 reads go there too; Settings then cannot change them.
