@@ -1,6 +1,7 @@
 # SQL
 
-The engine is DuckDB, compiled into the app, reading the object where it lives.
+The engine is ObjectExplorer's own, built into the app, reading the file with the same readers the
+explorer opens it with.
 
 <script setup>
 // the notebook cells the frame opens on, each "<type>:<code>"
@@ -13,34 +14,36 @@ const cells = [
 
 ```sql
 SELECT region, count(*), sum(amount)
-FROM 's3://sales-eu/orders/2026-08-24.parquet'
+FROM 'sales-eu/orders/2026-08-24.parquet'
 GROUP BY region
 ORDER BY 2 DESC
 ```
 
-A quoted path straight after `FROM` or `JOIN` is what names the data. It can be:
+A quoted path names the data, starting with the name of a folder or bucket in your tree. It can be:
 
-- an object in a bucket — `s3://`, `gs://`, `az://`, or a path in one of your roots;
+- a file in a local folder, or an object in a bucket you added;
+- a file inside an archive — `'demo/archive/sample.zip/sample/test.csv'`;
+- a table of an SQLite or DuckDB file — `'demo/stations.duckdb/main/stations'`;
+- a sheet of a workbook, by its name after the workbook's path;
 - a folder that is a [Delta, Iceberg or Hudi table](/analyze/lake);
-- a Hive-partitioned export, or a `YYYY/MM/DD` prefix;
-- a local file.
+- a Hive-partitioned folder (`year=2024/month=1/…`), read as one table with the partition columns.
 
-## Nothing is staged
+## Nothing is uploaded
 
-DuckDB reads the bucket directly, through the same signed requests the explorer uses, so a `WHERE`
-over a multi-gigabyte Parquet file touches the row groups it needs and no more. There is no temporary
-copy in a scratch folder and no upload anywhere.
+A local file is read where it is. An object in a bucket is copied once into the
+[cache](/explore/cache), through the same signed requests the explorer uses, and read from there
+until it changes. There is no upload anywhere and no scratch folder to clean up.
 
 ## What is queryable
 
-`parquet` `csv` `tsv` `json` `jsonl` `xlsx` `avro`, plus SPSS `.sav` and SAS `.sas7bdat` `.xpt`.
-
-ORC, Arrow and HDF5 open as grids and charts too; only SQL over them is missing, and the cell says
-so.
+`parquet` `csv` `tsv` `psv` `json` `jsonl` `ndjson` `xlsx` `avro` `orc`, Arrow and Feather, HDF5,
+NetCDF, SPSS `.sav` and SAS `.sas7bdat` `.xpt`, and the tables of SQLite and DuckDB files.
 
 ## Running
 
-**Shift+Enter**, or the run button in the cell's toolbar. The cell's label says what came back — the
-row count — and the grid under it is virtualized, so a million rows scroll rather than load.
+**Shift+Enter** or **⌘Enter**, or the run button in the cell's toolbar. The cell's label says what came
+back — the row count — and the grid under it shows up to 10,000 rows: the query's own `LIMIT`, or
+10,000 when it has none. Under the grid, a line says how many rows there are, which empty columns
+were hidden, and which columns hold one value in every row.
 
 Next: [Python](/analyze/python).

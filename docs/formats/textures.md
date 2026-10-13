@@ -4,8 +4,8 @@
 
 <img src="/screenshot/format-texture.png" alt="A texture in the texture view: the picture, the mip level and channel toggles above it">
 
-A GPU or HDR texture opens as the picture it holds — the compressed blocks of a DDS decoded, the
-floats of an EXR tone-mapped to the screen. No image editor and no engine: which reader a file needs
+A GPU or HDR texture opens as the picture it holds — the compressed blocks of a DDS decoded, BC6H
+and BC7 among them, the floats of an EXR tone-mapped to the screen. No image editor and no engine: which reader a file needs
 is decided by its first bytes, not its name.
 
 ## The toolbar
@@ -17,6 +17,7 @@ is decided by its first bytes, not its name.
 | **exposure**            | for a float picture: brighter or darker, from −10 to +10 stops    |
 | **tone mapping**        | for a float picture: clamp, Reinhard, or ACES filmic, the default |
 | **lit**                 | for a normal map: light it from a lamp that follows the pointer   |
+| **fit**                 | the whole picture in the pane again                               |
 | **file**                | everything the file says about itself                             |
 
 Under the pointer, the texel's own values are read out — floats as floats, not rounded to what the

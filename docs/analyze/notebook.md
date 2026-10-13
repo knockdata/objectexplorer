@@ -22,39 +22,42 @@ output. The first two are already written — a `SELECT *` over the object you c
 what that query returned — so the file is queried and plotted before you have typed anything.
 
 ```sql
-SELECT * FROM 'gs://sales-eu/orders/2026-08-24.parquet' LIMIT 10000
+SELECT * FROM 'sales-eu/orders/2026-08-24.parquet' LIMIT 10000
 ```
 
-The query runs on your machine, against the object where it lives. Nothing is staged into a temporary
-folder first: DuckDB reads the bucket directly, so a `WHERE` over a multi-gigabyte Parquet file
-touches the row groups it needs and no more.
+The query runs on your machine, in ObjectExplorer's own SQL engine. A local file is read where it is;
+an object in a bucket is copied once into the [cache](/explore/cache) and read from there.
 
 ## Cells are piped, not shared
 
 Each cell reads the rows produced by the nearest cell above it that produced any, so a query narrows
-the data and everything under it — the chart, the model, the next query — sees what came back.
+the data and everything under it — the chart, the model, the code — sees what came back.
 
-Nothing re-runs on its own: a cell runs from its run button or **Shift+Enter**, so what is on screen
-is always something you asked for.
+A cell runs from its run button, **Shift+Enter** or **⌘Enter**, so what you change is drawn when you ask
+for it.
 
-| Cell | What it is |
-|---|---|
-| **Table** | [SQL](/analyze/sql), with the rows as a virtualized grid — column summaries and all |
-| **Chart** | [a plot](/analyze/charts) of the rows above, as source you can edit |
-| **Model** | [gradient boosting](/analyze/model) over the rows above |
-| **Code** | JavaScript over the same rows, with [pandasjs](https://www.npmjs.com/package/@rockiey/pandasjs) — `pd` — already in scope |
-| **Python** | [real Python](/analyze/python) in a venv you made, in a kernel that keeps its variables, with `oe` in scope |
-| **Text** | markdown, rendered when you click away |
+| Cell         | What it is                                                                                          |
+|--------------|-----------------------------------------------------------------------------------------------------|
+| **SQL**      | [SQL](/analyze/sql), with the rows as a grid — column summaries and all                             |
+| **Chart**    | [a plot](/analyze/charts) of the rows above, as source you can edit                                 |
+| **Model**    | [gradient boosting](/analyze/model) over the rows above                                             |
+| **Code**     | JavaScript over the same rows, with `rows`, `columns`, `Plot` and a small pandas-like `pd` in scope |
+| **Python**   | [real Python](/analyze/python) in a venv you made, in a session that keeps its variables, with `oe` |
+| **Markdown** | prose, shown when you run it; double-click to edit it again                                         |
+
+A Code cell's last value is its answer, with no `return` to write: rows or a `pd` frame become a grid
+that the cells below read, a `Plot.plot(…)` a chart, anything else is printed. `console.log` lines
+show above it. It is plain JavaScript without classes, generators or `async`.
 
 ## Adding and moving cells
 
-The strip in the gap above a cell adds one there; hold it to pick the type. The arrows in a cell's
-toolbar move it, and the chevron on its left collapses everything but its output.
+The **+** in the gap above or below a cell adds one there, of the same kind as the cell above it; the
+icons in a cell's toolbar change its kind. The arrows move it, the bin removes it, and the chevron on
+its left folds its code away so only the output shows.
 
 ## They are kept
 
 Notebooks are kept per object. Reopen the file next week — in another window, or after a restart —
-and your cells are still there. A cell that had run comes back with its answer; a cell you added and
-never ran comes back unrun rather than running itself because you reloaded.
+and your cells are still there, and they run again from the top so each one shows its answer.
 
 Next: [SQL](/analyze/sql), then [Python](/analyze/python).

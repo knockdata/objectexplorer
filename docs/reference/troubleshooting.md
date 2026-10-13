@@ -11,41 +11,32 @@
 
 ## Windows: SmartScreen shows a notice
 
-The `.msix` is signed with the company's certificate, but a new signature takes a while to build
-reputation. Choose **More info → Run anyway**. ObjectExplorer is not in the
-[Microsoft Store](https://apps.microsoft.com/detail/9PMCD8HJPCXH) yet.
+The `.msix` and the `.exe` files are signed with the company's certificate, but a new signature takes
+a while to build reputation. Choose **More info → Run anyway**.
 
-## Linux: it opened in my browser instead of a window
+## Linux: no window opens
 
-The native window is drawn with the WebKitGTK your distribution ships, and ObjectExplorer falls back
-to your browser on a machine that has none. Install it:
-
-```sh
-sudo apt install libwebkit2gtk-4.1-0        # Debian, Ubuntu
-sudo dnf install webkit2gtk4.1              # Fedora, RHEL
-sudo pacman -S webkit2gtk-4.1               # Arch
-sudo zypper install libwebkit2gtk-4_1-0     # openSUSE
-```
-
-On an older release without a 4.1 package, the 4.0 one (`libwebkit2gtk-4.0-37`, `webkit2gtk3`) works
-too.
+The window is drawn on Wayland. Under an X11 session, or over ssh, run the command line instead,
+`objectexplorer`, and it opens the app in your browser.
 
 ## A bucket lists nothing, or asks me to sign in again
 
-The provider answered, and it said no. Open **Settings → Connections** and the row for that provider
-reports which credential source was tried and what each one said — a source that is not configured on
-this machine shows as *skipped* rather than *failed*, so the report says which step is missing. See
-[Amazon S3](/storage/s3), [Google Cloud Storage](/storage/gcs) or
-[Azure Blob Storage](/storage/azure).
+The provider answered, and it said no. Open **Settings** and the sign-in for that provider —
+**Amazon Web Services**, **Google** or **Microsoft** — reports which credential source was tried and
+what each one said; a source that is not configured on this machine is skipped rather than failed,
+so the report says which step is missing. See [Amazon S3](/storage/s3),
+[Google Cloud Storage](/storage/gcs) or [Azure Blob Storage](/storage/azure).
 
 ## A folder shows objects that are gone, or misses ones that are there
 
-Cloud listings are cached for eight hours. The refresh button asks the provider again, past that
-cache — the pane goes blank while the request is out, so the answer on screen is the answer to the
-click.
+Cloud listings are kept for eight hours, and an older one is shown while the folder is listed again
+in the background. The refresh icon that shows on a row of the tree under the pointer asks the
+provider again at once.
 
 ## Something else
 
-`~/.objectexplorer/app.log` has what the app did, in order, including the `about:` block naming
-exactly which build is running — that block is also under **Settings → About**. Attach it to an
-issue on [GitHub](https://github.com/knockdata/objectexplorer/issues).
+**Settings → About** names exactly which build is running and where it keeps its files. Started from
+a terminal, `objectexplorer window=true` prints its messages and errors there. Every window session
+is also [recorded](/reference/session-recording) on this machine, and a recording can be played back
+to show what happened. Attach what you found to an issue on
+[GitHub](https://github.com/knockdata/objectexplorer/issues).

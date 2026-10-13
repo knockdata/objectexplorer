@@ -1,7 +1,7 @@
 # Where your data lives
 
 Everything ObjectExplorer keeps for itself is in one folder, on every platform and in every
-[deployment](/reference/deployment) — the desktop app, `npx`, an enterprise server:
+[deployment](/reference/deployment) — the desktop app, the command line, a server:
 
 ```
 ~/.objectexplorer
@@ -9,50 +9,55 @@ Everything ObjectExplorer keeps for itself is in one folder, on every platform a
 
 On Windows that is `C:\Users\<you>\.objectexplorer`.
 
+Secrets are not in it. A key you typed, a sign-in's refresh token or an OIDC client secret goes to
+the system keychain: the macOS keychain, the Windows Credential Manager, or the Secret Service on
+Linux. The files below hold only a reference to it. On a Linux machine with no Secret Service, a
+secret is a file under `keychain/` that only your user can read.
+
 Nothing is written into the folders or buckets you browse unless you ask for it: a copy, a rename, a
-file you save, and the `.trash` folder a [delete](/explore/file-management) moves things into. The one
-exception is [search](/explore/search): searching a local folder leaves an index, `.index.bin`, in
-that folder, so the next search reads only what changed.
+file you save. A [delete](/explore/file-management) of a file on this machine goes to the system's
+Trash; a delete in a cloud bucket moves the object into a `.trash` folder at the top of that root,
+kept 30 days so it can be undone.
 
-|                         | What it holds                                                                                                                                                                                                |
-|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `meta.db`               | what the app remembers about what you have looked at: the roots you added, the object tree, size history, column statistics, notebooks, read counts — and the [writing tool](/analyze/writing)'s style index |
-| `log.db`                | the [Cloud Logging](/analyze/logging) tail, so it survives a restart                                                                                                                                         |
-| `search.db`             | the index [search](/explore/search) reads                                                                                                                                                                    |
-| `connections.json`      | the credentials the app holds: a key you typed or dropped into a dialog, a Microsoft sign-in, what your AWS CLI exported. Every secret in it is encrypted with a key tied to this machine                    |
-| `folders.json`          | your [S3 compatible](/storage/s3-compatible) endpoints                                                                                                                                                       |
-| `mcp.yaml`              | [the MCP rule file](/reference/mcp-rules) — roots, tools, limits and PII rules                                                                                                                               |
-| `mcp/key`               | the key [PII rules](/agents/pii) encrypt and hash an agent's answers with; it never leaves the machine, and a share uses a key of its own                                                                    |
-| `mcp/<agent>/`          | the access log of every MCP call, one file per session — see [sessions](/agents/sessions)                                                                                                                    |
-| `venvs/`                | the [Python environments](/analyze/python) you made, one folder each, all of them made by uv                                                                                                                 |
-| `spark-conf/`           | the Spark settings written for each environment that has pyspark                                                                                                                                             |
-| `duckdb/`               | the parquet a local file is converted to when SQL or Spark cannot read its own format                                                                                                                        |
-| `gcs/` `s3/` `azure/` … | the cached copies of cloud objects you opened, one folder per provider — see [the cache](/explore/cache)                                                                                                     |
-| `trial` `licence`       | your plan                                                                                                                                                                                                    |
-| `app.log`               | what the app did, in order — the first thing to read when something is wrong                                                                                                                                 |
-| `.app/`                 | the versions of the product the desktop app has downloaded for itself                                                                                                                                        |
-| `.bin/`                 | the native parts of the desktop app, unpacked once per version                                                                                                                                               |
-| `update/`               | where an `npx` install puts a newer version it downloaded                                                                                                                                                    |
-| `versions/` `current`   | an [enterprise server](/reference/deployment#updating-an-enterprise-server)'s installed versions, and the link to the one in use                                                                             |
-| `enterpriseTrial`       | when an enterprise server's [trial](/reference/deployment#the-trial) started                                                                                                                                 |
-| `server.json`           | the deployment and settings the server was last started with, which the admin commands read                                                                                                                  |
-| `acme/<domain>/`        | the certificate an [enterprise server](/reference/deployment#certificates) got from Let's Encrypt, its key, and the Let's Encrypt account that got it                                                        |
+|                        | What it holds                                                                                                                                                                                                                          |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `explorer.db`          | what the app remembers: the folders in the tree, settings, open tabs, each table's notebook, size history, the folders' last listings, how long each opening took, what each bucket is priced by, how often each cloud object was read |
+| `storage.json`         | the cloud accounts and the [S3 compatible](/storage/s3-compatible) endpoints you connected; every secret in it is a reference to the keychain                                                                                          |
+| `cache/`               | the copies of cloud objects you opened, page by page, and media converted to play — see [the cache](/explore/cache)                                                                                                                    |
+| `thumbnails/`          | the small pictures the grid shows of files                                                                                                                                                                                             |
+| `index/`               | the index [search](/explore/search) reads, one per root                                                                                                                                                                                |
+| `replay/`              | the [recordings](/reference/session-recording) of the last window sessions                                                                                                                                                             |
+| `onboarding.json`      | whether you have seen [the tour](/reference/tour), and which cards about new features                                                                                                                                                  |
+| `features.db`          | what is new in each release, and which of it has been used                                                                                                                                                                             |
+| `installed.json`       | the version that first used this folder                                                                                                                                                                                                |
+| `style/`               | the [writing tool](/analyze/writing)'s sources and their index                                                                                                                                                                         |
+| `logs/`                | the live [Cloud Logging](/analyze/logging) tails, one file per project                                                                                                                                                                 |
+| `mcp.yaml`             | [the MCP rule file](/reference/mcp-rules) — roots, tools, limits and PII rules                                                                                                                                                         |
+| `mcp/key`              | the key [PII rules](/agents/pii) encrypt and hash an agent's answers with; it never leaves the machine, and a share uses a key of its own                                                                                              |
+| `mcp/vault.db`         | the real values behind the pseudonyms agents were sent, encrypted                                                                                                                                                                      |
+| `mcp/<agent>/`         | the access log of every MCP call, one file per session — see [sessions](/agents/sessions)                                                                                                                                              |
+| `venvs/`               | the [Python environments](/analyze/python) you made, one folder each, all of them made by uv                                                                                                                                           |
+| `trial`, `licence`     | your plan                                                                                                                                                                                                                              |
+| `update/`              | where an `npx` copy puts a newer version it downloaded                                                                                                                                                                                 |
+| `web/`                 | on a server: what each signed-in browser user's app remembers, one database each                                                                                                                                                       |
+| `server.json`          | on a server: its [config](/reference/deployment#the-config-file) — sign-in, roots, certificates                                                                                                                                        |
+| `certs/<domain>/`      | on a server: the certificate Let's Encrypt gave it, its key, and the account that got it                                                                                                                                               |
+| `audit/`               | on a server: the [audit log](/reference/deployment#the-audit-log), one file a day                                                                                                                                                      |
+| `versions/`, `current` | on a server: its installed versions, and the link to the one in use — see [updating a server](/reference/deployment#updating-an-enterprise-server)                                                                                     |
+| `enterprise_trial`     | on a server: when its [trial](/reference/deployment#the-trial) started                                                                                                                                                                 |
 
-The notes you draw on a [PDF](/formats/pdf), and the layout you drag a [grid](/explore/tree#the-grid)
-into, are kept in the browser's own storage instead.
+In the browser, at objectexplorer.com/app, the same things are kept in the page's own storage
+instead, and the folders you pick never leave it.
 
-## meta.db
+## Starting from an earlier install
 
-The object tree is stored as ids and names, never as paths, which is why renaming a folder carries
-its whole history with it — every size snapshot and column measurement stays attached to the thing
-you have been watching.
-
-There is no migration path between schema versions: when the shape changes, the database is deleted
-and built again from what your providers say. The one thing that cannot be observed a second time is
-the list of roots you added, so a schema change asks you to add them again.
+On its first start, the desktop app looks for files an earlier ObjectExplorer left in this folder. If
+it finds some, it asks before writing anything: move them aside to `~/.objectexplorer.bk`, or use the
+folder as it is. It asks once.
 
 ## Deleting it
 
-Removing `~/.objectexplorer` resets the app to a fresh install. Nothing in your storage is touched.
+Removing `~/.objectexplorer` resets the app to a fresh install. Nothing in your storage is touched,
+and the keychain keeps its entries until you remove them there.
 
 Next: [updating](/reference/updating).

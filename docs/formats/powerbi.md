@@ -6,8 +6,8 @@
 
 A Power BI report opens as the report: its pages, laid out where the author put every visual, with
 the numbers each one shows worked out from the data the file carries. Power BI Desktop is not
-needed, and nothing is sent to the Power BI service — the file is read in a worker on your machine,
-like every other one.
+needed, and nothing is sent to the Power BI service — the file is read on your machine, like every
+other one.
 
 ## The report
 
@@ -29,8 +29,11 @@ the selections of the page's slicers. A measure written in DAX is evaluated — 
 year, and most of the rest. A measure that uses something the evaluator does not cover shows as
 blank rather than as a wrong number, and the visual says which function stopped it.
 
-Maps and custom visuals are drawn as a box naming the visual and its fields, so the page keeps its
-layout. Clicking a visual does not filter the others yet.
+Maps are drawn too, on country and state outlines built into the app, so no map service is called.
+The decomposition tree and key influencers are worked out the way Power BI's own analysis does,
+as near as we can, and Q&A shows its question box. A custom visual is drawn as a box naming the
+visual and its fields, so the page keeps its layout. Clicking a visual does not filter the others
+yet.
 
 ## Data and Model
 

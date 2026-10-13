@@ -3,7 +3,7 @@
 <img src="/screenshot/writing.png" alt="A markdown file open for editing, with the style sidebar beside it showing a reference passage, phrase ideas and flags">
 
 A Markdown file in a local folder is something you can write in, not only read. Open it, switch to
-**text** mode with the **T** icon, and the source is editable — `⌘S` saves it back to the file.
+**Text** mode, and the source is editable — `⌘S` saves it back to the file.
 Beside it sits a sidebar that shows you how writers you chose put things, while you are writing.
 
 It is not a grader. There are no scores, no ticks and no "looks great" anywhere in it, and nothing
@@ -45,15 +45,17 @@ A flag points at the words and says what it noticed. It never suggests a rewrite
 The references and phrases come from web pages you add, and from nothing else: with no source, the
 sidebar says so and points here.
 
-**Settings → Writing tool** — in the desktop app and `npx`, not at objectexplorer.com/app — paste an address — an index page, or a single article — and press
-**+**. Adding fetches nothing yet; **Reindex** does, for one source or for all of them. From an
-index page, the articles it links to are read too.
+**Settings → Writing tool** — in the desktop app and on a server, not in the instant page at
+objectexplorer.com/app — paste an address — an index page, or a single article — and press **+**.
+Adding fetches nothing yet; **Reindex** does, for one source or for all of them. From an index page,
+the articles it links to are read too. An address on this machine or its local network is refused.
+Other people signed in to a server can use it only when the server's owner turned web sources on.
 
 Each source shows how many documents and sentences it holds and when it was last read. Three boxes
 turn the sidebar's sections on or off.
 
 The fetching is polite: one request a second to any one site, `robots.txt` obeyed, a size and time
 limit on every page, and a page that has not changed since last time is not downloaded again. The
-index is kept in `meta.db` on this machine.
+index is kept in the app's folder on this machine.
 
 Next: [ObjectExplorer for agents](/agents/).

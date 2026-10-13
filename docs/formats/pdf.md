@@ -4,13 +4,12 @@
 
 <AppDemo open="folder/demo/pdf/tour.pdf" height="640px" image="/screenshot/pdf-reader.png" alt="A PDF open in the reader, with its contents panel beside the page" />
 
-A PDF is drawn by ObjectExplorer's own reader and painter, not by the browser's viewer, so it reads
-the same in the desktop app, in `npx` and at objectexplorer.com/app. Nothing is sent anywhere to be
-rendered.
+A PDF is drawn by ObjectExplorer's own reader and painter, not by a system or browser viewer, so it
+reads the same on every machine. Nothing is sent anywhere to be rendered.
 
 The page follows the window's light or dark theme, and it is not a filter over a white page: every
 colour is mapped as it is painted, so the text flips and the photographs do not. Only the page you
-are reading and two either side of it are decoded, so a thousand-page file opens as fast as a short
+are reading and one either side of it are painted, so a thousand-page file opens as fast as a short
 one.
 
 ## What it draws
@@ -64,7 +63,7 @@ eraser takes a mark off again, and the pointer at the start of the row is the wa
 reading and selecting. `⌘Z` takes back the last mark, and `Delete` removes the one that is picked.
 
 The notes are yours, not the file's: nothing is written into the PDF. They are remembered for that
-file in this browser, on this machine.
+file on this machine.
 
 ## Moving around
 

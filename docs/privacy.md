@@ -2,13 +2,15 @@
 
 This is the part that matters when you work with data you are not allowed to copy.
 
-ObjectExplorer is an HTTP server bound to `127.0.0.1` plus the OS webview, both inside the same
-executable. Every parser — Parquet, SPSS, SAS, PDF, the office formats, the image decoders — runs in
-a worker on your own machine.
+ObjectExplorer is one native program on your machine. Every reader — Parquet, SPSS, SAS, PDF, the
+office formats, the image and media decoders — runs on your own machine, in the app itself. Started
+from a terminal, it serves the app to your browser from `127.0.0.1`, which nothing else on your
+network can reach.
 
 - Objects are fetched **from your cloud provider to your computer**, and nowhere else. We run no
   backend that sees your data, because there is nothing for it to see.
-- Credentials stay local. Nothing is synced — see [where your data lives](/reference/data-locations).
+- Credentials stay local, in the system keychain. Nothing is synced — see
+  [where your data lives](/reference/data-locations).
 - The calls that are not to your own storage are few, listed below, and none of them carries an
   object.
 - Nothing is uploaded for "processing", no file names are reported anywhere, and no account is
@@ -21,36 +23,44 @@ bucket.
 
 **A share link, when you make one.** [Sharing a table](/explore/share) is the one feature that sends
 rows somewhere else, and it never happens on its own: you open the dialog, decide column by column
-what goes — each column opening on what your [PII rules](/agents/pii) already say — and press Copy
-URL. Small shares travel inside the link's fragment, which no server ever
-sees. A bigger one, and every read-and-burn link, is stored on objectexplorer.com until it expires.
+what goes — each column opening on what your [PII rules](/agents/pii) already say — and copy the
+link. Small shares travel inside the link's fragment, which no server ever sees. A bigger one, and
+every read-and-burn link, is stored on objectexplorer.com until it expires.
 
 Everything else the app asks of the outside world is listed here. None of it carries a row of your
-data, and only the app log — which you send on purpose — names paths on this machine.
+data or a path on this machine.
 
-| Call                                                 | When                                                                       |
-|------------------------------------------------------|----------------------------------------------------------------------------|
-| The npm registry: what is the newest version?        | when the desktop app starts, and when you open **Check for Updates**       |
-| The npm registry: the new version itself             | when there is one — see [updating](/reference/updating)                    |
-| unpkg.com: the FFmpeg WebAssembly core, about 32 MB  | the first time an audio file needs converting; it is kept afterwards       |
-| uv: a Python build, and the packages you name        | when you make a [Python environment](/analyze/python) or install into one  |
-| The web pages you added as style sources             | when you press **Reindex** in [the writing tool](/analyze/writing)         |
-| objectexplorer.com: your licence                     | at start, only once you have started a trial, showing a secret made for it |
-| objectexplorer.com: the trial sign-up                | when you first sign in                                                     |
-| Google: signing in                                   | when you sign in with Google                                               |
-| Google: your picture                                 | whenever the account icon shows it, after you signed in with Google        |
-| objectexplorer.com: the last 1000 lines of `app.log` | when you press **share** on the app log, to quote it in a bug report       |
+| Call                                          | When                                                                        |
+|-----------------------------------------------|-----------------------------------------------------------------------------|
+| GitHub: what is the newest release?           | when you open **Settings → Check for Updates**, and only then               |
+| GitHub: the new version itself                | when you press **Update** — see [updating](/reference/updating)             |
+| uv: a Python build, and the packages you name | when you make a [Python environment](/analyze/python) or install into one   |
+| The web pages you added as style sources      | when you add or reindex one in [the writing tool](/analyze/writing)         |
+| objectexplorer.com: your licence              | at start, and in a plan's last three days, only once you have signed up     |
+| objectexplorer.com: the trial sign-up         | when you first sign in                                                      |
+| Google: signing in                            | when you sign in with Google                                                |
+| Google: your picture                          | whenever the account icon shows it, after you signed in with Google         |
+| Let's Encrypt: a certificate for your domain  | a server started with `tls=auto`, at its first start and before it runs out |
 
-The FFmpeg core is GPL software, which is why it is fetched rather than shipped; once it is here it
-stays in the browser's own storage, so the download happens once.
+There is no usage reporting and no crash reporting. What the app measures about itself — how long
+each file took to open, what its memory was made of — stays in `~/.objectexplorer`.
+
+## What stays on this machine, and you may not expect
+
+**Your window sessions.** The desktop window records each session as it happens: what you clicked,
+the keys you pressed, the text you typed, and the messages the app printed. It is kept so a session
+can be played back after something went wrong. Only the last 20 are kept, and never more than 50 MB
+in all, in `~/.objectexplorer/replay`; nothing of it is sent anywhere. Start with `record=false` to
+record nothing — see [recording a session](/reference/session-recording). The browser version
+records nothing.
 
 ## What an agent sees
 
 An MCP client on this machine is not an exception to any of the above: it reaches storage only
 through this app, only at `127.0.0.1`, only in the roots you ticked, and only with PII already
-rewritten — by the same [PII rules](/agents/pii) a share link goes through. It never holds a credential, and every call it made is on your disk in
-`~/.objectexplorer/mcp/`. The door is shut until you open it — see
-[ObjectExplorer for agents](/agents/).
+rewritten — by the same [PII rules](/agents/pii) a share link goes through. It never holds a
+credential, and every call it made is on your disk in `~/.objectexplorer/mcp/`. The door is shut
+until you open it — see [ObjectExplorer for agents](/agents/).
 
 ## What a cloud provider sees
 

@@ -5,31 +5,42 @@ same token reads the objects.
 
 ## Ways to connect
 
-- **Application Default Credentials.** If `~/.config/gcloud/application_default_credentials.json`
-  exists, buckets list immediately — this works in the packaged app even when `gcloud` is not on the
-  PATH.
-- **Sign in.** The button runs `gcloud auth login --update-adc`, which opens your browser once and
-  refreshes silently afterwards.
-- **A service-account key**, for a machine that has no person in front of it.
+- **Use what this machine already has.** **Settings → Sign-ins → Google** walks the chain below and
+  says who it signed in as, and through what.
+- **Sign in with Google.** The button runs `gcloud auth login --update-adc`: your browser opens once
+  to sign in, and the Application Default Credentials the app reads are written. When `gcloud` is
+  missing, the pane shows the command that installs it for your user, and goes on once it is there.
+- **A service account key**, for a machine that has no person in front of it. Paste the JSON or drop
+  the `.json` file; it is checked before it is kept.
+
+## The credential chain
+
+|   | Source                           | Read from                                                                            |
+|---|----------------------------------|--------------------------------------------------------------------------------------|
+| 1 | `GOOGLE_APPLICATION_CREDENTIALS` | a service account key, or an authorized user's file                                  |
+| 2 | Application Default Credentials  | `application_default_credentials.json` in `CLOUDSDK_CONFIG`, else `~/.config/gcloud` |
+| 3 | Metadata server                  | Compute Engine, Cloud Run, GKE                                                       |
+| 4 | `gcloud` ADC token               | `gcloud auth application-default print-access-token`                                 |
+| 5 | `gcloud` token                   | `gcloud auth print-access-token`                                                     |
+
+A pasted service account key is used ahead of the chain. A source that is set up but fails — a
+revoked token, `gcloud` signed out — is passed over for the next, and **What was checked** lists
+each one. The ADC file works even when `gcloud` is not on the PATH.
+
+**Revoke** forgets a pasted key, or runs `gcloud auth application-default revoke` and
+`gcloud auth revoke`.
 
 ## Projects
 
-A bucket belongs to a project, and the dialog lists the projects your account can see so you can pick
-the one whose buckets you want in the tree. The same project selection is what
-[Cloud Logging](/analyze/logging) tails.
+A bucket belongs to a project. **Settings → Locations → Google Cloud Platform** lists the projects
+your account can see, each with its buckets and a tick for each bucket.
 
-An organisation can hand out hundreds of projects, so the dialog shows the first five and a
-**Show all** row for the rest; the filter box finds one by name or id. A project's buckets are
-listed when you open it, not before, so a long list costs nothing until you look inside.
+An organisation can hand out hundreds of projects, so five or fewer open at once, and more show the
+first five and a **Show all** row for the rest; the filter box finds one by name or id. A project's
+buckets are listed when you open it, not before, so a long list costs nothing until you look inside.
 
 A project that refuses to list its buckets says **No permission to list buckets** and moves to the
-bottom of the list, with what Google said on hover. Opening it again asks again, so a permission
-granted a minute ago shows up without a restart.
-
-## Objects you may not read
-
-Listing a bucket and reading an object are separate permissions. An object your account may not
-read opens on **No permission to read** with the account and permission Google named, rather than a
-sign-in prompt — signing in again would not change the answer.
+bottom of the list, with what Google said on hover. A bucket you may read but not list can be added
+by its name.
 
 Next: [Azure Blob Storage](/storage/azure).

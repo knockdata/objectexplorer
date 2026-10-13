@@ -11,12 +11,15 @@ out.
 
 ## Which shaders run
 
-| Language                 | The preview runs on | Notes                                                                                  |
-|--------------------------|---------------------|----------------------------------------------------------------------------------------|
-| **WGSL**                 | WebGPU              |                                                                                        |
-| **GLSL**                 | WebGL2              | a Shadertoy `mainImage`, a single stage, a `.vert`/`.frag` pair, or `#shader` sections |
-| **Godot** `gdshader`     | WebGL2              |                                                                                        |
-| **HLSL**, Unity `shader` | —                   | a diagram only: no browser can compile HLSL, and the view says so                      |
+| Language                 | The preview              | Notes                                                                                  |
+|--------------------------|--------------------------|----------------------------------------------------------------------------------------|
+| **WGSL**                 | runs as written          |                                                                                        |
+| **GLSL**                 | runs, translated to WGSL | a Shadertoy `mainImage`, a single stage, a `.vert`/`.frag` pair, or `#shader` sections |
+| **Godot** `gdshader`     | runs, translated to WGSL |                                                                                        |
+| **HLSL**, Unity `shader` | —                        | a diagram only: the app has no translator for HLSL, and the view says so               |
+
+The preview is drawn on your graphics card through the system's own interface — Metal on a Mac,
+Direct3D on Windows, Vulkan on Linux — so nothing has to be installed.
 
 A vertex and fragment pair is found by name — `toon.vert` beside `toon.frag`, `sky.vs.glsl` beside
 `sky.fs.glsl` — and a texture a shader samples is looked for in the same folder by its name. Where

@@ -7,35 +7,41 @@ pandas or polars or whatever else you installed. It sits in the same notebook as
 chart, and what it returns flows into the cells below it.
 
 ```python
-frame = oe.frame("SELECT * FROM 's3://sales-eu/orders/2026-08-24.parquet'")
+import pandas as pd
+
+frame = pd.read_parquet(oe.path("s3://sales-eu/orders/2026-08-24.parquet"))
 frame.groupby("region")["amount"].sum().sort_values(ascending=False)
 ```
 
-The last value is the answer — there is no `print` to write, and no `return`. A DataFrame comes back
-as a grid, a matplotlib figure as a picture, anything else as its `repr`. Whatever you print along
-the way is shown above it.
+The last value is the answer — there is no `print` to write, and no `return`. A pandas, polars or
+Spark DataFrame comes back as a grid, and a chart cell under it plots those rows; a matplotlib figure
+comes back as a picture, anything else as its `repr`. Whatever you print along the way is kept behind
+the cell's **ⓘ** icon.
+
+A Python cell does not read the rows of the cell above it: the session is a separate process, and it
+reaches the data through `oe`. When the notebook's file is on this machine, its folder is the cell's
+working directory.
 
 ## `oe` — the objects, from Python
 
 Every cell starts with `oe` already imported. It is how Python reaches the same storage the window
-reaches: your sign-ins, your caches, your rules. **Nothing in a Python cell talks to a provider
-directly**, so a bucket you can browse is a bucket you can read, and one you cannot is one you
-cannot.
+reaches: your sign-ins, your cache. **Nothing in a Python cell talks to a provider directly**, so a
+bucket you can browse is a bucket you can read, and one you cannot is one you cannot.
 
-| | |
-|---|---|
-| `oe.path(uri)` | one absolute local path, downloading into the cache if needed |
-| `oe.paths(uri)` | a list of them with globs expanded — `s3://b/y=*/*.parquet` → forty paths |
-| `oe.glob(uri)` | the matching URIs, without downloading anything |
-| `oe.stat(uri)` | `{"size": …, "mtime": …}`, or `None` |
-| `oe.query(sql)` | rows from DuckDB, as a list of dicts |
-| `oe.frame(sql)` | the same as a DataFrame — needs pandas |
-| `oe.open(uri, mode)` | an open file over the local copy |
-| `oe.current` | the object this notebook is on |
-| `oe.uri()` | that object's URI — the same text a [SQL](/analyze/sql) cell writes for it |
+|                      |                                                                                       |
+|----------------------|---------------------------------------------------------------------------------------|
+| `oe.path(uri)`       | one absolute local path, copied into the cache if needed                              |
+| `oe.paths(uri)`      | a list of them with globs expanded — `s3://b/y=*/*.parquet` → forty paths             |
+| `oe.glob(uri)`       | the matching URIs, without downloading anything                                       |
+| `oe.stat(uri)`       | `{"size": …, "mtime": …}`, or `None`                                                  |
+| `oe.query(sql)`      | rows from the app's own [SQL](/analyze/sql) engine, as a list of dicts                |
+| `oe.frame(sql)`      | the same as a DataFrame — needs pandas                                                |
+| `oe.open(uri, mode)` | an open file over the local copy                                                      |
+| `oe.current`         | the object this notebook is on, as `{"path": …, "uri": …}`                            |
+| `oe.uri()`           | that object's URI                                                                     |
 
-A URI means the same thing here as it does in a SQL cell, so a query you wrote in one can be pasted
-into the other:
+`oe.query` reads files on this machine by their path, with the same readers the explorer uses — a
+parquet, a csv, a `.sav`, a table of a DuckDB file. For an object in a bucket, `oe.path` first:
 
 ```python
 import pandas as pd
@@ -48,29 +54,41 @@ pd.concat(pd.read_parquet(path) for path in paths)
 `oe` itself needs nothing installed — it is standard library only, so it imports in an environment
 you made a second ago and have not put anything in yet.
 
-## Kernels
+## `%sql`
 
-A **kernel** is a running Python process, and it keeps everything you put in it. Assign a variable
+The `%sql` lines a data notebook uses are answered by the app itself, with nothing to install:
+
+```python
+%sql sqlite:///media_survey.db
+%sql SELECT genre, count(*) FROM tracks GROUP BY genre
+```
+
+`%sql <url>` connects to an SQLite or DuckDB file, `%sql <statement>` runs one statement on it, a cell
+that starts with `%%sql` is one statement, and `%config SqlMagic.displaylimit = 20` says how many rows
+an answer shows. `%load_ext sql` is accepted and does nothing. The file is read, never written: only
+`SELECT` runs.
+
+## Sessions
+
+A **session** is a running Python process, and it keeps everything you put in it. Assign a variable
 in one cell and the next cell has it; import pandas once and it stays imported.
 
-The kernel is called `global` and it is **shared across notebooks**. Two objects open side by side
+The session is called `global` and it is **shared across notebooks**. Two objects open side by side
 are two views onto one namespace, which is usually what you want — load a frame while reading one
-file, reshape it while reading another. When it is not, pick **new kernel…** from the box in the
-cell's toolbar and name one; that cell gets a namespace of its own, and another notebook joins it by
-picking the same name.
+file, reshape it while reading another. When it is not, pick **new session…** from the box in the
+cell's toolbar and name one; that notebook gets a namespace of its own, and another notebook joins it
+by picking the same name.
 
-A kernel belongs to one environment, and naming a new kernel is the only time you are asked which —
-and only if you have more than one, since a machine with one has nothing to answer. Cells never
-carry an environment of their own: a cell runs in whichever one its kernel was started on.
+A session belongs to one environment, and naming a new session is when you pick which. Cells never
+carry an environment of their own: a cell runs in whichever one its session was started on.
 
-The **ⓘ** icon beside Run opens everything else about the cell in one place: what is in the kernel's
-namespace right now — every name, its type, and a word about what it holds, a DataFrame saying its
-shape — and anything the cell printed. The icon is struck through while that panel is closed, the way
-a crossed-out eye reads: there is something in there and you are not seeing it. The namespace is
-asked for rather than remembered, because another notebook may have changed it since.
+The **ⓘ** icon beside the session opens everything else about the cell in one place: what is in the
+session's namespace right now — every name, its type, and a word about what it holds, a DataFrame
+saying its shape — and anything the cell printed. The namespace is asked for rather than remembered,
+because another notebook may have changed it since.
 
 A cell whose last line is not a value — an assignment, an import, a bare `print` — draws nothing at
-all, and stays that way. What the kernel did is behind the icon for whenever you want it.
+all, and stays that way. What the session did is behind the icon for whenever you want it.
 
 ## Virtual environments
 
@@ -106,26 +124,17 @@ install into is filled in for you, so it cannot go to the wrong one by accident.
 
 ## Spark
 
-Install **pyspark** and a Spark session in a Python cell can name your objects directly, with no
-prefix and nothing to configure:
+Install **pyspark** and a Spark session in a Python cell runs on this machine, sized by the
+environment's own setting:
 
 ```python
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.getOrCreate()
-spark.sql("SELECT * FROM `demo/table/nl_train_stations.parquet` LIMIT 10000")
+spark.read.parquet(oe.path("s3://sales-eu/orders/2026-08-24.parquet"))
 ```
 
-The backticks are needed — `:` and `/` are not characters an unquoted SQL name may contain — and
-inside them goes the same URI a [SQL cell](/analyze/sql) is written with, or a path under a folder
-you have added.
-
-What happens behind it is what already happens for SQL: the sign-in you have given the app is
-reused, the object is downloaded once into the cache, and a format Spark has no reader for — `.sav`,
-`.sas7bdat`, `.xpt`, `.xlsx` — is converted to parquet first. Spark then reads a local file. There
-is no cloud connector to configure, no key to hand it, and no `spark.hadoop.*` line to write.
-
-A name that is not one of ours is left alone, so your own tables, views and `parquet.\`path\`` reads
-behave exactly as they would without this.
+Spark reads local files, so an object in a bucket goes through `oe.path` first, which copies it into
+the cache once and hands Spark the local path.
 
 Note the plain `getOrCreate()` with no `.master(...)` in front of it. How big the session is comes
 from the environment's own setting, and a builder that names its own master overrides that.
@@ -135,7 +144,7 @@ from the environment's own setting, and a builder that names its own master over
 Install **pyspark** into an environment and Settings → Python grows two sliders for it: how many
 cores a session may use, and how much memory its driver may take.
 
-Each slider runs the length of the machine — all 10 cores, all 24 GB — and the thumb stops story of
+Each slider runs the length of the machine — all 10 cores, all 24 GB — and the thumb stops short of
 the end where the machine keeps something back. Memory stops at three quarters, so a 24 GB machine
 lets a session have 18 GB and holds the rest for the operating system, this app and your browser;
 the end of the track past that is shaded. Cores have no such reserve, so that slider goes the whole
@@ -152,7 +161,7 @@ This is a local Spark — one process on your machine, where the driver *is* the
 memory is a driver setting, and why it can only be set here: a JVM's heap is fixed when it starts,
 which is before any `.config()` in your builder is read.
 
-A kernel that is already running keeps the size it started with. Move a slider and the next kernel
+A session that is already running keeps the size it started with. Move a slider and the next session
 you start picks up the new numbers.
 
 ### Checking what you got
@@ -176,37 +185,34 @@ on a 2 GB session changes nothing at all.
 
 ### When the session ends
 
-Stopping a kernel — changing its environment, deleting one, closing the app — stops the Spark
-session with it. The JVM is asked to shut down first; one that has stopped answering is killed
+Stopping a session — changing its environment, deleting the environment, closing the app — stops the
+Spark session with it. The JVM is asked to shut down first; one that has stopped answering is killed
 about eight seconds later, because a driver holding several GB is not something to leave running
 until the machine is next restarted.
 
-Every JVM this app starts is named, so one you find in `ps` is identifiable:
-
-```
-java … -Dobjectexplorer.venv=default …
-```
-
-That is also what makes it safe to kill by hand — and it is what the app itself checks before
-killing one, so it can never take out a process that merely inherited the same pid.
+Every JVM this app starts carries its environment's name on its command line, so one you find in `ps`
+is identifiable — and it is what the app itself checks before killing one, so it can never take out a
+process that merely inherited the same pid.
 
 If a session's JVM dies on its own, the next cell starts a new one. pyspark would otherwise hand
-back the dead session forever, leaving the kernel unusable with no way to ask for another.
+back the dead session forever, leaving the session unusable with no way to ask for another.
 
 **What it needs.** A JDK 17 or 21 — Spark does not yet run on 26. The app finds one wherever your
-package manager put it, including Homebrew's `openjdk`, which is deliberately kept off your PATH:
+package manager put it, including Homebrew's `openjdk`, which is deliberately kept off your PATH; a
+`JAVA_HOME` you set always wins:
 
 ```
 brew install openjdk@21
 ```
 
+**The file.** The two numbers are kept in the environment's `spark-defaults.conf`, and nowhere else.
 The sliders and that file are the same thing, not a copy of each other. Move a slider and the file
 changes; edit the file and the sliders say what you edited; delete it and the environment is back on
-its defaults, with the file written again the next time anything looks. A hand-written number over
-what the machine has is still held to the cap on the way back in.
+its defaults. A hand-written number over what the machine has is still held to the cap on the way
+back in.
 
-**Outside the app.** A terminal session needs to be pointed at the same configuration, which the app
-rewrites every time it starts. There is one per environment, named after it:
+**Outside the app.** A terminal session is pointed at the same configuration with one line per
+environment, named after it:
 
 ```
 export SPARK_CONF_DIR=~/.objectexplorer/spark-conf/default
@@ -219,9 +225,11 @@ home directory is not what this is for.
 
 There is no Jupyter server, no notebook file on disk and no `.ipynb` to keep in sync. The cells are
 kept per object like every other cell in [the notebook](/analyze/notebook), and the process runs on
-your machine beside the app.
+the machine the app runs on.
 
-Python runs only in the desktop app and the local server — the browser front door has no interpreter
-to run it in, and the Python cell is not offered there.
+Python runs in the desktop app and on a server. The instant page at objectexplorer.com/app has no
+interpreter to run it in, and the Python cell is not offered there. Environments are made and
+packages installed only on the server's own machine or from the command line, and other people signed
+in to a server run Python only when its owner turned that on.
 
 Next: [charts](/analyze/charts).

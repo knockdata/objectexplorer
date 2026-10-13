@@ -21,7 +21,7 @@ row — and the strip under the code offers the charts those columns actually su
 words.
 
 Click one and its source is written into the editor and drawn. After that it is source, and it is
-yours:
+yours: change it and run the cell, and it draws what the source says.
 
 ```js
 Plot.plot({
@@ -32,11 +32,14 @@ Plot.plot({
 })
 ```
 
-`rows` is what the cell above produced. The plotting library is
-[Observable Plot](https://observablehq.com/plot), so anything its API can draw, a cell can draw.
+`rows` is what the cell above produced. The source is written the way
+[Observable Plot](https://observablehq.com/plot) writes it, and the app draws the part of Plot that
+charts of a table need: bars (`barY`, `barX`, grouped with `groupX` by count, mean or sum, sorted by
+height), histograms (`rectY` over `binX`), lines over a date, dots, box plots, rules and arrows. The
+last line must be the `Plot.plot(…)`.
 
 Suggestions are named after your columns, not after chart types — *count by country*, *average
-geo_lat by type*, *spread of geo_lng* — because the question is what you have, not which mark
-implements it.
+geo_lat by type*, *spread of geo_lng*, *geo_lat over date* — because the question is what you have,
+not which mark implements it.
 
 Next: [models](/analyze/model).

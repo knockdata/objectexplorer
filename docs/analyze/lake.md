@@ -7,25 +7,29 @@ inside it the table is currently made of. So the path is the whole SQL surface �
 it answers:
 
 ```sql
-SELECT region, sum(amount) FROM 's3://sales-eu/orders' GROUP BY region
+SELECT region, sum(amount) FROM 'warehouse/sales' GROUP BY region
 ```
 
-There is no `delta_scan()` or `iceberg_scan()` to remember. A quoted path straight after `FROM` or
-`JOIN` is sniffed — a `_delta_log` beside the files, a `metadata/` of metadata.json, a `.hoodie` —
-and rewritten into the query that really reads it before DuckDB sees a character of it.
+There is no `delta_scan()` or `iceberg_scan()` to remember. The engine looks at a quoted folder — a
+`_delta_log` beside the files, a `metadata/` of metadata.json, a `.hoodie` — and reads the files that
+are the table now, not every file in the folder.
 
 ## As of now, not a pile of files
 
-| | What it takes to be right |
-|---|---|
-| **Delta** | partition columns live in the log rather than in the parquet, column mapping names the physical columns by uuid, and a deletion vector marks rows inside a file that is otherwise live |
-| **Iceberg** | schema evolution is resolved by field id, so a renamed column still reads and an added one reads as its default; position deletes, equality deletes and deletion vectors each become their own anti-join |
-| **Hudi** | a merge-on-read slice stacks its base file under the log files written over it, and the last write of each record key wins |
+|             | What it takes to be right                                                                                                                                                                                                          |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Delta**   | the adds and removes are replayed in version order; partition columns live in the log rather than in the parquet, column mapping names the physical columns, and a deletion vector marks rows inside a file that is otherwise live |
+| **Iceberg** | the newest metadata.json names the current snapshot, whose manifest list and manifests name the live data files; delete files are not applied yet                                                                                  |
+| **Hudi**    | a merge-on-read slice stacks its base file under the log files written over it, and the last write of each record key wins                                                                                                         |
 
 A table with none of that — the common one — comes out as a single scan over a file list, which is
 all it should ever have been.
 
-Hive-partitioned exports and `YYYY/MM/DD` date prefixes read as one table the same way.
+A folder laid out as `column=value` partitions reads as one table the same way, with the partition
+columns taken from the folder names.
+
+A lake table is read from a folder on this machine, or on the server you are connected to. Click
+one in the tree and it opens as a notebook over its rows now, with its history as the next view.
 
 ## The metadata is readable too
 

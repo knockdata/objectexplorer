@@ -10,10 +10,10 @@ A folded stack profile — one line per distinct stack with its sample count, th
   at one run of them. `Esc` puts the whole profile back.
 - **The flame**, root at the bottom or at the top, with idle threads hidden by default so the work is
   not buried under the waiting.
-- **The full stack** of whatever the pointer is on, each frame with two percentages: this call site,
-  and the same function summed over every call site.
+- **The full stack** of whatever the pointer is on, or of the frame you clicked, each frame with two
+  percentages: its share of the samples, and the share spent in it alone.
 
-When the file's first line is a `#` comment holding JSON metadata, the profile is read in
-milliseconds instead of samples.
+When the file's first line is a `#` comment holding JSON metadata — the sample rate and the runs —
+the profile is read in milliseconds instead of samples.
 
 Next: [keyboard shortcuts](/reference/shortcuts).

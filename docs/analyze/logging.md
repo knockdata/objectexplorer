@@ -1,13 +1,21 @@
 # Cloud Logging
 
-A Google Cloud project can be switched live, and ObjectExplorer tails Cloud Logging into a local
-store: the tail belongs to the app, not to the window, so it keeps collecting while you are elsewhere
-and is still there after a restart. The tree under the project is the one the logs describe —
-resource type, resource, then the single service.
+A Google Cloud project can be tailed live, and ObjectExplorer copies its Cloud Logging entries into a
+local log file: the tail belongs to the app, not to the window, so it keeps collecting while you are
+elsewhere and starts again after a restart.
 
-Log files that a sink already exported to a bucket open the same way. Point at one NDJSON object, or
-at the whole `YYYY/MM/DD` prefix, and the viewer walks it newest first. Cloud Logging entries and
-OpenTelemetry records both read as the same rows.
+Run **Cloud Logging: Tail a Project Live** from the command palette and type the project id. A filter
+in the Logging query language can follow it — `acme-prod severity>=ERROR` keeps only the errors. The
+tail reads the last hour first, then asks for what is newer every 10 seconds, and writes it to
+`~/.objectexplorer/logs/<project>.log`. **Cloud Logging: Open a Live Tail** opens one you started
+before. It signs in with your Google Cloud sign-in, and only on the machine the app runs on.
+
+The viewer shows the project as live, with a **stop** button. Stopping ends the tail and keeps what it
+gathered. The tree under the project is the one the logs describe — resource type, resource, then the
+single stream.
+
+Any `.log` file opens in the same viewer: Cloud Logging entries, an OpenTelemetry export, JSON lines,
+or a plain text log.
 
 ## The viewer
 

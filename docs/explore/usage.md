@@ -12,13 +12,13 @@ It answers the question a console will not: **not what is in one bucket, but whe
 across all of them, what has gone cold, what is already on this laptop, what nobody has opened, and
 what you are paying to keep twice.**
 
-Nothing is asked of any provider to draw it. The disc is made from what this window has already
-listed, so it opens instantly, works with the network off, and costs nothing to look at.
+Nothing is listed to draw it. The disc is made from what this window has already listed, so it
+opens instantly, works with the network off, and costs nothing to look at; the one thing asked of a
+provider is a bucket's region and class, once a session, to price it.
 
 ## Reading one pole
 
-Read a pole from the floor up. The disc walks you through the same key itself: press **?** in the
-toolbar and choose **Tour this page**, and each mark is turned to the front and lit as it is named.
+Read a pole from the floor up.
 
 | Part       | What it says                                                                                                                                                                | What to look for                                                                                                                      |
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
@@ -42,16 +42,16 @@ Nothing on the disc says how often anything was **written**. That is not recorde
 
 ## If you see…
 
-| If you see…                   | Read it as…                          | Next action                                                         |
-|-------------------------------|--------------------------------------|---------------------------------------------------------------------|
-| A tall pole                   | high value in the measure you picked | switch between Cost and Size to see what drives it                  |
-| A tall pole with grey balls   | a lot of old data at today's price   | click the pole and read its share over a year                       |
-| One big ball high on the pole | one object dominates                 | click the ball to name it                                           |
-| A wide cap                    | many objects                         | compare the object count with the size                              |
-| A ring wider than its cap     | something reads it again and again   | check the base: pale is a person, dark is an agent                  |
-| An empty base and no ring     | paid for, never opened               |                                                                     |
-| An arch                       | the same bytes in two places         | click either end for the size, and **Insight** for the saving       |
-| A post                        | nothing listed there yet             | open it once in the tree                                            |
+| If you see…                   | Read it as…                          | Next action                                                      |
+|-------------------------------|--------------------------------------|------------------------------------------------------------------|
+| A tall pole                   | high value in the measure you picked | switch between Cost and Size to see what drives it               |
+| A tall pole with grey balls   | a lot of old data at today's price   | click the pole and read its share over a year                    |
+| One big ball high on the pole | one object dominates                 | click the ball to name it                                        |
+| A wide cap                    | many objects                         | compare the object count with the size                           |
+| A ring wider than its cap     | something reads it again and again   | check the base: pale is a person, dark is an agent               |
+| An empty base and no ring     | paid for, never opened               |                                                                  |
+| An arch                       | the same bytes in two places         | click either end for what it holds twice, and **Insight** for it |
+| A post                        | nothing listed there yet             | open it once in the tree                                         |
 
 ## Sectors and colour
 
@@ -85,12 +85,13 @@ Point at anything and a card beside the disc says what it is; click and the card
 turn the disc.
 
 - **A pole** shows its size, cost, object count and share over a year, the age of its bytes, how much
-  is on this machine, who has read it, its six named objects — click one to open it — and what
-  keeping it here has saved. It ends with **Look inside** and **Open in the tree**.
+  is on this machine, who has read it, how much of it is held twice, its six named objects — click
+  one to pin its card — and what keeping it here has saved. It ends with the sum behind its cost, then
+  **Look inside** and **Open in the tree**.
 - **A ball** is one object: its size, its age, its share of the pole, its storage class and how often
   it was opened, and **Open it**.
-- **The hub** in the middle adds everything up: cost a month, size, objects, share over a year, share
-  on this machine, and what the local copies have spared.
+- **The hub** in the middle adds everything up: cost a month, size, objects, share unchanged over a
+  year, share on this machine, and how many places.
 - **A post** says nothing has been listed there yet, or — for a cloud that is not connected — offers
   **Add a connection…**.
 
@@ -103,16 +104,16 @@ one had to be borrowed.
 
 ## The toolbar
 
-Along the bottom of the disc:
+Along the bottom of the disc, beside **Refresh** and the **Demo** switch:
 
-| Button            | What it does                                                                                                                       |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| **Size / Cost**   | what the heights measure                                                                                                           |
-| **Insight**       | a toggle: circles the poles the numbers single out and writes each finding beside it; press again to take them off                 |
-| **Spin**          | turns the disc slowly until pressed again                                                                                          |
-| **Marker**        | draws on the glass over the disc: while it is on, a drag is a stroke that undraws a moment later; Esc or Marker again puts it down |
-| **Share**         | shares the disc as a table — one row per pole, with its kind, provider, size, objects, cost, bytes held here, cold bytes and reads |
-| **Reset**         | takes off the insights and the marker's strokes, lets go of what is picked, and puts the view back where it started                |
+| Button          | What it does                                                                                                                       |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------|
+| **Size / Cost** | what the heights measure                                                                                                           |
+| **Insight**     | a toggle: circles the poles the numbers single out and writes each finding beside it; press again to take them off                 |
+| **Spin**        | turns the disc slowly until pressed again                                                                                          |
+| **Marker**      | draws on the glass over the disc: while it is on, a drag is a stroke that undraws a moment later; Esc or Marker again puts it down |
+| **Share**       | shares the disc as a table — one row per pole, with its kind, provider, size, objects, cost, bytes held here, cold bytes and reads |
+| **Reset**       | takes off the insights and the marker's strokes, lets go of what is picked, and puts the view back where it started                |
 
 **Insight** writes up to five findings, worked out from the numbers rather than written by
 anyone: where the money goes, warm storage holding cold data, one object that is most of a pole, a
@@ -170,11 +171,11 @@ have offered.
 
 ## Moving around it
 
-The disc moves like every other three-dimensional view: drag to turn, `⇧`-drag to pan, wheel to zoom,
-double-click to start over. The full list is on [moving around a view](/reference/view-controls).
+The disc is drawn as a flat projection, and moves like a three-dimensional view: drag to turn,
+`⇧`-drag to pan, wheel to zoom, double-click to start over. The full list is on [moving around a view](/reference/view-controls).
 
 Click a pole, a ball or the hub in the middle to pin its numbers; click empty space or press `Escape`
-to let go.
+to let go. An arch has no card of its own: click either end.
 
 ## Where it opens
 
@@ -183,12 +184,13 @@ It fills the window whenever nothing else is open. **Settings → General** turn
 
 A fresh install has nothing of its own to draw yet, so the disc opens on made-up data with the
 **Demo** switch on — the sample in the worked example above. Switch Demo off to see yours, and on again
-at any time to see what a full disc looks like. After seven days of use the disc opens on your own
-data instead; the switch still works. At [objectexplorer.com/app](https://objectexplorer.com/app/)
-the demo is always where it starts.
+at any time to see what a full disc looks like. Once the app has been used on seven different days the
+disc opens on your own data instead; the switch still works, and is remembered. In the browser
+build the demo is where it starts.
 
-With Demo off and nothing listed yet, the disc says so, with **Add a connection…** under it. Add a
-connection, open it once, and a pole appears the next time it is drawn.
+With Demo off and nothing listed yet, only posts stand, and a cloud you have not connected offers
+**Add a connection…** on its card. Add a connection, open it once in the tree, and a pole appears
+the next time the disc is drawn — **Refresh** draws it again now.
 
 Every number on it is explained in
 [where the usage numbers come from](/reference/usage-data).
