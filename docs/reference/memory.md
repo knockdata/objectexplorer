@@ -41,4 +41,4 @@ away once the footprint is under the limit again.
 How long each opening took, and what it cost, is also what [the cache](/explore/cache) pane lists as
 the slowest openings. All of it stays in `~/.objectexplorer/explorer.db`.
 
-Next: [lint](/reference/lint).
+Next: [authentication with OIDC](/reference/authentication-oidc).

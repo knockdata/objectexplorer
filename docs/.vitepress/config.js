@@ -249,7 +249,6 @@ export default defineConfig({
 					{ text: "Recording a session", link: "/reference/session-recording" },
 					{ text: "The tour and what is new", link: "/reference/tour" },
 					{ text: "Memory", link: "/reference/memory" },
-					{ text: "Lint", link: "/reference/lint" },
 					{ text: "Authentication with OIDC", link: "/reference/authentication-oidc" },
 					{ text: "Authentication with SAML", link: "/reference/authentication-saml" },
 					{ text: "Where the usage numbers come from", link: "/reference/usage-data" },
