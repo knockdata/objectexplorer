@@ -80,6 +80,11 @@ block on the clipboard, already shaped:
 Each token's own **Copy Connection** puts the address and that agent's token on the clipboard.
 Budgets — bytes per session and per day — are counted per agent and kept across a restart.
 
+An agent that has a shell but no MCP client reads through the command line instead: with its token
+in `OE_TOKEN`, `oe ls`, `oe stat`, `oe schema`, `oe cat`, `oe search` and `oe get` each make one call
+through this same door, so the rules, the PII floor, the budget and the log are the same as over MCP.
+→ [Reading as an agent](/reference/command-line#reading-as-an-agent)
+
 ## 4. Choose what may be called
 
 Seven tools, ticked one by one.

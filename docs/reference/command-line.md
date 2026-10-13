@@ -79,6 +79,7 @@ Some panes have buttons rather than values. Each button is a command.
 | `oe cache clear`                         | delete the local copies of cloud objects                                                                              |
 | `oe mcp install claude`                  | connect Claude Code; `codex` for Codex; `--off` disconnects                                                           |
 | `oe writing add <url>`                   | a writing source; `remove <url>`, `list`, and `reindex [url]`, which waits until it is done                           |
+| `oe pii reveal '<PERSON_17>'`            | the real value of a pseudonym, after your login; `reveals` lists every ask (below)                                    |
 | `oe plan status`                         | your plan; `signin` (Google, in the browser) and `signout` too                                                        |
 | `oe check`, `oe upgrade`, `oe rollback`  | [updating](/reference/updating)                                                                                       |
 
@@ -120,16 +121,79 @@ format in the order the model first uses them. `--piece` keeps those numbers, so
 point at the same vertices as the whole model's. A vertex on a seam has more than one normal or uv;
 the first is printed.
 
+## Revealing a pseudonym
+
+```sh
+oe pii reveal '<PERSON_17>'
+oe pii reveals
+```
+
+`oe pii reveal` is **Settings → PII → Reveal** on the command line: the system asks for your login
+first (Touch ID or the password on macOS), then the real value is printed. Quote the token, or the
+shell reads `<` and `>` as redirections. Every ask, answered or not, is a line in
+`~/.objectexplorer/mcp/reveal.ndjson`, marked as asked from the command line, without the value;
+`oe pii reveals` lists them, newest first: when, the token, who asked, the user, what the login
+said, and whether the token was found. Windows and Linux cannot ask for the login yet, so there
+nothing is revealed. `--json` prints JSON.
+
+## Reading as an agent
+
+An agent with a shell can read through `oe` instead of speaking MCP. Each command is one call through
+the [MCP door](/agents/connect) of the running app, with the agent's own token, so what it gets is
+exactly what the same call over MCP would get: the same roots, deny rules and
+[PII rules](/agents/pii), the same budget, and a line in the same [session log](/agents/sessions).
+The app keeps every credential; `oe` holds only the token.
+
+```sh
+export OE_TOKEN=7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83   # Settings → MCP → Tokens
+oe ls                                    # the roots this agent may reach
+oe ls reference/data                     # a folder: uri, type, size
+oe stat reference/data/stations.csv
+oe schema reference/data/stations.csv
+oe cat reference/data/stations.csv --rows 0:100
+oe search reference/docs 'invoice'
+oe get reference/data/stations.csv -o stations.csv
+```
+
+| Command                     | MCP tool                     | Prints                                                       |
+|-----------------------------|------------------------------|--------------------------------------------------------------|
+| `oe ls [uri]`               | `listRoots`, `listObjects`   | a root a line, or a folder's objects: uri, type, size        |
+| `oe stat <uri>`             | `describeObject`             | kind, type, size, time, content type and columns             |
+| `oe schema <uri>`           | `columnSummary`              | a table's columns as CSV, measured after the PII rules       |
+| `oe cat <uri> [--rows a:b]` | `getObject`                  | a table as CSV, text as text, a tree as JSON                 |
+| `oe search <uri> <pattern>` | `searchText`                 | `uri:line:text`, as grep prints, the text sanitized          |
+| `oe get <uri> [-o file]`    | `getObject`, page by page    | nothing: the whole sanitized copy is written to the file     |
+
+The app must be open with MCP turned on, and each tool must be ticked for the agent. A URI is the
+one an agent uses over MCP: `root/key` for a folder of the window, `s3://bucket/key` and so on.
+`cat` reads one page (the rule file's `rowsPerCall` rows, or 500 lines); `--rows a:b` picks rows, or
+lines, a to b - 1. `get` reads every page, and with no `-o` names the file after the object, adding
+`.csv`, `.json` or `.txt` when what came back is that rather than the original format.
+
+Data goes to the output and `note:` lines to the error stream: how many objects a listing hid, that
+more rows follow and the command that reads them. `--json` prints one envelope instead, failures
+too:
+
+```json
+{ "data": { …the tool's answer… }, "notes": ["…"], "status": "ok", "next": ["oe cat reference/data/stations.csv --rows 1000:", "oe get reference/data/stations.csv"] }
+```
+
+`status` is `ok`, `denied`, `budget`, `too large`, `not found`, `closed` or `failed`, as the exit code.
+
 ## What comes back
 
 What you asked for goes to the output, and anything said about it goes to the error stream, so a pipe
 only carries data. The exit code says how it went:
 
-| Code | Meaning                                             |
-|------|-----------------------------------------------------|
-| 0    | done                                                |
-| 1    | it failed: a key refused, a file that does not read |
-| 2    | the command was written wrong; usage follows        |
-| 7    | no such setting, file or piece                      |
+| Code | Meaning                                                                   |
+|------|---------------------------------------------------------------------------|
+| 0    | done                                                                      |
+| 1    | it failed: a key refused, a file that does not read                       |
+| 2    | the command was written wrong; usage follows                              |
+| 3    | denied by a rule (an agent's read), or the login not confirmed (reveal)   |
+| 5    | the agent's budget is spent: calls a minute, bytes a session or a day     |
+| 6    | over a size limit: `bytesPerCall`, `maxObjectBytes`                       |
+| 7    | no such setting, file, piece, object or token                             |
+| 8    | the MCP door is closed, or `OE_TOKEN` is not a token this app made        |
 
 `oe help` lists the commands, and `oe help <command>` (or `--help` after any command) explains one.

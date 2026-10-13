@@ -84,7 +84,8 @@ in the vault: it shows the type and a digest, `<EMAIL_bdd8e64f>`, where an agent
 machine: the system asks for the login first (Touch ID or the password on macOS), and every ask —
 answered or not — is a line in `~/.objectexplorer/mcp/reveal.ndjson`, with the token, who asked and
 what the login said, never the value. Windows and Linux cannot ask for the login yet, so there
-nothing is revealed.
+nothing is revealed. On the command line the same is `oe pii reveal '<PERSON_17>'`, and
+`oe pii reveals` lists the asks ([the command line](/reference/command-line#revealing-a-pseudonym)).
 
 ## Where the key lives
 
