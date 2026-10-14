@@ -17,12 +17,12 @@ How the new version is put in place depends on how you installed this copy:
 
 | Installed from                     | What **Update** does                                                                          |
 |------------------------------------|-----------------------------------------------------------------------------------------------|
-| the macOS `.zip` (the `.app`)      | replaces the app                                                                              |
+| the macOS `.dmg` (the `.app`)      | replaces the app                                                                              |
 | a `.tar.gz`, or the Windows `.zip` | downloads the new binary and puts it in place of this one                                     |
 | `npm install -g`, or a project     | runs npm to install the new version                                                           |
 | `npx`                              | installs it under `~/.objectexplorer/update`, and runs from there                             |
 | Homebrew                           | shows the command: `brew upgrade objectexplorer`, or `brew upgrade --cask objectexplorer-app` |
-| the Windows `.msix`                | nothing: Windows updates it, and App Installer looks when the app starts                      |
+| the Windows `.msix`                | downloads the new `.msix`; on restart App Installer opens it and replaces this copy           |
 | a server                           | shows the commands: [updating a server](#a-server)                                            |
 
 A copy that came from none of these is told so, and offered nothing.

@@ -1,5 +1,5 @@
 // Every download a release carries, as its target: the asset's name after "objectexplorer-"
-// (app-darwin-arm64.zip is objectexplorer-app-darwin-arm64.zip). Once the page has asked GitHub
+// (app-darwin-arm64.dmg is objectexplorer-app-darwin-arm64.dmg). Once the page has asked GitHub
 // for the newest release, a link points straight at that release's asset. Until then, or when
 // GitHub cannot be reached, it points at objectexplorer.com/download/<target>, which the host
 // resolves (foldone's service/landing/download.js).
@@ -12,19 +12,19 @@ export const downloadPlatforms = [
 	{
 		id: "mac",
 		name: "macOS",
-		note: "Signed and notarized. Unzip and drag ObjectExplorer.app to Applications; the .tar.gz is the command line alone.",
+		note: "Signed and notarized. Open the .dmg and drag ObjectExplorer to Applications; the .tar.gz is the command line alone.",
 		downloads: [
 			{
 				label: "Apple silicon",
 				files: [
-					{ target: "app-darwin-arm64.zip", extension: ".app" },
+					{ target: "app-darwin-arm64.dmg", extension: ".dmg" },
 					{ target: "darwin-arm64.tar.gz", extension: ".tar.gz" },
 				],
 			},
 			{
 				label: "Intel",
 				files: [
-					{ target: "app-darwin-x64.zip", extension: ".app" },
+					{ target: "app-darwin-x64.dmg", extension: ".dmg" },
 					{ target: "darwin-x64.tar.gz", extension: ".tar.gz" },
 				],
 			},
@@ -33,20 +33,20 @@ export const downloadPlatforms = [
 	{
 		id: "windows",
 		name: "Windows",
-		note: "Signed. The .appinstaller installs the msix and keeps it up to date; the .zip runs where it is unpacked.",
+		note: "Signed. Open the .msix and Windows installs it, with its Start menu entry; the portable .zip runs where it is unpacked.",
 		downloads: [
 			{
 				label: "x64 / AMD64",
 				files: [
-					{ target: "windows-x64.appinstaller", extension: ".appinstaller" },
-					{ target: "windows-x64.zip", extension: ".zip" },
+					{ target: "windows-x64.msix", extension: ".msix" },
+					{ target: "windows-x64.zip", extension: ".zip (portable)" },
 				],
 			},
 			{
 				label: "ARM64",
 				files: [
-					{ target: "windows-arm64.appinstaller", extension: ".appinstaller" },
-					{ target: "windows-arm64.zip", extension: ".zip" },
+					{ target: "windows-arm64.msix", extension: ".msix" },
+					{ target: "windows-arm64.zip", extension: ".zip (portable)" },
 				],
 			},
 		],

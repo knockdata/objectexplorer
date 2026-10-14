@@ -4,8 +4,9 @@ name: Release
 # carries it in ref_name, a dispatch in its version input.
 run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version, inputs.dry_run && ' (dry run)' || '') || github.ref_name }}
 
-# objectexplorer ships from this one run: the GitHub release (the binaries, the desktop app,
-# the Windows zip, msix and .appinstaller, SHA256SUMS), the npm packages and the Homebrew tap,
+# objectexplorer ships from this one run: the GitHub release (the binaries, the desktop app as a
+# .dmg (the download) and a .zip (the updater's), the Windows msix (the download), zip and
+# .appinstaller, SHA256SUMS), the npm packages and the Homebrew tap,
 # under one version, from the same signed files.
 #
 # No source is here. foldone's tools/release.sh builds the candidate on the owner's Mac (macOS,
@@ -16,7 +17,9 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 #   source           downloads the candidate, checks it against the tag's sha256 and its own
 #                    version against the tag
 #   smoke            the unsigned binaries on six runners: --version and an instant server + curl
-#   sign-macos       Developer ID, notarized, stapled: both .apps and both command line binaries
+#   sign-macos       Developer ID, notarized, stapled: both .apps and both command line binaries;
+#                    each .app in a .dmg (dmgbuild: a link to Applications, a line saying to drag
+#                    it there), the .dmg signed, notarized and stapled too
 #   sign-windows     Azure Trusted Signing: ObjectExplorer.exe, .com, oe.exe, oe.com of both cpus;
 #                    the msix packed again around the signed .exe (Publisher: the certificate's
 #                    subject) and signed; an .appinstaller per cpu
@@ -283,6 +286,36 @@ jobs:
             (cd "work/app-$cpu" && ditto -c -k --keepParent ObjectExplorer.app "../../signed/objectexplorer-app-darwin-$cpu.zip")
           done
           ls -la signed
+      # the download: the stapled app in a .dmg with a link to Applications and a line saying to drag it
+      # there (the candidate's dmg/: dmgbuild's settings and background); the .zip stays, for the updater
+      - name: The dmg
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/dmg" && "$RUNNER_TEMP/dmg/bin/pip" install --quiet dmgbuild
+          for cpu in arm64 x64; do
+            "$RUNNER_TEMP/dmg/bin/dmgbuild" -s candidate/dmg/settings.py -D app="work/app-$cpu/ObjectExplorer.app" -D background="candidate/dmg/background.tiff" ObjectExplorer "signed/objectexplorer-app-darwin-$cpu.dmg"
+          done
+      - name: Sign, notarize and staple the dmg
+        if: steps.identity.outputs.signed == 'true'
+        env:
+          PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          echo "$PRIVATE_KEY" > "$RUNNER_TEMP/AuthKey.p8"
+          for cpu in arm64 x64; do
+            dmg="signed/objectexplorer-app-darwin-$cpu.dmg"
+            codesign --force --timestamp --sign "$IDENTITY" "$dmg"
+            xcrun notarytool submit "$dmg" --key "$RUNNER_TEMP/AuthKey.p8" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait --output-format json > notary-dmg.json
+            cat notary-dmg.json
+            status=$(python3 -c 'import json; print(json.load(open("notary-dmg.json"))["status"])')
+            if [ "$status" = "Accepted" ]; then
+              xcrun stapler staple "$dmg"
+            else
+              echo "::error::notarization of $dmg: $status"
+              exit 1
+            fi
+          done
+          ls -la signed
       - uses: actions/upload-artifact@v6
         with:
           name: signed-macos
@@ -450,7 +483,7 @@ jobs:
           # a dry run without the Windows certificate has no msix: the unsigned one is for local tests only
           shopt -s nullglob
           cd assets
-          sha256sum objectexplorer-*.tar.gz objectexplorer-*.zip objectexplorer-*.msix objectexplorer-*.appinstaller > SHA256SUMS
+          sha256sum objectexplorer-*.tar.gz objectexplorer-*.zip objectexplorer-*.dmg objectexplorer-*.msix objectexplorer-*.appinstaller > SHA256SUMS
           cat SHA256SUMS
       - uses: actions/setup-node@v6
         with:
@@ -484,8 +517,8 @@ jobs:
             -e "s/SHA_LINUX_ARM64/$(sum objectexplorer-linux-arm64.tar.gz)/" \
             -e "s/SHA_LINUX_X64/$(sum objectexplorer-linux-x64.tar.gz)/" \
             candidate/brew/objectexplorer.rb > brew/objectexplorer.rb
-          sed -e "s/SHA_APP_ARM64/$(sum objectexplorer-app-darwin-arm64.zip)/" \
-            -e "s/SHA_APP_X64/$(sum objectexplorer-app-darwin-x64.zip)/" \
+          sed -e "s/SHA_APP_ARM64/$(sum objectexplorer-app-darwin-arm64.dmg)/" \
+            -e "s/SHA_APP_X64/$(sum objectexplorer-app-darwin-x64.dmg)/" \
             candidate/brew/objectexplorer-app.rb > brew/objectexplorer-app.rb
           grep -n "sha256\|version" brew/*.rb
       - uses: actions/upload-artifact@v6
@@ -560,6 +593,14 @@ jobs:
             spctl --assess --type execute --verbose=4 app/ObjectExplorer.app
             xcrun stapler validate app/ObjectExplorer.app
             codesign -dv --verbose=4 app/ObjectExplorer.app 2>&1 | grep -E "Authority|TeamIdentifier|Runtime" >> "$GITHUB_STEP_SUMMARY"
+            # the dmg: signed, notarized, stapled, and the app inside it the same signed app
+            codesign --verify --strict --verbose=2 "assets/objectexplorer-app-$TARGET.dmg"
+            spctl --assess --type open --context context:primary-signature --verbose=4 "assets/objectexplorer-app-$TARGET.dmg"
+            xcrun stapler validate "assets/objectexplorer-app-$TARGET.dmg"
+            mounted=$(hdiutil attach -nobrowse -readonly "assets/objectexplorer-app-$TARGET.dmg" | tail -1 | awk -F'\t' '{print $NF}')
+            codesign --verify --deep --strict "$mounted/ObjectExplorer.app"
+            test -L "$mounted/Applications"
+            hdiutil detach "$mounted" -quiet
           else
             echo "::warning::dry run without the Developer ID: signatures not checked"
           fi

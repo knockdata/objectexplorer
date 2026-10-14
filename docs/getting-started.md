@@ -15,8 +15,8 @@ Older versions, and the release notes for each one, are on the
 
 ### macOS
 
-The `.zip` holds `ObjectExplorer.app`: unzip it and drag the app to Applications. It is signed with a
-Developer ID and notarized, so it opens on the first double-click. It needs macOS 13 or later, on
+Open the `.dmg` and drag ObjectExplorer to the Applications folder beside it, as its window says. The
+app is signed with a Developer ID and notarized, so it opens on the first double-click. It needs macOS 13 or later, on
 Apple silicon or Intel.
 
 The `.tar.gz` is the command line alone, one file `objectexplorer` beside `oe`, its short name. Put
@@ -24,11 +24,10 @@ both somewhere on your PATH.
 
 ### Windows
 
-The `.appinstaller` installs the signed `.msix`: a Start menu entry, an icon, and an entry in
-*Add or remove programs* that uninstalls cleanly. Windows keeps it up to date from then on. SmartScreen
-may still show a notice the first time.
+Open the signed `.msix` and Windows installs it: a Start menu entry, an icon, and an entry in
+*Add or remove programs* that uninstalls cleanly. SmartScreen may still show a notice the first time.
 
-The `.zip` runs where you unpack it, with nothing installed: `ObjectExplorer.exe` is the window,
+The portable `.zip` runs where you unpack it, with nothing installed: `ObjectExplorer.exe` is the window,
 `objectexplorer.com` beside it is the command line, and `oe.exe` is the short name.
 
 ### Linux
