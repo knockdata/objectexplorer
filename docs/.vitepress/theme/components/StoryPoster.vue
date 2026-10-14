@@ -1,6 +1,7 @@
 <script setup>
 import { useData, withBase } from "vitepress"
 import { ref } from "vue"
+import YoutubePlayer from "./YoutubePlayer.vue"
 
 const { frontmatter } = useData()
 
@@ -25,7 +26,9 @@ function appLink() {
 <!-- The ideal, as a photo: the story's `poster`, a real screenshot of the thing done, with its
      `caption` saying what is in the picture. A story writes <StoryPoster /> where the picture goes.
      A story with `open` gets a corner icon that opens the app on that item, to see it in action;
-     one with `recording` gets a play icon before it, which plays the recording over the picture. -->
+     one with `recording` gets a play icon before it, which plays the recording over the picture.
+     One with `videoInIdeal` shows its `youtube` short (or its `video`) here instead of the picture,
+     and not in the header. -->
 <template>
 	<figure v-if="frontmatter.poster" class="story-poster">
 		<div class="story-poster-frame">
@@ -41,7 +44,11 @@ function appLink() {
 					<path d="M18 10v-4h-4" />
 				</svg>
 			</a>
-			<img :src="withBase(frontmatter.poster)" :alt="frontmatter.caption ?? frontmatter.title">
+			<div v-if="frontmatter.videoInIdeal && frontmatter.youtube" class="story-poster-short">
+				<YoutubePlayer :video="frontmatter.youtube" :poster="`/video/${frontmatter.youtube}.jpg`" :title="frontmatter.title" />
+			</div>
+			<video v-else-if="frontmatter.videoInIdeal" :src="withBase(frontmatter.video)" :poster="withBase(frontmatter.poster)" controls playsinline preload="metadata"></video>
+			<img v-else :src="withBase(frontmatter.poster)" :alt="frontmatter.caption ?? frontmatter.title">
 			<span v-if="playing" class="story-poster-mask"></span>
 			<video v-if="playing" class="story-poster-recording" :src="withBase(frontmatter.recording)" autoplay controls playsinline></video>
 		</div>
@@ -86,13 +93,23 @@ function appLink() {
 	color: var(--vp-c-brand-1);
 }
 
-.vp-doc .story-poster img {
+.vp-doc .story-poster img,
+.vp-doc .story-poster-frame > video {
 	border: 1px solid var(--vp-c-divider);
 	border-radius: 12px;
 	display: block;
 	margin: 0 auto;
 	max-height: 70vh;
 	max-width: 100%;
+}
+
+.vp-doc .story-poster-short {
+	aspect-ratio: 9 / 16;
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 12px;
+	overflow: hidden;
+	position: relative;
+	width: min(360px, calc(70vh * 9 / 16));
 }
 
 /* dims the picture while the recording plays over it */

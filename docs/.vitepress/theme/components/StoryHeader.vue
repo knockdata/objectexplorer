@@ -1,16 +1,21 @@
 <script setup>
 import { useData, withBase } from "vitepress"
+import YoutubePlayer from "./YoutubePlayer.vue"
 
 const { frontmatter } = useData()
 </script>
 
 <!-- The question, its subtitle, then the video once one is recorded — publishing it is filling in
-     `video:`. The poster is not drawn here: the story places it in its Ideal (StoryPoster). -->
+     `youtube:` (the short's id; its poster is /video/<id>.jpg) or `video:`. The poster is not drawn
+     here: the story places it in its Ideal (StoryPoster). -->
 <template>
 	<header class="story-header">
 		<h1 class="rock"><span>{{ frontmatter.title }}</span><span> shouldn't be that hard</span></h1>
 		<p class="story-header-subtitle">{{ frontmatter.subtitle }}</p>
-		<div v-if="frontmatter.video" class="story-header-media">
+		<div v-if="frontmatter.youtube && !frontmatter.videoInIdeal" class="story-header-short">
+			<YoutubePlayer :video="frontmatter.youtube" :poster="`/video/${frontmatter.youtube}.jpg`" :title="frontmatter.title" />
+		</div>
+		<div v-else-if="frontmatter.video && !frontmatter.videoInIdeal" class="story-header-media">
 			<video
 				:src="withBase(frontmatter.video)"
 				:poster="frontmatter.poster ? withBase(frontmatter.poster) : undefined"
@@ -55,6 +60,18 @@ const { frontmatter } = useData()
 	margin: 0 auto;
 	max-height: 70vh;
 	max-width: 100%;
+}
+
+/* a short is 9:16: as tall as the screen allows, in the middle */
+.story-header-short {
+	aspect-ratio: 9 / 16;
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 12px;
+	margin: 0 auto 28px;
+	max-width: 100%;
+	overflow: hidden;
+	position: relative;
+	width: min(360px, calc(70vh * 9 / 16));
 }
 
 .story-header-note {

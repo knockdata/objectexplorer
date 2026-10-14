@@ -4,6 +4,7 @@ subtitle: "See where our money goes"
 episode: 5
 runtime: null
 video: null
+youtube: 5rMh5sigbv0
 recording: /video/usage-visualization.mp4
 poster: /screenshot/usage-visualization.png
 open: "usage/"

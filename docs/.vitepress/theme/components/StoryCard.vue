@@ -1,12 +1,14 @@
 <script setup>
 import { withBase } from "vitepress"
 import { ref } from "vue"
+import YoutubePlayer from "./YoutubePlayer.vue"
 
 defineProps({
 	story: { type: Object, required: true },
 })
 
-// Play swaps the poster for the screen recording, which is 9:16 like the card, and plays it in place.
+// Play swaps the poster for the film, a YouTube short when the story has `youtube`, else the screen
+// recording; both are 9:16 like the card, and play in place.
 const playing = ref(false)
 
 function playRecording() {
@@ -42,8 +44,9 @@ function pauseVideo(event) {
 		@mouseleave="pauseVideo"
 	>
 		<span class="story-card-art">
+			<YoutubePlayer v-if="playing && story.youtube" :video="story.youtube" :poster="`/video/${story.youtube}.jpg`" :title="story.title" start />
 			<video
-				v-if="playing"
+				v-else-if="playing"
 				class="story-card-poster"
 				:src="withBase(story.recording)"
 				autoplay
@@ -51,8 +54,15 @@ function pauseVideo(event) {
 				playsinline
 			></video>
 			<a v-else class="story-card-art-link" :href="withBase(story.url)" tabindex="-1">
+				<img
+					v-if="story.youtube"
+					class="story-card-poster"
+					:src="withBase(`/video/${story.youtube}.jpg`)"
+					alt=""
+					loading="lazy"
+				>
 				<video
-					v-if="story.video"
+					v-else-if="story.video"
 					class="story-card-poster"
 					:src="withBase(story.video)"
 					:poster="story.poster ? withBase(story.poster) : undefined"
@@ -78,7 +88,7 @@ function pauseVideo(event) {
 					</svg>
 					<span>Read</span>
 				</a>
-				<button v-if="story.recording" class="story-card-badge" type="button" @click="playRecording">
+				<button v-if="story.youtube || story.recording" class="story-card-badge" type="button" @click="playRecording">
 					<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
 						<path d="M8 5v14l11-7z" />
 					</svg>

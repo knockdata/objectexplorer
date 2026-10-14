@@ -6,6 +6,7 @@ export const featuredCount = 8
 export default [
 	"/story/visualize-usage",
 	"/story/view-a-file",
+	"/story/draw-facing-the-audience",
 	"/story/train-a-model",
 	"/story/know-what-an-agent-did",
 	"/story/search-across-a-bucket",
