@@ -669,7 +669,7 @@ jobs:
           node-version: 24
       # trusted publishing needs npm 11.5.1 or newer
       - run: npm install -g npm@latest
-      # the platform packages first, so the main one's optionalDependencies resolve; a version
+      # the platform packages first, so the main one's optionalDependencies resolve (a path, ./npm/…: npm 11 reads npm/x.tgz as github:npm/x.tgz); a version
       # already on npm is left alone (npm never takes one twice, and a re-run would fail)
       - name: Publish
         run: |
@@ -680,9 +680,9 @@ jobs:
           fi
           files=()
           for target in darwin-arm64 darwin-x64 linux-arm64 linux-x64 win32-arm64 win32-x64; do
-            files+=("npm/knockdata-objectexplorer-$target-$VERSION.tgz")
+            files+=("./npm/knockdata-objectexplorer-$target-$VERSION.tgz")
           done
-          files+=("npm/knockdata-objectexplorer-$VERSION.tgz")
+          files+=("./npm/knockdata-objectexplorer-$VERSION.tgz")
           for file in "${files[@]}"; do
             name=$(tar -xOzf "$file" package/package.json | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).name')
             if [ "$(npm view "$name@$VERSION" version 2> /dev/null || true)" = "$VERSION" ]; then
