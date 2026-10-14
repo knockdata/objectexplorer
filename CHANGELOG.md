@@ -11,7 +11,7 @@ What changed in each version. Every build is on the
 - objectexplorer.com/app: a zip opens as a folder, Delta, Hudi and Iceberg tables query, and every file of a folder you add opens (pictures, web pages, shaders, large CSVs)
 - Blender: backups (`.blend1`) open as models, the scene Blender opens at is drawn with its collection instances, and a file with no mesh says so
 - code with no spaces between tokens no longer overlaps; text sits centred in buttons on macOS
-- flame graphs draw in the browser
+- flame graphs draw in the browser; on Windows, OBJ models find their materials and textures
 - the usage disc is off until turned on in Settings → General
 
 ## v0.9.0  —  2026-10-14
