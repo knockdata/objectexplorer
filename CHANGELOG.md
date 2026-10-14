@@ -4,6 +4,16 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.2  —  2026-10-15
+- macOS downloads as a .dmg: drag ObjectExplorer to Applications
+- Windows downloads as the .msix; Check for Updates installs the next one through App Installer
+- JSON and YAML open laid out, coloured and foldable; one-object-per-line JSON stays a table; Unity's .asset and .meta read as YAML
+- Unity scenes draw their built-in cubes, spheres, planes and the rest
+- C# is coloured and folds
+- Find in Folder… searches inside one folder
+- markdown with Slidev front matter opens as a slide deck, with themes; drawings in documents and slides take the laser directly
+- the laser draws a clean trail, also in Present
+
 ## v0.9.1  —  2026-10-15
 - starts on a small Linux machine with no swap (v0.9.0 stopped with "could not reserve memory")
 - the Linux desktop window no longer crashes at start
