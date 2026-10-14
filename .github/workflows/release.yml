@@ -591,12 +591,14 @@ jobs:
             codesign --verify --strict --verbose=2 unpacked/objectexplorer
             codesign --verify --deep --strict --verbose=2 app/ObjectExplorer.app
             spctl --assess --type execute --verbose=4 app/ObjectExplorer.app
-            xcrun stapler validate app/ObjectExplorer.app
+            # Apple's ticket service drops a connection now and then (Error 68): three tries
+            validate() { for attempt in 1 2 3; do xcrun stapler validate "$1" && return 0; sleep 20; done; return 1; }
+            validate app/ObjectExplorer.app
             codesign -dv --verbose=4 app/ObjectExplorer.app 2>&1 | grep -E "Authority|TeamIdentifier|Runtime" >> "$GITHUB_STEP_SUMMARY"
             # the dmg: signed, notarized, stapled, and the app inside it the same signed app
             codesign --verify --strict --verbose=2 "assets/objectexplorer-app-$TARGET.dmg"
             spctl --assess --type open --context context:primary-signature --verbose=4 "assets/objectexplorer-app-$TARGET.dmg"
-            xcrun stapler validate "assets/objectexplorer-app-$TARGET.dmg"
+            validate "assets/objectexplorer-app-$TARGET.dmg"
             mounted=$(hdiutil attach -nobrowse -readonly "assets/objectexplorer-app-$TARGET.dmg" | tail -1 | awk -F'\t' '{print $NF}')
             codesign --verify --deep --strict "$mounted/ObjectExplorer.app"
             test -L "$mounted/Applications"
