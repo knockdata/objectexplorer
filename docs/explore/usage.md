@@ -81,8 +81,8 @@ to the whole disc.
 
 ## The card
 
-Point at anything and a card beside the disc says what it is; click and the card stays up while you
-turn the disc.
+Point at anything and it lights up, and a card beside the disc says what it is; click and the card
+stays up while you turn the disc.
 
 - **A pole** shows its size, cost, object count and share over a year, the age of its bytes, how much
   is on this machine, who has read it, how much of it is held twice, its six named objects — click
@@ -104,7 +104,8 @@ one had to be borrowed.
 
 ## The toolbar
 
-Along the bottom of the disc, beside **Refresh** and the **Demo** switch:
+Across the top of the disc, beside the **Demo** switch, **Refresh** and **?**, which walks you
+round the marks one at a time, turning each to the front as it names it:
 
 | Button          | What it does                                                                                                                       |
 |-----------------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -171,8 +172,11 @@ have offered.
 
 ## Moving around it
 
-The disc is drawn as a flat projection, and moves like a three-dimensional view: drag to turn,
-`⇧`-drag to pan, wheel to zoom, double-click to start over. The full list is on [moving around a view](/reference/view-controls).
+The disc is a real three-dimensional scene, drawn on the GPU (Metal on a Mac, Vulkan on Linux,
+Direct3D on Windows, WebGPU in the browser): lit from one side, every pole casting its shadow on the
+plate, the sector names painted on the plate itself, and whatever is picked glowing. Drag to turn
+it, `⇧`-drag to pan, wheel to zoom toward the pointer, double-click to start over; the poles grow
+to their new heights when Size and Cost are switched. The full list is on [moving around a view](/reference/view-controls).
 
 Click a pole, a ball or the hub in the middle to pin its numbers; click empty space or press `Escape`
 to let go. An arch has no card of its own: click either end.
