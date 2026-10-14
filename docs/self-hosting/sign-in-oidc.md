@@ -1,8 +1,8 @@
-# Authentication with OIDC
+# Sign-in with OIDC
 
-A [server](/reference/deployment) can ask everyone to sign in with your organization's identity
+A [server](/self-hosting/) can ask everyone to sign in with your organization's identity
 provider before they see anything. This page sets it up with **OpenID Connect (OIDC)**. For SAML 2.0,
-see [authentication with SAML](/reference/authentication-saml).
+see [sign-in with SAML](/self-hosting/sign-in-saml).
 
 With sign-in on, every page and every API call needs a signed-in person. A server that other machines
 can reach refuses to start without a sign-in, unless it is started with `public=true`.
@@ -10,7 +10,7 @@ can reach refuses to start without a sign-in, unless it is started with `public=
 Signing in decides who is using the server, not what they may configure. Everyone signed in uses what
 the server's owner set up, inside the folders the owner shared; clouds, roots, Python and the agent
 door are configured on the server's own machine only — see
-[who may do what](/reference/deployment#who-may-do-what).
+[who may do what](/self-hosting/#who-may-do-what).
 
 ## Set it up
 
@@ -19,8 +19,9 @@ Type your server's domain, and the commands and addresses on this page use it.
 <DomainInput />
 
 Everything is done on the server, as the account that runs it, with `oe` (or `objectexplorer`
-followed by the same words). It writes into the server's config, `~/.objectexplorer/server.json`, or
-the file given with `config=`.
+followed by the same words). It writes into the server's
+[config](/self-hosting/#the-config-file), `~/.objectexplorer/server.json`, or the file given with
+`config=`.
 
 ### 1. The addresses to register
 
@@ -96,9 +97,11 @@ The sign-in applies when the server starts again:
 objectexplorer host=0.0.0.0 https_port=443 http_port=80 domain=oe.example.com tls=auto
 ```
 
+The certificate for `tls=auto` is on [domain and certificate](/self-hosting/domain-and-certificate).
+
 To change the identity provider, or a secret that has been rotated, run `oe sso oidc` again and
 restart. `oe sso show` prints what is saved. Every change is a line in the
-[audit log](/reference/deployment#the-audit-log), with the account that ran it.
+[audit log](/self-hosting/#the-audit-log), with the account that ran it.
 
 ## Sessions
 
@@ -119,4 +122,4 @@ After a sign-in the page shows the session's token too, for a desktop window to 
 Signing in talks to your identity provider only: its configuration, its keys and the tokens.
 Nothing about who signs in is sent to us.
 
-Next: [authentication with SAML](/reference/authentication-saml).
+Next: [sign-in with SAML](/self-hosting/sign-in-saml).

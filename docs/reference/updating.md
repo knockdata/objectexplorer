@@ -45,7 +45,7 @@ oe upgrade    # install the latest and make it current
 oe rollback   # back to the version before
 ```
 
-See [updating a server](/reference/deployment#updating-an-enterprise-server).
+See [updating a server](/self-hosting/#updating-an-enterprise-server).
 
 ## What changed
 

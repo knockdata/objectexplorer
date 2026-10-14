@@ -47,7 +47,7 @@ same through npx.
 | `config=`    | `~/.objectexplorer/server.json` | a server's settings, as JSON                                                                      |
 
 A server takes more: `https_port=`, `tls=`, `domain=`, `public=`, `licence=`, `base=` and `data=`,
-all on [deployment](/reference/deployment).
+all on [running your own server](/self-hosting/).
 
 A word with no `=` is a folder or a file to open. An argument it does not know is refused, with the
 list.
@@ -122,28 +122,28 @@ Add `--json` to either for JSON.
 
 Some panes have buttons rather than values. Each button is a command.
 
-| Command                                   | What it does                                                                                                                 |
-|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-| `oe folder add <path …>`                  | add folders or buckets (`s3://name`) to the tree; `remove` takes them out                                                    |
-| `oe signin aws`                           | an access key: the IAM console's accessKeys.csv, or the key ID and the secret                                                |
-| `oe signin google`                        | a service account's JSON key; `--browser` signs in with Google instead                                                       |
-| `oe signin microsoft`                     | a storage account's connection string or SAS URL; `--browser` signs in with Microsoft instead                                |
-| `oe signin s3 <name> --endpoint <url>`    | a custom S3 store (MinIO, R2 …): its access key and secret; `--anonymous` keeps none, `--description` says what it is        |
-| `oe python venv create <name> [version]`  | a new Python environment; `delete <name>` and `list` too                                                                     |
-| `oe cache clear`                          | delete the local copies of cloud objects                                                                                     |
-| `oe mcp install claude`                   | connect Claude Code; `codex` for Codex; `--off` disconnects                                                                  |
-| `oe writing add <url>`                    | a writing source; `remove <url>`, `list`, and `reindex [url]`, which waits until it is done                                  |
-| `oe pii reveal '<PERSON_17>'`             | the real value of a pseudonym, after your login; `reveals` lists every ask (below)                                           |
-| `oe plan status`                          | your plan; `signin` (Google, in the browser) and `signout` too                                                               |
-| `oe licence <file or token>`              | install a licence                                                                                                            |
-| `oe check`                                | this copy, the version in use, what is installed and the latest release; changes nothing                                     |
-| `oe upgrade [version]`                    | install a version beside the others and make it the one in use — see [updating](/reference/updating)                         |
-| `oe rollback [version]`                   | make an installed version the one in use again                                                                               |
-| `oe versions`                             | every installed version, the one in use marked `*`                                                                           |
-| `oe version`                              | this copy's version, alone on a line                                                                                         |
-| `oe sso show [domain=<name>]`             | how people sign in to this machine's server, and the addresses to register — see [deployment](/reference/deployment#sign-in) |
-| `oe sso oidc issuer=<url> client_id=<id>` | OIDC sign-in, the client secret read from `--file` or the input — see [OIDC](/reference/authentication-oidc)                 |
-| `oe sso saml metadata=<url or file>`      | SAML sign-in — see [SAML](/reference/authentication-saml)                                                                    |
+| Command                                   | What it does                                                                                                          |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `oe folder add <path …>`                  | add folders or buckets (`s3://name`) to the tree; `remove` takes them out                                             |
+| `oe signin aws`                           | an access key: the IAM console's accessKeys.csv, or the key ID and the secret                                         |
+| `oe signin google`                        | a service account's JSON key; `--browser` signs in with Google instead                                                |
+| `oe signin microsoft`                     | a storage account's connection string or SAS URL; `--browser` signs in with Microsoft instead                         |
+| `oe signin s3 <name> --endpoint <url>`    | a custom S3 store (MinIO, R2 …): its access key and secret; `--anonymous` keeps none, `--description` says what it is |
+| `oe python venv create <name> [version]`  | a new Python environment; `delete <name>` and `list` too                                                              |
+| `oe cache clear`                          | delete the local copies of cloud objects                                                                              |
+| `oe mcp install claude`                   | connect Claude Code; `codex` for Codex; `--off` disconnects                                                           |
+| `oe writing add <url>`                    | a writing source; `remove <url>`, `list`, and `reindex [url]`, which waits until it is done                           |
+| `oe pii reveal '<PERSON_17>'`             | the real value of a pseudonym, after your login; `reveals` lists every ask (below)                                    |
+| `oe plan status`                          | your plan; `signin` (Google, in the browser) and `signout` too                                                        |
+| `oe licence <file or token>`              | install a licence                                                                                                     |
+| `oe check`                                | this copy, the version in use, what is installed and the latest release; changes nothing                              |
+| `oe upgrade [version]`                    | install a version beside the others and make it the one in use — see [updating](/reference/updating)                  |
+| `oe rollback [version]`                   | make an installed version the one in use again                                                                        |
+| `oe versions`                             | every installed version, the one in use marked `*`                                                                    |
+| `oe version`                              | this copy's version, alone on a line                                                                                  |
+| `oe sso show [domain=<name>]`             | how people sign in to this machine's server, and the addresses to register — see [sign-in](/self-hosting/#sign-in)    |
+| `oe sso oidc issuer=<url> client_id=<id>` | OIDC sign-in, the client secret read from `--file` or the input — see [OIDC](/self-hosting/sign-in-oidc)              |
+| `oe sso saml metadata=<url or file>`      | SAML sign-in — see [SAML](/self-hosting/sign-in-saml)                                                                 |
 
 A key is checked before it is kept, as the pane checks it: one that is refused is said and not kept.
 

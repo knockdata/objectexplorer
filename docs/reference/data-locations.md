@@ -1,13 +1,16 @@
 # Where your data lives
 
 Everything ObjectExplorer keeps for itself is in one folder, on every platform and in every
-[deployment](/reference/deployment) — the desktop app, the command line, a server:
+[shape](/self-hosting/) — the desktop app, the command line, a server:
 
 ```
 ~/.objectexplorer
 ```
 
 On Windows that is `C:\Users\<you>\.objectexplorer`.
+
+A server started with `data=<folder>` keeps all of it in that folder instead — see
+[the data folder](/self-hosting/#the-data-folder).
 
 Secrets are not in it. A key you typed, a sign-in's refresh token or an OIDC client secret goes to
 the system keychain: the macOS keychain, the Windows Credential Manager, or the Secret Service on
@@ -40,11 +43,11 @@ kept 30 days so it can be undone.
 | `trial`, `licence`     | your plan                                                                                                                                                                                                                              |
 | `update/`              | where an `npx` copy puts a newer version it downloaded                                                                                                                                                                                 |
 | `web/`                 | on a server: what each signed-in browser user's app remembers, one database each                                                                                                                                                       |
-| `server.json`          | on a server: its [config](/reference/deployment#the-config-file) — sign-in, roots, certificates                                                                                                                                        |
+| `server.json`          | on a server: its [config](/self-hosting/#the-config-file) — sign-in, roots, certificates                                                                                                                                               |
 | `certs/<domain>/`      | on a server: the certificate Let's Encrypt gave it, its key, and the account that got it                                                                                                                                               |
-| `audit/`               | on a server: the [audit log](/reference/deployment#the-audit-log), one file a day                                                                                                                                                      |
-| `versions/`, `current` | on a server: its installed versions, and the link to the one in use — see [updating a server](/reference/deployment#updating-an-enterprise-server)                                                                                     |
-| `enterprise_trial`     | on a server: when its [trial](/reference/deployment#the-trial) started                                                                                                                                                                 |
+| `audit/`               | on a server: the [audit log](/self-hosting/#the-audit-log), one file a day                                                                                                                                                             |
+| `versions/`, `current` | on a server: its installed versions, and the link to the one in use — see [updating a server](/self-hosting/#updating-an-enterprise-server)                                                                                            |
+| `enterprise_trial`     | on a server: when its [trial](/self-hosting/#the-trial) started                                                                                                                                                                        |
 
 In the browser, at objectexplorer.com/app, the same things are kept in the page's own storage
 instead, and the folders you pick never leave it.

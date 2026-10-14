@@ -19,6 +19,6 @@ it is gone with the page. Its pictures are made small by the browser's own decod
 
 A server counts a page as on this machine only when the request comes from this machine and passed
 through no proxy — the same test that decides
-[who may configure it](/reference/deployment#who-may-do-what).
+[who may configure it](/self-hosting/#who-may-do-what).
 
 Next: [instant mode](/reference/instant-mode).

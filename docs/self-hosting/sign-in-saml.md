@@ -1,15 +1,15 @@
-# Authentication with SAML
+# Sign-in with SAML
 
-A [server](/reference/deployment) can ask everyone to sign in with your organization's identity
+A [server](/self-hosting/) can ask everyone to sign in with your organization's identity
 provider before they see anything. This page sets it up with **SAML 2.0**. For OpenID Connect, see
-[authentication with OIDC](/reference/authentication-oidc).
+[sign-in with OIDC](/self-hosting/sign-in-oidc).
 
 With sign-in on, every page and every API call needs a signed-in person. A server that other machines
 can reach refuses to start without a sign-in, unless it is started with `public=true`.
 
 Signing in decides who is using the server, not what they may configure: clouds, roots, Python and
 the agent door are configured on the server's own machine only — see
-[who may do what](/reference/deployment#who-may-do-what).
+[who may do what](/self-hosting/#who-may-do-what).
 
 ## Set it up
 
@@ -18,8 +18,9 @@ Type your server's domain, and the commands and addresses on this page use it.
 <DomainInput />
 
 Everything is done on the server, as the account that runs it, with `oe` (or `objectexplorer`
-followed by the same words). It writes into the server's config, `~/.objectexplorer/server.json`, or
-the file given with `config=`.
+followed by the same words). It writes into the server's
+[config](/self-hosting/#the-config-file), `~/.objectexplorer/server.json`, or the file given with
+`config=`.
 
 ### 1. The addresses to register
 
@@ -81,8 +82,10 @@ The sign-in applies when the server starts again:
 objectexplorer host=0.0.0.0 https_port=443 http_port=80 domain=oe.example.com tls=auto
 ```
 
+The certificate for `tls=auto` is on [domain and certificate](/self-hosting/domain-and-certificate).
+
 `oe sso show` prints what is saved. Every change is a line in the
-[audit log](/reference/deployment#the-audit-log), with the account that ran it.
+[audit log](/self-hosting/#the-audit-log), with the account that ran it.
 
 ## Sessions
 
@@ -102,4 +105,4 @@ Nothing but the metadata request: the server only receives the answer your brows
 from the identity provider, and reads a metadata URL when it starts. Nothing about who signs in is
 sent to us.
 
-Next: [deployments and start settings](/reference/deployment).
+Next: [running as a service](/self-hosting/#running-as-a-service).

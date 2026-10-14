@@ -1,7 +1,19 @@
-# Deployments and start settings
+# Running your own server
+
+This part is for whoever runs ObjectExplorer for other people: an admin who puts it on a server at a
+company, so a team opens it in their browsers and signs in with the company's accounts.
 
 ObjectExplorer is one binary, and it behaves the same however you got it: the desktop app, npm,
 Homebrew, a tarball on a server. What differs is how it is started, and what its plan allows.
+
+The steps, in order:
+
+1. Pick the [scenario](#scenarios) that fits your network, below.
+2. Give it a [domain and a certificate](/self-hosting/domain-and-certificate), for https.
+3. Set up [sign-in](#sign-in), with [OIDC](/self-hosting/sign-in-oidc) or
+   [SAML](/self-hosting/sign-in-saml).
+4. Install a [licence](#installing-a-licence), or run the [trial](#the-trial).
+5. [Run it as a service](#running-as-a-service), so it starts with the machine.
 
 Every setting is written as `name=value` after the command, in any order, or kept in a config file
 as JSON. Type your server's domain, and the commands on this page use it.
@@ -73,7 +85,7 @@ A folder after the command is opened in the tree: `objectexplorer ~/data`.
 ### A server the internet can reach
 
 The machine has a public address, and port 80 reaches it. The certificate comes from Let's Encrypt
-through the [web check](#certificates).
+by [http-01](/self-hosting/domain-and-certificate#http-01-the-internet-can-reach-the-machine).
 
 1. Point `oe.example.com` (an A or AAAA record) at the machine.
 2. Set up [sign-in](#sign-in).
@@ -92,15 +104,16 @@ through the [web check](#certificates).
 4. [Run it as a service](#running-as-a-service).
 
 Behind a home or office router, forward 80 to 8080 and 443 to 8443, and start with
-`http_port=8080 https_port=8443` instead.
+`http_port=8080 https_port=8443` instead. The details are on
+[domain and certificate](/self-hosting/domain-and-certificate).
 
 ### A server on a private network
 
-The internet cannot reach the machine, so Let's Encrypt's web check cannot either. Use
-[your own certificate](#with-your-own-certificate), from your company CA.
-
-Or get one from Let's Encrypt anyway, through one DNS record:
-[dns-01](#a-server-the-internet-cannot-reach-dns-01).
+The internet cannot reach the machine, so Let's Encrypt cannot connect to it to check the domain.
+Get the certificate from Let's Encrypt anyway, through one DNS record:
+[dns-01](/self-hosting/domain-and-certificate#dns-01-the-machine-is-behind-a-firewall). Or use
+[your own certificate files](/self-hosting/domain-and-certificate#your-own-certificate-files), from
+your company's authority.
 
 ### Behind a load balancer or reverse proxy
 
@@ -118,20 +131,6 @@ the load balancer's name. Every request through the proxy carries a forwarding h
 them is local: configure the server on the machine itself, or through an ssh tunnel. Then
 [sign-in](#sign-in) and [running as a service](#running-as-a-service).
 
-### With your own certificate
-
-A certificate from your company CA, or bought from anyone, as PEM files:
-
-```sh
-objectexplorer \
-	host=0.0.0.0 \
-	https_port=443 \
-	domain=oe.example.com \
-	tls=/etc/ssl/oe/fullchain.pem,/etc/ssl/oe/privkey.pem
-```
-
-The server reads the files when it starts, so restart it after you renew the certificate.
-
 ::: warning Other machines can reach it
 `host=0.0.0.0`, or any address other than `127.0.0.1`, lets other machines reach this copy. Without
 a sign-in it refuses to start, unless you add `public=true`: then nothing asks them to sign in, and
@@ -142,11 +141,11 @@ they use whatever the owner shared. Only do that on a network you control.
 
 A server signs people in when its config has any of these:
 
-| Key      | Who gets in                                                                                           |
-|----------|-------------------------------------------------------------------------------------------------------|
-| `oidc`   | anyone your identity provider lets in, by OpenID Connect — see [OIDC](/reference/authentication-oidc) |
-| `saml`   | anyone your identity provider lets in, by SAML 2.0 — see [SAML](/reference/authentication-saml)       |
-| `tokens` | a desktop window or a script holding one of the fixed tokens you wrote down                           |
+| Key      | Who gets in                                                                                                    |
+|----------|----------------------------------------------------------------------------------------------------------------|
+| `oidc`   | anyone your identity provider lets in, by OpenID Connect — see [sign-in with OIDC](/self-hosting/sign-in-oidc) |
+| `saml`   | anyone your identity provider lets in, by SAML 2.0 — see [sign-in with SAML](/self-hosting/sign-in-saml)       |
+| `tokens` | a desktop window or a script holding one of the fixed tokens you wrote down                                    |
 
 `oe sso` writes `oidc` and `saml` into the config for you, and keeps the OIDC client secret in the
 system keychain rather than in the file. The server reads the sign-in when it starts.
@@ -173,7 +172,8 @@ signing in. Restarting the server ends every session.
 ## The config file
 
 Everything the command line takes, and what it cannot, is kept in one JSON file: `config=<file>`, or
-else `~/.objectexplorer/server.json` when it exists. An argument on the command line wins over the
+else `server.json` in the [data folder](#the-data-folder), `~/.objectexplorer/server.json`, when it
+exists. An argument on the command line wins over the
 file.
 
 ```json
@@ -197,7 +197,7 @@ file.
 |----------------------------------------|----------------------------------------------------------------------------------------------------------|
 | the arguments                          | `mode`, `host`, `http_port`, `https_port`, `domain`, `tls`, `cloud`, `public`, `licence`, `base`, `data` |
 | `aliases`                              | other names of `domain`: answered with a redirect to it, and on the certificate                          |
-| `acme`                                 | how `tls=auto` gets its certificate ([below](#certificates))                                             |
+| `acme`                                 | how `tls=auto` gets its certificate ([the acme key](/self-hosting/domain-and-certificate#the-acme-key))  |
 | `oidc`, `saml`, `tokens`               | the [sign-in](#sign-in)                                                                                  |
 | `roots`, `remote_python`, `remote_web` | [what other machines may reach](#what-other-machines-may-reach)                                          |
 | `audit`                                | the [audit log](#the-audit-log)'s Cloud Logging project                                                  |
@@ -205,75 +205,62 @@ file.
 
 ## Start settings
 
-| Setting      | Values                                | Default                         | What it does                                                                                                                  |
-|--------------|---------------------------------------|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| `host`       | `127.0.0.1`, `0.0.0.0`, or an address | `127.0.0.1`                     | where it listens; `127.0.0.1` is this machine only                                                                            |
-| `http_port`  | a number                              | `9421`                          | the plain listener; with `tls` it answers Let's Encrypt and sends the rest to https                                           |
-| `https_port` | a number                              |                                 | the TLS listener, needed with `tls`                                                                                           |
-| `tls`        | `auto`, or `<chain.pem>,<key.pem>`    |                                 | https with a certificate from Let's Encrypt, or with your own                                                                 |
-| `domain`     | a name, like `oe.example.com`         |                                 | the name people use to reach it; the certificate's name; a licence for a domain counts only here                              |
-| `public`     | `true`                                | `false`                         | serve other machines without sign-in                                                                                          |
-| `licence`    | a licence file, or its text           |                                 | installed before the server starts; one that does not verify stops the start                                                  |
-| `mode`       | `full`, `instant`                     | `full`                          | `instant`: one read-only folder, see [instant mode](/reference/instant-mode)                                                  |
-| `cloud`      | `on`, `off`                           | `on`                            | `off`: storage is the disk only; no cloud can be added                                                                        |
-| `base`       | a folder                              | the built-in app                | read only: `web/` the app, `site/` a static site at `/` (the app then at `/app/`), `demo/` instant mode's folder, `learning/` |
-| `data`       | a folder                              |                                 | the objectexplorer.com host's own folder; other servers leave it out                                                          |
-| `open`       | `true`, `false`                       | `true`                          | open the browser when it starts                                                                                               |
-| `config`     | a JSON file                           | `~/.objectexplorer/server.json` | everything else                                                                                                               |
+| Setting      | Values                                | Default              | What it does                                                                                     |
+|--------------|---------------------------------------|----------------------|--------------------------------------------------------------------------------------------------|
+| `host`       | `127.0.0.1`, `0.0.0.0`, or an address | `127.0.0.1`          | where it listens; `127.0.0.1` is this machine only                                               |
+| `http_port`  | a number                              | `9421`               | the plain listener; with `tls` it answers Let's Encrypt and sends the rest to https              |
+| `https_port` | a number                              |                      | the TLS listener, needed with `tls`                                                              |
+| `tls`        | `auto`, or `<chain.pem>,<key.pem>`    |                      | https with a certificate from Let's Encrypt, or with your own                                    |
+| `domain`     | a name, like `oe.example.com`         |                      | the name people use to reach it; the certificate's name; a licence for a domain counts only here |
+| `public`     | `true`                                | `false`              | serve other machines without sign-in                                                             |
+| `licence`    | a licence file, or its text           |                      | installed before the server starts; one that does not verify stops the start                     |
+| `mode`       | `full`, `instant`                     | `full`               | `instant`: one read-only folder, see [instant mode](/reference/instant-mode)                     |
+| `cloud`      | `on`, `off`                           | `on`                 | `off`: storage is the disk only; no cloud can be added                                           |
+| `base`       | a folder                              | the built-in app     | read only, served as it is — see [the base folder](#the-base-folder)                             |
+| `data`       | a folder                              | `~/.objectexplorer`  | where the server writes — see [the data folder](#the-data-folder)                                |
+| `open`       | `true`, `false`                       | `true`               | open the browser when it starts                                                                  |
+| `config`     | a JSON file                           | `<data>/server.json` | everything else                                                                                  |
 
 The window's own settings, `window=`, `connect=`, `record=` and the rest, are on
 [the command line](/reference/command-line#starting-it).
 
 The server refuses to start, with a message, when the settings cannot work: `tls` without
 `https_port`, `tls=auto` without `domain`, a host other machines can reach without a sign-in or
-`public=true`, or a licence that does not verify.
+`public=true`, or a licence that does not verify. The certificate's own reasons are on
+[domain and certificate](/self-hosting/domain-and-certificate#when-it-does-not-start).
 
-## Certificates
+## The data folder
 
-| How           | Settings                              | The machine must be reachable from the internet | Renewing                          |
-|---------------|---------------------------------------|-------------------------------------------------|-----------------------------------|
-| Your own      | `tls=<chain>,<key>` and `https_port`  | no                                              | yours; restart after replacing it |
-| Let's Encrypt | `tls=auto`, `domain` and `https_port` | yes, on port 80                                 | by the server, while it runs      |
+Everything the server writes goes in one folder, `~/.objectexplorer` of the account that runs it.
+`data=<folder>` moves it, all of it together:
 
-With `tls=auto`, Let's Encrypt fetches a file from `http://<domain>/.well-known/acme-challenge/`. The
-domain must point at the machine, and port 80 of the internet must reach `http_port`: the server
-listens there, or the router forwards 80 to it. The certificate is fetched at the first start and
-kept in `~/.objectexplorer/certs/<domain>/`. A start that finds one that has not run out serves it
-without asking. The server looks a minute after it starts and every 12 hours after, renews 30 days
-before the end, and swaps the new certificate in without a restart.
+| In the data folder | What it is                                                                            |
+|--------------------|---------------------------------------------------------------------------------------|
+| `server.json`      | the [config file](#the-config-file), unless `config=` names another                   |
+| `licence`          | the [licence](#installing-a-licence)                                                  |
+| `certs/<domain>/`  | the [certificate](/self-hosting/domain-and-certificate#where-the-certificate-is-kept) |
+| `audit/`           | the [audit log](#the-audit-log)                                                       |
+| `explorer.db`      | what the app remembers — see [where your data lives](/reference/data-locations)       |
 
-### A server the internet cannot reach: dns-01
-
-Nothing of the internet needs to reach the machine; the domain may point at an address of your
-private network. Add one DNS record, once:
-
-```
-_acme-challenge.data.example.com  CNAME  data.example.com.acme.objectexplorer.com
+```sh
+objectexplorer data=/srv/objectexplorer
 ```
 
-Then install a licence issued for `data.example.com` and add `"acme": { "challenge": "dns-01" }`
-beside `"tls": "auto"` in the config file. At each issue the server puts Let's Encrypt's check
-value on objectexplorer.com with its licence (the licence proves the domain is yours), waits up to
-two minutes until public DNS sees it, lets Let's Encrypt look, and removes it again. Renewal works
-as above. Until the record exists, the server waits and prints the record to add.
+## The base folder
 
-Refused at start: dns-01 without a licence for the domain, and dns-01 with `aliases` (one name
-only).
+`base=<folder>` serves one read-only folder as it is: the file `<folder>/docs/guide.html` is the
+page `/docs/guide.html`. Only `/api/` is the server's own. The server never writes into it.
 
-The `acme` key of the config tunes it:
+Where the app is:
 
-| `acme` key  | Default                   | What it does                                                                     |
-|-------------|---------------------------|----------------------------------------------------------------------------------|
-| `email`     |                           | the contact Let's Encrypt writes to before a certificate runs out                |
-| `directory` | `production`              | `staging` uses Let's Encrypt's test CA, whose certificates browsers do not trust |
-| `http_port` | the server's `http_port`  | where the check is answered                                                      |
-| `folder`    | `~/.objectexplorer/certs` | where certificates are kept                                                      |
-| `challenge` | `http-01`                 | `dns-01`: through the CNAME above, for a server the internet cannot reach        |
-| `licence`   | the licence installed     | dns-01's proof that the domain is yours: a licence issued for `domain`           |
+- `base` has an `app/` folder: the app is at `/app/`, and `base` itself is a site at `/`.
+- Otherwise the app is at `/`: `base`'s own `index.html` when it has one, else the app built into
+  the binary.
 
-What leaves the server: the domain name, to Let's Encrypt; with dns-01 also the check value and
-the licence, to objectexplorer.com. The certificate's private key is made on the server and never
-leaves it.
+A `demo/` folder in it is what [instant mode](/reference/instant-mode) serves.
+
+Most servers need no `base=`: the app built into the binary is at `/`. Give one when you want a few
+static folders served beside the app, like a folder of documents at `/docs/`.
 
 ## What other machines may reach
 
@@ -414,4 +401,4 @@ On Linux with systemd, as an account of its own named `objectexplorer`:
 On a Mac, `brew services start objectexplorer` runs the Homebrew copy the same way, as your own
 account, with `open=false`; settings go in `~/.objectexplorer/server.json`.
 
-Next: [troubleshooting](/reference/troubleshooting).
+Next: [domain and certificate](/self-hosting/domain-and-certificate).

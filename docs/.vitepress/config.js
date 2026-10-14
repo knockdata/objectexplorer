@@ -234,6 +234,16 @@ export default defineConfig({
 				],
 			},
 			{
+				text: "Self hosting",
+				collapsed: true,
+				items: [
+					{ text: "Running your own server", link: "/self-hosting/" },
+					{ text: "Domain and certificate", link: "/self-hosting/domain-and-certificate" },
+					{ text: "Sign-in with OIDC", link: "/self-hosting/sign-in-oidc" },
+					{ text: "Sign-in with SAML", link: "/self-hosting/sign-in-saml" },
+				],
+			},
+			{
 				text: "Reference",
 				collapsed: true,
 				items: [
@@ -242,15 +252,12 @@ export default defineConfig({
 					{ text: "Moving around a view", link: "/reference/view-controls" },
 					{ text: "Where your data lives", link: "/reference/data-locations" },
 					{ text: "Updating", link: "/reference/updating" },
-					{ text: "Deployments and start settings", link: "/reference/deployment" },
 					{ text: "Command line", link: "/reference/command-line" },
 					{ text: "Instant mode", link: "/reference/instant-mode" },
 					{ text: "Where a file is parsed", link: "/reference/where-files-are-parsed" },
 					{ text: "Recording a session", link: "/reference/session-recording" },
 					{ text: "The tour and what is new", link: "/reference/tour" },
 					{ text: "Memory", link: "/reference/memory" },
-					{ text: "Authentication with OIDC", link: "/reference/authentication-oidc" },
-					{ text: "Authentication with SAML", link: "/reference/authentication-saml" },
 					{ text: "Where the usage numbers come from", link: "/reference/usage-data" },
 					{ text: "The MCP rule file", link: "/reference/mcp-rules" },
 					{ text: "The MCP endpoint", link: "/reference/mcp-protocol" },

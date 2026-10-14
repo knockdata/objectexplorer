@@ -16,7 +16,7 @@ window; typed in a terminal, run by npx or by Homebrew, it serves the same app t
 path between you and your bucket. Everything stays on the machine you run it on.
 
 The same program runs as a server for a team, with your organization's sign-in — see
-[deployment](/reference/deployment). And [objectexplorer.com/app](https://objectexplorer.com/app)
+[deployment](/self-hosting/). And [objectexplorer.com/app](https://objectexplorer.com/app)
 runs it in your browser with nothing installed.
 
 ## How it fits together
