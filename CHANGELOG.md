@@ -4,6 +4,16 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.1  —  2026-10-15
+- starts on a small Linux machine with no swap (v0.9.0 stopped with "could not reserve memory")
+- the Linux desktop window no longer crashes at start
+- on Windows, the page `objectexplorer` serves opens files again
+- objectexplorer.com/app: a zip opens as a folder, Delta, Hudi and Iceberg tables query, and every file of a folder you add opens (pictures, web pages, shaders, large CSVs)
+- Blender: backups (`.blend1`) open as models, the scene Blender opens at is drawn with its collection instances, and a file with no mesh says so
+- code with no spaces between tokens no longer overlaps; text sits centred in buttons on macOS
+- flame graphs draw in the browser
+- the usage disc is off until turned on in Settings → General
+
 ## v0.9.0  —  2026-10-14
 - rebuilt on our own home-brewed development platform: one native binary is the desktop app, the command line and the server, with no Electron
 - install with `brew install knockdata/tap/objectexplorer`, `npx @knockdata/objectexplorer`, or the desktop app for macOS, Windows and Linux
