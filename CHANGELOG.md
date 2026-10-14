@@ -4,6 +4,11 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.0  —  2026-10-14
+- rebuilt on our own home-brewed development platform: one native binary is the desktop app, the command line and the server, with no Electron
+- install with `brew install knockdata/tap/objectexplorer`, `npx @knockdata/objectexplorer`, or the desktop app for macOS, Windows and Linux
+- Self hosting guide: your own domain, a certificate by http-01 or dns-01, sign-in with OIDC or SAML
+
 ## v0.8.4  —  2026-10-02
 - cloud bill for every service: disc Services sector, forecast, budgets, commitments, chargeback
 - BigQuery tables open as a local sample, SQL cells run in BigQuery
