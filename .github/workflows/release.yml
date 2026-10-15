@@ -806,7 +806,8 @@ jobs:
   # The package's first version was submitted by hand (foldone docs/release.md §6.6).
   winget:
     needs: [source, release]
-    if: needs.source.outputs.prerelease != 'true'
+    # off for now (owner, 2026-10-15); back on: if: needs.source.outputs.prerelease != 'true'
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:

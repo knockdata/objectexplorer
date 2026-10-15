@@ -4,6 +4,16 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.3  —  2026-10-15
+- code blocks in documents scroll sideways instead of being cut off
+- the macOS app runs on macOS 11 Big Sur and later
+- the shader preview takes a picture of your own: click or drop one in to see the shader on it; colours are picked from a small swatch or typed as hex
+- Apple Loops (.caf) and Apple Lossless audio play
+- videos seek faster: playing from a point starts at the key frame before it
+- in the page `objectexplorer` serves on a Mac, Add folder no longer freezes the browser; the dialog opens on the screen you are on
+- a folder added that is also inside another added folder shows once, in its place, in the tree
+- the AMR, VP9 and AAC decoders are rewritten from their reference sources
+
 ## v0.9.2  —  2026-10-15
 - macOS downloads as a .dmg: drag ObjectExplorer to Applications
 - Windows downloads as the .msix; Check for Updates installs the next one through App Installer
