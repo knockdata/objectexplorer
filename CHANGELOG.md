@@ -4,6 +4,15 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.4  —  2026-10-15
+- Windows: AWS, and any site whose root certificate Windows has not fetched yet, connects (it failed with "not correctly signed by the trusted CA")
+- signing in with Google works on a computer whose clock is off; Settings → Plan says so, with Fix system clock
+- the installed app (npm, brew, the .dmg and .msix) opens with the demo folder, fetched once from objectexplorer.com
+- Settings → Python installs uv with one button, and finds uv on Windows
+- Sign-ins: each service is a tick, Refresh looks again for a CLI installed or a login made in a terminal; on Windows, gcloud's card links to Google's installation page; Sign in with Google stays gray until gcloud is there
+- dialogs are no longer crossed by the side bar's divider
+- a markdown file's front matter shows as foldable, coloured YAML; the player's controls are leaner
+
 ## v0.9.3  —  2026-10-15
 - code blocks in documents scroll sideways instead of being cut off
 - the macOS app runs on macOS 11 Big Sur and later
