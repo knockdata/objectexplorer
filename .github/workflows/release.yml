@@ -32,6 +32,9 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 #   npm              the six platform packages, then @knockdata/objectexplorer (OIDC trusted
 #                    publishing; an rc under the dist-tag rc), then the registry asked until it says so
 #   brew             knockdata/homebrew-tap's formula and cask (TAP_TOKEN); not for an rc
+#   winget           the new version of KnockData.ObjectExplorer (both msix) proposed to
+#                    microsoft/winget-pkgs as a pull request from rockie-yang's fork (komac,
+#                    WINGET_TOKEN); not for an rc, skipped while the secret is missing
 #
 # A dispatch with dry_run (the default) runs everything up to check and publishes nothing.
 on:
@@ -795,4 +798,34 @@ jobs:
             git commit -q -m "objectexplorer $VERSION"
             git push -q origin HEAD
             echo "the tap has $VERSION" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  # winget: komac reads both msix of the release (their sha256, signature hash and package family
+  # name), writes the new version's manifests from the last one in microsoft/winget-pkgs, and opens
+  # the pull request there from the token owner's fork; Microsoft's validation then merges it.
+  # The package's first version was submitted by hand (foldone docs/release.md §6.6).
+  winget:
+    needs: [source, release]
+    if: needs.source.outputs.prerelease != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VERSION: ${{ needs.source.outputs.version }}
+      WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }}
+    steps:
+      - name: Propose the version to winget
+        run: |
+          set -euo pipefail
+          if [ -z "$WINGET_TOKEN" ]; then
+            echo "no WINGET_TOKEN: winget left out" >> "$GITHUB_STEP_SUMMARY"
+          else
+            curl -fsSL -o komac.tar.gz https://github.com/russellbanks/Komac/releases/download/v2.16.0/komac-2.16.0-x86_64-unknown-linux-gnu.tar.gz
+            tar -xzf komac.tar.gz
+            komac=$(find . -name komac -type f -perm -u+x | head -1)
+            base="https://github.com/${{ github.repository }}/releases/download/v$VERSION"
+            GITHUB_TOKEN="$WINGET_TOKEN" "$komac" update KnockData.ObjectExplorer \
+              --version "$VERSION" \
+              --urls "$base/objectexplorer-windows-x64.msix" "$base/objectexplorer-windows-arm64.msix" \
+              --submit
+            echo "winget: KnockData.ObjectExplorer $VERSION proposed" >> "$GITHUB_STEP_SUMMARY"
           fi
