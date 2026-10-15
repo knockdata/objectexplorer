@@ -3,9 +3,10 @@
 # are one VitePress site now. The old nano landing in rock2/sites/explorer is retired: this build
 # is what the apex serves.
 #
-# The front door in rock2/server serves sites/<domain>/ as that domain's static root, and answers
-# /app, /api and the source maps from mountApp BEFORE it ever reaches these files — so publishing
-# the site here cannot take the app down.
+# The fo server (foldone service) serves its base folder, /www/base on the host, at / — the
+# landing at the top, with the app, the demo, the learning series and the releases in folders of
+# their own beside it (foldone tools/base.sh assembles the whole folder). Only the landing is
+# replaced here, so publishing the site cannot take the app down.
 #
 #   ./docs.sh
 set -euo pipefail
@@ -18,17 +19,16 @@ npm run docs:build
 # index.css do not linger next to the new home page. Every exclusion is anchored with a leading '/'
 # because an unanchored one matches at every depth: `--exclude='app/'` would also swallow any
 # folder named app inside the built site. These are the host's, not the site's:
-#   app/ maps/ WebServer.mjs   the product, installed from npm and mounted at /app
-#   releases/                  the OTA feed the desktop app polls — deleting it breaks updates
-#   download/ build/           installers and build leftovers that predate this site
+#   app/        the browser app (foldone tools/base.sh)
+#   demo/       instant mode's folder
+#   learning/   the learning series
+#   releases/   the OTA feed the desktop app polls — deleting it breaks updates
 rsync -av --delete \
-	--exclude='/app/' --exclude='/maps/' --exclude='/WebServer.mjs' \
-	--exclude='/releases/' --exclude='/download/' --exclude='/build/' \
-	docs/.vitepress/dist/ node@explorer:/www/sites/objectexplorer.com/
+	--exclude='/app/' --exclude='/demo/' --exclude='/learning/' --exclude='/releases/' \
+	docs/.vitepress/dist/ node@explorer:/www/base/
 
-# No restart: serveStatic reads these files from disk on every request, so the new pages are live
-# the moment the rsync finishes. A restart is only what a NEW domain needs — the vhost list and the
-# certificates are read at start — and rock2/deploy.sh is what does that.
+# No restart: the server reads these files from disk on every request, so the new pages are live
+# the moment the rsync finishes.
 
 # A URL is the only honest check, and it is worth retrying: a request can lose the race with a
 # restart happening for other reasons. Four shapes, because each exercises a different rule —
@@ -60,3 +60,8 @@ verify https://objectexplorer.com/formats/ "a section index"
 verify https://objectexplorer.com/app/ "the app, still mounted at /app"
 
 echo "published to https://objectexplorer.com"
+
+# every page opened, its links, films and errors (test.sh); TEST=0 skips it
+if [ "${TEST:-1}" = 1 ]; then
+	./test.sh
+fi

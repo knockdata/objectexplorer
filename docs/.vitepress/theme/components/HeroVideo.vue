@@ -4,7 +4,7 @@ import YoutubePlayer from "./YoutubePlayer.vue"
 
 <template>
 	<div class="hero-video-frame">
-		<YoutubePlayer video="6jSKJHLVmJE" poster="/video/poster.png" title="ObjectExplorer, the 40-second tour" />
+		<YoutubePlayer video="6jSKJHLVmJE" poster="/video/poster.png" title="ObjectExplorer, the 40-second tour" own="/video/objectexplorer.mp4" />
 	</div>
 </template>
 

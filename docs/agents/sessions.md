@@ -131,6 +131,6 @@ A recheck is an ordinary set of calls: it is logged as its own session, marked a
 one it came from, and it obeys every limit and every approval the live path obeys. It is not a way
 to re-run something the rules no longer permit.
 
-→ the endpoints behind all of this: [the MCP endpoint](/reference/mcp-protocol#the-other-half-what-the-window-listens-to)
+→ the endpoints behind all of this: [the MCP endpoint](/reference/mcp-protocol#the-other-half-what-the-window-uses)
 
 Next: [every format](/formats/).

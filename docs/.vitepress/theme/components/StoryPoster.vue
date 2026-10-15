@@ -45,7 +45,7 @@ function appLink() {
 				</svg>
 			</a>
 			<div v-if="frontmatter.videoInIdeal && frontmatter.youtube" class="story-poster-short">
-				<YoutubePlayer :video="frontmatter.youtube" :poster="`/video/${frontmatter.youtube}.jpg`" :title="frontmatter.title" />
+				<YoutubePlayer :video="frontmatter.youtube" :poster="`/video/${frontmatter.youtube}.jpg`" :title="frontmatter.title" :own="frontmatter.recording ?? frontmatter.video ?? ''" />
 			</div>
 			<video v-else-if="frontmatter.videoInIdeal" :src="withBase(frontmatter.video)" :poster="withBase(frontmatter.poster)" controls playsinline preload="metadata"></video>
 			<img v-else :src="withBase(frontmatter.poster)" :alt="frontmatter.caption ?? frontmatter.title">

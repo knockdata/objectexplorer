@@ -33,4 +33,4 @@ through our servers. See [your data stays here](/privacy).
 
 - [Terms of use](/terms)
 - [Privacy](/privacy)
-- [Third-party licenses](https://objectexplorer.com/app/LICENSES.md)
+- [Third-party licenses](/third-party-licenses)

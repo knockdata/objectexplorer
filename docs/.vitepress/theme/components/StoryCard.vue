@@ -44,7 +44,7 @@ function pauseVideo(event) {
 		@mouseleave="pauseVideo"
 	>
 		<span class="story-card-art">
-			<YoutubePlayer v-if="playing && story.youtube" :video="story.youtube" :poster="`/video/${story.youtube}.jpg`" :title="story.title" start />
+			<YoutubePlayer v-if="playing && story.youtube" :video="story.youtube" :poster="`/video/${story.youtube}.jpg`" :title="story.title" :own="story.recording ?? story.video ?? ''" start />
 			<video
 				v-else-if="playing"
 				class="story-card-poster"

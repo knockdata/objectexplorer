@@ -6,18 +6,24 @@ import { onBeforeUnmount, onMounted, ref } from "vue"
 // Google and needs no cookie notice. The click is the viewer asking for the film: only then is the
 // player made, from youtube-nocookie.com, and the line on the poster says beforehand where it plays
 // from. Our films carry their subtitles burned in, so YouTube's own captions are turned off.
+// The site is cross-origin isolated for the app it frames (Cross-Origin-Embedder-Policy: require-corp),
+// which refuses a YouTube frame; `credentialless` loads it without cookies, which isolation allows.
+// Firefox and Safari have no `credentialless`, so there the film plays from our own copy (`own`).
 const props = defineProps({
 	video: { type: String, required: true },
 	poster: { type: String, required: true },
 	title: { type: String, required: true },
 	// the click that asked for the film was elsewhere (a story card's Play), so the player starts at once
 	start: { type: Boolean, default: false },
+	// our own copy of the film (/video/<name>.mp4), played where the YouTube frame would be refused
+	own: { type: String, default: "" },
 })
 
 const PLAYER_ORIGIN = "https://www.youtube-nocookie.com"
 const PLAYING = 1
 
 const playing = ref(false)
+const playing_own = ref(false)
 const frame = ref(null)
 
 onMounted(function () {
@@ -26,7 +32,13 @@ onMounted(function () {
 	}
 })
 
+// the page is cross-origin isolated and the browser cannot load a frame credentialless
+function youtube_refused() {
+	return window.crossOriginIsolated && !("credentialless" in HTMLIFrameElement.prototype)
+}
+
 function play() {
+	playing_own.value = props.own !== "" && youtube_refused()
 	playing.value = true
 	window.addEventListener("message", on_player_message)
 }
@@ -66,12 +78,14 @@ onBeforeUnmount(function () {
 </script>
 
 <template>
+	<video v-if="playing && playing_own" class="youtube-player" :src="withBase(own)" :title="title" autoplay controls playsinline></video>
 	<iframe
-		v-if="playing"
+		v-else-if="playing"
 		ref="frame"
 		class="youtube-player"
 		:src="player_address()"
 		:title="title"
+		credentialless
 		allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
 		allowfullscreen
 		@load="on_player_load"

@@ -13,7 +13,7 @@ const { frontmatter } = useData()
 		<h1 class="rock"><span>{{ frontmatter.title }}</span><span> shouldn't be that hard</span></h1>
 		<p class="story-header-subtitle">{{ frontmatter.subtitle }}</p>
 		<div v-if="frontmatter.youtube && !frontmatter.videoInIdeal" class="story-header-short">
-			<YoutubePlayer :video="frontmatter.youtube" :poster="`/video/${frontmatter.youtube}.jpg`" :title="frontmatter.title" />
+			<YoutubePlayer :video="frontmatter.youtube" :poster="`/video/${frontmatter.youtube}.jpg`" :title="frontmatter.title" :own="frontmatter.recording ?? frontmatter.video ?? ''" />
 		</div>
 		<div v-else-if="frontmatter.video && !frontmatter.videoInIdeal" class="story-header-media">
 			<video

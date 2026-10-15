@@ -102,7 +102,7 @@ Seven tools, ticked one by one.
 `query` and `getObject` are the two worth thinking about, and the two a starting file leaves off:
 they are the ones that read a whole object. Turning `query` on is what makes the app an analysis
 engine for the agent rather than a catalogue. `getObject` on a drawing or a binary answers with a
-tree or bytes, which no [PII rule](/agents/pii#what-the-rules-cannot-reach) can rewrite.
+tree or bytes, which no [PII rule](/agents/pii#what-the-rules-reach-and-what-they-cannot) can rewrite.
 
 An agent names everything by the same URI the app writes into SQL — `gs://bucket/key`,
 `s3://bucket/key`, `az://account/container/key`, and `root/key` for a local folder you mounted.
