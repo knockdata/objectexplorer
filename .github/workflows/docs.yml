@@ -1,9 +1,9 @@
 name: Docs
 
 # A GitHub Pages mirror of the site at objectexplorer.com. It is built from docs/ with VitePress,
-# which is why this is its own workflow: release.yml ships the product and must never wait on a
+# which is why this is its own workflow: create-release.yml ships the product and must never wait on a
 # docs build, and a typo fix in a page must never touch the binaries. objectexplorer.com itself is
-# published by docs.sh, not by this workflow.
+# published by foldone's tools/deploy-landing.sh, not by this workflow.
 on:
   push:
     branches: [main]
@@ -36,8 +36,9 @@ jobs:
           node-version: 24
       - run: npm install
       # Pages serves this repo's site under /objectexplorer/, not at a domain root, so the
-      # build has to be rooted there or every asset and link answers 404. docs.sh builds the
-      # same pages with no DOCS_BASE for objectexplorer.com, which is served at /.
+      # build has to be rooted there or every asset and link answers 404. foldone's
+      # tools/deploy-landing.sh builds the same pages with no DOCS_BASE for objectexplorer.com,
+      # which is served at /.
       - run: npm run docs:build
         env:
           DOCS_BASE: /objectexplorer/

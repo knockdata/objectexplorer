@@ -1,5 +1,5 @@
 #!/bin/bash
-# .github/check-binary.sh <program> <version> — what release.yml asks of every binary,
+# .github/check-binary.sh <program> <version> — what create-release.yml asks of every binary,
 # unsigned and signed: it answers --version with the version, and started as an instant
 # server (mode=instant, the embedded browser app over the demo folder) it answers curl.
 # Retried: a check right after the start races the bind. window=false: an .app's

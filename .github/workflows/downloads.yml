@@ -2,7 +2,7 @@ name: Downloads
 
 # How many times each release asset has been downloaded, one row per asset per day. GitHub only
 # ever shows a running total, and loses it with the release, so the history is kept here: one
-# `downloads.csv` on the orphan `stats` branch, which neither docs.yml nor release.yml triggers on.
+# `downloads.csv` on the orphan `stats` branch, which neither docs.yml, create-release.yml nor release.yml triggers on.
 on:
   schedule:
     - cron: "17 4 * * *"

@@ -1,67 +1,39 @@
-name: Release
+name: release
 
-# The Actions list shows one row per run, so the row says which version it is: a tag push
-# carries it in ref_name, a dispatch in its version input.
-run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version, inputs.dry_run && ' (dry run)' || '') || github.ref_name }}
+run-name: ObjectExplorer v${{ inputs.version }} to npm, brew and winget
 
-# objectexplorer ships from this one run: the GitHub release (the binaries, the desktop app as a
-# .dmg (the download) and a .zip (the updater's), the Windows msix (the download), zip and
-# .appinstaller, SHA256SUMS), the npm packages and the Homebrew tap,
-# under one version, from the same signed files.
+# A created release taken to everyone: npm, the Homebrew tap and winget, from the GitHub release
+# v<version> alone. create-release.yml made that release from the signed files and attached publish.tar
+# (version, npm/*.tgz with the signed binaries, brew/objectexplorer.rb and brew/objectexplorer-app.rb
+# with the signed files' sha256), so this run needs no artifact of that one, which expire after
+# 5 days: a version can be published any time after it was created. foldone's
+# tools/publish-release.sh <version> dispatches it, watches it and checks npm and the tap.
 #
-# No source is here. foldone's tools/release.sh builds the candidate on the owner's Mac (macOS,
-# Linux and Windows binaries, unsigned: macOS ad hoc), and tools/publish.sh uploads it as
-# https://objectexplorer.com/releases/<version>/candidate.tar (+ .sha256) and pushes the tag
-# v<version>, annotated "candidate <sha256>". This run then:
+#   source       the release v<version> published (not a draft), publish.tar downloaded, its
+#                version checked; an rc (1.2.3-rc.1) is a prerelease
+#   npm          the six platform packages, then @knockdata/objectexplorer (OIDC trusted
+#                publishing; an rc under the dist-tag rc)
+#   npm-verify   the registry asked until it says so
+#   brew         knockdata/homebrew-tap's formula and cask (TAP_TOKEN); not for an rc
+#   winget       the new version of KnockData.ObjectExplorer (both msix of the release) proposed
+#                to microsoft/winget-pkgs as a pull request from rockie-yang's fork (komac,
+#                WINGET_TOKEN); not for an rc, skipped while the secret is missing
 #
-#   source           downloads the candidate, checks it against the tag's sha256 and its own
-#                    version against the tag
-#   smoke            the unsigned binaries on six runners: --version and an instant server + curl
-#   sign-macos       Developer ID, notarized, stapled: both .apps and both command line binaries;
-#                    each .app in a .dmg (dmgbuild: a link to Applications, a line saying to drag
-#                    it there), the .dmg signed, notarized and stapled too
-#   sign-windows     Azure Trusted Signing: ObjectExplorer.exe, .com, oe.exe, oe.com of both cpus;
-#                    the msix packed again around the signed .exe (Publisher: the certificate's
-#                    subject) and signed; an .appinstaller per cpu
-#   package          SHA256SUMS of the signed files, the npm packages with the signed binaries,
-#                    the brew formula and cask with their sha256
-#   check            the signed files on the six runners: codesign, spctl, stapler; Authenticode;
-#                    --version, instant + curl; Add-AppxPackage of the msix
-#   release          the GitHub release (an rc, 1.2.3-rc.1, is a prerelease: /releases/latest
-#                    and so Check for Updates never offer it)
-#   npm              the six platform packages, then @knockdata/objectexplorer (OIDC trusted
-#                    publishing; an rc under the dist-tag rc), then the registry asked until it says so
-#   brew             knockdata/homebrew-tap's formula and cask (TAP_TOKEN); not for an rc
-#   winget           the new version of KnockData.ObjectExplorer (both msix) proposed to
-#                    microsoft/winget-pkgs as a pull request from rockie-yang's fork (komac,
-#                    WINGET_TOKEN); not for an rc, skipped while the secret is missing
-#
-# A dispatch with dry_run (the default) runs everything up to check and publishes nothing.
+# Each step leaves a version already published alone, so a run can be dispatched again.
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
       version:
-        description: "The candidate's version (objectexplorer.com/releases/<version>/candidate.tar)"
+        description: "The GitHub release's version (v<version>, made by create-release.yml)"
         type: string
         required: true
-      dry_run:
-        description: "Sign, pack and check, publish nothing"
-        type: boolean
-        default: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-${{ inputs.version || github.ref_name }}
+  group: release-${{ inputs.version }}
   cancel-in-progress: false
-
-env:
-  CANDIDATES: https://objectexplorer.com/releases
-  COPYFILE_DISABLE: 1
 
 jobs:
   source:
@@ -69,63 +41,38 @@ jobs:
     timeout-minutes: 15
     outputs:
       version: ${{ steps.pick.outputs.version }}
-      tag: ${{ steps.pick.outputs.tag }}
       prerelease: ${{ steps.pick.outputs.prerelease }}
-      dry_run: ${{ steps.pick.outputs.dry_run }}
-      msix_version: ${{ steps.pick.outputs.msix_version }}
     steps:
-      - uses: actions/checkout@v6
       # through env, not ${{ }} inside the script: an expression is pasted in as text before
       # bash sees it, so a value typed with a quote in it would run as a command
       - id: pick
         env:
-          REF_NAME: ${{ github.ref_name }}
-          EVENT: ${{ github.event_name }}
           CLAIMED: ${{ inputs.version }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          if [ "$EVENT" = "push" ]; then
-            version="${REF_NAME#v}"
-            dry_run=false
-          else
-            version="$CLAIMED"
-            dry_run="$DRY_RUN"
-          fi
+          version="$CLAIMED"
           if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
-            echo "candidate $version (dry_run=$dry_run)" >> "$GITHUB_STEP_SUMMARY"
+            echo "publishing $version" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "::error::expected a version like 1.2.3 or 1.2.3-rc.1, got '$version'"
             exit 1
           fi
-          curl -fsSL -o candidate.tar "$CANDIDATES/$version/candidate.tar"
-          curl -fsSL -o candidate.tar.sha256 "$CANDIDATES/$version/candidate.tar.sha256"
-          sha=$(sha256sum candidate.tar | cut -d' ' -f1)
-          if [ "$sha" = "$(cut -d' ' -f1 candidate.tar.sha256)" ]; then
-            echo "candidate.tar sha256 $sha"
+          draft=$(gh release view "v$version" --json isDraft --jq '.isDraft')
+          if [ "$draft" = "false" ]; then
+            gh release download "v$version" --pattern publish.tar
           else
-            echo "::error::candidate.tar does not match its candidate.tar.sha256"
+            echo "::error::v$version is a draft: create-release.yml did not finish"
             exit 1
           fi
-          # a tag push: the annotated tag names the sha256 the Mac built, so the host alone
-          # cannot change what is signed (checkout leaves a lightweight copy: fetched again)
-          if [ "$EVENT" = "push" ]; then
-            git fetch --force origin "refs/tags/$REF_NAME:refs/tags/$REF_NAME"
-            message=$(git tag -l --format='%(contents)' "$REF_NAME" | head -1)
-            if [ "$message" = "candidate $sha" ]; then
-              echo "the tag $REF_NAME names this candidate" >> "$GITHUB_STEP_SUMMARY"
-            else
-              echo "::error::the tag $REF_NAME says '$message', the download is candidate $sha"
-              exit 1
-            fi
-          fi
-          mkdir candidate
-          tar -xf candidate.tar -C candidate
-          inside=$(cat candidate/version)
+          mkdir publish
+          tar -xf publish.tar -C publish
+          inside=$(cat publish/version)
           if [ "$inside" = "$version" ]; then
-            (cd candidate && sha256sum -c SHA256SUMS)
+            ls -la publish/npm publish/brew
           else
-            echo "::error::the candidate is $inside, not $version"
+            echo "::error::publish.tar is $inside, not $version"
             exit 1
           fi
           numbers="${version%%-*}"
@@ -135,568 +82,27 @@ jobs:
           fi
           {
             echo "version=$version"
-            echo "tag=v$version"
             echo "prerelease=$prerelease"
-            echo "dry_run=$dry_run"
-            echo "msix_version=$numbers.0"
           } >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v6
         with:
-          name: candidate
-          path: candidate
-          retention-days: 5
-
-  # the unsigned candidate on every system and cpu it is for: x64 macOS on Intel hardware
-  smoke:
-    needs: source
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: ubuntu-latest
-            target: linux-x64
-          - runner: ubuntu-24.04-arm
-            target: linux-arm64
-          - runner: macos-latest
-            target: darwin-arm64
-          - runner: macos-15-intel
-            target: darwin-x64
-          - runner: windows-latest
-            target: windows-x64
-          - runner: windows-11-arm
-            target: windows-arm64
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 15
-    defaults:
-      run:
-        shell: bash
-    env:
-      VERSION: ${{ needs.source.outputs.version }}
-      TARGET: ${{ matrix.target }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/download-artifact@v7
-        with:
-          name: candidate
-          path: candidate
-      - name: unpack
-        run: |
-          mkdir unpacked
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            powershell -NoProfile -Command "Expand-Archive -Path candidate/objectexplorer-$TARGET.zip -DestinationPath unpacked"
-          else
-            tar -xzf "candidate/objectexplorer-$TARGET.tar.gz" -C unpacked
-          fi
-          ls -la unpacked
-      - name: the binary
-        run: |
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            bash .github/check-binary.sh unpacked/ObjectExplorer.com "$VERSION"
-            PORT=9432 bash .github/check-binary.sh unpacked/oe.com "$VERSION"
-          else
-            bash .github/check-binary.sh unpacked/objectexplorer "$VERSION"
-          fi
-      - name: the app
-        if: runner.os == 'macOS'
-        run: |
-          ditto -x -k "candidate/objectexplorer-app-$TARGET.zip" app
-          PORT=9433 bash .github/check-binary.sh app/ObjectExplorer.app/Contents/MacOS/ObjectExplorer "$VERSION"
-
-  sign-macos:
-    needs: [source, smoke]
-    runs-on: macos-latest
-    timeout-minutes: 60
-    outputs:
-      signed: ${{ steps.identity.outputs.signed }}
-    env:
-      VERSION: ${{ needs.source.outputs.version }}
-      DRY_RUN: ${{ needs.source.outputs.dry_run }}
-      BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-      P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-      APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-    steps:
-      - uses: actions/download-artifact@v7
-        with:
-          name: candidate
-          path: candidate
-      # without a certificate only a dry run goes on, with the ad hoc signatures
-      - id: identity
-        name: Import the Developer ID
-        run: |
-          if [ -n "$BUILD_CERTIFICATE_BASE64" ]; then
-            certificate=$RUNNER_TEMP/certificate.p12
-            keychain=$RUNNER_TEMP/build.keychain
-            echo -n "$BUILD_CERTIFICATE_BASE64" | base64 -D -o "$certificate"
-            security create-keychain -p "$KEYCHAIN_PASSWORD" "$keychain"
-            security set-keychain-settings -lut 21600 "$keychain"
-            security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$keychain"
-            security import "$certificate" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
-            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$keychain"
-            security list-keychain -d user -s "$keychain" login.keychain
-            echo "IDENTITY=$(security find-identity -v -p codesigning "$keychain" | head -1 | awk '{print $2}')" >> "$GITHUB_ENV"
-            echo "signed=true" >> "$GITHUB_OUTPUT"
-          elif [ "$DRY_RUN" = "true" ]; then
-            echo "::warning::no BUILD_CERTIFICATE_BASE64: the dry run keeps the ad hoc signatures"
-            echo "signed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "::error::no BUILD_CERTIFICATE_BASE64: a release is signed with the Developer ID"
-            exit 1
-          fi
-      - name: Unpack
-        run: |
-          for cpu in arm64 x64; do
-            mkdir -p "work/darwin-$cpu" "work/app-$cpu"
-            tar -xzf "candidate/objectexplorer-darwin-$cpu.tar.gz" -C "work/darwin-$cpu"
-            ditto -x -k "candidate/objectexplorer-app-darwin-$cpu.zip" "work/app-$cpu"
-          done
-      # the hardened runtime and a secure timestamp, both of which notarization asks for;
-      # the .app's marker (Contents/Resources) is inside the seal
-      - name: Sign
-        if: steps.identity.outputs.signed == 'true'
-        run: |
-          for cpu in arm64 x64; do
-            codesign --force --options runtime --timestamp --sign "$IDENTITY" "work/darwin-$cpu/objectexplorer"
-            codesign --force --options runtime --timestamp --sign "$IDENTITY" "work/app-$cpu/ObjectExplorer.app"
-            codesign --verify --strict --verbose=2 "work/app-$cpu/ObjectExplorer.app"
-          done
-      - name: Notarize and staple
-        if: steps.identity.outputs.signed == 'true'
-        env:
-          PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
-        run: |
-          echo "$PRIVATE_KEY" > "$RUNNER_TEMP/AuthKey.p8"
-          ditto -c -k --keepParent work notarize.zip
-          xcrun notarytool submit notarize.zip --key "$RUNNER_TEMP/AuthKey.p8" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait --output-format json > notary.json
-          cat notary.json
-          id=$(python3 -c 'import json; print(json.load(open("notary.json"))["id"])')
-          status=$(python3 -c 'import json; print(json.load(open("notary.json"))["status"])')
-          if [ "$status" = "Accepted" ]; then
-            for cpu in arm64 x64; do
-              xcrun stapler staple "work/app-$cpu/ObjectExplorer.app"
-            done
-          else
-            xcrun notarytool log "$id" --key "$RUNNER_TEMP/AuthKey.p8" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER"
-            echo "::error::notarization: $status"
-            exit 1
-          fi
-      - name: Pack
-        run: |
-          mkdir signed
-          for cpu in arm64 x64; do
-            tar -czf "signed/objectexplorer-darwin-$cpu.tar.gz" -C "work/darwin-$cpu" objectexplorer oe objectexplorer.install.json
-            (cd "work/app-$cpu" && ditto -c -k --keepParent ObjectExplorer.app "../../signed/objectexplorer-app-darwin-$cpu.zip")
-          done
-          ls -la signed
-      # the download: the stapled app in a .dmg with a link to Applications and a line saying to drag it
-      # there (the candidate's dmg/: dmgbuild's settings and background); the .zip stays, for the updater
-      - name: The dmg
-        run: |
-          set -euo pipefail
-          python3 -m venv "$RUNNER_TEMP/dmg" && "$RUNNER_TEMP/dmg/bin/pip" install --quiet dmgbuild
-          for cpu in arm64 x64; do
-            "$RUNNER_TEMP/dmg/bin/dmgbuild" -s candidate/dmg/settings.py -D app="work/app-$cpu/ObjectExplorer.app" -D background="candidate/dmg/background.tiff" ObjectExplorer "signed/objectexplorer-app-darwin-$cpu.dmg"
-          done
-      - name: Sign, notarize and staple the dmg
-        if: steps.identity.outputs.signed == 'true'
-        env:
-          PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
-        run: |
-          set -euo pipefail
-          echo "$PRIVATE_KEY" > "$RUNNER_TEMP/AuthKey.p8"
-          for cpu in arm64 x64; do
-            dmg="signed/objectexplorer-app-darwin-$cpu.dmg"
-            codesign --force --timestamp --sign "$IDENTITY" "$dmg"
-            xcrun notarytool submit "$dmg" --key "$RUNNER_TEMP/AuthKey.p8" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait --output-format json > notary-dmg.json
-            cat notary-dmg.json
-            status=$(python3 -c 'import json; print(json.load(open("notary-dmg.json"))["status"])')
-            if [ "$status" = "Accepted" ]; then
-              xcrun stapler staple "$dmg"
-            else
-              echo "::error::notarization of $dmg: $status"
-              exit 1
-            fi
-          done
-          ls -la signed
-      - uses: actions/upload-artifact@v6
-        with:
-          name: signed-macos
-          path: signed
-          retention-days: 5
-      - name: Delete the keychain
-        if: always()
-        run: security delete-keychain "$RUNNER_TEMP/build.keychain" || true
-
-  sign-windows:
-    needs: [source, smoke]
-    runs-on: windows-latest
-    timeout-minutes: 60
-    outputs:
-      signed: ${{ steps.secrets.outputs.signed }}
-    env:
-      VERSION: ${{ needs.source.outputs.version }}
-      DRY_RUN: ${{ needs.source.outputs.dry_run }}
-      PRERELEASE: ${{ needs.source.outputs.prerelease }}
-      MSIX_VERSION: ${{ needs.source.outputs.msix_version }}
-      # a step's own env is not visible to that step's if, so the signing secret lives here
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-    steps:
-      - uses: actions/download-artifact@v7
-        with:
-          name: candidate
-          path: candidate
-      - id: secrets
-        name: Signing or not
-        shell: bash
-        run: |
-          if [ -n "$AZURE_CLIENT_ID" ]; then
-            echo "signed=true" >> "$GITHUB_OUTPUT"
-          elif [ "$DRY_RUN" = "true" ]; then
-            echo "::warning::no AZURE_CLIENT_ID: the dry run keeps the files unsigned"
-            echo "signed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "::error::no AZURE_CLIENT_ID: a release is signed by Azure Trusted Signing"
-            exit 1
-          fi
-      - name: Unpack
-        shell: powershell
-        run: |
-          foreach ($cpu in "arm64", "x64") {
-            Expand-Archive -Path "candidate\objectexplorer-windows-$cpu.zip" -DestinationPath "work\windows-$cpu"
-          }
-          Get-ChildItem -Recurse work
-      # every program of both zips: the window's .exe, the command line's door (.com), and the oe pair
-      - name: Sign the programs
-        if: steps.secrets.outputs.signed == 'true'
-        uses: azure/trusted-signing-action@v0
-        with:
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          endpoint: https://neu.codesigning.azure.net/
-          trusted-signing-account-name: knockdata
-          certificate-profile-name: KnockData
-          files-folder: ${{ github.workspace }}\work
-          files-folder-filter: exe,com
-          files-folder-recurse: true
-      # the certificate's subject is what the msix's Publisher must equal, character for
-      # character: read off a signed .exe, never written down
-      - name: Check the signatures
-        if: steps.secrets.outputs.signed == 'true'
-        shell: powershell
-        run: |
-          $files = Get-ChildItem work\*\*.exe, work\*\*.com
-          foreach ($file in $files) {
-            $signature = Get-AuthenticodeSignature $file.FullName
-            Write-Output "$($file.FullName): $($signature.Status)"
-            if ($signature.Status -ne "Valid") { throw "$($file.Name) is not signed: $($signature.Status)" }
-          }
-          $subject = (Get-AuthenticodeSignature $files[0].FullName).SignerCertificate.Subject
-          Write-Output "signed by $subject" >> $env:GITHUB_STEP_SUMMARY
-          Write-Output "MSIX_PUBLISHER=$subject" >> $env:GITHUB_ENV
-      # the candidate's msix folder (AppxManifest.xml, Assets/, the marker) around the signed
-      # .exe pair, Publisher set to the subject, packed by the Windows SDK's makeappx
-      - name: Pack the msix
-        if: steps.secrets.outputs.signed == 'true'
-        shell: powershell
-        run: |
-          $makeappx = (Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\10.*\x64\makeappx.exe" | Sort-Object FullName | Select-Object -Last 1).FullName
-          New-Item -ItemType Directory -Force -Path packages | Out-Null
-          foreach ($cpu in "arm64", "x64") {
-            $folder = "candidate\msix\windows-$cpu"
-            Copy-Item "work\windows-$cpu\ObjectExplorer.exe", "work\windows-$cpu\oe.exe" $folder
-            $manifest = Get-Content "$folder\AppxManifest.xml" -Raw
-            $publisher = [System.Security.SecurityElement]::Escape($env:MSIX_PUBLISHER)
-            $manifest = $manifest -replace 'Publisher="[^"]*"', "Publisher=`"$publisher`""
-            [System.IO.File]::WriteAllText("$PWD\$folder\AppxManifest.xml", $manifest)
-            & $makeappx pack /o /d $folder /p "packages\objectexplorer-windows-$cpu.msix"
-            if ($LASTEXITCODE -ne 0) { throw "makeappx failed for $cpu" }
-          }
-      - name: Sign the msix
-        if: steps.secrets.outputs.signed == 'true'
-        uses: azure/trusted-signing-action@v0
-        with:
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          endpoint: https://neu.codesigning.azure.net/
-          trusted-signing-account-name: knockdata
-          certificate-profile-name: KnockData
-          files-folder: ${{ github.workspace }}\packages
-          files-folder-filter: msix
-          files-folder-recurse: false
-      # App Installer reads the .appinstaller from its own Uri at each start and installs a newer
-      # msix it names (the update pane says Windows updates such a copy): the release's latest,
-      # or for an rc this version's own files
-      - name: Pack the zips and write the .appinstaller
-        shell: powershell
-        run: |
-          New-Item -ItemType Directory -Force -Path signed | Out-Null
-          $base = "https://github.com/knockdata/objectexplorer/releases/latest/download"
-          if ($env:PRERELEASE -eq "true") { $base = "https://github.com/knockdata/objectexplorer/releases/download/v$env:VERSION" }
-          foreach ($cpu in "arm64", "x64") {
-            $files = "ObjectExplorer.exe", "ObjectExplorer.com", "oe.exe", "oe.com", "objectexplorer.install.json" | ForEach-Object { "work\windows-$cpu\$_" }
-            Compress-Archive -Path $files -DestinationPath "signed\objectexplorer-windows-$cpu.zip"
-            if (Test-Path "packages\objectexplorer-windows-$cpu.msix") {
-              Copy-Item "packages\objectexplorer-windows-$cpu.msix" signed
-              $publisher = [System.Security.SecurityElement]::Escape($env:MSIX_PUBLISHER)
-              $installer = @"
-          <?xml version="1.0" encoding="utf-8"?>
-          <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018" Version="$env:MSIX_VERSION" Uri="$base/objectexplorer-windows-$cpu.appinstaller">
-          	<MainPackage Name="KnockData.ObjectExplorer" Publisher="$publisher" Version="$env:MSIX_VERSION" ProcessorArchitecture="$cpu" Uri="$base/objectexplorer-windows-$cpu.msix" />
-          	<UpdateSettings>
-          		<OnLaunch HoursBetweenUpdateChecks="0" />
-          	</UpdateSettings>
-          </AppInstaller>
-          "@
-              [System.IO.File]::WriteAllText("$PWD\signed\objectexplorer-windows-$cpu.appinstaller", $installer)
-            }
-          }
-          Get-ChildItem signed
-      - uses: actions/upload-artifact@v6
-        with:
-          name: signed-windows
-          path: signed
-          retention-days: 5
-
-  # what the release publishes, all from the signed files: SHA256SUMS (what Check for Updates
-  # checks a download against), the npm packages, the brew formula and cask
-  package:
-    needs: [source, sign-macos, sign-windows]
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      VERSION: ${{ needs.source.outputs.version }}
-    steps:
-      - uses: actions/download-artifact@v7
-        with:
-          name: candidate
-          path: candidate
-      - uses: actions/download-artifact@v7
-        with:
-          pattern: signed-*
-          merge-multiple: true
-          path: assets
-      - name: Assets and SHA256SUMS
-        run: |
-          set -euo pipefail
-          cp candidate/objectexplorer-linux-*.tar.gz assets/
-          cp candidate/LICENSE.md assets/
-          # a dry run without the Windows certificate has no msix: the unsigned one is for local tests only
-          shopt -s nullglob
-          cd assets
-          sha256sum objectexplorer-*.tar.gz objectexplorer-*.zip objectexplorer-*.dmg objectexplorer-*.msix objectexplorer-*.appinstaller > SHA256SUMS
-          cat SHA256SUMS
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-      - name: The npm packages
-        run: |
-          set -euo pipefail
-          mkdir -p npm extracted
-          for target in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
-            mkdir -p "extracted/$target"
-            tar -xzf "assets/objectexplorer-$target.tar.gz" -C "extracted/$target" objectexplorer
-            cp "extracted/$target/objectexplorer" "candidate/npm/objectexplorer-$target/bin/objectexplorer"
-            chmod +x "candidate/npm/objectexplorer-$target/bin/objectexplorer"
-          done
-          for cpu in arm64 x64; do
-            mkdir -p "extracted/windows-$cpu"
-            unzip -q "assets/objectexplorer-windows-$cpu.zip" ObjectExplorer.exe -d "extracted/windows-$cpu"
-            cp "extracted/windows-$cpu/ObjectExplorer.exe" "candidate/npm/objectexplorer-win32-$cpu/bin/objectexplorer.exe"
-          done
-          for package in candidate/npm/*/; do
-            (cd npm && npm pack --silent "../$package" > /dev/null)
-          done
-          ls -la npm
-      - name: The brew formula and cask
-        run: |
-          set -euo pipefail
-          sum() { sha256sum "assets/$1" | cut -d' ' -f1; }
-          mkdir brew
-          sed -e "s/SHA_DARWIN_ARM64/$(sum objectexplorer-darwin-arm64.tar.gz)/" \
-            -e "s/SHA_DARWIN_X64/$(sum objectexplorer-darwin-x64.tar.gz)/" \
-            -e "s/SHA_LINUX_ARM64/$(sum objectexplorer-linux-arm64.tar.gz)/" \
-            -e "s/SHA_LINUX_X64/$(sum objectexplorer-linux-x64.tar.gz)/" \
-            candidate/brew/objectexplorer.rb > brew/objectexplorer.rb
-          sed -e "s/SHA_APP_ARM64/$(sum objectexplorer-app-darwin-arm64.dmg)/" \
-            -e "s/SHA_APP_X64/$(sum objectexplorer-app-darwin-x64.dmg)/" \
-            candidate/brew/objectexplorer-app.rb > brew/objectexplorer-app.rb
-          grep -n "sha256\|version" brew/*.rb
-      - uses: actions/upload-artifact@v6
-        with:
-          name: release
-          path: assets
-          retention-days: 5
-      - uses: actions/upload-artifact@v6
-        with:
           name: npm
-          path: npm
+          path: publish/npm
           retention-days: 5
       - uses: actions/upload-artifact@v6
         with:
           name: brew
-          path: brew
+          path: publish/brew
           retention-days: 5
 
-  # the signed files as a user gets them, on the six runners
-  check:
-    needs: [source, sign-macos, sign-windows, package]
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: ubuntu-latest
-            target: linux-x64
-          - runner: ubuntu-24.04-arm
-            target: linux-arm64
-          - runner: macos-latest
-            target: darwin-arm64
-          - runner: macos-15-intel
-            target: darwin-x64
-          - runner: windows-latest
-            target: windows-x64
-          - runner: windows-11-arm
-            target: windows-arm64
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 15
-    defaults:
-      run:
-        shell: bash
-    env:
-      VERSION: ${{ needs.source.outputs.version }}
-      TARGET: ${{ matrix.target }}
-      MAC_SIGNED: ${{ needs.sign-macos.outputs.signed }}
-      WINDOWS_SIGNED: ${{ needs.sign-windows.outputs.signed }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/download-artifact@v7
-        with:
-          name: release
-          path: assets
-      - name: SHA256SUMS
-        run: |
-          cd assets
-          if [ "$RUNNER_OS" = "macOS" ]; then
-            shasum -a 256 -c SHA256SUMS
-          else
-            sha256sum -c SHA256SUMS
-          fi
-      - name: macOS signatures
-        if: runner.os == 'macOS'
-        run: |
-          set -euo pipefail
-          mkdir unpacked
-          tar -xzf "assets/objectexplorer-$TARGET.tar.gz" -C unpacked
-          ditto -x -k "assets/objectexplorer-app-$TARGET.zip" app
-          if [ "$MAC_SIGNED" = "true" ]; then
-            codesign --verify --strict --verbose=2 unpacked/objectexplorer
-            codesign --verify --deep --strict --verbose=2 app/ObjectExplorer.app
-            spctl --assess --type execute --verbose=4 app/ObjectExplorer.app
-            # Apple's ticket service drops a connection now and then (Error 68): three tries
-            validate() { for attempt in 1 2 3; do xcrun stapler validate "$1" && return 0; sleep 20; done; return 1; }
-            validate app/ObjectExplorer.app
-            codesign -dv --verbose=4 app/ObjectExplorer.app 2>&1 | grep -E "Authority|TeamIdentifier|Runtime" >> "$GITHUB_STEP_SUMMARY"
-            # the dmg: signed, notarized, stapled, and the app inside it the same signed app
-            codesign --verify --strict --verbose=2 "assets/objectexplorer-app-$TARGET.dmg"
-            spctl --assess --type open --context context:primary-signature --verbose=4 "assets/objectexplorer-app-$TARGET.dmg"
-            validate "assets/objectexplorer-app-$TARGET.dmg"
-            mounted=$(hdiutil attach -nobrowse -readonly "assets/objectexplorer-app-$TARGET.dmg" | tail -1 | awk -F'\t' '{print $NF}')
-            codesign --verify --deep --strict "$mounted/ObjectExplorer.app"
-            test -L "$mounted/Applications"
-            hdiutil detach "$mounted" -quiet
-          else
-            echo "::warning::dry run without the Developer ID: signatures not checked"
-          fi
-          bash .github/check-binary.sh unpacked/objectexplorer "$VERSION"
-          PORT=9433 bash .github/check-binary.sh app/ObjectExplorer.app/Contents/MacOS/ObjectExplorer "$VERSION"
-      - name: Linux
-        if: runner.os == 'Linux'
-        run: |
-          mkdir unpacked
-          tar -xzf "assets/objectexplorer-$TARGET.tar.gz" -C unpacked
-          bash .github/check-binary.sh unpacked/objectexplorer "$VERSION"
-      - name: Windows signatures
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          Expand-Archive -Path "assets\objectexplorer-$env:TARGET.zip" -DestinationPath unpacked
-          if ($env:WINDOWS_SIGNED -eq "true") {
-            foreach ($file in Get-ChildItem unpacked\*.exe, unpacked\*.com) {
-              $signature = Get-AuthenticodeSignature $file.FullName
-              Write-Output "$($file.Name): $($signature.Status) $($signature.SignerCertificate.Subject)"
-              if ($signature.Status -ne "Valid") { throw "$($file.Name) is not signed: $($signature.Status)" }
-            }
-            $msix = Get-AuthenticodeSignature "assets\objectexplorer-$env:TARGET.msix"
-            if ($msix.Status -ne "Valid") { throw "the msix is not signed: $($msix.Status)" }
-          } else {
-            Write-Output "::warning::dry run without Azure Trusted Signing: signatures not checked"
-          }
-      - name: Windows programs
-        if: runner.os == 'Windows'
-        run: |
-          bash .github/check-binary.sh unpacked/ObjectExplorer.com "$VERSION"
-          PORT=9432 bash .github/check-binary.sh unpacked/oe.com "$VERSION"
-      # installed as a user would (the signed msix chains to a trusted root), asked for its
-      # version through the package's own folder, removed again
-      - name: Windows package
-        if: runner.os == 'Windows' && env.WINDOWS_SIGNED == 'true'
-        shell: powershell
-        run: |
-          Add-AppxPackage -Path "assets\objectexplorer-$env:TARGET.msix"
-          $package = Get-AppxPackage KnockData.ObjectExplorer
-          Write-Output "installed $($package.PackageFullName) at $($package.InstallLocation)"
-          $said = & "$($package.InstallLocation)\ObjectExplorer.exe" --version window=false | Out-String
-          Remove-AppxPackage $package.PackageFullName
-          if ($said.Trim() -ne "objectexplorer $env:VERSION") { throw "the msix's ObjectExplorer.exe says '$($said.Trim())'" }
-
-  release:
-    needs: [source, package, check]
-    if: needs.source.outputs.dry_run != 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: write
-    env:
-      TAG: ${{ needs.source.outputs.tag }}
-      PRERELEASE: ${{ needs.source.outputs.prerelease }}
-      GH_TOKEN: ${{ github.token }}
-      GH_REPO: ${{ github.repository }}
-    steps:
-      # first: checkout cleans the workspace. Here for CHANGELOG.md and scripts/release-notes.mjs; the files go to release-files/, as the repo has an assets/ of its own (assets/document/ broke v0.9.0's first run)
-      - uses: actions/checkout@v6
-      - uses: actions/download-artifact@v7
-        with:
-          name: release
-          path: release-files
-      - name: Notes from this version's CHANGELOG.md section
-        run: |
-          node scripts/release-notes.mjs "$TAG" CHANGELOG.md > notes.md
-          cat notes.md
-      # a draft until every asset is there; then published. Latest only for a release: an rc
-      # is a prerelease, which /releases/latest (Check for Updates, the download page) skips
-      - name: The GitHub release
-        run: |
-          set -euo pipefail
-          prerelease=()
-          if [ "$PRERELEASE" = "true" ]; then
-            prerelease=(--prerelease)
-          fi
-          gh release create "$TAG" --draft --verify-tag --title "ObjectExplorer $TAG" --notes-file notes.md --generate-notes "${prerelease[@]}" release-files/*
-          if [ "$PRERELEASE" = "true" ]; then
-            gh release edit "$TAG" --draft=false
-          else
-            gh release edit "$TAG" --draft=false --latest
-          fi
-
   npm:
-    needs: [source, release]
+    needs: source
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # npm trusted publishing: the registry trusts this repository and this workflow file by name,
-    # and GitHub mints the OIDC token for the exchange only with id-token: write. No NPM_TOKEN on
-    # purpose: a token in the environment is used before OIDC, and a 2FA account answers EOTP.
+    # npm trusted publishing: the registry trusts this repository and this workflow file by name
+    # (release.yml: the file name stays), and GitHub mints the OIDC token for the exchange only with id-token: write. No
+    # NPM_TOKEN on purpose: a token in the environment is used before OIDC, and a 2FA account
+    # answers EOTP.
     permissions:
       id-token: write
       contents: read
@@ -769,7 +175,7 @@ jobs:
   # knockdata/homebrew-tap: Formula/objectexplorer.rb, Casks/objectexplorer-app.rb. Not for an
   # rc: the tap has one version, and brew install would give everyone the rc
   brew:
-    needs: [source, release, npm-verify]
+    needs: [source, npm-verify]
     if: needs.source.outputs.prerelease != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -805,7 +211,7 @@ jobs:
   # the pull request there from the token owner's fork; Microsoft's validation then merges it.
   # The package's first version was submitted by hand (foldone docs/release.md §6.6).
   winget:
-    needs: [source, release]
+    needs: source
     # off for now (owner, 2026-10-15); back on: if: needs.source.outputs.prerelease != 'true'
     if: false
     runs-on: ubuntu-latest

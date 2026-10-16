@@ -4,6 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.6  —  2026-10-16
+- Help: Report Bug with a Screenshot in the command palette: a picture of the window, an optional line on what went wrong, the version and the end of the app's log, sent encrypted so only we can read it
+- Check for Updates works on a copy opened straight from the .dmg (it failed writing to /Volumes/ObjectExplorer): every update downloads into ~/.objectexplorer/update and only then replaces the app
+- objectexplorer.com/app and the page `objectexplorer` serves have Share Anonymized for Debugging and Share Application Log too
+- anonymizing says how far it is, "Anonymizing 37%", instead of "Anonymizing 1 of 1…"
+- large Jupyter notebooks open about 20 times faster with a seventh of the memory: a 124 MB notebook in 40 ms instead of 760 ms; outputs are read as their cells scroll into view, and a broken spot costs only that value
+- Microsoft Fabric notebooks no longer show the Spark StatementMeta line above a cell's printed output
+
 ## v0.9.5  —  2026-10-16
 - Create Anonymized Copy in a file's menu: CSV, TSV, JSON, notebooks, SQLite, Parquet and Excel files, every value replaced by one of the same shape, so the copy keeps its size and structure and opens like the original; `oe anonymize <file>` on the command line
 - Share Anonymized for Debugging sends such a copy, encrypted so only we can read it, to help us find a problem in your file; the command palette's Share Application Log for Debugging does the same for the app's log

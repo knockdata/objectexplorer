@@ -11,7 +11,7 @@ import path from "node:path"
 import { pathToFileURL } from "node:url"
 
 // Defaults match what .github/smoke.sh and the release workflow always pass
-// (smoke.sh's own $port, and "smoke/test" at .github/workflows/release.yml:399), so this
+// (smoke.sh's own $port, and "smoke/test" at .github/workflows/create-release.yml:399), so this
 // also runs standalone against an already-running packaged binary — `node
 // .github/smoke-browser.mjs` from the repo root, nothing else needed.
 const [testDir = "smoke/test", url = "http://127.0.0.1:9421"] = process.argv.slice(2)
