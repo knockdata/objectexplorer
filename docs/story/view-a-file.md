@@ -9,7 +9,7 @@ poster: /screenshot/open-a-file.png
 recording: /video/view-a-file.mp4
 open: folder/demo/cad/nist_ftc_11_asme1_rb.stp
 # focus: { x: 64, y: 50, width: 40 }
-background: "#202020"
+background: "#000"
 caption: "A 7 KB STEP part in a Cloud Storage bucket, opened where it sits: a washer 63 mm across, drawn from its 6 faces as 1,798 triangles."
 today:
   - tool: "Cloud console"

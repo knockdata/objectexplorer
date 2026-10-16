@@ -6,7 +6,7 @@ export const headerLinks = [
 	{ name: "Pricing", link: "/pricing" },
 	{ name: "Docs", link: "/what-is-objectexplorer" },
 	{ name: "Stories", link: "/story/" },
-	{ name: "Download", link: "/download" },
+	// { name: "Download", link: "/download" },
 ]
 
 export const footerLinks = [

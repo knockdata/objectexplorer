@@ -9,7 +9,7 @@ recording: /video/usage-visualization.mp4
 poster: /screenshot/usage-visualization.png
 open: "usage/"
 component: { insight: "on" }
-background: "#11151b"
+background: "#101518"
 focus: { x: 50, y: 50, width: 90 }
 caption: "Every bucket and folder from four places on one disc: this machine, Google Cloud, AWS and Azure. Each pole stands as tall as what it holds, by size or by monthly cost, in the sector of what kind of thing it is; an arch joins bytes kept twice."
 today:

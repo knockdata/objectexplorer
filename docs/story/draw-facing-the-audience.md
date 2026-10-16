@@ -6,6 +6,7 @@ runtime: "2:35"
 video: /video/lightboarding.mp4
 youtube: OA-ALTYy2vk
 videoInIdeal: true
+background: "#000"
 poster: /screenshot/story-lightboard.png
 caption: "My lightboard, filmed on it: me behind the glass, and three markers tried one after another. The first is faint, the second is better, the last one glows."
 today:
