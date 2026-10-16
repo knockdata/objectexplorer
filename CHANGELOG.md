@@ -4,6 +4,17 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.5  —  2026-10-16
+- Create Anonymized Copy in a file's menu: CSV, TSV, JSON, notebooks, SQLite, Parquet and Excel files, every value replaced by one of the same shape, so the copy keeps its size and structure and opens like the original; `oe anonymize <file>` on the command line
+- Share Anonymized for Debugging sends such a copy, encrypted so only we can read it, to help us find a problem in your file; the command palette's Share Application Log for Debugging does the same for the app's log
+- Developer: Open Application Log in the command palette: the app keeps its log in ~/.objectexplorer/app.log
+- large notebooks scroll smoothly in the desktop app, and open at once
+- Excel, CSV and every other grid scroll sideways, and the arrow keys, Home, End, Page Up and Page Down move a selected cell as in Excel
+- the onboarding tour glides from step to step, forward and back, with no flicker
+- objectexplorer.com/app keeps a folder you added for your next visit (Chrome, Edge)
+- the demo folder stays up to date with objectexplorer.com's, and is there from the first start
+- Power BI reports keep the data of their last refresh and open from it
+
 ## v0.9.4  —  2026-10-15
 - Windows: AWS, and any site whose root certificate Windows has not fetched yet, connects (it failed with "not correctly signed by the trusted CA")
 - signing in with Google works on a computer whose clock is off; Settings → Plan says so, with Fix system clock
