@@ -4,6 +4,10 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.9  —  2026-10-19
+- what you read can be selected and copied: a file's content, a message, a warning, an error, a description; buttons, labels, names in the tree and the tabs, icons and menus are not, so a click on them never starts a selection
+- a table in a document or a slide gives each column room for its longest word and wraps the rest, instead of running past the page; Chinese and Japanese text wraps between its characters
+
 ## v0.9.8  —  2026-10-19
 - Airflow DAGs and dbt projects open as one pipeline graph, tasks or data a toggle apart: a DAG file is read, never run; dbt models are rendered as `dbt compile` renders them; a table is matched across the tools by its database, schema and name, and a DuckDB or SQLite table opens its rows
 - Check for Updates on a copy opened from the .dmg by a user who cannot write /Applications puts the new version in ~/Applications, or in a folder you choose
