@@ -645,10 +645,33 @@ jobs:
         if: runner.os == 'Windows' && env.WINDOWS_SIGNED == 'true'
         shell: powershell
         run: |
+          # who runs it, and what the profile and its .objectexplorer allow, before and after: an
+          # EACCES from inside the package then says which folder refused and to whom
+          $folder = "$env:USERPROFILE\.objectexplorer"
+          function Show-Folders {
+            param($moment)
+            Write-Output "== $moment"
+            icacls $env:USERPROFILE
+            if (Test-Path $folder) {
+              icacls $folder
+              Get-Item $folder -Force | Format-List FullName, Attributes, LinkType, Target, CreationTime | Out-String | Write-Output
+            } else {
+              Write-Output "$folder is not there"
+            }
+          }
+          Write-Output "$([Environment]::OSVersion.VersionString), $(whoami), elevated: $(([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))"
+          Show-Folders "before the package"
           Add-AppxPackage -Path "assets\objectexplorer-$env:TARGET.msix"
           $package = Get-AppxPackage KnockData.ObjectExplorer
           Write-Output "installed $($package.PackageFullName) at $($package.InstallLocation)"
           $said = & "$($package.InstallLocation)\ObjectExplorer.exe" --version window=false | Out-String
+          Write-Output "the package's ObjectExplorer.exe --version: exit $LASTEXITCODE, said: $said"
+          Show-Folders "after the package's --version"
+          if (Test-Path "$folder\app.log") {
+            Get-Content "$folder\app.log" -Tail 40
+          } else {
+            Write-Output "no app.log"
+          }
           Remove-AppxPackage $package.PackageFullName
           if ($said.Trim() -ne "objectexplorer $env:VERSION") { throw "the msix's ObjectExplorer.exe says '$($said.Trim())'" }
 
