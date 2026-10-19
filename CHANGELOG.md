@@ -4,6 +4,18 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.7  —  2026-10-19
+- Claude in a side bar right of the panes: Ask Claude… on a file or folder in the tree runs your own `claude` with your settings, asks before each tool it needs, and pops out into a tab of its own
+- Explain in a text file's right-click menu: Claude explains the lines, with five around them, and reads nothing else
+- Find Code Duplication in its own activity: CSS, JavaScript, JSX and C, with files to include and exclude, remote storage and a minimum number of lines; Refactor or Merge a copy with Claude
+- References in the pane toolbar: under the caret's line, where a CSS class or id is used in HTML, JS and JSX, and where a JS, JSX or C name is used
+- Search answers while you type and builds its index after; a row shows the line that matched; a folder that no longer exists is marked instead of stopping the search; fuzzy match, and several locations at once
+- an animated GIF opens in a player: play, pause, step, a timeline with a preview on hover; edit it with drawings over a range of frames, trim, crop, flip and speed, and Save writes `<name>-edited.gif`
+- slides: `<Popup label="…">…</Popup>` shows its text in a box on a click; presenting, a press and drag anywhere draws the laser, one trail per finger; the laser is a smooth, hand-drawn stroke
+- the text view keeps a line's leading tabs, a drag selects several lines, and a copy leaves the line numbers out; a reload opens a file at the line it was at
+- scrollbars show only while the pointer is over the box or the focus is in it
+- Open in the Left Pane and Compare with the Left Pane (they said Side); `tour=off` on the command line or `?tour=off` in the address turns the onboarding tour off
+
 ## v0.9.6  —  2026-10-16
 - Help: Report Bug with a Screenshot in the command palette: a picture of the window, an optional line on what went wrong, the version and the end of the app's log, sent encrypted so only we can read it
 - Check for Updates works on a copy opened straight from the .dmg (it failed writing to /Volumes/ObjectExplorer): every update downloads into ~/.objectexplorer/update and only then replaces the app
