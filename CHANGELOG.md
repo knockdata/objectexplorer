@@ -4,6 +4,12 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.8  —  2026-10-19
+- Airflow DAGs and dbt projects open as one pipeline graph, tasks or data a toggle apart: a DAG file is read, never run; dbt models are rendered as `dbt compile` renders them; a table is matched across the tools by its database, schema and name, and a DuckDB or SQLite table opens its rows
+- Check for Updates on a copy opened from the .dmg by a user who cannot write /Applications puts the new version in ~/Applications, or in a folder you choose
+- notebooks opened in the browser (objectexplorer.com/app and the page `objectexplorer` serves) show their tables and errors again
+- files an earlier install left in ~/.objectexplorer are moved to ~/.objectexplorer.bk without asking
+
 ## v0.9.7  —  2026-10-19
 - Claude in a side bar right of the panes: Ask Claude… on a file or folder in the tree runs your own `claude` with your settings, asks before each tool it needs, and pops out into a tab of its own
 - Explain in a text file's right-click menu: Claude explains the lines, with five around them, and reads nothing else
