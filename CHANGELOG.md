@@ -4,6 +4,11 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.11  —  2026-10-20
+- pipelines: a dbt model's columns each list the upstream columns they come from (direct, derived or aggregated); `adapter.get_columns_in_relation`, `dbt_utils.star`, `is_incremental()` and the like are answered from catalog.json or the profile's DuckDB or SQLite file, and an incremental model shows both of its renders
+- Airflow DAGs are read from Airflow's own database too, when an airflow.db is reachable: a factory's DAGs, a mapped task's instances, the rendered SQL and commands, and each task's last state
+- a Postgres table in a pipeline opens its columns and first 100 rows, read only; you sign in once and the credentials stay in the keychain
+
 ## v0.9.10  —  2026-10-19
 - new file types: Excel 97–2003 `.xls` as a sheet with SQL per sheet; compressed tables (`.csv.gz`, `.zst`, `.bz2` …) as their table with SQL; NumPy `.npy` as its rows or its picture and `.npz` as a folder of them; safetensors and GGUF as a table of their metadata and tensors, read in place however large; Stata `.dta`; SQLite under its other names (GeoPackage with its geometry as WKT, MBTiles, `.db3` …); STL models drawn in 3D; DXF drawings drawn as a DWG is; TGA images; a `.unitypackage` as a folder of its files
 - corners are continuous (a squircle, no kink where the curve meets the side) in the app and in Chrome; Safari and Firefox keep round ones
