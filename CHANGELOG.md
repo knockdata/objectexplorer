@@ -4,6 +4,22 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.13  —  2026-10-21
+- Unity projects play in place: the Game tab runs a project's scenes with its scripts, physics (2D and 3D, character controllers, joints), animation (blend trees, skinned meshes, sprite swaps), uGUI and TextMesh Pro, the Input System, audio mixers, lightmaps, shadows, HDR and the sky as Unity draws them; Play, Maximize and Escape back; the Scene view starts framed on the scene; Hierarchy, Project window and Inspector as Unity's editor
+- BigQuery in the tree (bq://project/dataset/table) at the least cost: browsing and opening a table read only free metadata and rows, kept on disk; every query is priced first and runs under a limit, and its answer is kept
+- JPEG XL and AVIF open as pictures, with their EXIF, on the desktop and in every browser (a format the browser can't show is sent as a JPEG)
+- slides: pictures and the logo kept inside the .slides.md file; timeline, big-number and card blocks; each slide's sources in its footer; notes with links; tighter bullets; Copy for LinkedIn and Medium puts the deck on the clipboard as an article (sources in small words under each slide, no stray links)
+- icons in hand-drawn drawings draw as icons, and Rock falls back to other hand-drawn fonts
+- the laser is one smooth hand-drawn stroke
+- Run a Test (Debug Mode): every file in a folder opened as a click opens it, the verdicts shown as the view shows them; Run Test on a single file too; `oe test <folder>`
+- Create Anonymized Copy for many more formats: xls, ods, arrow/feather, avro, NetCDF, sas7bdat, dta, sav, xpt, npy/npz, yaml, xml, psv, and compressed csv/json; Hebrew, Arabic, Thai and Devanagari letters changed too
+- Debug Mode in the command palette gates the developer tools; Run Improvement
+- grids: a click on a column name sorts and keeps the filters, a click on empty header space clears them; columns stay aligned after a narrowing drag
+- a long Markdown page scrolls to its last line in the desktop app
+- a storage location your plan had no room for is added once the plan changes
+- the tree's context menu in groups
+- source maps for debugging any copy in the browser, to the developer's password only
+
 ## v0.9.11  —  2026-10-20
 - pipelines: a dbt model's columns each list the upstream columns they come from (direct, derived or aggregated); `adapter.get_columns_in_relation`, `dbt_utils.star`, `is_incremental()` and the like are answered from catalog.json or the profile's DuckDB or SQLite file, and an incremental model shows both of its renders
 - Airflow DAGs are read from Airflow's own database too, when an airflow.db is reachable: a factory's DAGs, a mapped task's instances, the rendered SQL and commands, and each task's last state
