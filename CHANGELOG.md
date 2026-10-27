@@ -4,6 +4,18 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.14  —  2026-10-27
+- many more formats open as what they are: older 3D models (3DS, LightWave, COLLADA, DirectX, MilkShape, Quake, Half-Life, Irrlicht, IQM, AC3D, AMF and more) drawn and their animations played; text FBX; USD shapes; DWG from R13 to 2007; SolidWorks previews; Keynote '09, iWork '09, Works, Write and Publisher text; OneNote, Access, Outlook PST, cpio, RAR 1.4, Doom WAD and winmail.dat; certificates, keys, PKCS #7/#12 and Java keystores as their fields; fonttools TTX, UFO glyphs and designspaces drawn; GRIB weather data; Berkeley DB; 15 older picture formats (FLI, SGI, BLP, Sun raster, PCX family, X BitMap and PixMap …)
+- TIFF: fax, LZMA, Zstandard, WebP and old-style JPEG compression, BigTIFF, Lab colour and any bit depth; camera raws of every TIFF-based make; EPS without a preview drawn
+- video and sound: Theora, ProRes, QuickTime Animation, H.264 4:4:4, MS-MPEG-4, more AAC profiles; a file whose track can't be played opens on its tracks and says why
+- parquet: version 2 pages, the DELTA and BYTE_STREAM_SPLIT encodings, INT96, wide decimals, Hadoop LZ4, brotli and LZO; millisecond timestamps were 1000× off and unsigned numbers showed negative: fixed; DuckDB 0.9 files; SQLite files with broken pages or UTF-16 text read as far as they go
+- files open forgivingly: a file cut short shows what it holds, and one that really can't be read says why in plain words; JSON with comments, trailing commas, JSON5, and a broken JSON shown as written with where it goes wrong underlined
+- grids: the # header says rows shown / total; numbers line up on their decimal point (cut to 4 decimals, the full number on hover); a latitude, longitude, city or country says its place and its local time on hover; a sheet of 16,384 columns opens at once
+- PDFs with a lost or broken page tree show their pages; a binary file nothing else draws opens on its structure; programs and libraries (.exe, .dll, .so, .wasm, .class) laid out as their structure
+- one slider for the whole app, a glass lens while pressed; controls muted at rest and green on hover; the Duplicate to / Convert To ring as solid as the menu
+- code: comments and multi-line strings coloured as they are, over every line
+- Run a Test and Run Improvement: interactive runs keep going across a reload, reports say each failure's code and where
+
 ## v0.9.13  —  2026-10-21
 - Unity projects play in place: the Game tab runs a project's scenes with its scripts, physics (2D and 3D, character controllers, joints), animation (blend trees, skinned meshes, sprite swaps), uGUI and TextMesh Pro, the Input System, audio mixers, lightmaps, shadows, HDR and the sky as Unity draws them; Play, Maximize and Escape back; the Scene view starts framed on the scene; Hierarchy, Project window and Inspector as Unity's editor
 - BigQuery in the tree (bq://project/dataset/table) at the least cost: browsing and opening a table read only free metadata and rows, kept on disk; every query is priced first and runs under a limit, and its answer is kept
