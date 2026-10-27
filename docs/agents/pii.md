@@ -2,24 +2,24 @@
 
 **Settings → PII.** What never leaves this machine as it stands.
 
-<img src="/screenshot/pii-rules.png" alt="Settings → PII: four column rules, one each of FPE, Mask, Hash and Drop, and the full-text rules under them, every rule with a sample as it is and as it goes">
+<img src="/screenshot/pii-rules.png" alt="Settings → PII: column rules, one each of Token, Mask, Hash, Drop and FPE, and the full-text rules under them, every rule with a sample as it is and as it goes">
 
-One set of rules protects two audiences: **an agent calling over MCP**, and **a person opening a
-[share link](/explore/share)**. Both are data leaving this machine, and both go through the same
+One set of rules protects two audiences: **an agent reading over MCP or the `oe` command line**, and
+**a person opening a [share link](/explore/share)**. Both are data leaving this machine, and both go through the same
 code in the app's own server, reading the same two lists from the same file,
 `~/.objectexplorer/mcp.yaml`. Someone who decides once that `email` is never shared plainly has
 decided it for both. An edit in the pane holds from the next call or the next share — the file is
 read again every time, with no restart.
 
-|                           | An agent over MCP                                  | A person with a share link                                   |
+|                           | An agent over MCP or `oe`                          | A person with a share link                                   |
 |---------------------------|----------------------------------------------------|--------------------------------------------------------------|
 | **Which rules**           | both lists, on every call                          | both lists, on every share                                   |
 | **Who can loosen one**    | nobody — no call can ask for less                  | the sender, one column at a time, for that one share         |
-| **A rule that says drop** | the column is not in the answer at all             | opens as **Hash** — a share cannot leave a column out yet    |
+| **Drop or Token**         | as the rule says                                   | opens as **Hash**: no column left out, no token sent         |
 | **The key**               | one per install, in `~/.objectexplorer/mcp/key`    | one per share, made when the dialog opens, never in the link |
 | **How it is told**        | every rewritten column is marked `encrypted: true` | a rewritten column reaches the receiver's grid as text       |
 
-Everything else is the same: the four methods below, the 16 hex characters a hash comes back as,
+Everything else is the same: the methods below, the 16 hex characters a hash comes back as,
 the characters a mask hides, and the full-text rules — which hold over a share even for a column
 set to **None**.
 
@@ -38,10 +38,13 @@ mail anna.berg@example.com about 19790224-5678 or call +46 73 987 65 43
 mail kxnh.qtay@zbmwuxe.tqf about 84013557-1092 or call +19 04 246 71 88
 ```
 
-A [starting rule file](/agents/connect#_1-write-a-starting-rule-file) ships four of each — column
-rules for email, phone, national id and card or account number, and text rules for an email address,
-a personal number, a US SSN and an international phone number — because a file with only column
-rules looks like it works right up until the day it does not.
+A [starting rule file](/agents/connect#_1-write-a-starting-rule-file) ships both — column rules for
+email, phone, national id and card or account number, and text rules for an email address, an
+international phone number and the detectors below — because a file with only column rules looks
+like it works right up until the day it does not.
+
+**Try a value**, under the two lists, shows what an agent gets for a value you type under every rule
+above; name a column beside it and the tabular rules join in.
 
 ## Five methods
 
@@ -53,8 +56,9 @@ rules looks like it works right up until the day it does not.
 | **Mask**  | a range of characters hidden, the rest kept                     | shape                         |
 | **Drop**  | the value never leaves — the column is not in the result at all | nothing                       |
 
-**Drop** is for an agent. The share dialog offers **None**, **Mask**, **Hash** and **FPE**, and a
-column a rule drops opens there as **Hash** — see the table above.
+**Drop** and **Token** are for an agent. The share dialog offers **None**, **Mask**, **Hash** and
+**FPE**, and a column a rule drops or turns into tokens opens there as **Hash** — a share cannot
+leave a column out yet, and a token means nothing outside this install's vault.
 
 **Token is the default**, and a rule that names no method gets it. The same value is the same token
 in every file, every session and every agent's answers — `Anna.Berg@Example.com ` and
@@ -137,7 +141,19 @@ The name detector is lists and context, not a language model: a name it has no l
 no title before it and no known family name after it, gets through. It is measured on a test set of
 planted fake people in six languages, and that is where it is improved.
 
-That is why a starting rule file leaves `getObject` and `query` off, and why a root holding raw
-exports is a place for an [approve rule](/agents/connect#_5-tick-the-roots).
+That is why a root holding raw exports is a place for an
+[approve rule](/agents/connect#_5-tick-the-roots), or for no grant at all.
+
+## Where the rules do not apply
+
+They guard what leaves this machine for someone else: an agent over MCP or `oe`, and a share. They
+do not touch:
+
+- your files, and what this app shows you — nothing is changed on disk;
+- [Ask and the Claude side bar](/agents/claude): your own data, sent as it is to the assistant you
+  picked;
+- folders other people open through this machine's server (Settings → Admin): they see the files
+  as they are;
+- Create Anonymized Copy, which replaces every value whatever the rules say.
 
 Next: [sessions, replay and audit](/agents/sessions).

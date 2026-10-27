@@ -91,12 +91,12 @@ The certificate for `tls=auto` is on [domain and certificate](/self-hosting/doma
 
 A session lasts until the person signs out, is idle for 8 hours, or 12 hours have passed since
 signing in. The account icon at the bottom of the activity bar, above the settings gear, is who is
-signed in; clicking it opens a menu with their name above their email, **Account…**, and **Sign out
-of this server**. When the identity provider's metadata names a Single Logout address, signing out
+signed in; clicking it opens a menu headed by their name and email, with **Account…** and
+**Sign Out**. When the identity provider's metadata names a Single Logout address, signing out
 ends the session there too, and a logout the identity provider starts ends that person's sessions on
 the server.
 
-**Settings → Account** shows the same: who is signed in, and how, with its own **Sign out**.
+**Settings → Account** shows the same: who is signed in, and how, with its own **Sign Out**.
 Restarting the server ends every session; with single sign-on, signing in again is one click.
 
 ## What leaves the server

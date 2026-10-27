@@ -4,6 +4,26 @@ The other half of a file explorer. `⌘C` `⌘X` `⌘V`, `⌫` to delete and `�
 the list and the grid; `F2` renames in the tree. Drag a file onto a folder of the tree to move it
 there, and hold `⌥` to copy it instead.
 
+## The right-click menu
+
+A file's or a folder's menu is in groups, each under a line, and shows only what applies to it:
+
+| Group             | Items                                                                                                                           |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| Ask               | **Ask…** an assistant about it — Claude, ChatGPT, Gemini or one on this machine, as you set up in Settings                      |
+| Open              | **Open in the Left Pane**, **Open in the Right Pane**, **Compare with the Left Pane** or the Right                              |
+| New               | **New File…**, **New Folder…**, in a folder on this machine                                                                     |
+| Find              | **Find in Folder…** — see [search](/explore/search) — and **Find Code Duplication**                                             |
+| Edit              | **Cut**, **Copy**, **Paste**, **Undo**                                                                                          |
+| Convert           | **Duplicate** (`⌘D`), **Convert To…** — see [download and convert](/explore/download) — and **Copy To…**                        |
+| Path              | **Copy Path**, **Copy Relative Path**, **Reveal in Finder** (Show in File Explorer on Windows, Open Containing Folder on Linux) |
+| Share             | **Create Anonymized Copy**, **Share Anonymized for Debugging** — see [anonymized copies](/explore/anonymize)                    |
+| View              | **Collapse All**, **Expand All**, **Refresh**                                                                                   |
+| Rename and remove | **Rename…** (`F2`), **Move to Trash** (Delete on Windows and in the cloud), **Remove Folder from Explorer**                     |
+
+The keys beside an item work without opening the menu, while the tree, the list or the grid has the
+focus.
+
 ## Across providers
 
 It works across providers, and that is the part a console cannot do: a file cut from S3 and pasted

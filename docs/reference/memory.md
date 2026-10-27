@@ -11,8 +11,8 @@ put away.
 Every file opened in a tab is measured three times: just before it opens (**A**), once its first
 screenful is drawn (**B**), and again after its tab is put away. The panel lists the files, newest
 first, with the snapshots taken around each. A click on a file compares its before and after; the
-A and B beside a snapshot pick it as that side. **Take snapshot** adds one of the moment, compared
-with the A already picked.
+A and B beside a snapshot pick it as that side. **Take Snapshot** adds one of the moment, compared
+with the A already picked. The trash can above the list removes every snapshot.
 
 ## The map
 
@@ -36,9 +36,11 @@ snapshot taken every 30 seconds while no file is being opened. The last 1,000 ar
 ## The memory limit
 
 The app looks at its own footprint once a second. Over its limit, half the machine's memory, it
-first gives back what it can: decoded pictures, and the script heap collected. Still over a second
-later, a bar at the top of the window says how much it uses, with **Close other tabs**. It goes
-away once the footprint is under the limit again.
+first gives back what it can: decoded pictures, and the script heap collected. It does the same
+when the system says memory is short, and takes a snapshot right after, listed in the side panel as
+taken when the system was short of memory. Still over its limit a second later, a bar at the top
+of the window says how much it uses, with **Close Other Tabs**. It goes away once the footprint is
+under the limit again.
 
 How long each opening took, and what it cost, is also what [the cache](/explore/cache) pane lists as
 the slowest openings. All of it stays in `~/.objectexplorer/explorer.db`.

@@ -59,6 +59,11 @@ A session played back is not recorded over the one it plays; give it `record=<fi
 
 ## Sending one with a bug report
 
+Most problems need no recording: **Help: Report Bug with a Screenshot** in the command palette
+(`⇧⌘P`) sends a picture of the window, a line on what went wrong if you like, the version and the
+end of the app's log, encrypted so only we can read it. When the steps that led there matter too,
+send the recording:
+
 ```sh
 oe replay export ~/.objectexplorer/replay/2026-10-11T17-36-44.166Z.replay session.replay
 ```

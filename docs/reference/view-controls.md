@@ -2,7 +2,7 @@
 
 Every view that shows something in three dimensions moves the same way:
 
-- a model: `glb` `gltf` `fbx` `blend` `obj`, or a Unity asset
+- a model: `glb` `gltf` `fbx` `blend` `obj` `stl` and the older 3D formats
 - a CAD part: `step` `sldprt` `catpart`
 - a shader drawn on a shape
 - [the usage disc](/explore/usage), where a click picks a pole or one of the objects on it
@@ -48,13 +48,13 @@ stay where they are.
 The view turns a part like a turntable, around the vertical. File formats disagree about which axis
 is vertical, so each file is stood up the way the program that wrote it meant:
 
-| File                      | Up                                   |
-|---------------------------|--------------------------------------|
-| `glb` `gltf` `obj`, Unity | Y                                    |
-| `fbx`                     | whatever the file says, usually Y    |
-| `blend` `catpart`         | Z                                    |
-| `sldprt`                  | Y                                    |
-| `step`                    | the program that wrote it, see below |
+| File               | Up                                   |
+|--------------------|--------------------------------------|
+| `glb` `gltf` `obj` | Y                                    |
+| `fbx`              | whatever the file says, usually Y    |
+| `blend` `catpart`  | Z                                    |
+| `sldprt`           | Y                                    |
+| `step`             | the program that wrote it, see below |
 
 A STEP file has no up of its own. It keeps the axes of the program that exported it, and names
 that program in its header if the exporter filled that in. The part stands on Z when the header
@@ -103,6 +103,10 @@ platform. It scrolls; the toolbar above it holds everything else.
 | ☰                         | the panel beside the page: contents, thumbnails, and what the file says   |
 | `⟳`                       | turn the page a quarter turn                                              |
 | `−` `+` and `fit`         | zoom, or fit the page to the width of the pane                            |
+| `Ctrl`/`⌘` + `Z`          | take back the last mark                                                   |
+| `Delete` or `⌫`           | remove the mark you picked                                                |
+| `Ctrl`/`⌘` + `A` `C`      | select the page's text, copy what is selected                             |
+| `Esc`                     | clear the selection                                                       |
 
 The marks are yours, not the file's: nothing is written into the pdf, and they are remembered
 for that file on this machine. Four controls in the row say what the next one will be - which

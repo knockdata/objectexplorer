@@ -19,7 +19,9 @@ A table cell asks, the chart cell under it draws what came back.`,
 
 Open a table and it opens as a notebook: a column of cells, each one a few lines of code over its own
 output. The first two are already written — a `SELECT *` over the object you clicked, and a chart of
-what that query returned — so the file is queried and plotted before you have typed anything.
+what that query returned — so the file is queried and plotted before you have typed anything. Their
+code starts folded away, so the file opens on its rows and its first chart; the chevron on a cell's
+left shows the code.
 
 ```sql
 SELECT * FROM 'sales-eu/orders/2026-08-24.parquet' LIMIT 10000
@@ -58,6 +60,7 @@ its left folds its code away so only the output shows.
 ## They are kept
 
 Notebooks are kept per object. Reopen the file next week — in another window, or after a restart —
-and your cells are still there, and they run again from the top so each one shows its answer.
+and your cells are still there, and they run again from the top so each one shows its answer, its
+code folded until you open it.
 
 Next: [SQL](/analyze/sql), then [Python](/analyze/python).

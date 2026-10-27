@@ -5,11 +5,13 @@ same token reads the objects.
 
 ## Ways to connect
 
-- **Use what this machine already has.** **Settings → Sign-ins → Google** walks the chain below and
+- **Use what this machine already has.** **Settings → Accounts → Google** walks the chain below and
   says who it signed in as, and through what.
 - **Sign in with Google.** The button runs `gcloud auth login --update-adc`: your browser opens once
   to sign in, and the Application Default Credentials the app reads are written. When `gcloud` is
-  missing, the pane shows the command that installs it for your user, and goes on once it is there.
+  missing, the button stays gray and the pane shows the command that installs it for your user, with
+  **Copy Command** (on Windows, a link to Google's installation page instead); it goes on by itself
+  once `gcloud` is there.
 - **A service account key**, for a machine that has no person in front of it. Paste the JSON or drop
   the `.json` file; it is checked before it is kept.
 
@@ -30,6 +32,9 @@ each one. The ADC file works even when `gcloud` is not on the PATH.
 **Revoke** forgets a pasted key, or runs `gcloud auth application-default revoke` and
 `gcloud auth revoke`.
 
+The same sign-in reads [BigQuery](/storage/bigquery): the Google account's pane ticks **Google Cloud
+Storage** and **Google BigQuery** apart, so either can be turned off.
+
 ## Projects
 
 A bucket belongs to a project. **Settings → Locations → Google Cloud Platform** lists the projects
@@ -43,4 +48,4 @@ A project that refuses to list its buckets says **No permission to list buckets*
 bottom of the list, with what Google said on hover. A bucket you may read but not list can be added
 by its name.
 
-Next: [Azure Blob Storage](/storage/azure).
+Next: [BigQuery](/storage/bigquery).

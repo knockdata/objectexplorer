@@ -39,7 +39,7 @@ height), histograms (`rectY` over `binX`), lines over a date, dots, box plots, r
 last line must be the `Plot.plot(…)`.
 
 Suggestions are named after your columns, not after chart types — *count by country*, *average
-geo_lat by type*, *spread of geo_lng*, *geo_lat over date* — because the question is what you have,
-not which mark implements it.
+geo_lat by type*, *spread of geo_lng*, *geo_lat over date*, *geo_lng against geo_lat*, *geo_lat range
+by country* — because the question is what you have, not which mark implements it.
 
 Next: [models](/analyze/model).

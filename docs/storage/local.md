@@ -1,8 +1,8 @@
 # Local folders
 
 A folder on this machine is a root like any bucket: pick it in **Settings → Local folder** with
-**Add folder**, or the **+** in the sidebar header, and it appears in the tree, on any disk or
-mounted volume. From the command line, `oe folder add ~/data` does the same.
+**Add Folder…**, or **Local Folder…** under the **+** in the side bar's header, and it appears in
+the tree, on any disk or mounted volume. From the command line, `oe folder add ~/data` does the same.
 
 Local roots are what make the [copy and move](/explore/file-management) story complete — a prefix
 dragged from S3 onto a local root streams through your machine and lands as files, and the other
@@ -11,7 +11,7 @@ continues from the parts already sent when you copy the same file again.
 
 ## A page in your browser
 
-On a page served by another machine, **Add folder** opens the browser's own folder picker, and the
+On a page served by another machine, adding a folder opens the browser's own folder picker, and the
 folder is kept by that page. In instant mode, at
 [objectexplorer.com/app](https://objectexplorer.com/app), there is no limit on these folders.
 

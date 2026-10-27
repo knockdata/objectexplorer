@@ -107,11 +107,11 @@ restart. `oe sso show` prints what is saved. Every change is a line in the
 
 A session lasts until the person signs out, is idle for 8 hours, or 12 hours have passed since
 signing in. The account icon at the bottom of the activity bar, above the settings gear, is who is
-signed in; clicking it opens a menu with their name above their email, **Account…**, and **Sign out
-of this server**, which ends the session at Okta too. The name is the ID token's `name` claim, which
+signed in; clicking it opens a menu headed by their name and email, with **Account…** and
+**Sign Out**, which ends the session at Okta too. The name is the ID token's `name` claim, which
 the `profile` scope brings; without one, only the email is shown.
 
-**Settings → Account** shows the same: who is signed in, and how, with its own **Sign out**.
+**Settings → Account** shows the same: who is signed in, and how, with its own **Sign Out**.
 Restarting the server ends every session; with single sign-on, signing in again is one click.
 
 After a sign-in the page shows the session's token too, for a desktop window to connect with:

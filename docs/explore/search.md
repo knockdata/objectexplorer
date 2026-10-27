@@ -10,24 +10,34 @@ zip is found, and the result says "slide 3".
 
 ## The index
 
-Opening the search panel brings an index of every root in the tree up to date; the count line says
+Opening the search panel brings an index of every folder in the tree up to date; the count line says
 how far it has got. A file is read again only when it changed, and a folder on this disk is followed
-from then on, so its index keeps itself current. A query then answers as it is typed.
+from then on, so its index keeps itself current. A query is searched a moment after you stop typing,
+and the answer fills in as it is found: files not indexed yet are read for it there and then.
 
 ## The controls
 
-- **Match case**, **whole word**, **regular expression** — the three toggles in the field.
+- **Fuzzy Match**, **Match Case**, **Match Whole Word**, **Use Regular Expression** — the four
+  toggles in the field. Fuzzy finds a word one letter off too.
 - **files to include** / **files to exclude** — globs, comma separated, like `*.json, src/`.
-- **Search only in open objects** — the book icon in the include field.
-- **Use ignore files** — the icon in the exclude field. On, `node_modules`, `build`, `.git`, `.venv`
-  and what `.gitignore` files name are left out.
-- **remote storage** — lists the buckets in the tree. **Search** beside it is the full scan: it
-  indexes them again, copying into [the cache](/explore/cache) what it has not read yet.
+- **Search only in Open Objects** — the book icon in the include field.
+- **Use Ignore Files** — the icon in the exclude field. On, build output, `node_modules`, `.git`,
+  `.venv` and what `.gitignore` files name are left out.
+- **remote storage** — lists the cloud folders in the tree. A ticked one is searched in full, each
+  file copied into [the cache](/explore/cache) to be read; any other only in the copies already
+  there. **Scan Now** beside it reads the ticked ones now, then searches again.
+
+To search one folder, right-click it and pick **Find in Folder…**: the panel opens with files to
+include set to that folder.
 
 ## The results
 
-Results group by file, with the place — a line, a slide, a page — and the hit marked; clicking one
-opens the object at that place. The toolbar switches between the grouped tree and a flat list, and
-opens the same search as an editor over the window.
+A line first says what was searched. Then **Names**: the files and folders whose name holds the
+query. Then **In files**: each file with its places under it — a line, a slide, a page — and the hit
+marked; clicking one opens the object at that place. With more than one folder in the tree, each
+folder with results gets a heading of its own that folds all its files.
+
+The toolbar switches between the grouped tree and a flat list, and opens the same search as an
+editor over the window. `⌘P` (Go to File) stays a search of names alone.
 
 Next: [hex](/explore/hex).

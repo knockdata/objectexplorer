@@ -113,7 +113,7 @@ card.
 
 Everything the disc reads is on this machine, in `~/.objectexplorer`:
 
-|---------------|------------------------------------------------------------------------------------------------|
+|               | What it holds                                                                                  |
 |---------------|------------------------------------------------------------------------------------------------|
 | `explorer.db` | the kept listings: objects, sizes, ages, classes; the openings and reads; each bucket's region |
 | `cache/`      | the cached copies, whose size on disk is the pale top of a stack                               |

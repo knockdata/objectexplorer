@@ -16,10 +16,10 @@ reachable until it is written down here.**
 Settings → MCP writes this file, and the file is watched, so editing it in an editor and editing it
 in the dialog are the same act.
 
-## The rules are the file's, not an agent's
+## The rules are the file's, then an agent's
 
-Every rule here applies to **every agent**. There is one set of roots, one set of limits, one PII
-floor, and turning on a second client does not mean writing them again.
+Every rule at the top of the file applies to **every agent**. There is one set of roots, one set of
+limits, one PII floor, and turning on a second client does not mean writing them again.
 
 A rule may then name the agents it is for:
 
@@ -28,8 +28,11 @@ agents: [claudeCode]
 ```
 
 Without that line the rule is for everyone; with it, only for those. It is allowed on a root under
-`roots` and on `approve` — the two places where one client plausibly differs from another. The
-names are the clients the app installs into: `claudeCode`, `codex`.
+`roots` and on `approve` — the two places where one client plausibly differs from another.
+
+An agent may also have lines of its own, under `agents:` at the end of the file: its token, and its
+own `tools`, `limits`, `deny`, `columns` and `text`, laid over the lines above for that agent alone.
+**Install** and **Add Agent** in Settings → MCP write that entry.
 
 ## The whole file
 
@@ -42,7 +45,7 @@ server:
   enabled: false
   host: 127.0.0.1
   port: 3417                   # its own listener; 0 is 3417 too
-  token: 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83   # generated on the first write; the app's only secret
+  token: 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83   # optional: a token shared by any client that names itself
   install:
     claudeCode: true           # write the entry into that client's own MCP config
     codex: false               # ticking a client also lets it initialize at all
@@ -120,6 +123,16 @@ roots:
   - providerType: folder
     root: reference
     agents: [claudeCode]       # this one root is Claude Code's alone
+
+  - providerType: s3
+    root: reports
+    prefixes: [exports/2024/]  # only this part of the bucket
+
+# Each agent: its own token, and any line above it should have for itself alone.
+agents:
+  claudeCode:
+    token: 3b9e0c71d4a85f26e1c7b04a9d3f8e52
+    tools: [listRoots, listObjects, describeObject, columnSummary, searchText]
 ```
 
 ## How one call is decided
@@ -127,15 +140,15 @@ roots:
 Every call — a listing, a query, a read — goes through the same seven steps, in this order.
 The first `deny` ends it.
 
-| #   | Step    | Denied when                                                               |
-|-----|---------|---------------------------------------------------------------------------|
-| 1   | server  | `server.enabled` is false, or the request did not come from `127.0.0.1`   |
-| 2   | agent   | the bearer token is not one this app issued                               |
-| 3   | tool    | the tool is not in `tools`                                                |
-| 4   | root    | no entry under `roots` names that `providerType` + `root`, for this agent |
-| 5   | path    | any regex in `deny` matches                                               |
-| 6   | limit   | this call, this session or today would go over a `limits` number          |
-| 7   | approve | the human said no, or said nothing for `timeoutSeconds`                   |
+| # | Step    | Denied when                                                                                                            |
+|---|---------|------------------------------------------------------------------------------------------------------------------------|
+| 1 | server  | `server.enabled` is false, or the request did not come from `127.0.0.1`                                                |
+| 2 | agent   | the bearer token is not one this app issued                                                                            |
+| 3 | tool    | the tool is not in `tools`                                                                                             |
+| 4 | root    | no entry under `roots` names that `providerType` + `root`, for this agent, or the path is under none of its `prefixes` |
+| 5 | path    | any regex in `deny` matches                                                                                            |
+| 6 | limit   | this call, this session or today would go over a `limits` number                                                       |
+| 7 | approve | the human said no, or said nothing for `timeoutSeconds`                                                                |
 
 Then the call runs, and on the way back the result passes through `columns`.
 
@@ -166,18 +179,19 @@ vague answer only makes it try again.
 
 ## Identity: agent, and session
 
-`server.token` is the bearer token, and it is the one secret this feature has. The app generates it
-the first time it writes this file and copies it into each client's own config when that client is
-ticked — nobody types it, and nobody pastes it. Changing it here and saving cuts off every client
-until they are ticked again.
+Each agent has a bearer token of its own, `agents.<name>.token`. The app makes it when you
+**Install** a client or **Add Agent** in Settings → MCP, and writes it into that client's own config
+— nobody types it, and nobody pastes it. The token names the agent, whatever the client calls itself.
+Changing it here and saving cuts that agent off until it is installed again.
 
-One token, not one per client: the token says the caller is a program this machine let in, and the
-client's own name says which program. Both are in the file, in one place, which is the point.
+`server.token`, the **shared token** in the pane, is the other way in: any client may use it, and
+then the client's own name says which agent it is, checked against the clients ticked under
+`install`. A token is the one secret this feature has; neither kind leaves this machine.
 
 Two things are recorded, and they are what the log is split by:
 
-- **agent** — which client is calling: the name it gives at `initialize`, checked against the
-  clients ticked under `install`. `claudeCode`, `codex`. It is what a root's `agents:` line names,
+- **agent** — which client is calling: the agent its token names, or with the shared token the
+  name it gives at `initialize`. `claudeCode`, `codex`. It is what a root's `agents:` line names,
   and what the activity strip colours.
 - **session** — one MCP connection, from `initialize` to the socket closing. A new `claude` in a
   new terminal is a new session under the same agent.
@@ -367,17 +381,11 @@ Plotting and model training live in the page, not in the server, so neither is a
 
 ## When there is no file
 
-The server is off, and Settings → MCP offers to write a starting file: every root already in the
-window, `tools: [listRoots, listObjects, describeObject, columnSummary, searchText]` — no `query` and
-no `getObject` — the four column rules and four text rules shown above, the deny list above, lower
-limits (1000 rows and 8 MB a call, 256 MB a session, 1 GB a day, 500 objects a listing), an empty
-`approve`, and the door shut with no client installed. Everything else is a deliberate line someone
-typed.
-
-## Open questions
-
-1. **`callsPerMinute` on a denial.** A refused call still costs a rule evaluation. Counting denials
-   toward the rate limit is what stops a probe; not counting them is friendlier to a confused
-   agent. Proposal: count them.
+The server is off, and Settings → MCP offers **Write a Starting Rule File**: every root already in
+the window, all seven tools (each answer through the PII rules), column rules for email, phone, id
+and account numbers, text rules for email addresses and phone numbers and the `@id`, `@card`,
+`@iban`, `@person` and `@address` detectors, the deny list above, lower limits (1000 rows and 8 MB a
+call, 256 MB a session, 1 GB a day, 500 objects a listing), an empty `approve`, no agent, and the
+door shut with no client installed. Every line of it can be changed there afterwards.
 
 Next: [the MCP endpoint](/reference/mcp-protocol).

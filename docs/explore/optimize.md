@@ -1,6 +1,6 @@
 # Optimize
 
-The **Cost/mo** column says what a bucket costs. **Optimize** says what it could cost instead, and
+The **Cost/mo** column says what a bucket costs. **Optimize…** says what it could cost instead, and
 hands you the command that gets it there.
 
 It is on the cost line at the foot of the list: for the folder you are in, or for the one object you

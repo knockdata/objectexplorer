@@ -16,15 +16,16 @@ holding the rows would be a second copy of the data the rules just spent their t
 
 Two things split it, and they are the two things worth asking about:
 
-- **agent** — which client is calling. The name it gives at the handshake, checked against the
-  clients you ticked: `claudeCode`, `codex`.
+- **agent** — whose token made the call: a client Install set up (`claudeCode`, `codex`), or an
+  agent you added by name. Never the name a client gives itself.
 - **session** — one connection, from `initialize` to the socket closing. A new `claude` in a new
   terminal is a new session under the same agent.
 
-**Audit log history** in Settings → MCP is how long they are meant to be kept: 1D, 7D, 1M, 3M, 1Y
-or Indefinite, 30 days by default. It is written to `log.keepDays`, and a session file last written
-longer ago than that is deleted when the app starts and whenever the sessions are listed. Indefinite
-(`keepDays: null`) keeps every one.
+**Audit log history** in Settings → MCP is how long they are meant to be kept: a slider from 1D
+through 7D, 1M, 3M and 1Y to Indefinite, 30 days in a starting rule file. Moving it past what your plan
+keeps — 7 days on the free plan, a year on Pro — offers the plan instead. It is written to
+`log.keepDays`, and a session file last written longer ago than that is deleted when the app starts
+and whenever the sessions are listed. Indefinite (`keepDays: null`) keeps every one.
 
 ## Watching it happen
 
@@ -67,7 +68,8 @@ that is what removing the rule is.
 
 ## The session list
 
-**Settings → MCP sessions** — one row per session, newest first.
+**Settings → MCP sessions** — one row per session, newest first, whether the agent came in over MCP
+or through the `oe` command line.
 
 ```
 Agent        Started              Calls   Data   Denied
@@ -133,4 +135,4 @@ to re-run something the rules no longer permit.
 
 → the endpoints behind all of this: [the MCP endpoint](/reference/mcp-protocol#the-other-half-what-the-window-uses)
 
-Next: [every format](/formats/).
+Next: [Claude in the side bar](/agents/claude).

@@ -37,8 +37,10 @@ until it changes. A lake table in a bucket is copied the same way, file for file
 
 ## What is queryable
 
-`parquet` `csv` `tsv` `psv` `json` `jsonl` `ndjson` `xlsx` `avro` `orc`, Arrow and Feather, HDF5,
-NetCDF, SPSS `.sav` and SAS `.sas7bdat` `.xpt`, and the tables of SQLite and DuckDB files.
+`parquet` `csv` `tsv` `psv` `json` `jsonl` `ndjson` `xlsx` `xls` `avro` `orc`, Arrow and Feather,
+HDF5, NetCDF, NumPy `.npy`, SPSS `.sav`, SAS `.sas7bdat` `.xpt`, Stata `.dta`, dBASE `.dbf`, R's
+`.rds` and `.rdata`, and the tables of SQLite and DuckDB files (GeoPackage and MBTiles are SQLite
+too). A table compressed whole — `orders.csv.gz`, `.zst`, `.bz2` — is queried as the table inside.
 
 ## Running
 

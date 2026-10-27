@@ -2,8 +2,8 @@
 
 ObjectExplorer is an explorer for cloud storage and local folders — for you, and for the agent working
 beside you. It puts Amazon S3 and any [S3 compatible provider](/storage/s3-compatible), Google Cloud
-Storage, Azure Blob Storage, Microsoft OneLake, Google Drive, OneDrive, Dropbox and Box, and every
-folder on your disk, in one tree — and opens what is inside them, including the formats a cloud
+Storage, Google BigQuery, Azure Blob Storage, Microsoft OneLake, Google Drive, OneDrive, Dropbox and
+Box, and every folder on your disk, in one tree — and opens what is inside them, including the formats a cloud
 console will never render.
 
 <!-- <img src="/screenshot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it"> -->
@@ -31,12 +31,13 @@ including the one folder it can write into your own buckets, is in [how it works
 
 ## What it does
 
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                     |                                                                                                                                                                                                                  |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Explores**        | every provider in one tree, as a list or a grid of previews, with copy, move, rename, delete and an undo that works across buckets — see [the tree and the list](/explore/tree)                                  |
+| **Converts**        | a table to Excel or CSV, a picture to PNG, a document to Word, a folder to a zip: Download in the toolbar, or Convert To… on a file — see [download in another format](/explore/download)                        |
 | **Previews**        | parquet, csv, json, SPSS, SAS, office files, images, audio, video, ebooks, databases, archives, and hex for everything else — see [formats](/formats/)                                                           |
 | **Reads PDFs**      | in its own reader: select, find, bookmarks, thumbnails, and seven kinds of mark plus text notes of your own — see [the PDF reader](/formats/pdf)                                                                 |
-| **Draws 3D**        | STEP, SolidWorks and CATIA parts, DWG drawings, glTF, FBX, Blender, obj and Unity models, GPU textures and live shaders — see [CAD](/formats/cad) and [3D models](/formats/models)                               |
+| **Draws 3D**        | STEP, SolidWorks and CATIA parts, DWG drawings, glTF, FBX, Blender and obj models, GPU textures and live shaders — see [CAD](/formats/cad) and [3D models](/formats/models)                                      |
 | **Shows the bill**  | every bucket and folder on one disc: what each costs a month, what has gone cold, what is already on this machine, what nobody opens and what is being kept twice — see [where the storage went](/explore/usage) |
 | **Cuts the bill**   | cheaper storage classes, one region, old versions and abandoned uploads, each priced, each a command you run — see [optimize](/explore/optimize)                                                                 |
 | **Queries**         | SQL over the object where it lives, in its own engine, in a [notebook](/analyze/notebook) that opens with the query already written                                                                              |
@@ -44,6 +45,7 @@ including the one folder it can write into your own buckets, is in [how it works
 | **Searches**        | local folders and cloud prefixes in the same run — see [search](/explore/search)                                                                                                                                 |
 | **Trains**          | a gradient boosting model over the rows on screen, with SHAP explanations — see [models](/analyze/model)                                                                                                         |
 | **Helps you write** | Markdown edited in place, with passages and phrases from writers you chose beside it, and never a score — see [writing](/analyze/writing)                                                                        |
+| **Anonymizes**      | a copy of a CSV, a sheet, a database or a Parquet file with every value replaced by one of the same shape, to hand over or to test with — see [anonymized copies](/explore/anonymize)                            |
 | **Answers agents**  | the same questions over MCP, decided by rules you wrote, PII rewritten on the way out and every call logged — see [for agents](/agents/)                                                                         |
 
 It has two ways in. One is the window. The other is [MCP](/agents/): Claude Code, Codex or any MCP

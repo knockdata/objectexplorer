@@ -5,7 +5,7 @@
 An Anki deck opens as its cards: a grid of flashcards, each drawn with the deck's own templates and
 styling, with its pictures loaded as the card comes into view. Click a card to bring it forward, and
 click it again to turn it to the answer. The left and right arrow keys go to the previous and next
-card, and `Esc` puts it back. A sound on a card is a play button.
+card, up and down a row of the grid, and `Esc` puts it back. A sound on a card is a play button.
 
 An `.apkg` is a zip with a SQLite database inside, so it can also be
 [browsed as a folder](/explore/archives).

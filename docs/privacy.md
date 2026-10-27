@@ -12,23 +12,27 @@ network can reach.
 - Credentials stay local, in the system keychain. Nothing is synced — see
   [where your data lives](/reference/data-locations).
 - The calls that are not to your own storage are few, listed below, and none of them carries an
-  object.
-- Nothing is uploaded for "processing", no file names are reported anywhere, and no account is
-  needed to open a file.
+  object unless you send one to us yourself.
+- Nothing is uploaded for "processing", no file names are reported on their own, and no account
+  is needed to open a file.
 
 Which also means there is no data-processing agreement to negotiate before anyone can look at a
 bucket.
 
 ## What does leave, and when
 
-**A share link, when you make one.** [Sharing a table](/explore/share) is the one feature that sends
-rows somewhere else, and it never happens on its own: you open the dialog, decide column by column
-what goes — each column opening on what your [PII rules](/agents/pii) already say — and copy the
-link. Small shares travel inside the link's fragment, which no server ever sees. A bigger one, and
+**A share link, when you make one.** [Sharing a table](/explore/share) sends rows to whoever opens
+the link, and it never happens on its own: you open the dialog, decide column by column what goes —
+each column opening on what your [PII rules](/agents/pii) already say — and copy the link. Small shares travel inside the link's fragment, which no server ever sees. A bigger one, and
 every read-and-burn link, is stored on objectexplorer.com until it expires.
 
+**What you ask an assistant.** **Ask…** in a file's menu hands the file to the assistant you picked
+— Claude, ChatGPT, Gemini, or one that runs on this machine such as Ollama — through that
+assistant's own program or address, under its own terms. It happens only when you pick it, and
+only to the one you picked.
+
 Everything else the app asks of the outside world is listed here. None of it carries a row of your
-data or a path on this machine.
+data or a path on this machine, except a file you send us yourself.
 
 | Call                                          | When                                                                        |
 |-----------------------------------------------|-----------------------------------------------------------------------------|
@@ -37,6 +41,9 @@ data or a path on this machine.
 | uv: a Python build, and the packages you name | when you make a [Python environment](/analyze/python) or install into one   |
 | The web pages you added as style sources      | when you add or reindex one in [the writing tool](/analyze/writing)         |
 | objectexplorer.com: your licence              | at start, and in a plan's last three days, only once you have signed up     |
+| objectexplorer.com: the demo folder           | at each start of the installed app, fetched again only when it changed      |
+| objectexplorer.com: the assistants Ask… knows | at start, at most once an hour                                              |
+| objectexplorer.com: a file you send us        | only when you pick a command that sends one, below                          |
 | objectexplorer.com: the trial sign-up         | when you first sign in                                                      |
 | Google: signing in                            | when you sign in with Google                                                |
 | Google: your picture                          | whenever the account icon shows it, after you signed in with Google         |
@@ -44,6 +51,12 @@ data or a path on this machine.
 
 There is no usage reporting and no crash reporting. What the app measures about itself — how long
 each file took to open, what its memory was made of — stays in `~/.objectexplorer`.
+
+**A file you send us, when you choose to.** Three commands send something for a bug report:
+**Share Anonymized for Debugging** on a file (an [anonymized copy](/explore/anonymize), never the
+file itself), **Help: Share Application Log for Debugging** and **Help: Report Bug with a
+Screenshot**. Each is encrypted on your machine with our public key before it leaves, so only we can
+read it, and none of them runs on its own.
 
 ## What stays on this machine, and you may not expect
 
@@ -56,6 +69,10 @@ read from the file, by another program or from a copy of your disk. To give a se
 for a bug report, `oe replay export <file> <out>` writes a readable copy; it holds what you typed,
 so look at it first. Start with `record=false` to record nothing — see
 [recording a session](/reference/session-recording). The browser version records nothing.
+
+**The app's log.** The desktop app writes the messages it prints, with the paths of the files it
+opened, to `~/.objectexplorer/app.log`, and keeps the one before as `app.log.1` once it passes 8 MB.
+It stays here unless you send it to us.
 
 ## What an agent sees
 

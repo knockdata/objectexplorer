@@ -74,8 +74,9 @@ in SQL and gets rows. **Documents** — PDF, Word, PowerPoint, EPUB, HTML, Markd
 come back as their text. **Structured files** — JSON, JSON Lines, YAML, XML, notebooks — come back as
 their tree. Every answer passes the PII rules on the way.
 
-That is not the whole [format list](/formats/). An image, an archive, a 3D model or anything else
-with no text to check is refused rather than sent as bytes no rule has looked at.
+That is not the whole [format list](/formats/). An archive, a 3D model or anything else with no text
+to check is refused rather than sent as bytes no rule has looked at. A picture is read by the
+system's text recognition first on macOS, and refused elsewhere.
 
 ### Limits, for safety and for cost
 
@@ -101,10 +102,18 @@ all of them.
 
 ## What it costs to try
 
-Settings → MCP, one toggle, one tick per client. The starting rule file grants the folders already
-in your window, turns `query` and `getObject` off, and leaves the door shut until you open it.
+Settings → MCP: write the starting rule file, press **Turn On**, and **Install** each client. The
+starting rule file grants the folders already in your window, turns on the seven tools — all of
+them read only, every answer through the PII rules — and leaves the door shut until you open it.
 
 MCP is in the desktop app and `npx`. The browser version has no agent on the machine to hand
 anything to, so it has no MCP pane at all.
+
+## Or ask your own assistant
+
+The other way round: you pick a file or a folder and ask Claude Code — or ChatGPT, Gemini or a
+model on your own machine — about it, in a side bar beside the panes. That is your data going to
+the assistant you chose, so the PII rules do not apply there.
+→ [Claude in the side bar](/agents/claude)
 
 Next: [connecting an agent](/agents/connect).

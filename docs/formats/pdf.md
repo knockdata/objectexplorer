@@ -21,6 +21,7 @@ one.
   says they look.
 - **Encrypted files** that only mark what may be printed or copied, which is most of them. A file
   that really needs a password says so rather than opening wrongly.
+- **Damaged files** — a PDF whose list of pages is lost or broken still shows the pages it holds.
 
 ## Find
 
@@ -29,7 +30,8 @@ one.
 
 ## The side panel
 
-**☰** opens a panel beside the page with three tabs:
+**☰** opens a panel beside the page with three tabs. Drag its edge to make it wider or narrower;
+dragged narrow enough, it closes.
 
 | Tab          | What it holds                                                                             |
 |--------------|-------------------------------------------------------------------------------------------|
@@ -41,8 +43,9 @@ An attachment is saved with a click, the way a download is.
 
 ## Notes
 
-The toolbar holds eight ways to mark a page. Seven are drawn over words: pick one, then select the
-text it goes on.
+**Annotate** in the toolbar brings out the note tools, and they stay in every PDF's toolbar until
+you turn them off. They hold eight ways to mark a page. Seven are drawn over words: pick one, then
+select the text it goes on.
 
 | Mark               | Drawn as                          |
 |--------------------|-----------------------------------|
@@ -64,6 +67,10 @@ reading and selecting. `⌘Z` takes back the last mark, and `Delete` removes the
 
 The notes are yours, not the file's: nothing is written into the PDF. They are remembered for that
 file on this machine.
+
+## Present
+
+**Present** shows the pages one at a time, full screen; `Escape` leaves.
 
 ## Moving around
 

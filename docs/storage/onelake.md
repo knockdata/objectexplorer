@@ -5,7 +5,7 @@ connection string or SAS URL to paste: a Microsoft token is the only way in.
 
 ## Ways to connect
 
-- **Sign in with Microsoft**, in **Settings → Sign-ins → Microsoft**. The sign-in happens inside the
+- **Sign in with Microsoft**, in **Settings → Accounts → Microsoft**. The sign-in happens inside the
   app, in your browser, and it is the same one [Azure Blob Storage](/storage/azure) uses — one
   sign-in serves both. Each has its own switch there, so either can be turned off.
 - **An app registration**, for a machine with no person in front of it: set `AZURE_TENANT_ID`,

@@ -6,8 +6,8 @@
 
 A Power BI report opens as the report: its pages, laid out where the author put every visual, with
 the numbers each one shows worked out from the data the file carries. Power BI Desktop is not
-needed, and nothing is sent to the Power BI service — the file is read on your machine, like every
-other one.
+needed, and a report that carries its data is read on your machine, like every other file; nothing
+of it is sent to the Power BI service.
 
 ## The report
 
@@ -43,14 +43,14 @@ relationships between the tables, and the Power Query that loads them.
 
 ## Which files
 
-| File                  | What opens                                                                           |
-|-----------------------|--------------------------------------------------------------------------------------|
-| `.pbix` with its data | the report, computed from the data inside — the usual case                           |
-| `.pbix` from 2016     | the same; the older way those files store their data is read too                     |
-| `.pbix` in PBIR       | the same; PBIR is the report format Power BI saves since 2026                        |
-| `.pbit` template      | the pages with their fields, and the model and its queries — a template has no data  |
-| live connection       | the pages with their fields, and where the model lives — the data is not in the file |
-| DirectQuery           | the pages and the model; the rows stay in the source database                        |
+| File                  | What opens                                                                                                                                                            |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `.pbix` with its data | the report, computed from the data inside — the usual case                                                                                                            |
+| `.pbix` from 2016     | the same; the older way those files store their data is read too                                                                                                      |
+| `.pbix` in PBIR       | the same; PBIR is the report format Power BI saves since 2026                                                                                                         |
+| `.pbit` template      | the pages with their fields, and the model and its queries — a template has no data                                                                                   |
+| live connection       | the pages, drawn from a snapshot of each visual's data asked of the Power BI service with your Microsoft sign-in, kept on your machine; the refresh button asks again |
+| DirectQuery           | the pages and the model; the rows stay in the source database, and the bar says where they live                                                                       |
 
 A report renamed to `.bin`, or saved with no extension, still opens as a report: the bytes are read,
 not only the name. See [what decides the viewer](/explore/preview#what-decides-the-viewer).

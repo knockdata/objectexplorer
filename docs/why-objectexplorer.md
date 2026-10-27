@@ -26,11 +26,14 @@ a `Downloads` folder full of data that should never have left the bucket.
 
 ObjectExplorer collapses that loop:
 
-- **One window for every provider.** S3 and S3 compatible storage, GCS, Azure Blob, OneLake, Google
-  Drive, OneDrive, Dropbox, Box and your local disks in the same tree, with the same keyboard
-  shortcuts.
+- **One window for every provider.** S3 and S3 compatible storage, GCS, BigQuery, Azure Blob,
+  OneLake, Google Drive, OneDrive, Dropbox, Box and your local disks in the same tree, with the same
+  keyboard shortcuts.
 - **Preview instead of download.** Formats render in place — including the ones no console will ever
   open, like Parquet, SPSS and SAS.
+- **Download only what you need, in the format you need.** When a copy does have to leave, it
+  leaves as an Excel workbook, a CSV, a PNG or a Word file, from the download button of the view —
+  see [download and convert](/explore/download).
 - **Search across buckets.** One query over local folders and cloud prefixes at the same time.
 - **Query, chart and model in place.** A table opens as a notebook: SQL over the object, a chart of
   what came back, and a gradient boosting model over the rows — all on your machine.

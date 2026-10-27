@@ -16,8 +16,8 @@ Older versions, and the release notes for each one, are on the
 ### macOS
 
 Open the `.dmg` and drag ObjectExplorer to the Applications folder beside it, as its window says. The
-app is signed with a Developer ID and notarized, so it opens on the first double-click. It needs macOS 13 or later, on
-Apple silicon or Intel.
+app is signed with a Developer ID and notarized, so it opens on the first double-click. It needs
+macOS 11 Big Sur or later, on Apple silicon or Intel.
 
 The `.tar.gz` is the command line alone, one file `objectexplorer` beside `oe`, its short name. Put
 both somewhere on your PATH.
@@ -27,8 +27,8 @@ both somewhere on your PATH.
 Open the signed `.msix` and Windows installs it: a Start menu entry, an icon, and an entry in
 *Add or remove programs* that uninstalls cleanly. SmartScreen may still show a notice the first time.
 
-The portable `.zip` runs where you unpack it, with nothing installed: `ObjectExplorer.exe` is the window,
-`objectexplorer.com` beside it is the command line, and `oe.exe` is the short name.
+The portable `.zip` runs where you unpack it, with nothing installed: `ObjectExplorer.exe` is the
+window, `ObjectExplorer.com` beside it is the command line, and `oe.exe` is the short name.
 
 ### Linux
 
@@ -99,8 +99,9 @@ What needs a machine of your own stays in the desktop app and the command line: 
 the MCP door for agents, Python, the writing tool's sources, and Check for Updates. The browser
 version leaves those panes out rather than showing one that can only fail.
 
-The download icon above the account icon, at the bottom of the activity bar, is **Download app**:
-every installer, with your computer's platform already open.
+In the browser, the download icon above the account icon, at the bottom of the activity bar, is
+**Download app**: every installer, with your computer's platform already open. The desktop app has
+no such icon; it is already installed.
 
 ## Signing in
 
@@ -117,13 +118,22 @@ signing out, or clearing the site's data, ends it.
 
 ## First run
 
-1. A short tour lights up the activity bar, the tree, **Add a folder**, the tabs, search and
-   settings, one card at a time. The **?** at the bottom of the activity bar shows it again; see
-   [the tour and what is new](/reference/tour).
-2. The tree shows the folder you started from, or is empty in the desktop window. Add a folder on
-   this machine with **+** in the sidebar's header, which opens Settings → Local folder, or connect a
-   cloud account in **Settings** — see [connecting storage](/storage/connect).
-3. Click a file and it opens as itself: a table as rows, a picture as a picture. A data table opens
-   as a [notebook](/analyze/notebook), already queried.
+1. On macOS and Windows, Settings opens once on **OS Extension**, where you choose what the app adds
+   to the Finder's or File Explorer's menu — see [Finder, File Explorer and file
+   managers](/reference/os-integration). Close it and the tour starts.
+2. A short tour opens the demo's train stations, a Parquet file, as rows, and shows you how to
+   filter them by a bar and download them as an Excel workbook. Then it lights up the activity bar,
+   the tree, **Add a folder**, the tabs, search and settings, one card at a time. The **?** at the
+   bottom of the activity bar shows it again; see [the tour and what is new](/reference/tour).
+3. The tree holds the demo folder, a small sample of every kind of file, and the folder you started
+   from. The empty pane says what the app is for — "Open any file to see it as itself: a table as
+   rows, a model in 3D. Then download it in another format." — with **Add a Folder…** and
+   **Open the Demo** under it, and the files you opened last once there are some.
+4. **+** in the sidebar's header, or **Add a Folder…**, adds a folder: **Local Folder…** picks one on
+   this machine, and a cloud's entry opens its pane in **Settings** — see
+   [connecting storage](/storage/connect).
+5. Click a file and it opens as itself: a table as rows, a picture as a picture. **Download** in its
+   toolbar saves it as it is, or in another format — see
+   [download in another format](/explore/download).
 
 Next: [your data stays here](/privacy).

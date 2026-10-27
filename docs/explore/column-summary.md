@@ -21,7 +21,7 @@ grid holds, after the first rows are already on screen.
 | Whole numbers that are nearly all distinct      | the range from minimum to maximum, and the distinct count — an identifier |
 | Text, and whole numbers with 12 values or fewer | a split bar of the commonest values, and how many are left                |
 | Text where every value is different             | the count of distinct values                                              |
-| Date                                            | a histogram over the years                                                |
+| Date                                            | a histogram by year, month, day or hour, as the range needs               |
 | Boolean                                         | the true/false split                                                      |
 
 Which one a column gets is decided from a sample of its values, so a date written as text, starting

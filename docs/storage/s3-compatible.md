@@ -4,20 +4,21 @@ Any storage that speaks the S3 API on its own endpoint is added as an **S3 compa
 Each one is a provider of its own, so its buckets list separately from [Amazon S3](/storage/s3) and
 from each other.
 
-Add one with the **+** beside **Sign-ins** in Settings. It needs a name, the endpoint's URL, and
-an access key and secret:
+Add one with the **+** beside **Accounts** in Settings. It needs a name and the endpoint's URL, and
+takes a description, an access key and a secret; **Connect** checks it and keeps it:
 
 ```
-name        minio
-URL         http://localhost:9000
-access key  minioadmin
-secret key  ••••••••
+name         minio
+description  the MinIO on this laptop
+URL          http://localhost:9000
+access key   minioadmin
+secret key   ••••••••
 ```
 
 The name is the endpoint's scheme in the tree — `minio://bucket/key` — so it is small letters and
 digits, and not `s3`, `gs`, `az` or `file`. The key pair may be left empty for an endpoint that takes
 anonymous requests, or written into the URL as `http://key:secret@host:9000`. Its buckets are then
-under **Locations**, each with a tick.
+under **Locations**, in a row named after it, each with a tick. **Forget this sign-in** removes it.
 
 From the command line, `oe signin s3 minio --endpoint http://localhost:9000` does the same, reading
 the key pair from the input (`--anonymous` keeps none).

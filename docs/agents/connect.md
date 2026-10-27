@@ -6,30 +6,34 @@ pane and editing it in an editor are the same act.
 
 ## 1. Write a starting rule file
 
-With no file, nothing is reachable and the pane says so. **Write a starting rule file** creates one:
+With no file, nothing is reachable and the pane says so, and lists what a starting file would grant
+before you write it. **Write a Starting Rule File** creates one:
 
 - the folders already in your window, as roots
-- `listRoots`, `listObjects`, `describeObject`, `columnSummary`, `searchText` — **no `query` and no
-  `getObject`**, the two that read a whole object rather than describe one
+- all seven tools, every one of them read only: a query is one `SELECT`, and nothing is changed,
+  moved or deleted. What a tool reads of a table, a JSON file or a document goes through the
+  PII rules first
 - the PII floor: column rules for email, phone, national id, card and account numbers, and text rules
-  for an email address, a personal number, a US SSN and a phone number inside any value
+  for an email address and a phone number inside any value, plus the detectors for personal numbers,
+  cards, IBANs, names and street addresses
 - the deny floor: `.env`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.kdbx`, `.git/`, `.ssh/`, `.aws/`,
   `.azure/`, anything with `secret`, `credential`, `password` or `token` in the path
-- modest limits: 1000 rows and 8 MB a call, 256 MB a session, 1 GB a day
+- modest limits: 1000 rows and 8 MB a call, 256 MB a session, 1 GB a day, 60 calls a minute
 - the door **shut**, and no client installed
 
 Everything past that is a line you set.
 
 ## 2. Open the door
 
-One toggle: *The door is shut* / *The door is open*. Under it, the endpoint every client calls:
+**Turn On** and **Turn Off**, beside *The door is shut* / *The door is open*. Under it, what an
+agent can reach once it is open, and the endpoint every client calls:
 
 ```
 Endpoint   http://127.0.0.1:3417/mcp
 ```
 
 **Each agent has a token of its own, and the token is who it is.** Install (below) makes one for
-the client it installs; **Add agent** under *Tokens* makes one for anything else, by a name you give
+the client it installs; **Add Agent** under *Tokens* makes one for anything else, by a name you give
 it (`reportBot`). The log, the budgets and the agent's own lines in the rule file follow the token,
 never the name a client gives itself, and **Remove** (or Uninstall) takes the token away so a copy
 of it left anywhere opens nothing. The tokens live in the rule file:
@@ -50,8 +54,7 @@ A root can be one agent's (`agents: [reportBot]`) and only part of it
 holds it names itself, and the name must be ticked under `install`.
 
 The server binds the loopback address, in every mode — the desktop app, `npx objectexplorer`, the
-browser front door. It is never mounted on the public host, for the same reason `/api/duckdb` is
-not.
+browser front door. It is never mounted on the public host.
 
 ## 3. Install into a client
 
@@ -60,9 +63,9 @@ not.
 | **Claude Code** | `~/.claude.json`, `mcpServers.objectexplorer`          |
 | **Codex**       | `~/.codex/config.toml`, `[mcp_servers.objectexplorer]` |
 
-**Install** writes the entry, the URL and the token into that client's own config. Nobody types a
-token anywhere. **Uninstall** takes it back out and touches nothing else in the file. A client that
-is not on this machine says *not found on this machine* and its button is dead.
+Under **Agents**, **Install** writes the entry, the URL and the token into that client's own config.
+Nobody types a token anywhere. **Uninstall** takes it back out and touches nothing else in the file. A
+client that is not on this machine says *not found on this machine* and its button is dead.
 
 For anything else that speaks MCP's Streamable HTTP transport, **Copy Connection** puts the whole
 block on the clipboard, already shaped:
@@ -95,14 +98,19 @@ Seven tools, ticked one by one.
 | `listObjects`    | the children of one folder                                          |
 | `describeObject` | size, time, format and columns of one object                        |
 | `columnSummary`  | per-column statistics of a tabular object                           |
-| `searchText`     | a pattern in one object's text, or in every text object in a folder |
+| `searchText`     | a pattern in one object, or in every object in a folder             |
 | `query`          | one SQL statement, over objects named by URI                        |
 | `getObject`      | one object read whole: rows, text, a tree or bytes, by what it is   |
 
-`query` and `getObject` are the two worth thinking about, and the two a starting file leaves off:
-they are the ones that read a whole object. Turning `query` on is what makes the app an analysis
-engine for the agent rather than a catalogue. `getObject` on a drawing or a binary answers with a
-tree or bytes, which no [PII rule](/agents/pii#what-the-rules-reach-and-what-they-cannot) can rewrite.
+`query` and `getObject` are the two worth thinking about: they are the ones that read a whole
+object rather than describe one. `query` is what makes the app an analysis engine for the agent
+rather than a catalogue. Both answer through the [PII rules](/agents/pii#what-the-rules-reach-and-what-they-cannot),
+and `getObject` refuses bytes no rule can check — an archive, a model. Untick either one if an agent
+should only look, not read.
+
+`searchText` searches a document's or code's lines, a table's rows (each hit the row as a CSV line)
+and a JSON or YAML tree, always after the PII rules: a dropped column is not searched, and a
+rewritten one is searched as it was rewritten.
 
 An agent names everything by the same URI the app writes into SQL — `gs://bucket/key`,
 `s3://bucket/key`, `az://account/container/key`, and `root/key` for a local folder you mounted.

@@ -8,22 +8,24 @@ requests ObjectExplorer makes that are not to your own storage —
 ## In the app
 
 **Settings → Check for Updates** asks GitHub for the latest release when you open it; nothing is
-asked before that. When there is a newer version, **Update to 0.9.1** downloads it, checks its
-sha256 against the release's own list, and puts it where the next start finds it. Nothing changes
-while you work. The button then turns into **Restart to finish**: the app closes and opens again on
-the new version, on the same port, and a browser page waits for it and reloads.
+asked before that. When there is a newer version, **Update to 0.9.14** downloads it into
+`~/.objectexplorer/update`, checks its sha256 against the release's own list, and only then puts it
+where the next start finds it. Nothing changes while you work. The button then turns into
+**Restart to Finish**: the app closes and opens again on the new version, on the same port, and a
+browser page waits for it and reloads.
 
 How the new version is put in place depends on how you installed this copy:
 
-| Installed from                     | What **Update** does                                                                          |
-|------------------------------------|-----------------------------------------------------------------------------------------------|
-| the macOS `.dmg` (the `.app`)      | replaces the app                                                                              |
-| a `.tar.gz`, or the Windows `.zip` | downloads the new binary and puts it in place of this one                                     |
-| `npm install -g`, or a project     | runs npm to install the new version                                                           |
-| `npx`                              | installs it under `~/.objectexplorer/update`, and runs from there                             |
-| Homebrew                           | shows the command: `brew upgrade objectexplorer`, or `brew upgrade --cask objectexplorer-app` |
-| the Windows `.msix`                | downloads the new `.msix`; on restart App Installer opens it and replaces this copy           |
-| a server                           | shows the commands: [updating a server](#a-server)                                            |
+| Installed from                            | What **Update** does                                                                                                                                                 |
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| the macOS `.dmg`, dragged to Applications | replaces the app                                                                                                                                                     |
+| the app opened straight from the `.dmg`   | puts the new version in `/Applications`, or in `~/Applications` when you cannot write `/Applications`; **Choose Folder…** picks another; Restart opens it from there |
+| a `.tar.gz`, or the Windows `.zip`        | downloads the new binary and puts it in place of this one                                                                                                            |
+| `npm install -g`, or a project            | runs npm to install the new version                                                                                                                                  |
+| `npx`                                     | installs it under `~/.objectexplorer/update`, and runs from there                                                                                                    |
+| Homebrew                                  | shows the command: `brew upgrade objectexplorer`, or `brew upgrade --cask objectexplorer-app`                                                                        |
+| the Windows `.msix`                       | downloads the new `.msix`; on restart App Installer opens it and replaces this copy                                                                                  |
+| a server                                  | shows the commands: [updating a server](#a-server)                                                                                                                   |
 
 A copy that came from none of these is told so, and offered nothing.
 

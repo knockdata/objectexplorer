@@ -5,8 +5,8 @@
 One share icon, one dialog, and a link to objectexplorer.com/app that carries the rows — on a
 machine with none of your storage, none of your accounts and nothing installed.
 
-The icon is where the rows are: over the header of a notebook cell's table, and on the
-[usage disc](/explore/usage)'s toolbar, which shares the disc as a table. A folder listing has
+The icon is where the rows are: at the right of a table's header, in the Table view and in a
+notebook cell's output, and on the [usage disc](/explore/usage)'s toolbar, which shares the disc as a table. A folder listing has
 none — a list of names is not something to hand somebody, and the object under it is.
 
 ## Decide column by column
@@ -39,7 +39,7 @@ places:
 | **Drop**       | opens as **Hash**                               | the column is left out                            |
 | **Key**        | one made for this share when the dialog opens   | one per install, `~/.objectexplorer/mcp/key`      |
 
-The share's key never enters the link — **Copy key**, shown while a column is Hash or FPE, is the
+The share's key never enters the link — **Copy Key**, shown while a column is Hash or FPE, is the
 only way it leaves this machine, and it is the key that share's Hash and FPE columns were made with,
 and nothing else. Because the keys differ, the same email hashed in two shares, or in a share and
 an agent's answer, comes back as two different values.

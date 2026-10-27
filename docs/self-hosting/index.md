@@ -44,6 +44,8 @@ runs code is configured only on the server's own machine, or on its command line
 - cloud and drive sign-ins, and the folders and buckets in the tree;
 - Python environments and packages, and the cloud command-line tools;
 - the agent door: its tokens, its rules and what agents read;
+- the Claude side bar and **Ask…**: they run on the server's own files, with its own keys;
+- a database server's sign-in, such as Postgres;
 - **Settings → Admin**: the licence, the sign-in and the audit log;
 - installing an update.
 
@@ -224,6 +226,9 @@ file.
 The window's own settings, `window=`, `connect=`, `record=` and the rest, are on
 [the command line](/reference/command-line#starting-it).
 
+With no `http_port` given and no `tls`, a busy 9421 gives way to any free port, and the start says
+so. A port you give is never changed: a busy one stops the start.
+
 The server refuses to start, with a message, when the settings cannot work: `tls` without
 `https_port`, `tls=auto` without `domain`, a host other machines can reach without a sign-in or
 `public=true`, or a licence that does not verify. The certificate's own reasons are on
@@ -282,7 +287,7 @@ Both write the config file, and a running server reads it again when it changes.
 ## Settings → Account and Admin
 
 **Settings → Account** shows who you are signed in to this server as, and how (OpenID Connect, SAML
-or a token), with **Sign out**, and the plan with the account it was signed up with.
+or a token), with **Sign Out**, and the plan with the account it was signed up with.
 
 **Settings → Admin** is on the server's own page only. It shows the server's version, licence and
 certificate; its sign-in, with the addresses to register at the identity provider; what other

@@ -31,20 +31,22 @@ objectexplorer --version
 `npx @knockdata/objectexplorer` passes its arguments on as they are, so everything here works the
 same through npx.
 
-| Argument     | Default                         | What it does                                                                                      |
-|--------------|---------------------------------|---------------------------------------------------------------------------------------------------|
-| `http_port=` | `9421`                          | the port; `0` takes any free one                                                                  |
-| `host=`      | `127.0.0.1`                     | where it listens; `0.0.0.0` lets other machines in, and then they must sign in                    |
-| `open=`      | `true`                          | `false` does not open the browser                                                                 |
-| `window=`    | as started                      | `true` the desktop window, `false` the command line                                               |
-| `folder=`    |                                 | a folder for the tree on the first run; give it once per folder                                   |
-| `connect=`   |                                 | the window as a client of that server                                                             |
-| `token=`     |                                 | the session the server knows this window by; kept in the keychain after                           |
-| `mode=`      | `full`                          | `instant`: one read-only folder, nothing signed in — see [instant mode](/reference/instant-mode)  |
-| `cloud=`     | `on`                            | `off`: no cloud storage is offered or can be added                                                |
-| `record=`    | a new file                      | where this window's session is recorded; `false` records nothing                                  |
-| `replay=`    |                                 | a recording played back into the window — see [recording a session](/reference/session-recording) |
-| `config=`    | `~/.objectexplorer/server.json` | a server's settings, as JSON                                                                      |
+| Argument        | Default                         | What it does                                                                                      |
+|-----------------|---------------------------------|---------------------------------------------------------------------------------------------------|
+| `http_port=`    | `9421`                          | the port; `0` takes any free one, as does a busy 9421 when no port was given                      |
+| `host=`         | `127.0.0.1`                     | where it listens; `0.0.0.0` lets other machines in, and then they must sign in                    |
+| `open=`         | `true`                          | `false` does not open the browser                                                                 |
+| `window=`       | as started                      | `true` the desktop window, `false` the command line                                               |
+| `folder=`       |                                 | a folder for the tree on the first run; give it once per folder                                   |
+| `connect=`      |                                 | the window as a client of that server                                                             |
+| `token=`        |                                 | the session the server knows this window by; kept in the keychain after                           |
+| `mode=`         | `full`                          | `instant`: one read-only folder, nothing signed in — see [instant mode](/reference/instant-mode)  |
+| `cloud=`        | `on`                            | `off`: no cloud storage is offered or can be added                                                |
+| `record=`       | a new file                      | where this window's session is recorded; `false` records nothing                                  |
+| `replay=`       |                                 | a recording played back into the window — see [recording a session](/reference/session-recording) |
+| `replay_speed=` | `fast`                          | how fast a recording plays back: `fast`, or `1` for real time, `2` twice as fast                  |
+| `tour=`         | on                              | `off`: neither [the tour](/reference/tour) nor a card about something new starts by itself        |
+| `config=`       | `~/.objectexplorer/server.json` | a server's settings, as JSON                                                                      |
 
 A server takes more: `https_port=`, `tls=`, `domain=`, `public=`, `licence=`, `base=` and `data=`,
 all on [running your own server](/self-hosting/).
@@ -88,10 +90,10 @@ oe settings set mcp.limits.rowsPerCall 500
 
 | Name                         | Pane         | Values                                                     |
 |------------------------------|--------------|------------------------------------------------------------|
-| `theme`                      | General      | `dark`, `light`                                            |
+| `theme`                      | Appearance   | `dark`, `light`                                            |
 | `folders`                    | Local folder | the folders and buckets in the tree                        |
 | `hidden`                     | Local folder | folders kept out of the tree                               |
-| `off`                        | Sign-ins     | services turned off: `gcs`, `s3`, `azure`, `onelake`       |
+| `off`                        | Accounts     | services turned off: `gcs`, `s3`, `azure`, `onelake`       |
 | `cache.limit`                | Cache        | whole gigabytes, 1 or more                                 |
 | `writing.show_passages`      | Writing tool | `true`, `false`                                            |
 | `writing.show_phrases`       | Writing tool | `true`, `false`                                            |
@@ -150,6 +152,44 @@ A key is checked before it is kept, as the pane checks it: one that is refused i
 A secret is never taken from the command line itself, where it would stay in your shell history.
 Point `--file` at it, pipe it in, or paste it when asked and end with Ctrl-D. It goes straight to the
 system keychain. On Windows, use `--file`.
+
+## Working on files
+
+These work on files on this machine, and need no window, no sign-in and no app already running.
+
+```sh
+oe anonymize customers.csv                  # customers.anonymized.csv beside it
+oe compare orders.parquet orders.csv --mode diff --key order_id
+oe test ~/data                               # every file of ~/data opened, a line each
+oe replay export ~/.objectexplorer/replay/2026-10-11T17-36-44.166Z.replay session.replay
+```
+
+| Command                              | What it does                                                                                                                                |
+|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `oe anonymize <file> [<out>]`        | the same as **Create Anonymized Copy** in a file's menu: every value replaced by one of the same shape, so the copy opens like the original |
+| `oe compare <left> <right>`          | two tables, or two CSS files, as **Compare with the Left Pane** shows them                                                                  |
+| `oe test <folder>`                   | every file of the folder opened as a click opens it, and whether its view showed what the file holds                                        |
+| `oe replay export <recording> <out>` | a decrypted copy of a [session recording](/reference/session-recording#sending-one-with-a-bug-report), to attach to a bug report            |
+
+`oe anonymize` takes CSV, TSV, PSV, JSON, JSON lines, notebooks, YAML, XML, SQLite, Parquet, Excel
+(`xlsx` and `xls`), OpenDocument sheets, Arrow and Feather, Avro, NumPy (`npy`, `npz`), Stata, SPSS,
+SAS (`xpt`, `sas7bdat`), NetCDF, and a CSV or JSON file compressed with gzip or Zstandard. The key
+that changed the values is made for that one copy and thrown away, so nothing can turn them back.
+With no `<out>`, the copy is `<name>.anonymized.<ext>` beside the file, and the line it prints says
+where it went.
+
+`oe compare` reads CSV, TSV, JSON lines, Parquet, ORC, and a table of a SQLite or DuckDB database,
+the two sides in the same format or not. `--mode dup` lists what both have; `--mode diff` matches
+rows by `--key` (by default the column whose values repeat least) and lists the rows that changed or
+are on one side only, numbers equal within `--tolerance`. `--on` picks the columns compared, and
+`--format json` or `ndjson` prints JSON. Its exit code is its own: 0 nothing found, 1 something
+found, 2 an error.
+
+`oe test` prints a line a file — whether it opened, the view it opened in, its path, and the first
+line of what went wrong — then a short report of the failures. A file that crashes or hangs ends
+alone, and the run goes on after it. `--seconds` is how long each file is given (20 by default).
+`--report` prints the folder's last run again, `--resume` carries on a run that did not finish, and
+`--again` starts a new one. It exits 0 when every file opened, 1 when some failed.
 
 ## 3D models
 

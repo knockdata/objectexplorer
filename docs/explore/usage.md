@@ -183,8 +183,9 @@ to let go. An arch has no card of its own: click either end.
 
 ## Where it opens
 
-It fills the window whenever nothing else is open. **Settings → General** turns that off, and
-`⇧⌘P` → **View: Usage Visualization** opens it as a tab whenever you want it.
+`⇧⌘P` → **View: Usage Visualization** opens it as a tab whenever you want it. To have it fill the
+window whenever nothing else is open, tick **Show where the storage went when nothing is open** in
+**Settings → Appearance**.
 
 A fresh install has nothing of its own to draw yet, so the disc opens on made-up data with the
 **Demo** switch on — the sample in the worked example above. Switch Demo off to see yours, and on again

@@ -16,7 +16,7 @@ frame.groupby("region")["amount"].sum().sort_values(ascending=False)
 The last value is the answer — there is no `print` to write, and no `return`. A pandas, polars or
 Spark DataFrame comes back as a grid, and a chart cell under it plots those rows; a matplotlib figure
 comes back as a picture, anything else as its `repr`. Whatever you print along the way is kept behind
-the cell's **ⓘ** icon.
+the info icon in the cell's toolbar.
 
 A Python cell does not read the rows of the cell above it: the session is a separate process, and it
 reaches the data through `oe`. When the notebook's file is on this machine, its folder is the cell's
@@ -75,14 +75,15 @@ in one cell and the next cell has it; import pandas once and it stays imported.
 
 The session is called `global` and it is **shared across notebooks**. Two objects open side by side
 are two views onto one namespace, which is usually what you want — load a frame while reading one
-file, reshape it while reading another. When it is not, pick **new session…** from the box in the
+file, reshape it while reading another. When it is not, pick **New Session…** from the box in the
 cell's toolbar and name one; that notebook gets a namespace of its own, and another notebook joins it
 by picking the same name.
 
-A session belongs to one environment, and naming a new session is when you pick which. Cells never
-carry an environment of their own: a cell runs in whichever one its session was started on.
+A session belongs to one environment, and naming a new session is when you pick which — or make one
+there with **New venv…**. Cells never carry an environment of their own: a cell runs in whichever one
+its session was started on.
 
-The **ⓘ** icon beside the session opens everything else about the cell in one place: what is in the
+The info icon beside the session opens everything else about the cell in one place: what is in the
 session's namespace right now — every name, its type, and a word about what it holds, a DataFrame
 saying its shape — and anything the cell printed. The namespace is asked for rather than remembered,
 because another notebook may have changed it since.
@@ -103,7 +104,8 @@ Name an environment, pick a version, and it is made. The versions in that box ar
 on your machine — the ones uv manages and the ones on your PATH — offered where they are actually
 useful rather than as a list to read. If none is found the pane says so, and points at
 [python.org/downloads](https://www.python.org/downloads/) or `uv python install 3.12`. If **uv**
-itself is missing it says that first, because nothing below it can work.
+itself is missing it says that first, because nothing below it can work, and **Install uv** puts it
+on the machine.
 
 The first Python cell you run makes an environment called `default` if you have not made any yet, so
 a fresh machine is not a four-step setup before `1 + 1`.

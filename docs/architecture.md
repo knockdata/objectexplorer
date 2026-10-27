@@ -69,6 +69,8 @@ Everything the app keeps is in `~/.objectexplorer` — the full list is in
 | The key PII rules hash and encrypt with | `mcp/key`      | a secret; it never leaves the machine                                                                                               |
 | Python environments                     | `venvs/`       | what you installed into them                                                                                                        |
 | Window sessions                         | `replay/`      | yes: what you clicked and typed in the last sessions, kept to replay them — see [recording a session](/reference/session-recording) |
+| The app's log                           | `app.log`      | the messages the app printed: paths, timings, errors; the one before is kept as `app.log.1` once it passes 8 MB                     |
+| The demo folder                         | `demo/`        | the sample files the installed app shows in its tree, fetched from objectexplorer.com                                               |
 
 One thing is written outside that folder, into the storage you browse: **a delete in a cloud
 bucket** moves the object into a `.trash` folder at the top of that root, kept for 30 days, so it
@@ -79,9 +81,11 @@ purpose: a copy, a move, a rename, a file you save.
 
 - **Query results.** A notebook stores its code; the rows come back when a cell runs again.
 - **What an agent was sent.** The log says what was asked and how much came back, not the rows.
-- **Anything on a server of ours.** There is no upload. The only calls to objectexplorer.com are your
-  licence and a share link too big to fit in its own URL; the update check goes to GitHub — the full
-  list is in [your data stays here](/privacy).
+- **Anything on a server of ours.** There is no upload behind your back. objectexplorer.com is asked
+  for your licence, the demo folder, the list of assistants **Ask…** knows and a share link too
+  big to fit in its own URL, and gets a file only when you send one yourself: a bug report, an
+  anonymized copy or the app's log, sealed so only we can open it. The update check goes to
+  GitHub — the full list is in [your data stays here](/privacy).
 
 ## Deleting it all
 

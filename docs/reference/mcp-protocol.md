@@ -23,12 +23,12 @@ could be pointed at.
 
 Four things are checked before a byte of JSON-RPC is parsed, and each is a plain HTTP failure:
 
-| Check                                         | Failure |
-|-----------------------------------------------|---------|
-| `server.enabled` and a token in the rule file | `403`   |
-| the connection came from this machine         | `403`   |
-| `Origin`, when present, is loopback or absent | `403`   |
-| `Authorization: Bearer <server.token>`        | `401`   |
+| Check                                                                              | Failure |
+|------------------------------------------------------------------------------------|---------|
+| `server.enabled` and a token in the rule file                                      | `403`   |
+| the connection came from this machine                                              | `403`   |
+| `Origin`, when present, is loopback or absent                                      | `403`   |
+| `Authorization: Bearer <token>`, an agent's own token or the shared `server.token` | `401`   |
 
 The `Origin` check is what stops a web page in the user's own browser from driving the agent
 endpoint — a page can send a POST to localhost, and without this it would be an agent.
@@ -51,10 +51,11 @@ endpoint — a page can send a POST to localhost, and without this it would be a
 ```
 
 Every request after that carries `Mcp-Session-Id` and `MCP-Protocol-Version`. The session id is
-what the access log is filed under, next to the agent name — and the agent name is
-`clientInfo.name`, normalised (`claude-code` → `claudeCode`) and matched against the clients ticked
-under `install`. A client that is not ticked is refused at `initialize`, which is the one place a
-refusal can say why in words a human will read.
+what the access log is filed under, next to the agent name. An agent's own token names the agent,
+whatever the client calls itself. With the shared token the agent name is `clientInfo.name`,
+normalised (`claude-code` → `claudeCode`) and matched against the clients ticked under `install`; a
+client that is not ticked is refused at `initialize`, which is the one place a refusal can say why
+in words a human will read. A session is answered only to the token that opened it.
 
 `tools.listChanged` is not decoration: editing the rule file changes which tools exist, and the
 notification is what stops an agent from calling one that was there a minute ago.
@@ -179,7 +180,8 @@ parse, a session that is gone.
 
 ## Installing into a client
 
-Ticking a client in Settings writes that client's own config, with the token from the rule file.
+**Install** for a client in Settings → MCP writes that client's own config, with the agent's own
+token from the rule file.
 
 **Claude Code** — `claude mcp add --transport http objectexplorer http://127.0.0.1:3417/mcp
 --header "Authorization: Bearer <token>"`, which lands in `~/.claude.json`. The app writes the same
@@ -190,10 +192,10 @@ in the file is touched. `experimental_use_rmcp_client = true` is added when it i
 that is what turns Codex's HTTP transport on at all, and it is left alone on uninstall — another
 server may be relying on it.
 
-Anything else that speaks this transport is wired by hand: **Copy Connection** in Settings → MCP
-puts the address and the token on the clipboard as one block, already shaped the way a client's
-config wants them. A client that speaks only stdio needs a bridge, and there is none in the app
-today.
+Anything else that speaks this transport is wired by hand: **Add Agent** in Settings → MCP makes it a
+token of its own, and **Copy Connection** puts the address and the token on the clipboard as one
+block, already shaped the way a client's config wants them. A client that speaks only stdio needs a
+bridge, and there is none in the app today.
 
 ## The other half: what the window uses
 
@@ -203,21 +205,5 @@ sessions and their calls, the client's transcript, Recheck, the answer to an app
 feed of every call as it is decided. That feed is what observing is: the window follows what it
 sees, debounced, and Escape stops following. It is a mirror of the log, never its source — the log
 is written before the answer leaves, whether or not a window is listening.
-
-## Where it lives
-
-```
-service/mcp/door.js        the listener: the four checks, sessions, JSON-RPC
-service/mcp/rules.js       mcp.yaml, read again whenever it changed
-service/mcp/gate.js        the steps that decide a call, and the only thing that does
-service/mcp/call.js        one call, from the rules to the record
-service/mcp/budget.js      what an agent has taken, and whether it may take more
-service/mcp/approve.js     the prompt, and what a timeout means
-service/mcp/tools.js       each tool, over the app's storage, database and readers
-service/mcp/log.js         one ndjson file per agent per session, written before the answer
-service/mcp/transcript.js  the client's own account, matched to a session
-service/pii/columns.js     fpe / hash / mask / drop
-service/pii/sanitize.js    the floor every answer goes through
-```
 
 Next: [troubleshooting](/reference/troubleshooting).

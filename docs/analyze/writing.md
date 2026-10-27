@@ -46,7 +46,9 @@ The references and phrases come from web pages you add, and from nothing else: w
 sidebar says so and points here.
 
 **Settings → Writing tool** — in the desktop app and on a server, not in the instant page at
-objectexplorer.com/app — paste an address — an index page, or a single article — and press **+**.
+objectexplorer.com/app. Five sources are offered with a tick each: Paul Graham's essays, George
+Orwell's essays, Strunk's *The Elements of Style*, Dan Luu's essays and Derek Sivers' blog. For your
+own, paste an address — an index page, or a single article — and press **+**.
 Adding fetches nothing yet; **Reindex** does, for one source or for all of them. From an index page,
 the articles it links to are read too. An address on this machine or its local network is refused.
 Other people signed in to a server can use it only when the server's owner turned web sources on.

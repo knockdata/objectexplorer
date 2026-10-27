@@ -48,8 +48,11 @@ The same savings are on each pole's card on [the usage disc](/explore/usage).
 
 ## The slowest openings
 
-Last in the pane: the twenty slowest of the last thousand files opened, each with how long it took
-to read and to draw, how much memory it added and holds, and whether it opened at all. When a file
-feels slow, this is where to look first.
+Then the twenty slowest of the last thousand files opened, each with how long it took to read and
+to draw, how much memory it added and holds, and whether it opened at all. When a file feels slow,
+this is where to look first.
+
+Last in the pane, three rows you can open explain when copies are removed, how **What it saved** is
+counted, and what **Slowest openings** measures.
 
 Next: [previewing an object](/explore/preview).

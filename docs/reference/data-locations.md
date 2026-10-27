@@ -26,9 +26,10 @@ kept 30 days so it can be undone.
 |------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `explorer.db`          | what the app remembers: the folders in the tree, settings, open tabs, each table's notebook, size history, the folders' last listings, how long each opening took, what each bucket is priced by, how often each cloud object was read |
 | `storage.json`         | the cloud accounts and the [S3 compatible](/storage/s3-compatible) endpoints you connected; every secret in it is a reference to the keychain                                                                                          |
-| `cache/`               | the copies of cloud objects you opened, page by page, and media converted to play — see [the cache](/explore/cache)                                                                                                                    |
+| `cache/`               | the copies of cloud objects you opened, page by page, media converted to play, and BigQuery's table rows and kept answers — see [the cache](/explore/cache)                                                                            |
 | `thumbnails/`          | the small pictures the grid shows of files                                                                                                                                                                                             |
 | `index/`               | the index [search](/explore/search) reads, one per root                                                                                                                                                                                |
+| `app.log`              | the app's log, every message it printed; `app.log.1` is the one before, once it passed 8 MB                                                                                                                                            |
 | `replay/`              | the [recordings](/reference/session-recording) of the last window sessions                                                                                                                                                             |
 | `onboarding.json`      | whether you have seen [the tour](/reference/tour), and which cards about new features                                                                                                                                                  |
 | `features.db`          | what is new in each release, and which of it has been used                                                                                                                                                                             |
@@ -39,9 +40,10 @@ kept 30 days so it can be undone.
 | `mcp/key`              | the key [PII rules](/agents/pii) encrypt and hash an agent's answers with; it never leaves the machine, and a share uses a key of its own                                                                                              |
 | `mcp/vault.db`         | the real values behind the pseudonyms agents were sent, encrypted                                                                                                                                                                      |
 | `mcp/<agent>/`         | the access log of every MCP call, one file per session — see [sessions](/agents/sessions)                                                                                                                                              |
+| `ask_providers.yaml`   | the list of programs **Ask…** can hand a file to, a newer copy fetched from objectexplorer.com than the one the app came with                                                                                                          |
 | `venvs/`               | the [Python environments](/analyze/python) you made, one folder each, all of them made by uv                                                                                                                                           |
 | `trial`, `licence`     | your plan                                                                                                                                                                                                                              |
-| `update/`              | where an `npx` copy puts a newer version it downloaded                                                                                                                                                                                 |
+| `update/`              | where [Check for Updates](/reference/updating) downloads a newer version before it replaces this one, and where an `npx` copy installs it                                                                                              |
 | `web/`                 | on a server: what each signed-in browser user's app remembers, one database each                                                                                                                                                       |
 | `server.json`          | on a server: its [config](/self-hosting/#the-config-file) — sign-in, roots, certificates                                                                                                                                               |
 | `certs/<domain>/`      | on a server: the certificate Let's Encrypt gave it, its key, and the account that got it                                                                                                                                               |
@@ -54,9 +56,10 @@ instead, and the folders you pick never leave it.
 
 ## Starting from an earlier install
 
-On its first start, the desktop app looks for files an earlier ObjectExplorer left in this folder. If
-it finds some, it asks before writing anything: move them aside to `~/.objectexplorer.bk`, or use the
-folder as it is. It asks once.
+On its first start, the desktop app looks for files an earlier ObjectExplorer left in this folder.
+If it finds some, it moves them aside to `~/.objectexplorer.bk` and starts with an empty folder. It
+does this once: nothing in `~/.objectexplorer.bk` is read again or deleted, so whatever you want from
+it is still there.
 
 ## Deleting it
 

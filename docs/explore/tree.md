@@ -16,17 +16,21 @@ tree. The pane beside it lists whatever is selected.
 | **Cost/mo**  | what keeping this object at its storage class costs per month, for cloud rows                                                             |
 | **Class**    | the storage class, when the folder holds more than one                                                                                    |
 | **Note**     | the one thing worth knowing about the bill: days left of a minimum storage duration, or a small object billed at the class's minimum size |
-| **Activity** | a sparkline of how this object's size has moved over the listings the app remembers                                                       |
+| **Activity** | a bar for each of the last 7 days you opened it, as tall as how often and as dark as how long it stayed open; a folder adds up its files  |
 
 A column with nothing to say in this folder is left out: a local folder has no on-disk, cost, class
-or note column.
+or note column. Click the **Activity** header, or a chart, to switch every list between the last 7
+days and the last 12 months; point at a chart to see its day.
+
+Click a header to sort by it. **←** **→** **↑** at the left of the toolbar go back, forward and up to
+the parent folder, as in a file manager.
 
 **Σ** counts a folder: click it, and every file under it is added up in one walk — the cell then
 says the size, and its tooltip how many files in how many folders. A walk stops at 20,000 files and
 marks the size with `>`. Click again to count again.
 
 A cloud folder adds a cost line at its foot — what the folder, or the one object you picked, costs a
-month, its class and region — with **Optimize** beside it: see [optimize](/explore/optimize). Prices
+month, its class and region — with **Optimize…** beside it: see [optimize](/explore/optimize). Prices
 need the bucket's region and class; those are asked of the provider once a session and kept.
 
 The **…** menu's **Information** shows what the app knows of an object: its kind, which reader opens
@@ -57,18 +61,23 @@ by name, up or down.
 Drag a tile to put it where you want it. That layout is kept for the folder, until you sort it
 again. `⌘Z` undoes, as in the list, and `Esc` clears the selection.
 
+A burst of JPEG photos, taken seconds apart with numbers one after another in their names, is one
+tile: a fanned stack of cards with the best shot on top. Click it to see the burst side by side, each
+photo with why it scored as it did, and **Keep** or **Remove** under it; **Keep best, remove N**
+clears the rest in one go. Removed photos go to the Trash, and `⌘Z` brings them back.
+
 ## Reading a folder again
 
 A cloud listing is kept, and shown at once the next time you step into that prefix. Younger than
 eight hours, it stands as it is; older, it is shown while the provider is asked again in the
-background. **Refresh** in the **…** menu asks the provider now, past that.
+background. **Refresh**, the circular arrow in the toolbar, asks the provider now, past that.
 
 ## Hidden and deleted rows
 
-Two toggles in the **…** menu decide what the list shows beyond the obvious:
+Two toggles in the **…** menu decide what the list and the grid show beyond the obvious:
 
-- **Hidden** — dot-files and `__MACOSX`. They are hidden until you turn this on.
-- **Deleted** — a name this folder had before and does not have now, struck through. Nothing is
+- **Hidden Objects** — dot-files and `__MACOSX`. They are hidden until you turn this on.
+- **Deleted Objects** — a name this folder had before and does not have now, struck through. Nothing is
   marked deleted until a folder that knew the name lists it again without it, so the mark means "it
   went", not "it was never here".
 

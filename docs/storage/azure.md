@@ -9,7 +9,7 @@ Azure has two planes, and telling them apart is what makes the sign-in painless:
 
 ## Ways to connect
 
-- **Sign in with Microsoft**, in **Settings → Sign-ins → Microsoft**. The sign-in happens inside the
+- **Sign in with Microsoft**, in **Settings → Accounts → Microsoft**. The sign-in happens inside the
   app — no CLI to install: your browser opens on Microsoft's page, with a link to click if it did
   not. It takes a work or school account, and the session is kept and refreshed so it stays
   signed in.

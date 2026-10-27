@@ -17,7 +17,6 @@ What changed in each version. Every build is on the
 - Run a Test and Run Improvement: interactive runs keep going across a reload, reports say each failure's code and where
 
 ## v0.9.13  —  2026-10-21
-- Unity projects play in place: the Game tab runs a project's scenes with its scripts, physics (2D and 3D, character controllers, joints), animation (blend trees, skinned meshes, sprite swaps), uGUI and TextMesh Pro, the Input System, audio mixers, lightmaps, shadows, HDR and the sky as Unity draws them; Play, Maximize and Escape back; the Scene view starts framed on the scene; Hierarchy, Project window and Inspector as Unity's editor
 - BigQuery in the tree (bq://project/dataset/table) at the least cost: browsing and opening a table read only free metadata and rows, kept on disk; every query is priced first and runs under a limit, and its answer is kept
 - JPEG XL and AVIF open as pictures, with their EXIF, on the desktop and in every browser (a format the browser can't show is sent as a JPEG)
 - slides: pictures and the logo kept inside the .slides.md file; timeline, big-number and card blocks; each slide's sources in its footer; notes with links; tighter bullets; Copy for LinkedIn and Medium puts the deck on the clipboard as an article (sources in small words under each slide, no stray links)
@@ -38,14 +37,13 @@ What changed in each version. Every build is on the
 - a Postgres table in a pipeline opens its columns and first 100 rows, read only; you sign in once and the credentials stay in the keychain
 
 ## v0.9.10  —  2026-10-19
-- new file types: Excel 97–2003 `.xls` as a sheet with SQL per sheet; compressed tables (`.csv.gz`, `.zst`, `.bz2` …) as their table with SQL; NumPy `.npy` as its rows or its picture and `.npz` as a folder of them; safetensors and GGUF as a table of their metadata and tensors, read in place however large; Stata `.dta`; SQLite under its other names (GeoPackage with its geometry as WKT, MBTiles, `.db3` …); STL models drawn in 3D; DXF drawings drawn as a DWG is; TGA images; a `.unitypackage` as a folder of its files
+- new file types: Excel 97–2003 `.xls` as a sheet with SQL per sheet; compressed tables (`.csv.gz`, `.zst`, `.bz2` …) as their table with SQL; NumPy `.npy` as its rows or its picture and `.npz` as a folder of them; safetensors and GGUF as a table of their metadata and tensors, read in place however large; Stata `.dta`; SQLite under its other names (GeoPackage with its geometry as WKT, MBTiles, `.db3` …); STL models drawn in 3D; DXF drawings drawn as a DWG is; TGA images
 - corners are continuous (a squircle, no kink where the curve meets the side) in the app and in Chrome; Safari and Firefox keep round ones
 - search results are grouped under their folder
 - tables: wider columns with a divider you drag, row numbers, arrow keys on the header row, the number of rows in the footer
 - the side bar starts 300 px wide, and in the browser it keeps the width you give it
 - finding a word in a text file keeps its folded regions folded and marks the line found
 - scrollbars show while the pointer is over the box or it scrolls, not because the focus is inside it
-- Unity games played in the explorer draw their sky, and their enemies' skinned meshes
 
 ## v0.9.9  —  2026-10-19
 - what you read can be selected and copied: a file's content, a message, a warning, an error, a description; buttons, labels, names in the tree and the tabs, icons and menus are not, so a click on them never starts a selection
@@ -110,8 +108,7 @@ What changed in each version. Every build is on the
 ## v0.9.2  —  2026-10-15
 - macOS downloads as a .dmg: drag ObjectExplorer to Applications
 - Windows downloads as the .msix; Check for Updates installs the next one through App Installer
-- JSON and YAML open laid out, coloured and foldable; one-object-per-line JSON stays a table; Unity's .asset and .meta read as YAML
-- Unity scenes draw their built-in cubes, spheres, planes and the rest
+- JSON and YAML open laid out, coloured and foldable; one-object-per-line JSON stays a table
 - C# is coloured and folds
 - Find in Folder… searches inside one folder
 - markdown with Slidev front matter opens as a slide deck, with themes; drawings in documents and slides take the laser directly

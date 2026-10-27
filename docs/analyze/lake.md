@@ -46,4 +46,4 @@ underneath it. `.hoodie` opens as the timeline, including the requested and infl
 writer that died left behind. An Iceberg `metadata/` opens as the chain it really is —
 metadata.json, snapshot, manifest list, manifest, and the data and delete files at the end of it.
 
-Next: [Cloud Logging](/analyze/logging).
+Next: [Airflow and dbt pipelines](/analyze/pipelines).
