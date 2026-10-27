@@ -4,6 +4,11 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.16  —  2026-10-27
+- Ask: Gemini, Copilot and ChatGPT (through codex-acp) work as agents beside Claude: their text, tool steps and edited files shown as they come, each permission a card (Allow, Always Allow, Deny), Stop at any time; Settings → Ask says whether codex-acp is found and how to install it
+- the agent side bar: while an agent works, a line under the last step says what it does (Thinking, Running a tool, Waiting for you); its thinking and its plan are steps of their own, the plan ticked off in place; the open tab is told with each question, a chip above the input leaves it out
+- OS integration: file types are only registered, never made the default app; on macOS ObjectExplorer is offered in Open With for every family, with no default-app dialogs
+
 ## v0.9.15  —  2026-10-27
 - Ask: GitHub Copilot built in beside Claude and Ollama, each with an icon of its own; Settings → Ask's + Add URL for any service and + Add CLI for any command line (its program found on the PATH or picked with Locate…)
 - a deck downloads as its slides: PDF, PNG, Word and HTML with the notes, Markdown; a crowded slide draws its text smaller so it fits, in the deck view, Present and every download
