@@ -4,6 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.17  —  2026-10-27
+- text editing: a text file on this disk is edited in its text mode; ⌘S saves, a dot on the tab marks edits not saved, ⌘Z and ⇧⌘Z go back and forth past a save, closing a tab or quitting with edits not saved asks Save, Don't Save or Cancel; Settings → Editor can save a second after the last edit
+- Ask… on Google Cloud Storage buckets, and on a local folder ticked "Agents read through PII" (Settings → Locations): the agent starts in an empty folder of its own and reads the files through the MCP server, every answer passing the PII rules
+- a Google Cloud Storage bucket opens as a folder; its row in Settings → Locations and the + menu is named Google Cloud Storage
+- the agent side bar: the mode button, its menu and Shift+Tab switch Claude's permission mode (auto by default, bypass offered) and an ACP agent's modes while it works
+- Claude asked about a cloud folder works in its cached copy
+- MCP: served on the app's own port at /api/mcp; getRawFile gives a file as it is, a picture as an image to look at
+
 ## v0.9.16  —  2026-10-27
 - Ask: Gemini, Copilot and ChatGPT (through codex-acp) work as agents beside Claude: their text, tool steps and edited files shown as they come, each permission a card (Allow, Always Allow, Deny), Stop at any time; Settings → Ask says whether codex-acp is found and how to install it
 - the agent side bar: while an agent works, a line under the last step says what it does (Thinking, Running a tool, Waiting for you); its thinking and its plan are steps of their own, the plan ticked off in place; the open tab is told with each question, a chip above the input leaves it out
