@@ -11,8 +11,8 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 # release's assets do not).
 #
 # No source is here. foldone's tools/create-release.sh builds the candidate on the owner's Mac
-# (macOS, Linux and Windows binaries, unsigned: macOS ad hoc), uploads it as
-# https://objectexplorer.com/releases/<version>/candidate.tar (+ .sha256) and pushes the tag
+# (macOS, Linux and Windows binaries, unsigned: macOS ad hoc), uploads it to
+# the draft release candidate-<version> (its assets candidate.tar and .sha256) and pushes the tag
 # v<version>, annotated "candidate <sha256>". This run then:
 #
 #   source           downloads the candidate, checks it against the tag's sha256 and its own
@@ -40,7 +40,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "The candidate's version (objectexplorer.com/releases/<version>/candidate.tar)"
+        description: "The candidate's version (the draft release candidate-<version>, its candidate.tar)"
         type: string
         required: true
       dry_run:
@@ -56,13 +56,15 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  CANDIDATES: https://objectexplorer.com/releases
   COPYFILE_DISABLE: 1
 
 jobs:
   source:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # the candidate is a draft release's assets: reading a draft takes write access
+    permissions:
+      contents: write
     outputs:
       version: ${{ steps.pick.outputs.version }}
       tag: ${{ steps.pick.outputs.tag }}
@@ -78,6 +80,7 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           EVENT: ${{ github.event_name }}
           CLAIMED: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set -euo pipefail
@@ -94,8 +97,9 @@ jobs:
             echo "::error::expected a version like 1.2.3 or 1.2.3-rc.1, got '$version'"
             exit 1
           fi
-          curl -fsSL -o candidate.tar "$CANDIDATES/$version/candidate.tar"
-          curl -fsSL -o candidate.tar.sha256 "$CANDIDATES/$version/candidate.tar.sha256"
+          # the candidate from the draft release candidate-<version> that tools/create-release.sh made:
+          # GitHub serves a 400 MB file, the site's small machine could not (v0.9.14)
+          gh release download "candidate-$version" --repo "$GITHUB_REPOSITORY" --pattern candidate.tar --pattern candidate.tar.sha256
           sha=$(sha256sum candidate.tar | cut -d' ' -f1)
           if [ "$sha" = "$(cut -d' ' -f1 candidate.tar.sha256)" ]; then
             echo "candidate.tar sha256 $sha"
