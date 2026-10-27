@@ -26,12 +26,13 @@ defineProps({
 				Agent is just another user, full control with audit
 			</p>
 			<div class="landing-hero-actions" style="display: flex;">
-				<a class="landing-hero-primary desktop-only" :href="appLink" target="_self">Open App</a>
+				<a v-glass="'brand'" class="landing-hero-primary desktop-only" :href="appLink" target="_self">Open App</a>
 				<p class="landing-hero-note desktop-only">
 					<span style="display: block;">It opens right here.</span>
 					<span style="display: block;">Nothing leaves your browser.</span>
 				</p>
 				<ShareLink
+					v-glass="'clear'"
 					class="landing-hero-primary mobile-only"
 					url="https://objectexplorer.com/download"
 					title="Download ObjectExplorer"

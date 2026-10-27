@@ -206,9 +206,13 @@ html[data-platform="windows"] .download .download-platform-windows li:first-chil
 	padding: 9px 10px 9px 15px;
 }
 
-/* a phone is narrower than the command: it breaks at the slash rather than hiding its end */
+/* The command takes the row's free width, so every copy icon stands at the row's right edge, in one
+   column under the other. A phone is narrower than the command: it breaks at the slash rather than
+   hiding its end. */
 .download-command code {
 	color: var(--brand);
+	flex: 1 1 auto;
+	min-width: 0;
 	overflow-wrap: anywhere;
 }
 

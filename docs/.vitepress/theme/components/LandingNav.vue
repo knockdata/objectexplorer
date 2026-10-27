@@ -3,6 +3,7 @@ import { withBase } from "vitepress"
 import { VPNavBarSearch } from "vitepress/theme"
 import { onMounted, onUnmounted, ref, watch } from "vue"
 import { headerLinks, linkOf } from "../data/siteLinks.js"
+import { attachGlass, detachGlass } from "../glass/glass.js"
 import ShareLink from "./ShareLink.vue"
 import SiteMenu from "./SiteMenu.vue"
 
@@ -16,6 +17,8 @@ defineProps({
 // On a phone the header's links, its app action and the footer fold into one menu (SiteMenu). While it is open the
 // page under it stays put (the class on <html>); Escape or following a link closes it.
 const menuOpen = ref(false)
+const header = ref()
+let searchButton = undefined
 
 function toggleMenu() {
 	menuOpen.value = menuOpen.value === false
@@ -35,18 +38,22 @@ watch(menuOpen, function (open) {
 	document.documentElement.classList.toggle("site-menu-open", open)
 })
 
+// VitePress's search button is its own component, so its glass is added here rather than by v-glass
 onMounted(function () {
 	window.addEventListener("keydown", closeOnEscape)
+	searchButton = header.value.querySelector(".DocSearch-Button")
+	attachGlass(searchButton, "clear")
 })
 
 onUnmounted(function () {
 	window.removeEventListener("keydown", closeOnEscape)
+	detachGlass(searchButton)
 	document.documentElement.classList.remove("site-menu-open")
 })
 </script>
 
 <template>
-	<header class="landing-nav">
+	<header ref="header" class="landing-nav">
 		<div class="landing-nav-inner">
 			<a class="landing-nav-mark" :href="withBase('/')">
 				<img :src="withBase('/img/64.png')" alt="" width="24" height="24">
@@ -58,7 +65,7 @@ onUnmounted(function () {
 			</nav>
 			<!-- target: VitePress's router leaves a link with one alone, so this is a real page load -->
 			<a class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
-			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
+			<a v-glass="'brand'" class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
 			<ShareLink
 				class="landing-nav-action mobile-only"
 				url="https://objectexplorer.com/"
@@ -148,7 +155,7 @@ onUnmounted(function () {
 /* the same rounded rectangle as the landing's own primary button */
 .landing-nav .landing-nav-action {
 	background: transparent;
-	border: 1.5px solid var(--brand-glow);
+	/* border: 1.5px solid var(--brand-glow); */
 	border-radius: 6px;
 	color: var(--brand);
 	cursor: pointer;
@@ -163,15 +170,15 @@ onUnmounted(function () {
 
 /* Download is the call to action; Open App sits beside it, muted */
 .landing-nav .landing-nav-primary {
-	background: var(--brand);
-	border-color: var(--brand);
+	/* background: var(--brand);
+	border-color: var(--brand); */
 	color: var(--brand-text);
 	font-weight: 600;
 }
 
 .landing-nav .landing-nav-primary:hover {
-	background: var(--brand);
-	box-shadow: 0 0 16px -4px var(--brand-glow);
+	/* background: var(--brand); */
+	/* box-shadow: 0 0 16px -4px var(--brand-glow); */
 }
 
 .landing-nav .landing-nav-secondary {
@@ -182,6 +189,11 @@ onUnmounted(function () {
 .landing-nav .landing-nav-secondary:hover {
 	background: var(--rule-soft);
 	color: var(--chalk);
+}
+
+/* the search's ⌘ K keys bare on its glass: VitePress draws a border round them */
+.landing-nav .DocSearch-Button .DocSearch-Button-Keys .DocSearch-Button-Key {
+	border: none;
 }
 
 .landing-nav-menu-button {

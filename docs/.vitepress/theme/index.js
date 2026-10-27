@@ -9,6 +9,7 @@ import PricingTable from "./components/PricingTable.vue"
 import StoryGrid from "./components/StoryGrid.vue"
 import StoryPoster from "./components/StoryPoster.vue"
 import StoryToday from "./components/StoryToday.vue"
+import { glassDirective } from "./glass/glass.js"
 import "./custom.css"
 import "./landing.css"
 
@@ -20,6 +21,7 @@ export default {
 	extends: DefaultTheme,
 	Layout: ThemeLayout,
 	enhanceApp({ app }) {
+		app.directive("glass", glassDirective)
 		app.component("AppDemo", AppDemo)
 		app.component("DomainInput", DomainInput)
 		app.component("DownloadBlock", DownloadBlock)

@@ -95,7 +95,8 @@ async function copyCommand(text) {
 			</div>
 			<div class="download-commands">
 				<div v-for="line in run.commands" :key="line" class="download-command">
-					<code>{{ line }}</code>
+					<!-- a line may break after each slash (wbr, which a copied selection leaves out) -->
+					<code><template v-for="(part, index) in line.split('/')" :key="index">{{ index > 0 ? "/" : "" }}<wbr v-if="index > 0">{{ part }}</template></code>
 					<button type="button" :aria-label="copied === line ? 'Copied' : 'Copy the command'" :title="copied === line ? 'Copied' : 'Copy'" @click="copyCommand(line)">
 						<svg v-if="copied === line" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<polyline points="20 6 9 17 4 12" />
