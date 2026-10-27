@@ -252,12 +252,21 @@ jobs:
             ditto -x -k "candidate/objectexplorer-app-darwin-$cpu.zip" "work/app-$cpu"
           done
       # the hardened runtime and a secure timestamp, both of which notarization asks for;
-      # the .app's marker (Contents/Resources) is inside the seal
+      # the .app's marker (Contents/Resources) is inside the seal. Its Finder extensions
+      # (Contents/PlugIns/*.appex: Convert To, Duplicate to) are signed first, each with the sandbox
+      # every app extension must have, then the app over them, as foldone's create-release.sh signs
+      # the candidate (notarization refused v0.9.14's unsigned ConvertTo.appex)
       - name: Sign
         if: steps.identity.outputs.signed == 'true'
         run: |
+          printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' '<plist version="1.0">' '<dict>' '<key>com.apple.security.app-sandbox</key>' '<true/>' '</dict>' '</plist>' > extension.entitlements
           for cpu in arm64 x64; do
             codesign --force --options runtime --timestamp --sign "$IDENTITY" "work/darwin-$cpu/objectexplorer"
+            for extension in "work/app-$cpu/ObjectExplorer.app/Contents/PlugIns/"*.appex; do
+              if [ -d "$extension" ]; then
+                codesign --force --options runtime --timestamp --entitlements extension.entitlements --sign "$IDENTITY" "$extension"
+              fi
+            done
             codesign --force --options runtime --timestamp --sign "$IDENTITY" "work/app-$cpu/ObjectExplorer.app"
             codesign --verify --strict --verbose=2 "work/app-$cpu/ObjectExplorer.app"
           done
