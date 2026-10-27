@@ -4,6 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.15  —  2026-10-27
+- Ask: GitHub Copilot built in beside Claude and Ollama, each with an icon of its own; Settings → Ask's + Add URL for any service and + Add CLI for any command line (its program found on the PATH or picked with Locate…)
+- a deck downloads as its slides: PDF, PNG, Word and HTML with the notes, Markdown; a crowded slide draws its text smaller so it fits, in the deck view, Present and every download
+- the Download ring flies out from its first frame, a Markdown's PDF first in A4 pages, Word keeps pictures and code in a monospace font, and a popover says where a download went
+- OS integration: tick the file types to open with ObjectExplorer and Save applies them at once, macOS asked once per type
+- Run a Test ends in the app, with Pause and Resume, and Anonymized Test packs its files into one sealed pack
+- one glass spinner for everything running
+
 ## v0.9.14  —  2026-10-27
 - many more formats open as what they are: older 3D models (3DS, LightWave, COLLADA, DirectX, MilkShape, Quake, Half-Life, Irrlicht, IQM, AC3D, AMF and more) drawn and their animations played; text FBX; USD shapes; DWG from R13 to 2007; SolidWorks previews; Keynote '09, iWork '09, Works, Write and Publisher text; OneNote, Access, Outlook PST, cpio, RAR 1.4, Doom WAD and winmail.dat; certificates, keys, PKCS #7/#12 and Java keystores as their fields; fonttools TTX, UFO glyphs and designspaces drawn; GRIB weather data; Berkeley DB; 15 older picture formats (FLI, SGI, BLP, Sun raster, PCX family, X BitMap and PixMap …)
 - TIFF: fax, LZMA, Zstandard, WebP and old-style JPEG compression, BigTIFF, Lab colour and any bit depth; camera raws of every TIFF-based make; EPS without a preview drawn
