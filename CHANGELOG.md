@@ -5,8 +5,8 @@ What changed in each version. Every build is on the
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
 ## v0.9.18  —  2026-10-28
-- updates: a newer version is offered once a day, at a start or on coming back to the app, with its release notes' first three items and a Full release notes link; Help: Check for Updates in the palette shows the offer at once, in a build from source too
-- the command palette's input no longer offers the browser's autofill
+- a newer version is offered once a day, with what is new in it
+- the command palette no longer pops up the browser's autofill
 
 ## v0.9.17  —  2026-10-27
 - text editing: a text file on this disk is edited in its text mode; ⌘S saves, a dot on the tab marks edits not saved, ⌘Z and ⇧⌘Z go back and forth past a save, closing a tab or quitting with edits not saved asks Save, Don't Save or Cancel; Settings → Editor can save a second after the last edit
