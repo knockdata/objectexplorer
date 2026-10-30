@@ -4,6 +4,17 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.19  —  2026-10-30
+- medical files open: DICOM scans with their series as slices, brain volumes, EEG and ECG recordings, HL7, FHIR and other health records, Garmin FIT and Apple Health exports, each also as tables in SQL
+- about fifty more table formats open on a table you can query with SQL: SAS, SPSS, Stata, R, Access, Paradox, Excel binary, Lotus 1-2-3, measurement logs, bank statements, event logs and more
+- circuit boards and schematics drawn from Altium, OrCAD, Allegro, CADSTAR, KiCad, Eagle, PADS, EasyEDA, DipTrace, Fritzing and the files boards travel in, their parts, nets and pins in SQL
+- many more file types: camera RAW, disk images and packages, Outlook mailboxes, chat exports as bubbles, browser history, building and CAD models, point clouds, G-code, maps, molecules, lab and microscopy files, music scores, older page formats and developer files
+- a file is recognised by its content, its extension only a first guess
+- Chat with Rockie in the side bar: your messages reach us encrypted, and the answer comes back to your app
+- a column's summary shows its empty values as a bar of their share
+- a deck's tile in the grid shows its first slide
+- About names the app and its version, and Keep awake says when it did not take
+
 ## v0.9.18  —  2026-10-28
 - a newer version is offered once a day, with what is new in it
 - the command palette no longer pops up the browser's autofill
