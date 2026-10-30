@@ -28,8 +28,12 @@
 	margin: 0;
 }
 
-.affiliate-consent a {
+/* the paragraph's link: one class and two elements, so it outweighs .landing a (color: inherit) on the
+   landing page, whichever stylesheet comes last */
+.affiliate-consent p a {
 	color: var(--brand);
+	text-decoration: underline;
+	text-underline-offset: 2px;
 }
 
 .affiliate-consent-buttons {

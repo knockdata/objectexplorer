@@ -38,14 +38,14 @@ export const downloadPlatforms = [
 				label: "x64 / AMD64",
 				files: [
 					{ target: "windows-x64.msix", extension: ".msix" },
-					{ target: "windows-x64.zip", extension: ".zip (portable)" },
+					{ target: "windows-x64.zip", extension: ".zip" },
 				],
 			},
 			{
 				label: "ARM64",
 				files: [
 					{ target: "windows-arm64.msix", extension: ".msix" },
-					{ target: "windows-arm64.zip", extension: ".zip (portable)" },
+					{ target: "windows-arm64.zip", extension: ".zip" },
 				],
 			},
 		],

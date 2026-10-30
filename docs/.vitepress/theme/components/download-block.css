@@ -79,17 +79,19 @@
 	margin-right: auto;
 }
 
+/* every package box is one width and never shrinks, so a column of them lines up and a label stays
+   inside its box; the architecture's name wraps instead when the card is narrow */
 .download .download-package {
 	border: 1px solid var(--rule);
 	border-radius: 6px;
 	color: var(--chalk-2);
+	flex-shrink: 0;
 	font-family: var(--mono);
 	font-size: 12.5px;
 	padding: 6px 8px;
 	text-align: center;
 	white-space: nowrap;
-	/* the widest of them, .appinstaller, decides it — every package box is that wide */
-	width: 116px;
+	width: 96px;
 }
 
 .download .download-package:hover,
