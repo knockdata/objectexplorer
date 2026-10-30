@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue"
+import { withAffiliate } from "../composables/affiliate.js"
 
 const props = defineProps({
 	url: { type: String, required: true },
@@ -12,11 +13,14 @@ const copied = ref(false)
 
 // The device's own share sheet where there is one; a copied link where there is not — desktop
 // Firefox has no navigator.share at all. Decided by what the browser can do, never by its width.
-// Dismissing a share sheet rejects too, which is not an error worth more than a line.
+// Dismissing a share sheet rejects too, which is not an error worth more than a line. The link
+// carries the partner's code the visitor came with (composables/affiliate.js), so the partner is
+// credited for a download from a link passed on.
 async function share() {
+	const url = withAffiliate(props.url)
 	if (navigator.share) {
 		try {
-			await navigator.share({ url: props.url, title: props.title, text: props.text })
+			await navigator.share({ url, title: props.title, text: props.text })
 		}
 		catch (error) {
 			console.warn(error)
@@ -24,7 +28,7 @@ async function share() {
 	}
 	else {
 		try {
-			await navigator.clipboard.writeText(props.url)
+			await navigator.clipboard.writeText(url)
 			copied.value = true
 			setTimeout(function () {
 				copied.value = false

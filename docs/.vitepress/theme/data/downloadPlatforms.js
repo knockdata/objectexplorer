@@ -1,8 +1,7 @@
 // Every download a release carries, as its target: the asset's name after "objectexplorer-"
-// (app-darwin-arm64.dmg is objectexplorer-app-darwin-arm64.dmg). Once the page has asked GitHub
-// for the newest release, a link points straight at that release's asset. Until then, or when
-// GitHub cannot be reached, it points at objectexplorer.com/download/<target>, which the host
-// resolves (foldone's service/landing/download.js).
+// (app-darwin-arm64.dmg is objectexplorer-app-darwin-arm64.dmg). Every link points at
+// objectexplorer.com/download/<target>, which sends the browser on to that file of the newest
+// release and keeps a record of the download (the privacy page says what it keeps).
 export const downloadSite = "https://objectexplorer.com/download/"
 export const releasesPage = "https://github.com/knockdata/objectexplorer/releases/latest"
 
@@ -78,14 +77,19 @@ export function downloadName(target) {
 	return `objectexplorer-${target}`
 }
 
-// the release asset itself when known; otherwise the host's link, which carries on the channel a
-// visitor arrived through (objectexplorer.com/youtube → ?channel=youtube) so the host counts it
-export function downloadLink(target, channel, assetUrl) {
-	if (assetUrl) {
-		return assetUrl
+// the host's link, carrying on the channel a visitor arrived through (objectexplorer.com/youtube →
+// ?channel=youtube) and the partner's code (composables/affiliate.js), so the host credits them
+export function downloadLink(target, channel, affiliate) {
+	const query = new URLSearchParams()
+	if (channel) {
+		query.set("channel", channel)
 	}
-	else if (channel) {
-		return `${downloadSite}${target}?channel=${encodeURIComponent(channel)}`
+	if (affiliate) {
+		query.set("aff", affiliate)
+	}
+	const search = query.toString()
+	if (search) {
+		return `${downloadSite}${target}?${search}`
 	}
 	else {
 		return `${downloadSite}${target}`

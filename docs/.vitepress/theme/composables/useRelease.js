@@ -4,10 +4,10 @@ import { downloadName, downloadTargets } from "../data/downloadPlatforms.js"
 const releaseUrl = "https://api.github.com/repos/knockdata/objectexplorer/releases/latest"
 let request = null
 
-// The newest release's version and, per download, its asset's name, URL and size, so a download
-// link points straight at objectexplorer-<target> of that release on GitHub. When this
-// request fails (a rate limit, offline, scripts off) the links stay objectexplorer.com/download/<target>,
-// which the host resolves. One request per page load, shared by every component that asks.
+// The newest release's version and, per download, its asset's name, URL and size, shown beside the
+// links. The links themselves are always objectexplorer.com/download/<target>, which the host
+// resolves; when this request fails (a rate limit, offline, scripts off) only the sizes are missing.
+// One request per page load, shared by every component that asks.
 export default function useRelease() {
 	const release = ref({ version: "", sizes: {}, names: {}, urls: {} })
 	onMounted(async function () {

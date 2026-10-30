@@ -5,6 +5,7 @@ import DomainInput from "./components/DomainInput.vue"
 import DownloadBlock from "./components/DownloadBlock.vue"
 import DownloadTable from "./components/DownloadTable.vue"
 import Landing from "./components/Landing.vue"
+import PartnerQr from "./components/PartnerQr.vue"
 import PricingTable from "./components/PricingTable.vue"
 import StoryGrid from "./components/StoryGrid.vue"
 import StoryPoster from "./components/StoryPoster.vue"
@@ -27,6 +28,7 @@ export default {
 		app.component("DownloadBlock", DownloadBlock)
 		app.component("DownloadTable", DownloadTable)
 		app.component("Landing", Landing)
+		app.component("PartnerQr", PartnerQr)
 		app.component("PricingTable", PricingTable)
 		app.component("StoryGrid", StoryGrid)
 		app.component("StoryPoster", StoryPoster)

@@ -52,6 +52,11 @@ data or a path on this machine, except a file you send us yourself.
 There is no usage reporting and no crash reporting. What the app measures about itself — how long
 each file took to open, what its memory was made of — stays in `~/.objectexplorer`.
 
+**A message to Rockie, when you write one.** **Chat with Rockie** in the side bar sends what you
+type to us. Each message is encrypted on your machine with our public key before it leaves, the
+server keeps only that ciphertext, and only our own machine can open it; the answer comes back to
+your app the same way.
+
 **A file you send us, when you choose to.** Three commands send something for a bug report:
 **Share Anonymized for Debugging** on a file (an [anonymized copy](/explore/anonymize), never the
 file itself), **Help: Share Application Log for Debugging** and **Help: Report Bug with a
@@ -87,12 +92,32 @@ until you open it — see [ObjectExplorer for agents](/agents/).
 The same thing it would see if you used its own console: signed requests from your machine, for the
 objects you opened. ObjectExplorer adds no proxy, no relay and no third party in between.
 
+## What this website keeps
+
+**A download.** Every download link goes through objectexplorer.com/download/, which sends you on
+to the file on GitHub and keeps a row of it: the time, your address, the file, its version, the
+channel you came through (a YouTube link, say) and the partner who sent you, if any. The row is
+encrypted with our public key as it is written, so the server holds only ciphertext, and only our
+own machine reads it.
+
+**A trial sign-up.** It keeps the email you gave and the address it came from, encrypted the same
+way, and the partner who sent you, if any.
+
+<a id="partner-links"></a>**A partner's link.** A link a partner shares carries their code
+(`?aff=K7QM`), and the links of the page you land on carry it on, so the partner is thanked for a
+download from it. Only if you came by such a link, the page asks whether it may remember the code;
+if you say yes, the site sets one cookie, `aff`, holding the code and the time, for 90 days, and a
+download or a sign-up within them credits that partner. Say no and nothing is kept, and the links
+stop carrying the code. The cookie holds nothing about you, is used by this site alone, and goes
+when you clear your cookies.
+
+There is no other tracking cookie and no analytics. The server also keeps an ordinary access log
+(address, time, page) for security.
+
 ## Who is responsible
 
 Knock Data AB (organization number 559229-1867), Sweden, is the controller for the data
-described on this page — see [company](/company). This website sets no tracking cookies and runs no
-analytics. The server keeps an ordinary access log (address, time, page) for security, and a trial
-sign-up keeps the email you gave, encrypted. Ask [rockie@knockdata.com](mailto:rockie@knockdata.com) to see or
+described on this page — see [company](/company). Ask [rockie@knockdata.com](mailto:rockie@knockdata.com) to see or
 delete what we hold about you.
 
 Next: [connecting storage](/storage/connect).

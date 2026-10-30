@@ -1,0 +1,82 @@
+.partner-qr {
+	margin: 24px 0;
+	max-width: 520px;
+}
+
+.partner-qr-form {
+	display: grid;
+	gap: 16px;
+}
+
+.partner-qr-form label {
+	display: grid;
+	gap: 6px;
+}
+
+.partner-qr-form label > span:first-child {
+	color: var(--vp-c-text-2);
+	font-size: 14px;
+	user-select: none;
+}
+
+.partner-qr input {
+	background: var(--vp-c-bg-alt);
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 8px;
+	color: var(--vp-c-text-1);
+	font: inherit;
+	padding: 8px 12px;
+}
+
+.partner-qr-code {
+	display: flex;
+	gap: 8px;
+}
+
+.partner-qr-code input {
+	font-family: var(--mono);
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	width: 8em;
+}
+
+.partner-qr button {
+	background: transparent;
+	border: 1px solid var(--vp-c-divider);
+	border-radius: 999px;
+	color: var(--vp-c-text-1);
+	cursor: pointer;
+	font: inherit;
+	padding: 6px 16px;
+	user-select: none;
+}
+
+.partner-qr button:disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+
+.partner-qr button.partner-qr-add {
+	background: var(--vp-c-brand-2);
+	border-color: var(--vp-c-brand-2);
+	color: #000000;
+	justify-self: start;
+}
+
+.partner-qr-status {
+	color: var(--vp-c-text-2);
+	margin: 0;
+}
+
+.partner-qr-made img {
+	background: #ffffff;
+	border-radius: 8px;
+	height: auto;
+	max-width: 100%;
+}
+
+.partner-qr-made p {
+	align-items: center;
+	display: flex;
+	gap: 16px;
+}

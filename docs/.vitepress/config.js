@@ -116,8 +116,13 @@ export default defineConfig({
 			["meta", { name: "twitter:card", content: "summary_large_image" }],
 		]
 	},
+	// the partner page (partner.md) is for the owner alone: out of the sitemap, as out of the
+	// navigation, and its own head says noindex
 	sitemap: {
 		hostname: site,
+		transformItems(items) {
+			return items.filter(item => item.url !== "partner")
+		},
 	},
 	// Every page wears the landing's header and footer: VitePress's own VPNav and VPFooter are swapped
 	// for ThemeNav and ThemeFooter, the override VitePress documents for its internal components. Its

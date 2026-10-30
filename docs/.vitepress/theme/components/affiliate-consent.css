@@ -1,0 +1,55 @@
+/* the consent line of a partner's link: a small bar at the bottom, above everything, never in the way
+   of reading for long */
+.affiliate-consent {
+	align-items: center;
+	backdrop-filter: blur(12px);
+	background: rgba(10, 12, 14, 0.92);
+	border: 1px solid var(--rule);
+	border-radius: 14px;
+	bottom: 16px;
+	box-sizing: border-box;
+	color: var(--chalk);
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 14px;
+	gap: 12px 20px;
+	left: 50%;
+	line-height: 1.45;
+	max-width: min(720px, calc(100vw - 32px));
+	padding: 14px 18px;
+	position: fixed;
+	transform: translateX(-50%);
+	width: max-content;
+	z-index: 100;
+}
+
+.affiliate-consent p {
+	flex: 1 1 320px;
+	margin: 0;
+}
+
+.affiliate-consent a {
+	color: var(--brand);
+}
+
+.affiliate-consent-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.affiliate-consent button {
+	background: transparent;
+	border: 1px solid var(--rule);
+	border-radius: 999px;
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+	padding: 6px 16px;
+	user-select: none;
+}
+
+.affiliate-consent button.affiliate-consent-yes {
+	background: var(--brand);
+	border-color: var(--brand);
+	color: var(--brand-text);
+}
