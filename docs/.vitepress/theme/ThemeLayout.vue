@@ -2,16 +2,15 @@
 import { useData } from "vitepress"
 import DefaultTheme from "vitepress/theme"
 import { computed, onMounted } from "vue"
-import { readAffiliate } from "./composables/affiliate.js"
-import AffiliateConsent from "./components/AffiliateConsent.vue"
+import { readVisitor } from "./composables/visitor.js"
 import StoryFooter from "./components/StoryFooter.vue"
 import StoryHeader from "./components/StoryHeader.vue"
 
 const { page } = useData()
 
-// a partner's ?aff= on any page of the documentation: the consent line, and the code in its links
+// a partner's ?id= on any page of the documentation: carried on in its links
 onMounted(function () {
-	readAffiliate()
+	readVisitor()
 })
 
 // story/<slug>.md is an episode; story/index.md is the list of them
@@ -28,9 +27,6 @@ const isStory = computed(function () {
 		</template>
 		<template #doc-after>
 			<StoryFooter v-if="isStory" />
-		</template>
-		<template #layout-bottom>
-			<AffiliateConsent />
 		</template>
 	</DefaultTheme.Layout>
 </template>

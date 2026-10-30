@@ -40,7 +40,7 @@ async function check() {
 	if (password.value !== "" && codePattern.test(code.value)) {
 		working.value = true
 		try {
-			const answer = await post("/affiliate/check", { password: password.value, code: code.value })
+			const answer = await post("/partner/check", { password: password.value, code: code.value })
 			if (answer.error) {
 				status.value = answer.error.message
 			}
@@ -65,7 +65,7 @@ async function add() {
 	working.value = true
 	status.value = ""
 	try {
-		const answer = await post("/affiliate/add", { password: password.value, code: code.value, name: name.value.trim() })
+		const answer = await post("/partner/add", { password: password.value, code: code.value, name: name.value.trim() })
 		if (answer.error) {
 			status.value = answer.error.message
 		}

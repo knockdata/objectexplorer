@@ -78,14 +78,14 @@ export function downloadName(target) {
 }
 
 // the host's link, carrying on the channel a visitor arrived through (objectexplorer.com/youtube →
-// ?channel=youtube) and the partner's code (composables/affiliate.js), so the host credits them
-export function downloadLink(target, channel, affiliate) {
+// ?channel=youtube) and the visitor's id (composables/visitor.js), so the host credits the partner
+export function downloadLink(target, channel, id) {
 	const query = new URLSearchParams()
 	if (channel) {
 		query.set("channel", channel)
 	}
-	if (affiliate) {
-		query.set("aff", affiliate)
+	if (id) {
+		query.set("id", id)
 	}
 	const search = query.toString()
 	if (search) {

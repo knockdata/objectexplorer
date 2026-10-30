@@ -6,8 +6,8 @@ What changed in each version. Every build is on the
 
 ## Next
 - Chat with Rockie in the side bar: your messages reach us encrypted, and the answer comes back to your app
-- partner links: a partner who shares objectexplorer.com is credited for the downloads and sign-ups they bring, with a cookie only if you say yes
-- the privacy page says what a download, a sign-up and a partner's link keep
+- partner links: a partner who shares objectexplorer.com is credited for the downloads and sign-ups they bring
+- the privacy page says what a download, a sign-up and your id keep
 
 ## v0.9.18  —  2026-10-28
 - a newer version is offered once a day, with what is new in it

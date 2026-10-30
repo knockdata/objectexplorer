@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
-import { readAffiliate } from "../composables/affiliate.js"
-import AffiliateConsent from "./AffiliateConsent.vue"
+import { readVisitor } from "../composables/visitor.js"
 import AppSection from "./AppSection.vue"
 import DownloadBlock from "./DownloadBlock.vue"
 import LandingHero from "./LandingHero.vue"
@@ -18,7 +17,7 @@ onMounted(function () {
 	if (new URLSearchParams(location.search).has("open")) {
 		appQuery.value = location.search
 	}
-	readAffiliate()
+	readVisitor()
 })
 
 </script>
@@ -35,6 +34,5 @@ onMounted(function () {
 			</main>
 			<SiteFooter />
 		</div>
-		<AffiliateConsent />
 	</div>
 </template>

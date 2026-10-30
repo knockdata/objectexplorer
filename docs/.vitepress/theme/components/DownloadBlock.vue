@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue"
 import useRelease from "../composables/useRelease.js"
-import { affiliateCode, readAffiliate } from "../composables/affiliate.js"
+import { readVisitor, visitorId } from "../composables/visitor.js"
 import { brewCommands, downloadLink, downloadName, downloadPlatforms, releasesPage } from "../data/downloadPlatforms.js"
 import ShareLink from "./ShareLink.vue"
 
@@ -16,10 +16,10 @@ const channel = ref("")
 const copied = ref("")
 
 // A visitor who came through objectexplorer.com/youtube arrives with ?channel=youtube, and the
-// download links carry it on, with a partner's code (composables/affiliate.js).
+// download links carry it on, with the visitor's id (composables/visitor.js).
 onMounted(function () {
 	channel.value = new URLSearchParams(location.search).get("channel") ?? ""
-	readAffiliate()
+	readVisitor()
 })
 
 // the full filename, and its size once the release lookup has answered
@@ -69,7 +69,7 @@ async function copyCommand(text) {
 							v-for="file in download.files"
 							:key="file.target"
 							class="download-package"
-							:href="downloadLink(file.target, channel, affiliateCode())"
+							:href="downloadLink(file.target, channel, visitorId())"
 							:title="downloadTitle(file.target)"
 						>{{ file.extension }}</a>
 					</li>

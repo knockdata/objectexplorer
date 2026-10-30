@@ -96,20 +96,19 @@ objects you opened. ObjectExplorer adds no proxy, no relay and no third party in
 
 **A download.** Every download link goes through objectexplorer.com/download/, which sends you on
 to the file on GitHub and keeps a row of it: the time, your address, the file, its version, the
-channel you came through (a YouTube link, say) and the partner who sent you, if any. The row is
+channel you came through (a YouTube link, say) and your id, if you have one (below). The row is
 encrypted with our public key as it is written, so the server holds only ciphertext, and only our
 own machine reads it.
 
 **A trial sign-up.** It keeps the email you gave and the address it came from, encrypted the same
-way, and the partner who sent you, if any.
+way, and your id, if you have one.
 
-<a id="partner-links"></a>**A partner's link.** A link a partner shares carries their code
-(`?aff=K7QM`), and the links of the page you land on carry it on, so the partner is thanked for a
-download from it. Only if you came by such a link, the page asks whether it may remember the code;
-if you say yes, the site sets one cookie, `aff`, holding the code and the time, for 90 days, and a
-download or a sign-up within them credits that partner. Say no and nothing is kept, and the links
-stop carrying the code. The cookie holds nothing about you, is used by this site alone, and goes
-when you clear your cookies.
+<a id="partner-links"></a>**Your id.** A link a partner shares carries their code as your id
+(`?id=K7QM`). The site keeps it in one cookie, `id`, so a download or a sign-up later credits that
+partner, and the links of the page carry it on, so a link you pass on credits them too. It is the
+partner's code until you register, when your own id replaces it, and a newer shared link with
+another id replaces it at once. The cookie holds nothing about you but that id, is used by this
+site alone, and goes when you clear your cookies.
 
 There is no other tracking cookie and no analytics. The server also keeps an ordinary access log
 (address, time, page) for security.

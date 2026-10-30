@@ -1,13 +1,13 @@
 <script setup>
 import { onMounted } from "vue"
-import { affiliateCode, readAffiliate } from "../composables/affiliate.js"
+import { readVisitor, visitorId } from "../composables/visitor.js"
 import useRelease from "../composables/useRelease.js"
 import { downloadLink, downloadName, downloadPlatforms, releasesPage } from "../data/downloadPlatforms.js"
 
 const release = useRelease()
 
 onMounted(function () {
-	readAffiliate()
+	readVisitor()
 })
 </script>
 
@@ -26,7 +26,7 @@ onMounted(function () {
 						<tr v-for="file in download.files" :key="file.target">
 							<td>{{ platform.name }}, {{ download.label }}</td>
 							<td>
-								<a :href="downloadLink(file.target, '', affiliateCode())">{{ release.names[file.target] ?? downloadName(file.target) }}</a>
+								<a :href="downloadLink(file.target, '', visitorId())">{{ release.names[file.target] ?? downloadName(file.target) }}</a>
 								<span v-if="release.sizes[file.target]" class="download-table-size"> · {{ release.sizes[file.target] }}</span>
 							</td>
 						</tr>
