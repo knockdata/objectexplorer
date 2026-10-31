@@ -4,9 +4,18 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
-## Next
-- partner links: a partner who shares objectexplorer.com is credited for the downloads and sign-ups they bring
+## v0.9.20  —  2026-10-31
+- measure distances, lengths, angles, radii, areas and volumes in drawings, 3D models, circuit boards, PDF pages and pictures
+- open files on FTP, FTPS and SFTP servers, with as many accounts as you like
+- download from GitHub or straight from objectexplorer.com, whichever reaches you
+- Windows downloads are half the size
+- partner links: a partner who shares objectexplorer.com is credited for the downloads and sign-ups they bring, and sees their own
 - the privacy page says what a download, a sign-up and your id keep
+- every font format opens in one view, with your own text at any size
+- a 3D model shows its textures in the browser too
+- drawings and diagrams open fitted to the window, and an upright DXF opens facing you
+- circuit boards and schematics draw at once
+- a compressed CSV or JSON file opens as a table
 
 ## v0.9.19  —  2026-10-30
 - medical files open: DICOM scans with their series as slices, brain volumes, EEG and ECG recordings, HL7, FHIR and other health records, Garmin FIT and Apple Health exports, each also as tables in SQL
