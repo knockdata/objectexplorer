@@ -129,10 +129,14 @@ async function copyCommand(text) {
 				<ul>
 					<li v-for="download in platform.downloads" :key="download.label" class="download-architecture">
 						<span class="download-architecture-name">{{ download.label }}</span>
+						<!-- target: VitePress's router takes a link of this site for one of its pages when it does
+						     not know the extension (.dmg, .msix, .appinstaller) and shows its 404; a link with a
+						     target it leaves to the browser -->
 						<a
 							v-for="file in download.files"
 							:key="file.target"
 							class="download-package"
+							target="_self"
 							:href="downloadLink(file.target, channel, visitorId(), source())"
 							:title="downloadTitle(file.target)"
 						>{{ file.extension }}</a>

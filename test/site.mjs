@@ -213,6 +213,8 @@ const pressPlay = `(() => {
 })()`
 
 const youtubeFrames = `[...document.querySelectorAll("iframe[src*='youtube']")].map((frame) => frame.src)`
+// the download links of this site that VitePress's router would catch (no target, no download)
+const routedDownloads = `[...document.querySelectorAll("a[href]")].filter((link) => link.origin === location.origin && link.pathname.startsWith("/download/") && link.hasAttribute("target") === false && link.hasAttribute("download") === false).map((link) => link.href)`
 
 // each <video> and <audio>, muted, played: started or why not, within the seconds given
 function playMedia(seconds) {
@@ -259,9 +261,6 @@ async function visit(address) {
 			requests.set(message.params.requestId, message.params.request.url)
 		} else if (message.method === "Network.responseReceived" && message.params.type === "Document" && pageKey(message.params.response.url) === address && !pageStatus.has(address)) {
 			pageStatus.set(address, message.params.response.status)
-		} else if (message.method === "Network.responseReceived" && message.params.response.status === 404 && message.params.response.url.endsWith("/download/release.json")) {
-			// a server from before 1031-3 has no release.json: the download block asks GitHub's API instead,
-			// as it always did (composables/useRelease.js). Remove once every host serves it.
 		} else if (message.method === "Network.responseReceived" && message.params.response.status >= 400) {
 			errors.push(`request ${message.params.response.status}: ${message.params.response.url}`)
 		} else if (message.method === "Network.loadingFailed" && !message.params.canceled && message.params.errorText !== "net::ERR_ABORTED") {
@@ -281,6 +280,11 @@ async function visit(address) {
 			content = await tab.evaluate(readPage)
 			if (content.notFound) {
 				report("dead link", address, address, "the site's not-found page")
+			}
+			// a link to /download/… with no target or download attribute: VitePress's router takes it for
+			// a page of the site when it does not know the extension (.dmg, .msix) and shows its 404
+			for (const link of await tab.evaluate(routedDownloads)) {
+				report("dead link", address, link, "a download link VitePress takes for a page: give it target=\"_self\"")
 			}
 			const pressed = await tab.evaluate(pressPlay)
 			if (pressed > 0) {
@@ -308,6 +312,7 @@ async function visit(address) {
 	await tab.close()
 	return content
 }
+
 
 // ---------------------------------------------------------------------------
 // The links, each checked once

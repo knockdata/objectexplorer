@@ -26,7 +26,7 @@ onMounted(function () {
 						<tr v-for="file in download.files" :key="file.target">
 							<td>{{ platform.name }}, {{ download.label }}</td>
 							<td>
-								<a :href="downloadLink(file.target, '', visitorId())">{{ release.names[file.target] ?? downloadName(file.target) }}</a>
+								<a target="_self" :href="downloadLink(file.target, '', visitorId())">{{ release.names[file.target] ?? downloadName(file.target) }}</a>
 								<span v-if="release.sizes[file.target]" class="download-table-size"> · {{ release.sizes[file.target] }}</span>
 							</td>
 						</tr>
