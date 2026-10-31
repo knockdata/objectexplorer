@@ -1,9 +1,21 @@
 // Every download a release carries, as its target: the asset's name after "objectexplorer-"
 // (app-darwin-arm64.dmg is objectexplorer-app-darwin-arm64.dmg). Every link points at
-// objectexplorer.com/download/<target>, which sends the browser on to that file of the newest
-// release and keeps a record of the download (the privacy page says what it keeps).
+// objectexplorer.com/download/<target>, which hands out that file of the newest release from its
+// source and keeps a record of the download (the privacy page says what it keeps): ?source=github
+// sends the browser on to GitHub's file, ?source=direct passes GitHub's file on through
+// objectexplorer.com, for where GitHub cannot be reached; a link without one is decided by the
+// visitor's address (Direct in mainland China, else GitHub).
 export const downloadSite = "https://objectexplorer.com/download/"
 export const releasesPage = "https://github.com/knockdata/objectexplorer/releases/latest"
+// the newest release's version, file sizes and this visitor's default source, from the server that
+// served the page (objectexplorer.com; the local VitePress has none and asks GitHub instead)
+export const releaseFacts = "/download/release.json"
+
+// where a file comes from: the switch above the cards
+export const downloadSources = [
+	{ id: "github", name: "GitHub", title: "Download from GitHub's release" },
+	{ id: "direct", name: "Direct", title: "Download through objectexplorer.com, for where GitHub cannot be reached" },
+]
 
 // One row per architecture, and one link per file in it. The first file of the first row is the
 // one the landing page lights up for a visitor on that platform.
@@ -78,14 +90,18 @@ export function downloadName(target) {
 }
 
 // the host's link, carrying on the channel a visitor arrived through (objectexplorer.com/youtube →
-// ?channel=youtube) and the visitor's id (composables/visitor.js), so the host credits the partner
-export function downloadLink(target, channel, id) {
+// ?channel=youtube), the visitor's id (composables/visitor.js), so the host credits the partner, and
+// the source chosen (github or direct; none: the host decides by the visitor's address)
+export function downloadLink(target, channel, id, source) {
 	const query = new URLSearchParams()
 	if (channel) {
 		query.set("channel", channel)
 	}
 	if (id) {
 		query.set("id", id)
+	}
+	if (source) {
+		query.set("source", source)
 	}
 	const search = query.toString()
 	if (search) {

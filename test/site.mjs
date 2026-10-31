@@ -259,6 +259,9 @@ async function visit(address) {
 			requests.set(message.params.requestId, message.params.request.url)
 		} else if (message.method === "Network.responseReceived" && message.params.type === "Document" && pageKey(message.params.response.url) === address && !pageStatus.has(address)) {
 			pageStatus.set(address, message.params.response.status)
+		} else if (message.method === "Network.responseReceived" && message.params.response.status === 404 && message.params.response.url.endsWith("/download/release.json")) {
+			// a server from before 1031-3 has no release.json: the download block asks GitHub's API instead,
+			// as it always did (composables/useRelease.js). Remove once every host serves it.
 		} else if (message.method === "Network.responseReceived" && message.params.response.status >= 400) {
 			errors.push(`request ${message.params.response.status}: ${message.params.response.url}`)
 		} else if (message.method === "Network.loadingFailed" && !message.params.canceled && message.params.errorText !== "net::ERR_ABORTED") {
