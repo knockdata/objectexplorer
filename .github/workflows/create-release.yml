@@ -21,7 +21,8 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 #   sign-macos       Developer ID, notarized, stapled: both .apps and both command line binaries;
 #                    each .app in a .dmg (dmgbuild: a link to Applications, a line saying to drag
 #                    it there), the .dmg signed, notarized and stapled too
-#   sign-windows     Azure Trusted Signing: ObjectExplorer.exe, .com, oe.exe, oe.com of both cpus;
+#   sign-windows     Azure Trusted Signing: ObjectExplorer.exe, .com, oe.exe, oe.com of both cpus
+#                    (the last three the same 11 KB launcher, which starts ObjectExplorer.exe);
 #                    the msix packed again around the signed .exe (Publisher: the certificate's
 #                    subject) and signed; an .appinstaller per cpu
 #   package          SHA256SUMS of the signed files; publish.tar: the npm packages with the signed
@@ -375,7 +376,8 @@ jobs:
             Expand-Archive -Path "candidate\objectexplorer-windows-$cpu.zip" -DestinationPath "work\windows-$cpu"
           }
           Get-ChildItem -Recurse work
-      # every program of both zips: the window's .exe, the command line's door (.com), and the oe pair
+      # every program of both zips: the window's .exe, the command line's door (.com), and oe.exe,
+      # oe.com (the same door under the short name)
       - name: Sign the programs
         if: steps.secrets.outputs.signed == 'true'
         uses: azure/trusted-signing-action@v0

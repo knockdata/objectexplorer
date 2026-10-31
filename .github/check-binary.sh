@@ -25,8 +25,8 @@ if [ "$said" = "objectexplorer $version" ]; then
 	done
 	kill $server 2> /dev/null
 	if [ "${RUNNER_OS:-}" = "Windows" ]; then
-		# the .com waits for its .exe, which a kill of the .com leaves running
-		taskkill //F //IM "$(basename "${program%.*}").exe" > /dev/null 2>&1
+		# the .com waits for ObjectExplorer.exe (oe.com too), which a kill of the .com leaves running
+		taskkill //F //IM ObjectExplorer.exe > /dev/null 2>&1
 	fi
 	if [ -n "$answered" ]; then
 		echo "$program mode=instant answered curl on $port"
