@@ -4,6 +4,12 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.22  —  2026-11-01
+- Windows no longer closes when a web page is shut while it is still opening
+- a medical recording opened on Windows finds its signal file beside it
+- your secrets are kept in one place in the keychain, so a new version asks for it once
+- Talk to Users and Chat with Rockie each show where they should
+
 ## v0.9.21  —  2026-10-31
 - a server you run yourself no longer freezes its page on a Print Replica book or a medical file's PDF
 - the browser app opens only what its address names: nothing by itself on a first visit, no tabs from an earlier one
