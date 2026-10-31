@@ -495,7 +495,6 @@ jobs:
         run: |
           set -euo pipefail
           cp candidate/objectexplorer-linux-*.tar.gz assets/
-          cp candidate/LICENSE.md assets/
           # a dry run without the Windows certificate has no msix: the unsigned one is for local tests only
           shopt -s nullglob
           cd assets
@@ -719,7 +718,7 @@ jobs:
           path: publish
       - name: Notes from this version's CHANGELOG.md section
         run: |
-          node scripts/release-notes.mjs "$TAG" CHANGELOG.md > notes.md
+          node scripts/release-notes.mjs "$TAG" CHANGELOG.md release-files > notes.md
           cat notes.md
       # publish.tar, what release.yml takes to npm and brew (190 MB), on a draft release of its own:
       # a draft is seen by the repository's writers alone, never among a visitor's downloads.
