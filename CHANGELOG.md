@@ -4,6 +4,13 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.21  —  2026-10-31
+- a server you run yourself no longer freezes its page on a Print Replica book or a medical file's PDF
+- the browser app opens only what its address names: nothing by itself on a first visit, no tabs from an earlier one
+- an FTP or SFTP server that is off no longer holds the app up: its folder says it does not answer and comes back by itself
+- FTP and SFTP folders say which they are
+- the context menu in the browser keeps its background
+
 ## v0.9.20  —  2026-10-31
 - measure distances, lengths, angles, radii, areas and volumes in drawings, 3D models, circuit boards, PDF pages and pictures
 - open files on FTP, FTPS and SFTP servers, with as many accounts as you like
