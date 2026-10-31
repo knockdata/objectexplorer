@@ -195,7 +195,7 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
             bash .github/check-binary.sh unpacked/ObjectExplorer.com "$VERSION"
-            PORT=9432 bash .github/check-binary.sh unpacked/oe.com "$VERSION"
+            COMMAND_LINE=1 bash .github/check-binary.sh unpacked/oe.com "$VERSION"
           else
             bash .github/check-binary.sh unpacked/objectexplorer "$VERSION"
           fi
@@ -656,7 +656,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           bash .github/check-binary.sh unpacked/ObjectExplorer.com "$VERSION"
-          PORT=9432 bash .github/check-binary.sh unpacked/oe.com "$VERSION"
+          COMMAND_LINE=1 bash .github/check-binary.sh unpacked/oe.com "$VERSION"
       # installed as a user would (the signed msix chains to a trusted root), asked for its
       # version through the package's own folder, removed again
       - name: Windows package
