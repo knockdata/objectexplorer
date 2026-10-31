@@ -23,10 +23,67 @@
 	font-size: 0.88em;
 }
 
+/* the lede, and at its row's end the GitHub / Direct switch (under it when the row is too narrow) */
+.download-lede-row {
+	align-items: flex-end;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px 24px;
+	justify-content: space-between;
+	margin: 0 0 34px;
+}
+
 .download-lede {
 	color: var(--chalk-2);
-	margin: 0 0 34px;
+	margin: 0;
 	max-width: var(--reading-width);
+}
+
+.download-source {
+	align-items: center;
+	display: inline-flex;
+	flex-shrink: 0;
+	font-size: 13px;
+	font-weight: 500;
+	gap: 10px;
+	line-height: 1;
+	user-select: none;
+}
+
+.download-source-label {
+	color: var(--chalk-3);
+}
+
+.download-source-choices {
+	border: 1px solid var(--rule);
+	border-radius: 999px;
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+}
+
+.download-source-choice {
+	align-items: center;
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	color: var(--chalk-2);
+	cursor: pointer;
+	display: inline-flex;
+	font: inherit;
+	gap: 6px;
+	padding: 5px 12px;
+}
+
+.download-source-choice:hover,
+.download-source-choice:focus-visible {
+	color: var(--chalk);
+}
+
+.download-source-choice.download-source-chosen {
+	background: var(--brand-soft);
+	border-color: var(--brand-glow);
+	color: var(--brand);
 }
 
 .download-platforms {
