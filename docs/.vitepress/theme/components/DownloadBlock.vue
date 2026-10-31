@@ -15,9 +15,9 @@ const release = useRelease()
 const channel = ref("")
 // the command last put on the clipboard, while its tick shows
 const copied = ref("")
-// the source the visitor chose on the switch, remembered in this browser ("" none: the server's default)
+// the source the visitor chose on the switch for this visit ("" none: the default our server gives
+// by the visitor's address); never remembered, so each visit starts from the address
 const chosen = ref("")
-const chosenKey = "download-source"
 // the footer's GitHub mark
 const githubMark = socialLinks.find(link => link.name === "GitHub").path
 
@@ -26,12 +26,6 @@ const githubMark = socialLinks.find(link => link.name === "GitHub").path
 onMounted(function () {
 	channel.value = new URLSearchParams(location.search).get("channel") ?? ""
 	readVisitor()
-	try {
-		chosen.value = localStorage.getItem(chosenKey) ?? ""
-	}
-	catch (error) {
-		chosen.value = ""
-	}
 })
 
 // The source the links carry: the visitor's choice, else the default our server gave for this
@@ -48,12 +42,6 @@ function source() {
 
 function choose(id) {
 	chosen.value = id
-	try {
-		localStorage.setItem(chosenKey, id)
-	}
-	catch (error) {
-		console.warn(error)
-	}
 }
 
 // the full filename, and its size once the release lookup has answered
