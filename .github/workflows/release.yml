@@ -2,15 +2,16 @@ name: release
 
 run-name: ObjectExplorer v${{ inputs.version }} to npm, brew and winget
 
-# A created release taken to everyone: npm, the Homebrew tap and winget, from the GitHub release
-# v<version> alone. create-release.yml made that release from the signed files and attached publish.tar
+# A created release taken to everyone: npm, the Homebrew tap and winget, from the GitHub releases
+# alone. create-release.yml made the release v<version> from the signed files and put publish.tar
 # (version, npm/*.tgz with the signed binaries, brew/objectexplorer.rb and brew/objectexplorer-app.rb
-# with the signed files' sha256), so this run needs no artifact of that one, which expire after
-# 5 days: a version can be published any time after it was created. foldone's
-# tools/publish-release.sh <version> dispatches it, watches it and checks npm and the tap.
+# with the signed files' sha256) on the draft release publish-<version>, which only the repository's
+# writers see; so this run needs no artifact of that one, which expire after 5 days: a version can
+# be published any time after it was created. foldone's tools/publish-release.sh <version>
+# dispatches it, watches it, checks npm and the tap, then deletes the draft publish-<version>.
 #
-#   source       the release v<version> published (not a draft), publish.tar downloaded, its
-#                version checked; an rc (1.2.3-rc.1) is a prerelease
+#   source       the release v<version> published (not a draft), publish.tar downloaded from the
+#                draft publish-<version>, its version checked; an rc (1.2.3-rc.1) is a prerelease
 #   npm          the six platform packages, then @knockdata/objectexplorer (OIDC trusted
 #                publishing; an rc under the dist-tag rc)
 #   npm-verify   the registry asked until it says so
@@ -39,6 +40,9 @@ jobs:
   source:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # publish.tar is a draft release's asset: reading a draft takes write access
+    permissions:
+      contents: write
     outputs:
       version: ${{ steps.pick.outputs.version }}
       prerelease: ${{ steps.pick.outputs.prerelease }}
@@ -61,7 +65,7 @@ jobs:
           fi
           draft=$(gh release view "v$version" --json isDraft --jq '.isDraft')
           if [ "$draft" = "false" ]; then
-            gh release download "v$version" --pattern publish.tar
+            gh release download "publish-$version" --pattern publish.tar
           else
             echo "::error::v$version is a draft: create-release.yml did not finish"
             exit 1

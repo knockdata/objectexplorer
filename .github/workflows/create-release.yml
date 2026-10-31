@@ -7,8 +7,9 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 # objectexplorer's GitHub release comes from this one run: the binaries, the desktop app as a
 # .dmg (the download) and a .zip (the updater's), the Windows msix (the download), zip and
 # .appinstaller, SHA256SUMS, all from the same signed files; and publish.tar, what release.yml
-# takes to npm, the Homebrew tap and winget later (the run's artifacts expire after 5 days, the
-# release's assets do not).
+# takes to npm, the Homebrew tap and winget later, on a draft release of its own, publish-<version>
+# (the run's artifacts expire after 5 days, a release's assets do not; a draft is seen by the
+# repository's writers alone, so it is not among the downloads every visitor sees).
 #
 # No source is here. foldone's tools/create-release.sh builds the candidate on the owner's Mac
 # (macOS, Linux and Windows binaries, unsigned: macOS ad hoc), uploads it to
@@ -29,8 +30,9 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 #                    binaries, the brew formula and cask with their sha256
 #   check            the signed files on the six runners: codesign, spctl, stapler; Authenticode;
 #                    --version, instant + curl; Add-AppxPackage of the msix
-#   release          the GitHub release, publish.tar attached (an rc, 1.2.3-rc.1, is a
-#                    prerelease: /releases/latest and so Check for Updates never offer it)
+#   release          publish.tar on the draft release publish-<version>; the GitHub release (an
+#                    rc, 1.2.3-rc.1, is a prerelease: /releases/latest and so Check for Updates
+#                    never offer it)
 #
 # npm, brew and winget: release.yml, dispatched by foldone's tools/publish-release.sh <version>.
 # A dispatch with dry_run (the default) runs everything up to check and publishes nothing.
@@ -535,8 +537,9 @@ jobs:
             -e "s/SHA_APP_X64/$(sum objectexplorer-app-darwin-x64.dmg)/" \
             candidate/brew/objectexplorer-app.rb > brew/objectexplorer-app.rb
           grep -n "sha256\|version" brew/*.rb
-      # one asset of the release, so release.yml needs nothing but the release: version, npm/*.tgz,
-      # brew/objectexplorer.rb and brew/objectexplorer-app.rb. Not in SHA256SUMS: no user downloads it
+      # the one asset of the draft release publish-<version>, so release.yml needs nothing but it:
+      # version, npm/*.tgz, brew/objectexplorer.rb and brew/objectexplorer-app.rb. Not in SHA256SUMS:
+      # no user downloads it
       - name: publish.tar
         run: |
           set -euo pipefail
@@ -698,6 +701,7 @@ jobs:
     permissions:
       contents: write
     env:
+      VERSION: ${{ needs.source.outputs.version }}
       TAG: ${{ needs.source.outputs.tag }}
       PRERELEASE: ${{ needs.source.outputs.prerelease }}
       GH_TOKEN: ${{ github.token }}
@@ -717,9 +721,20 @@ jobs:
         run: |
           node scripts/release-notes.mjs "$TAG" CHANGELOG.md > notes.md
           cat notes.md
-      # a draft until every asset is there (publish.tar too: what release.yml takes to npm and
-      # brew); then published. Latest only for a release: an rc is a prerelease, which
-      # /releases/latest (Check for Updates, the download page) skips
+      # publish.tar, what release.yml takes to npm and brew (190 MB), on a draft release of its own:
+      # a draft is seen by the repository's writers alone, never among a visitor's downloads.
+      # tools/publish-release.sh deletes it once published; a version never published keeps it.
+      # One left by an earlier attempt goes first: drafts may share a name, release.yml takes one.
+      # Before the GitHub release, so a re-run of this job after a failure here makes both again
+      - name: publish.tar on the draft release publish-<version>
+        run: |
+          set -euo pipefail
+          if gh release view "publish-$VERSION" > /dev/null 2>&1; then
+            gh release delete "publish-$VERSION" --yes
+          fi
+          gh release create "publish-$VERSION" --draft --title "publish $VERSION" --notes "publish.tar of $TAG, for release.yml (tools/publish-release.sh $VERSION); deleted once published" publish/publish.tar
+      # a draft until every asset is there; then published. Latest only for a release: an rc is a
+      # prerelease, which /releases/latest (Check for Updates, the download page) skips
       - name: The GitHub release
         run: |
           set -euo pipefail
@@ -727,7 +742,7 @@ jobs:
           if [ "$PRERELEASE" = "true" ]; then
             prerelease=(--prerelease)
           fi
-          gh release create "$TAG" --draft --verify-tag --title "ObjectExplorer $TAG" --notes-file notes.md --generate-notes "${prerelease[@]}" release-files/* publish/publish.tar
+          gh release create "$TAG" --draft --verify-tag --title "ObjectExplorer $TAG" --notes-file notes.md --generate-notes "${prerelease[@]}" release-files/*
           if [ "$PRERELEASE" = "true" ]; then
             gh release edit "$TAG" --draft=false
           else
