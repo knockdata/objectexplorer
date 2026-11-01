@@ -4,6 +4,11 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.23  —  2026-11-01
+- a message to Chat with Rockie arrives at once, and so does the answer
+- chat bubbles are round in every browser
+- the hint text in an empty field is as easy to read in Safari as in Chrome
+
 ## v0.9.22  —  2026-11-01
 - Windows no longer closes when a web page is shut while it is still opening
 - a medical recording opened on Windows finds its signal file beside it
