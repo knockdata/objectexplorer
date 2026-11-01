@@ -4,6 +4,17 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.24  —  2026-11-01
+- read ebooks, PDFs and Markdown files as a book: two pages on a board, turned by their corner
+- math in Markdown and LaTeX files is drawn as math
+- PubMed, Web of Science and EndNote exports open as tables, and JATS and TEI articles as their page
+- Flash movies play
+- large 3D models open in the browser too
+- menus in the browser have their background again
+- a spinner sits level with the words beside it
+- a kept FTP or SFTP password shows as dots, and Disconnect closes an account until you connect it again
+- Create Agentic Task… on a file, folder or tab: an AI agent researches it, builds it and leaves a deck for you to review
+
 ## v0.9.23  —  2026-11-01
 - a message to Chat with Rockie arrives at once, and so does the answer
 - chat bubbles are round in every browser
