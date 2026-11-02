@@ -1,7 +1,7 @@
 # Drawings and diagrams
 
 `excalidraw`, Mermaid's `mmd` `mermaid`, draw.io's `drawio` `dio`, Visio's `vsdx` `vsd` `vssx`
-`vstx`, OpenDocument's `odg`, and maps as `geojson` `topojson` `gpx` `kml` `kmz` `shp`
+`vstx`, and OpenDocument's `odg`
 
 ## Excalidraw
 
@@ -34,9 +34,7 @@ text. The words of every page are read for [search](/explore/search).
 
 ## Maps
 
-A GeoJSON or TopoJSON file, a GPS track (`.gpx`), a Google Earth file (`.kml`, `.kmz`) or a
-shapefile opens as its shapes, drawn: points, lines and areas, at the file's own coordinates. No map
-service is called. The text of the ones that are text is a click away. A shapefile's `.shp` is drawn
-on its own; its attributes in the `.dbf` beside it open as a [table](/formats/databases).
+GeoJSON, GPS tracks, KML, shapefiles, GeoPackage, map tiles and the other map formats are drawn as
+their shapes too: see [maps](/formats/maps).
 
-Next: [images](/formats/images).
+Next: [maps](/formats/maps).

@@ -1,17 +1,19 @@
 # Finder, File Explorer and file managers
 
 ObjectExplorer can reach into the file manager you already use: open a file from there, convert it
-without opening anything, or ask Claude about it. On macOS and Windows each part is turned on and off
-by itself in **Settings → OS Extension**; nothing of it is on until you tick it and click **Save**.
+without opening anything, or ask Claude about it. On macOS and Windows the menu items are turned on
+and off in **Settings → OS Extension**: a tick only marks what you want, and **Save** applies every
+change at once. Nothing of it is on until you tick it and save. ObjectExplorer is never made the
+default app for a file type by itself.
 
-<img src="/screenshot/os-extension.png" alt="Settings, OS Extension: Ask Claude and Convert To for the file manager's menu, and the families of files to open with ObjectExplorer, each with a tick, over Save and Open System Settings">
+<img src="/screenshot/os-extension.png" alt="Settings, OS Extension on macOS: Ask Claude and Convert To for the Finder's menu with a tick each, the families of files ObjectExplorer is offered for, and Save beside Open System Settings">
 
 The first time the desktop app starts on macOS or Windows, it opens Settings on that pane, once, so
 you can see what is there. Leaving it all unticked is fine.
 
 ## Open with ObjectExplorer
 
-Under **Open with ObjectExplorer** the pane lists families of files, each with a tick:
+Under **Open with ObjectExplorer** the pane lists families of files:
 
 | Family                  | For example                               |
 |-------------------------|-------------------------------------------|
@@ -26,14 +28,13 @@ Under **Open with ObjectExplorer** the pane lists families of files, each with a
 | Archives                | `zip` `tar` `7z` `gz` `dmg` `iso`         |
 | Fonts                   | `ttf` `otf` `woff` `woff2`                |
 
-- **macOS**: ObjectExplorer is always in a file's **Open With** menu for these. A family you tick
-  and save opens in ObjectExplorer on a double-click; untick it and save, and those files go back to
-  the app they had before. macOS asks you to confirm each file type whose app changes, and no app
-  can skip those dialogs, so **Save** asks once per type (`jpg` and `jpeg` are one) and leaves out
-  the ones that open in ObjectExplorer already. The pane says how many it will ask about before, and
-  which you refused after; a refused one stays as it was, and the next **Save** asks again.
-- **Windows**: a family you tick and save offers ObjectExplorer under **Open with**. Windows leaves the
-  default app to you: **Open with → Choose another app**, pick ObjectExplorer and **Always**.
+- **macOS**: the families are listed, with no ticks. ObjectExplorer is in a file's **Open With**
+  menu for every one of them, and the default app stays yours, so the Finder asks nothing. To make
+  ObjectExplorer the app a type opens in on a double-click, do it in the Finder: **Get Info** on a
+  file, **Open with** → ObjectExplorer, then **Change All…**.
+- **Windows**: each family has a tick. A family you tick and **Save** offers ObjectExplorer under
+  **Open with**; untick it and save, and it is taken off again. Windows leaves the default app to
+  you: **Open with → Choose another app**, pick ObjectExplorer and **Always**.
 - **Linux**: there is no pane. The application menu entry that comes with the Linux download names
   the file types ObjectExplorer opens, so the file manager lists it under **Open With**.
 

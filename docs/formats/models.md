@@ -1,13 +1,15 @@
 # 3D models
 
-`glb` `gltf` `fbx` `blend` `obj` `mtl` `stl` `ply` `3mf` `usd` `usdz` `dae` `3ds` `x`, and some twenty
-older formats
+`glb` `gltf` `fbx` `blend` `obj` `mtl` `stl` `ply` `3mf` `usd` `usdz` `dae` `3ds` `x`, and some
+twenty older formats
 
 <AppDemo open="folder/demo/model/factory.glb" image="/screenshot/format-model.png" alt="factory.glb in the model view: a low-poly industrial yard, with the model toolbar above it" />
 
 A model opens as the model: its meshes, its materials and its textures, drawn in place. No Blender,
 no 3D engine and no importer — the file is read as it is, the way the program that wrote it wrote
-it.
+it. A scan, a `ply` with no faces among them, and a printer's G-code open in the same view as their
+points and moves: see [point clouds and G-code](/formats/points). A CAD part, a Rhino model and a
+building are on [CAD](/formats/cad).
 
 | Kind                   | Files                                                                                                                                                                         |
 |------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -37,6 +39,9 @@ With **Pick a Face** on, a click on a face numbers its corners the way the file 
 of the fragment shader and the model switches to the shading that shows it; click it again to go
 back to lit.
 
+The ruler in the pane's toolbar, or `M`, measures distances, angles, radii, areas and the volume of
+a model — see [measuring](/explore/measure).
+
 ## Animation
 
 A file that carries clips gets a player: play, the clip, the time, and **Rest**, which puts the
@@ -63,4 +68,4 @@ Drag to rotate, hold Shift to pan, use the wheel to zoom, and double-click to st
 over. The arrow keys turn it, `1` `3` `7` look from the front, the side and the top, `F` fits and
 `R` resets. Every control is on [moving around a view](/reference/view-controls).
 
-Next: [textures](/formats/textures).
+Next: [point clouds and G-code](/formats/points).

@@ -1,8 +1,8 @@
 # Audio and video
 
-`mp3` `wav` `m4a` `aac` `aiff` `flac` `ogg` `opus` `wma` `ac3` `dts` `wv` `ape` `dsf` `caf`, video as
-`mp4` `mov` `mkv` `webm` `avi` `wmv` `flv` `m2ts` `ts` `mpg` `vob` `ogv`, MIDI as `mid` `midi`, and
-subtitles
+`mp3` `wav` `m4a` `m4b` `aac` `aiff` `flac` `ogg` `opus` `wma` `ac3` `dts` `wv` `ape` `dsf` `caf`,
+video as `mp4` `mov` `mkv` `webm` `avi` `wmv` `flv` `m2ts` `ts` `mpg` `vob` `ogv`, MIDI as `mid`
+`midi`, and subtitles
 
 <img src="/screenshot/audio.png" alt="An mp3 in structure mode: MPEG audio, 21 frames, each with its bitrate and byte size">
 
@@ -26,6 +26,13 @@ another player. The **table** mode lists every track, and whether it plays.
 the chunks of a wav, the boxes of an m4a — each one with its offset, its bitrate and its size. It
 answers what a player never shows: how the file is actually put together.
 
+## Chapters
+
+An audiobook (`.m4b`), and any MP4 or Matroska file that marks chapters, lists them under the player
+bar: each chapter's number, title and start, the one playing marked. Click one to jump to its start.
+The **table** mode holds them too, a row each — `12:04 – 25:31 · The Storm`. The chapter list is in
+the desktop app; the browser's player has none.
+
 ## MIDI
 
 A MIDI file opens **playing**: the app's own synthesizer sounds its notes at the file's tempos, a
@@ -46,4 +53,7 @@ A subtitle file opens as its cues, a timed list: when each one starts, when it e
 The **text** mode beside it is the words alone, a line a cue. Which format it is, its content
 decides; a `.sub` is read when it is MicroDVD's text.
 
-Next: [fonts](/formats/fonts).
+A score — MusicXML, MuseScore, Guitar Pro — plays the same way, and a playlist opens as its
+entries: see [music scores and playlists](/formats/music).
+
+Next: [music scores and playlists](/formats/music).

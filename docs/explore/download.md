@@ -20,7 +20,11 @@ is done, the line at the foot of the pane says what was written, such as "Saved 
 Downloads: 5 rows × 4 columns, the whole file".
 
 The desktop app saves into your `Downloads` folder. A name already taken gets `-1`, `-2` and so on
-added. In a browser, the server writes the file and your browser downloads it like any other.
+added. Once it is saved, a small box under **Download** says **Saved to** and the whole path, which
+you can select and copy, with **Reveal in Finder** (**Show in File Explorer** on Windows, **Open
+Containing Folder** on Linux). It closes on `Esc`, a click elsewhere or the next download. In a
+browser, the server writes the file and your browser downloads it like any other, and shows it in
+its own list of downloads.
 
 A few things to know:
 
@@ -48,32 +52,38 @@ A file inside an archive or a database is only read, so it cannot be converted w
 The ring shows the formats a file's kind can be written as, most common first, up to eight. Its own
 format is left out.
 
-| A file that is                                       | Can become                                                    |
-|------------------------------------------------------|---------------------------------------------------------------|
-| a picture: `jpg` `png` `heic` `webp` `psd` `raw` …   | JPEG, PNG, WebP, GIF, PDF, TIFF, BMP, icon                    |
-| an SVG drawing                                       | PNG, JPEG, PDF, WebP, GIF, TIFF, BMP, icon                    |
-| a drawing: `vsdx` `vsd` `odg` `emf` `wmf` `ps` …     | SVG, PNG, JPEG, PDF, WebP, GIF, TIFF, BMP                     |
-| a diagram: `excalidraw` `drawio` `mmd`               | PNG, PDF, JPEG, WebP, GIF, TIFF, BMP                          |
-| a map: `geojson` `topojson` `gpx` `kml` `kmz`        | GeoJSON, KML, GPX, SVG, PNG, PDF, JPEG, WebP                  |
-| a shapefile                                          | SVG, PNG, PDF, JPEG, WebP                                     |
-| a table: `csv` `parquet` `xlsx` `sav` `arrow` `h5` … | CSV, JSON lines, Excel, Parquet, JSON, TSV, SQLite, Markdown  |
-| data: `json` `yaml` `toml` `xml` `plist` `cbor` …    | JSON, YAML, XML, CSV, Excel, TOML, property list, MessagePack |
-| subtitles: `srt` `vtt` `ass` `ttml` `lrc` …          | SRT, WebVTT, ASS, plain text, TTML, SAMI, LRC                 |
-| a document: `docx` `doc` `odt` `rtf` `pages` `md` …  | Word, plain text, HTML, Markdown, OpenDocument, RTF, EPUB     |
-| an ebook: `epub` `mobi` `azw3` `fb2` …               | EPUB, Word, plain text, HTML, Markdown, OpenDocument, RTF     |
-| a comic: `cbz` `cbr` `cb7` `cbt`                     | PDF, CBZ                                                      |
-| a Jupyter notebook                                   | HTML, Python script, Markdown, plain text, Word               |
-| slides: `pptx` `ppt` `key` `odp` …                   | PDF, PNG, JPEG, plain text, Markdown, HTML, Word              |
-| a PDF                                                | Word, JPEG, PNG, plain text, HTML, Markdown, WebP             |
-| a 3D model: `glb` `fbx` `blend` `usdz` `step` …      | STL, OBJ, GLB, glTF, PLY, 3MF                                 |
-| a sound: `mp3` `flac` `ogg` `m4a` …                  | WAV, M4A (AAC), AIFF, WebM sound (Opus)                       |
-| a video: `mp4` `mov` `mkv` `webm` `avi` …            | MP4, MOV, WebM, M4A (the sound only), WAV (the sound only)    |
-| a font: `ttf` `otf` `woff` `woff2` `eot` …           | TrueType, OpenType, WOFF, EOT                                 |
-| an archive, a folder, or several files               | ZIP, gzipped tar, tar, the file list as CSV                   |
+| A file that is                                       | Can become                                                     |
+|------------------------------------------------------|----------------------------------------------------------------|
+| a picture: `jpg` `png` `heic` `webp` `psd` `raw` …   | JPEG, PNG, WebP, GIF, PDF, TIFF, BMP, icon                     |
+| an SVG drawing                                       | PNG, JPEG, PDF, WebP, GIF, TIFF, BMP, icon                     |
+| a drawing: `vsdx` `vsd` `odg` `emf` `wmf` `ps` …     | SVG, PNG, JPEG, PDF, WebP, GIF, TIFF, BMP                      |
+| a diagram: `excalidraw` `drawio` `mmd`               | PNG, PDF, JPEG, WebP, GIF, TIFF, BMP                           |
+| a map: `geojson` `topojson` `gpx` `kml` `kmz`        | GeoJSON, KML, GPX, SVG, PNG, PDF, JPEG, WebP                   |
+| a shapefile                                          | SVG, PNG, PDF, JPEG, WebP                                      |
+| a table: `csv` `parquet` `xlsx` `sav` `arrow` `h5` … | CSV, JSON lines, Excel, Parquet, JSON, TSV, SQLite, Markdown   |
+| data: `json` `yaml` `toml` `xml` `plist` `cbor` …    | JSON, YAML, XML, CSV, Excel, TOML, property list, MessagePack  |
+| subtitles: `srt` `vtt` `ass` `ttml` `lrc` …          | SRT, WebVTT, ASS, plain text, TTML, SAMI, LRC                  |
+| a document: `docx` `doc` `odt` `rtf` `pages` `md` …  | PDF, Word, plain text, HTML, Markdown, OpenDocument, RTF, EPUB |
+| an ebook: `epub` `mobi` `azw3` `fb2` …               | EPUB, Word, plain text, HTML, Markdown, OpenDocument, RTF      |
+| a comic: `cbz` `cbr` `cb7` `cbt`                     | PDF, CBZ                                                       |
+| a Jupyter notebook                                   | HTML, Python script, Markdown, plain text, Word                |
+| slides: `pptx` `ppt` `key` `odp` …                   | PDF, PNG, JPEG, plain text, Markdown, HTML, Word               |
+| a deck: `.slides.md`                                 | PDF, PNG, Word, HTML, Markdown                                 |
+| a PDF                                                | Word, JPEG, PNG, plain text, HTML, Markdown, WebP              |
+| a 3D model: `glb` `fbx` `blend` `usdz` `step` …      | STL, OBJ, GLB, glTF, PLY, 3MF                                  |
+| a sound: `mp3` `flac` `ogg` `m4a` …                  | WAV, M4A (AAC), AIFF, WebM sound (Opus)                        |
+| a video: `mp4` `mov` `mkv` `webm` `avi` …            | MP4, MOV, WebM, M4A (the sound only), WAV (the sound only)     |
+| a font: `ttf` `otf` `woff` `woff2` `eot` …           | TrueType, OpenType, WOFF, EOT                                  |
+| an archive, a folder, or several files               | ZIP, gzipped tar, tar, the file list as CSV                    |
 
 What each one keeps is said on the format before you pick it: a PDF turned into a picture is its
-first page, slides into a PDF are a page a slide, a model into STL is the shape without its colours,
-a document into Word keeps its headings, lists and tables but not its pictures.
+first page, slides into a PDF are a page a slide, a model into STL is the shape without its colours.
+
+A document, Markdown among them, becomes a PDF of A4 pages laid out by the app itself, with its
+headings, lists, tables, code and pictures; PDF is first in its ring. Into Word it keeps its
+headings, lists, tables and pictures, and its code in a monospace font. A deck, a `.slides.md`
+file, is written as its slides, each drawn as the deck view draws it — see
+[slide decks](/formats/slides#downloading-it).
 
 A file of a kind not in the table downloads as it is.
 

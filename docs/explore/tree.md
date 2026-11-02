@@ -2,8 +2,8 @@
 
 <img src="/screenshot/tree-providers.png" alt="The tree with local and cloud roots, and a folder listing beside it">
 
-The sidebar holds every [root](/storage/connect) you added — local folders and cloud buckets in one
-tree. The pane beside it lists whatever is selected.
+The sidebar holds every [root](/storage/connect) you added — local folders, cloud buckets and
+[FTP and SFTP servers](/storage/ftp) in one tree. The pane beside it lists whatever is selected.
 
 ## The columns
 
@@ -47,12 +47,14 @@ The **Grid** icon in the toolbar, beside the list icon, shows a folder as tiles 
 |------------------------------------------------|------------------------------------------|
 | an image or a texture                          | the picture                              |
 | a PDF                                          | its first page                           |
-| a slide deck                                   | its first slide                          |
+| a slide deck, a `.slides.md` deck too          | its first slide                          |
 | a drawing or a diagram                         | the drawing                              |
 | a Markdown, Word or Jupyter document           | the start of its page                    |
 | a table                                        | its row and column count, and first rows |
 | a text file                                    | its first lines                          |
-| an archive, an ebook, a disk image, a database | the names at its top                     |
+| an ebook or a comic                            | its cover, or a comic's first page       |
+| a video, in the desktop app                    | a picture from its first second          |
+| an archive, a disk image, a database           | the names at its top                     |
 | anything else                                  | the icon of its format                   |
 
 Tiles come in five sizes, 64 to 256 pixels; the magnifier icons step between them. Two arrows sort

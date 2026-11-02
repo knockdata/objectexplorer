@@ -6,18 +6,19 @@ What an agent talks to, and what it may call. The rules that decide the answers 
 ## One endpoint
 
 ```
-POST   http://127.0.0.1:3417/mcp      a JSON-RPC message
-GET    http://127.0.0.1:3417/mcp      405: no server stream is offered
-DELETE http://127.0.0.1:3417/mcp      end this session
+POST   http://127.0.0.1:9421/api/mcp      a JSON-RPC message
+GET    http://127.0.0.1:9421/api/mcp      405: no server stream is offered
+DELETE http://127.0.0.1:9421/api/mcp      end this session
 ```
 
-MCP's Streamable HTTP transport, protocol version `2025-06-18`, on **a listener of its own**:
-`server.host` and `server.port` in the rule file, `127.0.0.1:3417` unless you change them. It is not
-the port the window or `npx objectexplorer` serves on, and it is open only while `server.enabled` is
-on and a token is written. `/api/mcp` on the same listener is answered the same way, for client
-configs written by an older version.
+MCP's Streamable HTTP transport, protocol version `2025-06-18`, on **the app's own port**, at
+`/api/mcp`: the port the window or `npx objectexplorer` is served on, 9421 unless something else
+holds it. A desktop window with no server of its own answers `/api/mcp` on 9421, or on any free port
+when that one is busy. The address in use is kept in `~/.objectexplorer/mcp/url`, shown as
+**Endpoint** in Settings → MCP, and written again into each installed client's config when it
+changes. It lets an agent in only while `server.enabled` is on and a token is written.
 
-The listener answers the agent and nothing else. The window does not talk to it: it reaches the MCP
+The endpoint answers the agent and nothing else. The window does not talk to it: it reaches the MCP
 service the way it reaches every other service of the app, so there is no settings route a token
 could be pointed at.
 
@@ -36,18 +37,18 @@ endpoint — a page can send a POST to localhost, and without this it would be a
 ## A session
 
 ```
-→ POST /mcp   {"jsonrpc":"2.0","id":1,"method":"initialize","params":{
-             "protocolVersion":"2025-06-18",
-             "clientInfo":{"name":"claude-code","version":"2.1.88"},
-             "capabilities":{}}}
-
-← 200         Mcp-Session-Id: 3f9c1a7e
-              {"jsonrpc":"2.0","id":1,"result":{
+→ POST /api/mcp   {"jsonrpc":"2.0","id":1,"method":"initialize","params":{
                  "protocolVersion":"2025-06-18",
-                 "serverInfo":{"name":"objectexplorer","version":"<app version>"},
-                 "capabilities":{"tools":{"listChanged":true}}}}
+                 "clientInfo":{"name":"claude-code","version":"2.1.88"},
+                 "capabilities":{}}}
 
-→ POST /mcp   {"jsonrpc":"2.0","method":"notifications/initialized"}
+← 200             Mcp-Session-Id: 3f9c1a7e
+                  {"jsonrpc":"2.0","id":1,"result":{
+                     "protocolVersion":"2025-06-18",
+                     "serverInfo":{"name":"objectexplorer","version":"<app version>"},
+                     "capabilities":{"tools":{"listChanged":true}}}}
+
+→ POST /api/mcp   {"jsonrpc":"2.0","method":"notifications/initialized"}
 ```
 
 Every request after that carries `Mcp-Session-Id` and `MCP-Protocol-Version`. The session id is
@@ -76,7 +77,7 @@ and is logged as `decision: cancelled`, which is not the same fact as a timeout.
 
 ## The tools
 
-Seven, the same seven [the rule file](/reference/mcp-rules#the-tools) ticks one by one — and a
+Eight, the same eight [the rule file](/reference/mcp-rules#the-tools) ticks one by one — and a
 tool that is not ticked is not listed at all. Every one of them names its object by a `uri`, and it
 is the same URI the app writes into SQL — `gs://bucket/key`, `s3://bucket/key`,
 `az://account/container/key`, `abfss://…`, and `root/key` for a local folder the user mounted. One
@@ -91,6 +92,7 @@ columnSummary  {uri}                      → statistics per column, measured af
 searchText     {uri, pattern, limit?}     → lines matching a regular expression, in one object or a folder
 query          {sql, limit?}              → rows
 getObject      {uri, offset?, limit?}     → rows, text or a tree, by what the object is; raw bytes refused
+getRawFile     {uri}                      → the object's own bytes: a picture as an image, else a file
 ```
 
 Two of them, as they are listed:
@@ -132,11 +134,18 @@ columnSummary  {uri, rowsMeasured, columns: [{name, encrypted, …statistics}]}
 searchText     {uri, pattern, hits: [{uri, line, text}], searched} — searched: a folder only
 query          {columns: [{name, encrypted}], rows, rowCount, truncated}
 getObject      {uri, objectType, …} — rows, text or a tree
+getRawFile     {uri, mimeType, size} — beside the bytes
 ```
 
 `getObject` counts `offset` and `limit` in rows for a table and lines for a text. An object with no
 text this app can read (an image, an archive, a model) is refused with `step: "type"`: bytes no
 rule has checked are not sent.
+
+`getRawFile` is the exception, and the one tool no PII rule passes: it is off in a starting rule
+file. Its answer's `content[0]` is the file itself, base64: `{type: "image", data, mimeType}` for a
+PNG, JPEG, GIF or WebP picture, which an agent such as Claude looks at, and `{type: "resource",
+resource: {uri, mimeType, blob}}` for any other file. `content[1]` and `structuredContent` hold
+`{uri, mimeType, size}`. An object over `maxObjectBytes` is refused.
 
 `encrypted: true` is on every column a rule rewrote, in `describeObject` and in `columnSummary`. A
 `query` never sees a real value of such a column: each object it names is read through a view where
@@ -183,7 +192,7 @@ parse, a session that is gone.
 **Install** for a client in Settings → MCP writes that client's own config, with the agent's own
 token from the rule file.
 
-**Claude Code** — `claude mcp add --transport http objectexplorer http://127.0.0.1:3417/mcp
+**Claude Code** — `claude mcp add --transport http objectexplorer http://127.0.0.1:9421/api/mcp
 --header "Authorization: Bearer <token>"`, which lands in `~/.claude.json`. The app writes the same
 entry itself rather than shelling out, so it works when the CLI is not on PATH.
 
@@ -196,6 +205,14 @@ Anything else that speaks this transport is wired by hand: **Add Agent** in Sett
 token of its own, and **Copy Connection** puts the address and the token on the clipboard as one
 block, already shaped the way a client's config wants them. A client that speaks only stdio needs a
 bridge, and there is none in the app today.
+
+## An Ask's own door
+
+[Ask…](/agents/ask) on a bucket, or on a folder ticked **Agents read through PII**, gives the agent
+the same endpoint with a token made for that one conversation, named `ask-` and eight characters.
+That token is let in whatever `server.enabled` says, reaches only the folder or bucket it was asked
+about, and is given every tool, `getRawFile` among them; the rule file's PII rules, deny lines, limits and approvals hold as
+for any agent. It opens nothing once the conversation ends.
 
 ## The other half: what the window uses
 

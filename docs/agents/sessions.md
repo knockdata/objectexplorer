@@ -16,8 +16,9 @@ holding the rows would be a second copy of the data the rules just spent their t
 
 Two things split it, and they are the two things worth asking about:
 
-- **agent** — whose token made the call: a client Install set up (`claudeCode`, `codex`), or an
-  agent you added by name. Never the name a client gives itself.
+- **agent** — whose token made the call: a client Install set up (`claudeCode`, `codex`), an
+  agent you added by name, or an [Ask…](/agents/ask) that reads through the PII rules, named `ask-`
+  and eight characters of its own. Never the name a client gives itself.
 - **session** — one connection, from `initialize` to the socket closing. A new `claude` in a new
   terminal is a new session under the same agent.
 
@@ -135,4 +136,4 @@ to re-run something the rules no longer permit.
 
 → the endpoints behind all of this: [the MCP endpoint](/reference/mcp-protocol#the-other-half-what-the-window-uses)
 
-Next: [Claude in the side bar](/agents/claude).
+Next: [Ask an agent](/agents/ask).

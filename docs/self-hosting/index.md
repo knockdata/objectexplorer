@@ -298,7 +298,7 @@ machines may reach; and the audit log, a day at a time, newest first.
 A server whose licence is an enterprise one is an enterprise server. Before it has one, `"enterprise":
 true` in its config runs a 14-day trial from the first time it starts.
 
-- **Days 1 to 7:** only **Settings → Plan** says how many days are left.
+- **Days 1 to 7:** only **Settings → Account** says how many days are left.
 - **Days 8 to 14:** a banner at the top of the window, a little more urgent each day. Closing it
   hides it until the next day.
 - **After day 14:** everything keeps working. The banner says the server is unlicensed, and it

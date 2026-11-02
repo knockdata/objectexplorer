@@ -121,9 +121,22 @@ The text over the page is the file's own text, placed where its glyphs were pain
 selection follows the lines even where the page was drawn out of order. A scanned page whose
 text was read by OCR selects too: that text is in the file, drawn invisibly behind the picture.
 
+## Measuring
+
+The ruler before **Search**, or `M`, turns the pointer into a measuring tool in a drawing, a model,
+a circuit board, a PDF page and a picture. A picture, measured, is drawn fitted to the pane: the
+wheel zooms and a drag pans. See
+[measuring](/explore/measure).
+
+## A book
+
+The **Book** view of an ebook, a PDF or a Markdown file turns its pages by their corner: drag a
+corner across, or click it; the arrow keys and `PageUp` `PageDown` turn them too. See
+[ebooks](/formats/ebooks#book).
+
 ## Why Shift
 
 On a Mac, Ctrl-click is a right click. On many Linux desktops, Alt-drag moves the whole window.
 Shift means nothing to the operating system, so a Shift-drag always reaches the view.
 
-Next: [where your data lives](/reference/data-locations).
+Next: [the Tools panel](/reference/tools).

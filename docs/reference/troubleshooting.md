@@ -55,6 +55,10 @@ itself is `~/.objectexplorer/app.log`. A file that will not open can be sent too
 contents: **Share Anonymized for Debugging** in its right-click menu sends a copy with every value
 replaced by one of the same shape.
 
+To ask rather than report, **Help: Chat with Rockie** in the command palette opens a side bar where
+you write to the maker of the app. Your messages are sealed so only Rockie can read them, and the
+answer comes back in the same side bar.
+
 **Settings → About** names exactly which build is running and where it keeps its files. Started from
 a terminal, `objectexplorer window=true` prints its messages and errors there. Every window session
 is also [recorded](/reference/session-recording) on this machine, and a recording can be played back

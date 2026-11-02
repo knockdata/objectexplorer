@@ -45,4 +45,4 @@ Two items with one name in a folder are listed with their id, so each can still 
 A Box folder open in the tree is listed again every few seconds, so a file someone else added shows
 up by itself.
 
-Next: [the tree and the list](/explore/tree).
+Next: [FTP, FTPS and SFTP](/storage/ftp).

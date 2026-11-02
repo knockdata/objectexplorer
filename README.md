@@ -1,7 +1,8 @@
 # <img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/assets/logo-full.png" width="32" alt="ObjectExplorer"> ObjectExplorer
 
-**The VS Code for cloud storage.** S3, GCS, Azure Blob, MinIO, OneLake, Dropbox, OneDrive, Box and
-local disks in one window — every object previewed, queried and modelled in place, on your machine.
+**The VS Code for cloud storage.** S3, GCS, Azure Blob, MinIO, OneLake, Google Drive, Dropbox,
+OneDrive, Box, FTP and SFTP servers and local disks in one window — every object opened, queried
+and modelled in place, on your machine.
 
 [<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/video/poster.png" width="800" alt="Forty seconds of ObjectExplorer">](https://objectexplorer.com)
 
@@ -10,30 +11,37 @@ local disks in one window — every object previewed, queried and modelled in pl
 
 ## Install
 
-| Platform                  | Download                                                    |
-|:--------------------------|:------------------------------------------------------------|
-| macOS, Apple silicon      | [ObjectExplorer-mac-arm64.dmg][mac-arm64.dmg]               |
-| macOS, Intel              | [ObjectExplorer-mac-x64.dmg][mac-x64.dmg]                   |
-| Windows, x64 installer    | [ObjectExplorer-windows-x64.msix][windows-x64.msix]         |
-| Windows, ARM64 installer  | [ObjectExplorer-windows-arm64.msix][windows-arm64.msix]     |
-| Windows, x64 executable   | [ObjectExplorer-windows-x64.exe][windows-x64.exe]           |
-| Windows, ARM64 executable | [ObjectExplorer-windows-arm64.exe][windows-arm64.exe]       |
-| Linux, x64                | [ObjectExplorer-linux-x64.AppImage][linux-x64.AppImage]     |
-| Linux, ARM64              | [ObjectExplorer-linux-arm64.AppImage][linux-arm64.AppImage] |
+| Platform                   | Download                                                |
+|:---------------------------|:--------------------------------------------------------|
+| macOS, Apple silicon       | [objectexplorer-app-darwin-arm64.dmg][mac-arm64.dmg]    |
+| macOS, Intel               | [objectexplorer-app-darwin-x64.dmg][mac-x64.dmg]        |
+| Windows, x64 installer     | [objectexplorer-windows-x64.msix][windows-x64.msix]     |
+| Windows, ARM64 installer   | [objectexplorer-windows-arm64.msix][windows-arm64.msix] |
+| Windows, x64 portable      | [objectexplorer-windows-x64.zip][windows-x64.zip]       |
+| Windows, ARM64 portable    | [objectexplorer-windows-arm64.zip][windows-arm64.zip]   |
+| Linux, x64                 | [objectexplorer-linux-x64.tar.gz][linux-x64.tar.gz]     |
+| Linux, ARM64               | [objectexplorer-linux-arm64.tar.gz][linux-arm64.tar.gz] |
 
-[mac-arm64.dmg]: https://objectexplorer.com/download/mac-arm64.dmg?channel=github
-[mac-x64.dmg]: https://objectexplorer.com/download/mac-x64.dmg?channel=github
+[mac-arm64.dmg]: https://objectexplorer.com/download/app-darwin-arm64.dmg?channel=github
+[mac-x64.dmg]: https://objectexplorer.com/download/app-darwin-x64.dmg?channel=github
 [windows-x64.msix]: https://objectexplorer.com/download/windows-x64.msix?channel=github
 [windows-arm64.msix]: https://objectexplorer.com/download/windows-arm64.msix?channel=github
-[windows-x64.exe]: https://objectexplorer.com/download/windows-x64.exe?channel=github
-[windows-arm64.exe]: https://objectexplorer.com/download/windows-arm64.exe?channel=github
-[linux-x64.AppImage]: https://objectexplorer.com/download/linux-x64.AppImage?channel=github
-[linux-arm64.AppImage]: https://objectexplorer.com/download/linux-arm64.AppImage?channel=github
+[windows-x64.zip]: https://objectexplorer.com/download/windows-x64.zip?channel=github
+[windows-arm64.zip]: https://objectexplorer.com/download/windows-arm64.zip?channel=github
+[linux-x64.tar.gz]: https://objectexplorer.com/download/linux-x64.tar.gz?channel=github
+[linux-arm64.tar.gz]: https://objectexplorer.com/download/linux-arm64.tar.gz?channel=github
 
-Every link fetches the installer from the newest release. Older versions, and the release notes for
+Every link fetches the file from the newest release. Older versions, and the release notes for
 each one, are on the [releases page](https://github.com/knockdata/objectexplorer/releases).
-Per-platform notes — notarization, SmartScreen, the WebKitGTK package Linux needs — are in
+Per-platform notes — notarization, SmartScreen, where the Linux binary goes — are in
 [getting started](https://objectexplorer.com/getting-started).
+
+With Homebrew, on macOS and Linux:
+
+```sh
+brew install knockdata/tap/objectexplorer             # the command line
+brew install --cask knockdata/tap/objectexplorer-app  # the desktop app
+```
 
 Or run it with no install at all, if you have Node 20+:
 
@@ -46,48 +54,48 @@ folders. Pro lifts every cap — see [pricing](https://objectexplorer.com/pricin
 
 ## What it does
 
-- **Preview instead of download.** More than 130 file extensions render in place — Parquet, SPSS, SAS,
-  office, ebooks, images, audio, video, SQLite and DuckDB files — parsed in a worker on your machine.
-  → [every format](https://objectexplorer.com/formats/)
-- **One window for every provider.** Every provider in the same tree, with the same keyboard, as a list
-  or as a grid of previews. A folder is a folder everywhere.
+- **One tree for every storage.** S3 and S3 compatible providers, Google Cloud Storage, BigQuery,
+  Azure Blob, OneLake, Google Drive, Dropbox, OneDrive, Box, FTP, FTPS and SFTP servers, and the
+  folders on your disk, with the same keyboard, as a list or a grid of previews.
   → [connecting storage](https://objectexplorer.com/storage/connect)
-- **A PDF reader with notes.** Its own renderer: select, find, bookmarks, thumbnails, and seven marks
-  plus text notes of your own. → [the PDF reader](https://objectexplorer.com/formats/pdf)
-- **CAD, 3D, textures and shaders.** STEP, SolidWorks, CATIA and DWG; glTF, FBX, Blender, obj and
-  Unity models; DDS, KTX2, HDR and EXR textures; WGSL and GLSL shaders running live.
-  → [CAD](https://objectexplorer.com/formats/cad) · [3D models](https://objectexplorer.com/formats/models)
-- **The bill, and how to cut it.** Every bucket priced on one disc — full of demo data until yours
-  has something on it — and Optimize for the cheaper class, the single region, the old versions and
-  the abandoned uploads — each a command you run.
-  → [optimize](https://objectexplorer.com/explore/optimize)
-- **SQL over the object, where it lives.** DuckDB queries the object in the bucket; nothing is staged
-  and no table is created first. → [SQL](https://objectexplorer.com/analyze/sql)
-- **Column summaries.** A histogram, a box plot or a split bar under every column header.
-  → [column summaries](https://objectexplorer.com/explore/column-summary)
-- **A notebook per object.** A tabular object opens with a query and a chart already written; Table,
-  Chart, Model, Python, JavaScript and Text cells. → [the notebook](https://objectexplorer.com/analyze/notebook)
+- **Every file opened as itself.** More than 900 kinds of file: tables, office files, PDFs and ebooks, pictures and
+  camera raw, audio and video, CAD parts, building and 3D models, point clouds, circuit boards,
+  scans and medical recordings, mailboxes and chats, maps, molecules, disk images and archives. A
+  file is told by its content, not its name. → [every format](https://objectexplorer.com/formats/)
+- **SQL over the object, where it lives.** The app's own engine queries a Parquet, CSV, sheet,
+  database file or lake table in place; nothing is imported first.
+  → [SQL](https://objectexplorer.com/analyze/sql)
+- **A notebook per object.** A table opens with a query and a chart already written; Table, Chart,
+  Model, Python, JavaScript and Text cells. → [the notebook](https://objectexplorer.com/analyze/notebook)
 - **Lake formats read as tables.** Delta, Iceberg and Hudi parsed to their own specifications, with
   deletes, schema evolution and time travel. → [data lake tables](https://objectexplorer.com/analyze/lake)
+- **Read, measure and edit.** A PDF reader with notes, ebooks and PDFs read as a book, distances and
+  areas measured on drawings, models, boards and pages, and text files edited and saved.
+  → [the PDF reader](https://objectexplorer.com/formats/pdf)
+- **The bill, and how to cut it.** Every bucket priced on one disc, and Optimize for the cheaper
+  class, the single region, the old versions and the abandoned uploads — each a command you run.
+  → [where the storage went](https://objectexplorer.com/explore/usage)
 - **Search across buckets.** Local folders and cloud prefixes in the same run.
   → [search](https://objectexplorer.com/explore/search)
-- **A writing assistant.** Markdown edited in place, with passages and phrases from writers you chose
-  beside it, and mechanical flags — never a score. → [writing](https://objectexplorer.com/analyze/writing)
-- **An access gateway for agents.** MCP for Claude Code and Codex: the agent holds no credential, PII
-  is rewritten on the way out, and every call is logged. → [agents](https://objectexplorer.com/agents/)
+- **Download in another shape.** A table as Excel or CSV, a deck as PDF, PNG or Word, a folder as a
+  zip, or an anonymized copy to test with. → [download and convert](https://objectexplorer.com/explore/download)
+- **Ask the agent you use.** Claude, GitHub Copilot, Gemini, ChatGPT or a model of your own in the
+  side bar, beside the file you have open. → [agents](https://objectexplorer.com/agents/)
+- **An access gateway for agents.** MCP (Model Context Protocol) for Claude Code, Codex or any client:
+  the agent holds no credential, personal data is rewritten on the way out, and every call is logged.
+  → [agents](https://objectexplorer.com/agents/)
 
 The whole story, one afternoon at a time: [objectexplorer.com/story](https://objectexplorer.com/story/).
 
 ## Your data never leaves your machine
 
-ObjectExplorer is an HTTP server bound to `127.0.0.1` plus the OS webview, both inside the same
-executable. Every parser runs in a worker on your own machine, and objects are fetched from your
-provider to your computer and nowhere else: we run no backend that sees your objects, because there
-is none. → [the whole argument](https://objectexplorer.com/privacy)
+Every file is read on your own machine, and objects come from your provider to your computer and
+nowhere else: we run no backend that sees your objects, because there is none.
+→ [the whole argument](https://objectexplorer.com/privacy)
 
-Under the hood it is a single native binary: no Electron, no Chromium, just the OS webview (WebKit
-on macOS and Linux, WebView2 on Windows) pointed at the HTTP server running inside the same
-executable.
+Under the hood it is one native program for macOS, Windows and Linux: no Electron, no Chromium.
+Opened from your applications it is a window; typed in a terminal, it serves the same app to your
+browser from `127.0.0.1`.
 
 ## Links
 
@@ -107,13 +115,5 @@ this repository packages into the desktop builds. That bundle is proprietary sof
 AB, under the terms in the package's `LICENSE.md`. Versions up to and including 0.7.0 were published
 under MIT.
 
-The app bundles work by other people, each under its own terms — Seti UI's file-type icons and DuckDB under MIT, VS Code's codicons under CC BY 4.0,
-SQLite in the public domain, and Google's Cloud service icons under Google's own icon terms. Every
-one of them is named, with its licence text, in `LICENSES.md` inside the app: open
-[objectexplorer.com/app/LICENSES.md](https://objectexplorer.com/app/LICENSES.md), or find the same
-file in `app/` of the [npm package](https://www.npmjs.com/package/@knockdata/objectexplorer) and
-of every release binary.
-
-FFmpeg is the one thing the app does **not** bundle. Its WebAssembly core is GPL, so the browser
-fetches it from a CDN the first time an audio file needs converting, and it reaches you from us in
-no build at all.
+The app bundles work by other people, each under its own terms. Every one of them is named, with
+its licence text, on the [third-party licenses](https://objectexplorer.com/third-party-licenses) page.

@@ -39,12 +39,10 @@ own `tools`, `limits`, `deny`, `columns` and `text`, laid over the lines above f
 ```yaml
 version: 1
 
-# The server itself. It binds to the loopback address only, in every mode — the desktop app,
-# `npx objectexplorer`, the browser front door.
+# The server itself. It is the app's own port, at /api/mcp, and answers this machine only, in
+# every mode — the desktop app, `npx objectexplorer`, the browser front door.
 server:
   enabled: false
-  host: 127.0.0.1
-  port: 3417                   # its own listener; 0 is 3417 too
   token: 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83   # optional: a token shared by any client that names itself
   install:
     claudeCode: true           # write the entry into that client's own MCP config
@@ -165,8 +163,8 @@ which names its objects inside SQL: every quoted path, every quoted file name, a
 the same step 5 a `getObject` would be. There is no second rule engine to keep in sync with the
 first.
 
-What the gate binds is the MCP listener. A program on this machine using the app's own API is not
-an agent and is not held to this file.
+What the gate binds is the MCP endpoint, `/api/mcp`. A program on this machine using the app's own
+API is not an agent and is not held to this file.
 
 ### What a denial looks like
 
@@ -361,29 +359,30 @@ to re-run something the rules no longer permit.
 
 ## The tools
 
-Seven, each ticked on its own under `tools`.
+Eight, each ticked on its own under `tools`.
 
-| Tool             | What it answers                                       | Rules on the way out                             |
-|------------------|-------------------------------------------------------|--------------------------------------------------|
-| `listRoots`      | which providers and roots are reachable               | the gate                                         |
-| `listObjects`    | the children of one path, and how many were hidden    | the gate, per child                              |
-| `describeObject` | size, time, format and columns                        | `columns` (names)                                |
-| `columnSummary`  | per-column statistics, measured after the rules       | `columns`                                        |
-| `searchText`     | lines matching a pattern, in one object or one folder | `text`                                           |
-| `query`          | one SQL statement over objects named by URI           | `columns`                                        |
-| `getObject`      | one object: rows, text, a tree or a window of bytes   | `columns` or `text`, or none for a tree or bytes |
+| Tool             | What it answers                                         | Rules on the way out             |
+|------------------|---------------------------------------------------------|----------------------------------|
+| `listRoots`      | which providers and roots are reachable                 | the gate                         |
+| `listObjects`    | the children of one path, and how many were hidden      | the gate, per child              |
+| `describeObject` | size, time, format and columns                          | `columns` (names)                |
+| `columnSummary`  | per-column statistics, measured after the rules         | `columns`                        |
+| `searchText`     | lines matching a pattern, in one object or one folder   | `text`                           |
+| `query`          | one SQL statement over objects named by URI             | `columns`                        |
+| `getObject`      | one object: rows, text or a tree                        | `columns` or `text`; a tree both |
+| `getRawFile`     | one object as it is: a picture as an image, else a file | none: the file as it is          |
 
-`maxObjectBytes` is checked with a HEAD before `getObject` or `searchText` reads anything that is not
-a table, so an object over the limit costs one metadata request rather than a download. A table is
-windowed by `rowsPerCall` instead.
+`maxObjectBytes` is checked with a HEAD before `getObject`, `getRawFile` or `searchText` reads
+anything that is not a table, so an object over the limit costs one metadata request rather than a
+download. A table is windowed by `rowsPerCall` instead.
 
 Plotting and model training live in the page, not in the server, so neither is a tool.
 
 ## When there is no file
 
 The server is off, and Settings → MCP offers **Write a Starting Rule File**: every root already in
-the window, all seven tools (each answer through the PII rules), column rules for email, phone, id
-and account numbers, text rules for email addresses and phone numbers and the `@id`, `@card`,
+the window, seven of the eight tools (each answer through the PII rules; `getRawFile`, which sends a
+file as it is, left off), column rules for email, phone, id and account numbers, text rules for email addresses and phone numbers and the `@id`, `@card`,
 `@iban`, `@person` and `@address` detectors, the deny list above, lower limits (1000 rows and 8 MB a
 call, 256 MB a session, 1 GB a day, 500 objects a listing), an empty `approve`, no agent, and the
 door shut with no client installed. Every line of it can be changed there afterwards.

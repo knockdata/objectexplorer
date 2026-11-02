@@ -11,6 +11,10 @@ code in the app's own server, reading the same two lists from the same file,
 decided it for both. An edit in the pane holds from the next call or the next share — the file is
 read again every time, with no restart.
 
+An agent you [ask](/agents/ask) about a bucket, or about a local folder ticked **Agents read through
+PII** in Settings → Locations → Local folder, is the first audience too: it starts in an empty folder
+of its own and reads every file through the MCP server, under these rules.
+
 |                           | An agent over MCP or `oe`                          | A person with a share link                                   |
 |---------------------------|----------------------------------------------------|--------------------------------------------------------------|
 | **Which rules**           | both lists, on every call                          | both lists, on every share                                   |
@@ -123,7 +127,10 @@ caught by the `ssn` column rule) and every other string goes through the full-te
 Documents are PDF, Word (`.docx` and the older `.doc`), OpenDocument, RTF, PowerPoint, EPUB, HTML and
 plain text. A picture, and a PDF page with no text in it (a scan), is read by the system's own text
 recognition on macOS before the rules see it; on Windows and Linux a picture is refused, saying so.
-Anything else — an archive, a model — is refused: bytes no rule can read are not sent.
+Anything else — an archive, a model — is refused: bytes no rule can read are not sent. The one
+way past that is `getRawFile`, which sends a file as it is so an agent can look at a picture: the
+rules are not applied to it. It is off for an agent over MCP until you tick it, and on for an agent
+you [ask](/agents/ask) through the PII rules.
 
 A `query` cannot step around the column rules by renaming a column: each object it names is read
 through a copy where the caught columns are already rewritten, so `SELECT ssn AS x`, `upper(ssn)`
@@ -150,8 +157,9 @@ They guard what leaves this machine for someone else: an agent over MCP or `oe`,
 do not touch:
 
 - your files, and what this app shows you — nothing is changed on disk;
-- [Ask and the Claude side bar](/agents/claude): your own data, sent as it is to the assistant you
-  picked;
+- [Ask…](/agents/ask) on a local folder not ticked **Agents read through PII** (Settings → Locations
+  → Local folder; a folder holding `.git` starts unticked): your own data, sent as it is to the
+  agent you picked. Settings → PII lists the folders read this way;
 - folders other people open through this machine's server (Settings → Admin): they see the files
   as they are;
 - Create Anonymized Copy, which replaces every value whatever the rules say.

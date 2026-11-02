@@ -28,4 +28,30 @@ It is the file's layout, not its code: nothing is disassembled or decompiled, an
 noted, not checked. A `.jar`, `.apk` or `.whl` is a zip, and its classes open this way from inside
 it — see [archives](/explore/archives).
 
-Next: [Anki decks](/formats/anki).
+## Developer files
+
+What a developer's tools write opens as a **table**, each told by its contents whatever it is called,
+so a `.json` that is a source map or a `.yaml` of Kubernetes objects opens as one. Every table is
+read by [SQL](/analyze/sql) too.
+
+| File                                                     | Files                                                   | A row for                                                            |
+|----------------------------------------------------------|---------------------------------------------------------|----------------------------------------------------------------------|
+| an Apple crash report                                    | `ips` `crash`                                           | each frame of each thread, the crashed thread marked                 |
+| a source map                                             | `map`                                                   | each mapping, from generated line and column to the source's         |
+| a CPU profile from Node or Chrome, Chrome's trace events | `cpuprofile`, `json`                                    | each stack; it opens as a [flame graph](/formats/flame-graphs) first |
+| a package manager's lockfile                             | `package-lock.json` `yarn.lock` `Cargo.lock` `go.sum` … | each package: name, version, source, checksum                        |
+| a SARIF log                                              | `sarif`                                                 | each result: tool, rule, level, message, file and line               |
+| JUnit test results                                       | an `xml`                                                | each test case: suite, class, name, time and outcome                 |
+| a Terraform state, version 4                             | `tfstate`                                               | each resource                                                        |
+| Kubernetes manifests                                     | a `yaml`                                                | each object: kind, name, namespace, labels and images                |
+| a diff or a patch                                        | `diff` `patch`                                          | each file changed: its path, status and lines added and deleted      |
+
+A diff opens drawn, the way a code review shows one: the files changed on top, then each file's
+hunks, the lines taken out in red and the ones put in in green, with their old and new line numbers.
+A patch mailed by `git format-patch` shows its subject, author, date and message first.
+
+A lockfile is npm's, yarn's, pnpm's, Cargo's, Poetry's, uv's, Bundler's (`Gemfile.lock`) or Go's.
+SARIF (the Static Analysis Results Interchange Format) is what code scanners write their findings
+in. A cut-short lockfile, SARIF log or Terraform state is read up to its last whole entry.
+
+Next: [disk images and packages](/formats/disks).

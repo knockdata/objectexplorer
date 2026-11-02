@@ -30,6 +30,8 @@ next one and `⇧Enter` back.
 - **Help: Report Bug with a Screenshot** — a picture of the window, a line on what went wrong if you
   like, the version and the end of the app's log, sent encrypted so only we can read it;
 - **Help: Share Application Log for Debugging** — the end of the app's log, sent the same way;
+- **Help: Check for Updates** — asks now whether a newer version is out, see
+  [updating](/reference/updating);
 - **Shell Command: Install 'oe' command in PATH** — see [the command line](/reference/command-line);
 - **Toggle Theme**, **Add Folder…**, **View: Hidden Objects**, **View: Deleted Objects**,
   **File: Copy Path** and **Reveal in Finder** (Show in File Explorer on Windows).
@@ -107,12 +109,41 @@ click into it:
 
 A click on a column's name sorts by it; a click on the empty space of the header clears the filters.
 
-## Writing Markdown
+## Editing text
 
-| Key        | What it does                  |
-|------------|-------------------------------|
-| `⌘S`       | save the file                 |
-| `F8` `⇧F8` | the next flag, the one before |
+In a text file on this machine — see [editing text](/explore/edit):
+
+| Key        | What it does                                                                  |
+|------------|-------------------------------------------------------------------------------|
+| `⌘S`       | save the file                                                                 |
+| `⌘Z`       | take back the last edit, also past a save                                     |
+| `⇧⌘Z`      | put it back                                                                   |
+| `F8` `⇧F8` | in Markdown, the [writing tool](/analyze/writing)'s next flag, the one before |
+
+## Measuring
+
+In a drawing, a model, a board, a PDF page or a picture — see [measuring](/explore/measure):
+
+| Key                          | What it does                                        |
+|------------------------------|-----------------------------------------------------|
+| `M`                          | start or stop measuring                             |
+| `Q` `D` `L` `A` `⇧A` `R` `V` | Auto, Distance, Length, Angle, Area, Radius, Volume |
+| `S`                          | set the scale, on a PDF page or a picture           |
+| `Enter`                      | end a chain of distances, close an area of points   |
+| `⌫`                          | remove the last result                              |
+| `⌘C`                         | copy the results as a table                         |
+| `Esc`                        | drop the points being placed, else stop measuring   |
+
+While measuring, `R` in a 3D view is **Radius**, not reset.
+
+## Reading a book
+
+In the **Book** view of an ebook, a PDF or a Markdown file:
+
+| Key                | What it does           |
+|--------------------|------------------------|
+| `→` `↓` `PageDown` | turn to the next pages |
+| `←` `↑` `PageUp`   | turn back              |
 
 ## In a notebook
 

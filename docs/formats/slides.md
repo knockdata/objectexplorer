@@ -66,11 +66,29 @@ the first and the last slide. A click on a title in the side list goes to that s
 pointer is a laser: press and drag anywhere on the slide and a trail follows it, then fades. A click
 on a popup word or a link still opens it.
 
-## Sharing it
+## A crowded slide
 
-| Button                           | What it does                                                                                                  |
-|----------------------------------|---------------------------------------------------------------------------------------------------------------|
-| **Copy for LinkedIn and Medium** | puts the deck on the clipboard as an article: each slide as a picture, its popups, notes and sources under it |
-| **Save as PDF**                  | a page a slide, saved to your Downloads folder — ready for a LinkedIn document post                           |
+A slide whose text does not fit is drawn with its text smaller, step by step, until it fits. The
+deck view, **Present** and every download draw it the same way, so what you see is what is sent.
+
+## Downloading it
+
+The **Download** button of a `.slides.md` deck writes its slides, drawn as the deck view draws them,
+not its Markdown turned into a document:
+
+| Format              | What it holds                                              |
+|---------------------|------------------------------------------------------------|
+| **PDF document**    | every slide as a vector page, first in the ring            |
+| **PNG pictures**    | every slide as a picture, `01.png`, `02.png` …, in one zip |
+| **Word document**   | every slide as a picture, its notes under it, a page each  |
+| **Web page**        | every slide as a picture, its notes under it               |
+| **Markdown slides** | the deck's Markdown as it is                               |
+
+A PDF is ready for a LinkedIn document post; Word and the web page carry each slide with its notes,
+popups and sources under it. A deck downloaded from a browser page is drawn
+by the server the same way. See [download and convert](/explore/download).
+
+A Markdown file that is a deck only by its front matter, not by a `.slides.md` name, downloads as a
+document.
 
 Next: [drawings and diagrams](/formats/diagrams).

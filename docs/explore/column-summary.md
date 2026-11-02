@@ -24,6 +24,11 @@ grid holds, after the first rows are already on screen.
 | Date                                            | a histogram by year, month, day or hour, as the range needs               |
 | Boolean                                         | the true/false split                                                      |
 
+A column with empty or null values says so beside whichever of these it draws: a `∅` with a bar whose
+height is their share of all the rows, so a column that is mostly empty shows it at a glance.
+Large numbers under a summary are shortened to `k`, `M`, `G` and `T`. A table of one row, or none,
+has no summaries: there is nothing to sum up.
+
 Which one a column gets is decided from a sample of its values, so a date written as text, starting
 `YYYY-MM-DD`, draws as a date. A long text file's grid reads its first thousand rows for this.
 

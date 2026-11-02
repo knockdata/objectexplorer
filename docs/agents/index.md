@@ -103,17 +103,25 @@ all of them.
 ## What it costs to try
 
 Settings → MCP: write the starting rule file, press **Turn On**, and **Install** each client. The
-starting rule file grants the folders already in your window, turns on the seven tools — all of
-them read only, every answer through the PII rules — and leaves the door shut until you open it.
+starting rule file grants the folders already in your window, turns on seven of the eight tools —
+all of them read only, every answer through the PII rules — and leaves the door shut until you open
+it. The eighth, `getRawFile`, hands a file over as it is (a picture for the agent to look at), so it
+stays off until you tick it.
 
 MCP is in the desktop app and `npx`. The browser version has no agent on the machine to hand
 anything to, so it has no MCP pane at all.
 
-## Or ask your own assistant
+## Or ask your own agent
 
-The other way round: you pick a file or a folder and ask Claude Code — or ChatGPT, Gemini or a
-model on your own machine — about it, in a side bar beside the panes. That is your data going to
-the assistant you chose, so the PII rules do not apply there.
-→ [Claude in the side bar](/agents/claude)
+The other way round: you right-click a file or a folder and pick **Ask…**, and Claude Code, GitHub
+Copilot, Gemini, ChatGPT, a model on your own machine or any command line you add answers in a side
+bar beside the panes, its steps and permission requests shown as they come. On your own disk that
+is your data going to the agent you chose, so the PII rules do not apply there. On a bucket, and on
+a folder ticked **Agents read through PII**, the agent reads only through this app's MCP server, and
+they do. → [Ask an agent](/agents/ask)
+
+**Create Agentic Task…** goes one step further: the agent researches or builds a piece of work in
+your repository and leaves a slide deck for you to review, accept or reject.
+→ [Agentic tasks](/agents/tasks)
 
 Next: [connecting an agent](/agents/connect).

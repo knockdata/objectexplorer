@@ -20,10 +20,10 @@ defineProps({
 				<path d="M2 11.5c54-6 96 2 148-2.5C196 5 246 12 338 5.5" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
 			</svg>
 			<p class="landing-hero-lede">
-				One app, explorer, analyze, plot over S3, GCS, Azure Blob ...
+				One app to explore, query and plot what is in S3, GCS, Azure Blob, Drive, FTP and your own disk, every file opened as itself.
 			</p>
 			<p class="landing-hero-lede">
-				Agent is just another user, full control with audit
+				An agent is just another user: your rules, every call audited.
 			</p>
 			<div class="landing-hero-actions" style="display: flex;">
 				<a v-glass="'brand'" class="landing-hero-primary desktop-only" :href="appLink" target="_self">Open App</a>

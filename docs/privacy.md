@@ -36,14 +36,16 @@ data or a path on this machine, except a file you send us yourself.
 
 | Call                                          | When                                                                        |
 |-----------------------------------------------|-----------------------------------------------------------------------------|
-| GitHub: what is the newest release?           | when you open **Settings → Check for Updates**, and only then               |
+| GitHub: what is the newest release?           | at most once a day, and when you open **Settings → Check for Updates**      |
 | GitHub: the new version itself                | when you press **Update** — see [updating](/reference/updating)             |
+| objectexplorer.com: the same two, passed on   | only when GitHub cannot be reached                                          |
 | uv: a Python build, and the packages you name | when you make a [Python environment](/analyze/python) or install into one   |
 | The web pages you added as style sources      | when you add or reindex one in [the writing tool](/analyze/writing)         |
 | objectexplorer.com: your licence              | at start, and in a plan's last three days, only once you have signed up     |
 | objectexplorer.com: the demo folder           | at each start of the installed app, fetched again only when it changed      |
 | objectexplorer.com: the assistants Ask… knows | at start, at most once an hour                                              |
 | objectexplorer.com: a file you send us        | only when you pick a command that sends one, below                          |
+| objectexplorer.com: your public address       | each time you open the [Tools](/reference/tools) panel                      |
 | objectexplorer.com: the trial sign-up         | when you first sign in                                                      |
 | Google: signing in                            | when you sign in with Google                                                |
 | Google: your picture                          | whenever the account icon shows it, after you signed in with Google         |

@@ -4,7 +4,7 @@
 
 <img src="/screenshot/tour.png" alt="The tour's first card, Open, look, export, over the demo's train stations opened as a table">
 
-The first time the window opens, a short tour shows you around. Each card lights up one part of the
+The first time the desktop window opens, a short tour shows you around. Each card lights up one part of the
 window and darkens the rest. The first three are a small task on the demo folder's train stations:
 
 1. **Open, look, export**: the stations, a Parquet file, open as rows; nothing is imported or
@@ -26,6 +26,10 @@ The rest are the window's parts:
 **Next** (`→` or `Enter`) and **Back** (`←`) walk the cards, and the last one says **Done**;
 **Skip**, the ✕ or `Esc` ends it. Once it has been shown it never starts by itself again. The **?**
 at the bottom of the activity bar, **Show me around**, starts it any time.
+
+In a browser page the tour never starts by itself, since a page opens nothing its address does not
+name: the first visit shows one card, **Show me around**, pointing at the **?**, and the tour, with
+its train stations, starts when you click it.
 
 On macOS and Windows, the very first start opens Settings on [OS Extension](/reference/os-integration)
 before the tour, once, while nothing of it is turned on; the tour waits until Settings is closed.

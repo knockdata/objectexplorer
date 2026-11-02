@@ -20,4 +20,25 @@ Print Replica `.azw4` is a PDF inside, and opens in [the PDF reader](/formats/pd
 A comic is its page scans, one a page: a `.cbz` is a zip of them, a `.cbr` RAR, a `.cb7` 7-Zip and a
 `.cbt` a tar — whichever the first bytes say it is.
 
+## Book
+
+<img src="/screenshot/book.png" alt="An epub in the Book view: two pages side by side on the cover's board, the page numbers at their feet">
+
+**Book**, the open-book icon after the reader's own in the toolbar, reads the same file as a book on
+a desk: two pages side by side on its cover's board, the spine between them. It is there for every
+ebook, for a [PDF](/formats/pdf) and for a [Markdown](/formats/text#markdown) file.
+
+The book opens closed, on its front cover: its picture, or else its title and author. A page's
+outer corner lifts as the pointer comes over it. Drag it and the page folds along the line between
+its corner and the pointer, the back of the sheet and the page under it showing as it turns; let go
+past the spine, or just click the corner, and the page turns, else it falls back. The **‹** and
+**›** in the bar above it, the arrow keys and `PageUp` `PageDown` turn a page too, and the bar says
+which pages are open, `2–3 / 3`. After the last page the book closes on its back cover. On a touch
+screen, tap a page's outer edge, or swipe across it toward the spine.
+
+An ebook's or a Markdown file's text is laid out into pages of the book's size, broken between
+lines and never leaving a heading alone at a page's foot; **A−** and **A+** make it smaller or
+larger. A PDF's pages are its own. The paper is warm in the light theme and dark grey in the dark
+one.
+
 Next: [sprite sheets](/formats/sprite-sheets).

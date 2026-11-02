@@ -3,7 +3,8 @@
 <img src="/screenshot/writing.png" alt="A markdown file open for editing, with the style sidebar beside it showing a reference passage, phrase ideas and flags">
 
 A Markdown file in a local folder is something you can write in, not only read. Open it, switch to
-**Text** mode, and the source is editable — `⌘S` saves it back to the file.
+**Text** mode, and the source is editable — `⌘S` saves it back to the file, a dot on its tab marks
+edits not saved, and closing it asks first; see [editing text](/explore/edit).
 Beside it sits a sidebar that shows you how writers you chose put things, while you are writing.
 
 It is not a grader. There are no scores, no ticks and no "looks great" anywhere in it, and nothing

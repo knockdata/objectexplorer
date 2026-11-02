@@ -2,8 +2,8 @@
 
 ObjectExplorer is an explorer for cloud storage and local folders — for you, and for the agent working
 beside you. It puts Amazon S3 and any [S3 compatible provider](/storage/s3-compatible), Google Cloud
-Storage, Google BigQuery, Azure Blob Storage, Microsoft OneLake, Google Drive, OneDrive, Dropbox and
-Box, and every folder on your disk, in one tree — and opens what is inside them, including the formats a cloud
+Storage, Google BigQuery, Azure Blob Storage, Microsoft OneLake, Google Drive, OneDrive, Dropbox,
+Box, FTP and SFTP servers, and every folder on your disk, in one tree — and opens what is inside them, including the formats a cloud
 console will never render.
 
 <!-- <img src="/screenshot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it"> -->
@@ -31,22 +31,25 @@ including the one folder it can write into your own buckets, is in [how it works
 
 ## What it does
 
-|                     |                                                                                                                                                                                                                  |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Explores**        | every provider in one tree, as a list or a grid of previews, with copy, move, rename, delete and an undo that works across buckets — see [the tree and the list](/explore/tree)                                  |
-| **Converts**        | a table to Excel or CSV, a picture to PNG, a document to Word, a folder to a zip: Download in the toolbar, or Convert To… on a file — see [download in another format](/explore/download)                        |
-| **Previews**        | parquet, csv, json, SPSS, SAS, office files, images, audio, video, ebooks, databases, archives, and hex for everything else — see [formats](/formats/)                                                           |
-| **Reads PDFs**      | in its own reader: select, find, bookmarks, thumbnails, and seven kinds of mark plus text notes of your own — see [the PDF reader](/formats/pdf)                                                                 |
-| **Draws 3D**        | STEP, SolidWorks and CATIA parts, DWG drawings, glTF, FBX, Blender and obj models, GPU textures and live shaders — see [CAD](/formats/cad) and [3D models](/formats/models)                                      |
-| **Shows the bill**  | every bucket and folder on one disc: what each costs a month, what has gone cold, what is already on this machine, what nobody opens and what is being kept twice — see [where the storage went](/explore/usage) |
-| **Cuts the bill**   | cheaper storage classes, one region, old versions and abandoned uploads, each priced, each a command you run — see [optimize](/explore/optimize)                                                                 |
-| **Queries**         | SQL over the object where it lives, in its own engine, in a [notebook](/analyze/notebook) that opens with the query already written                                                                              |
-| **Reads tables**    | Delta, Iceberg and Hudi folders as one table, and their metadata as the history it is — see [data lake tables](/analyze/lake)                                                                                    |
-| **Searches**        | local folders and cloud prefixes in the same run — see [search](/explore/search)                                                                                                                                 |
-| **Trains**          | a gradient boosting model over the rows on screen, with SHAP explanations — see [models](/analyze/model)                                                                                                         |
-| **Helps you write** | Markdown edited in place, with passages and phrases from writers you chose beside it, and never a score — see [writing](/analyze/writing)                                                                        |
-| **Anonymizes**      | a copy of a CSV, a sheet, a database or a Parquet file with every value replaced by one of the same shape, to hand over or to test with — see [anonymized copies](/explore/anonymize)                            |
-| **Answers agents**  | the same questions over MCP, decided by rules you wrote, PII rewritten on the way out and every call logged — see [for agents](/agents/)                                                                         |
+|                     |                                                                                                                                                                                                                                                                          |
+|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Explores**        | every provider in one tree, as a list or a grid of previews, with copy, move, rename, delete and an undo that works across buckets — see [the tree and the list](/explore/tree)                                                                                          |
+| **Opens**           | more than 900 kinds of file as what they are: tables, office files, pictures and camera raw, audio and video, scans and medical recordings, circuit boards, mailboxes, maps, molecules, disk images and archives, and hex for everything else — see [formats](/formats/) |
+| **Converts**        | a table to Excel or CSV, a picture to PNG, a document or a deck to PDF or Word, a folder to a zip: Download in the toolbar, or Convert To… on a file — see [download in another format](/explore/download)                                                               |
+| **Reads**           | PDFs in its own reader with marks and notes, and ebooks, PDFs and Markdown as a book, turned by their corner — see [the PDF reader](/formats/pdf)                                                                                                                        |
+| **Measures**        | distances, angles, radii, areas and volumes on drawings, 3D models, circuit boards, PDF pages and pictures — see [measuring](/explore/measure)                                                                                                                           |
+| **Edits**           | a text file on this disk, saved with `⌘S`, undone past a save — see [editing text](/explore/edit)                                                                                                                                                                        |
+| **Draws 3D**        | STEP, SolidWorks and CATIA parts, DWG drawings, building models, point clouds, glTF, FBX, Blender and obj models — see [CAD](/formats/cad) and [3D models](/formats/models)                                                                                              |
+| **Shows the bill**  | every bucket and folder on one disc: what each costs a month, what has gone cold, what is already on this machine, what nobody opens and what is being kept twice — see [where the storage went](/explore/usage)                                                         |
+| **Cuts the bill**   | cheaper storage classes, one region, old versions and abandoned uploads, each priced, each a command you run — see [optimize](/explore/optimize)                                                                                                                         |
+| **Queries**         | SQL over the object where it lives, in its own engine, in a [notebook](/analyze/notebook) that opens with the query already written                                                                                                                                      |
+| **Reads tables**    | Delta, Iceberg and Hudi folders as one table, and their metadata as the history it is — see [data lake tables](/analyze/lake)                                                                                                                                            |
+| **Searches**        | local folders and cloud prefixes in the same run — see [search](/explore/search)                                                                                                                                                                                         |
+| **Trains**          | a gradient boosting model over the rows on screen, with SHAP explanations — see [models](/analyze/model)                                                                                                                                                                 |
+| **Helps you write** | Markdown edited in place, with passages and phrases from writers you chose beside it, and never a score — see [writing](/analyze/writing)                                                                                                                                |
+| **Anonymizes**      | a copy of a CSV, a sheet, a database or a Parquet file with every value replaced by one of the same shape, to hand over or to test with — see [anonymized copies](/explore/anonymize)                                                                                    |
+| **Asks your agent** | Claude, GitHub Copilot, Gemini, ChatGPT or a model of your own, in a side bar beside the file you have open — see [asking an agent](/agents/ask)                                                                                                                         |
+| **Answers agents**  | the same questions over MCP, decided by rules you wrote, PII rewritten on the way out and every call logged — see [for agents](/agents/)                                                                                                                                 |
 
 It has two ways in. One is the window. The other is [MCP](/agents/): Claude Code, Codex or any MCP
 client on this machine asks the app instead of asking your storage — so it never holds a credential,

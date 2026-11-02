@@ -4,14 +4,16 @@
 
 Open **Settings** from the activity bar. Two groups on the left do the work:
 
-- **Accounts**: who the app signs in as — Google, Amazon Web Services, Microsoft, and each S3
-  compatible endpoint you added. An account that is signed in carries a check. The **+** beside the
-  group adds an S3 compatible endpoint.
+- **Accounts**: who the app signs in as — Google, Amazon Web Services, Microsoft, each S3
+  compatible endpoint you added, and each FTP, FTPS or SFTP server account. An account that is
+  signed in carries a check. The **+** beside the group adds an S3 compatible endpoint or a server
+  account: **S3-compatible Endpoint…**, **FTP…**, **FTPS…** or **SFTP…**.
 - **Locations**: what can go in the tree — local folders, and the buckets, containers, projects and
   workspaces of each service that is on.
 
 The **+** in the side bar's header, **Add a location**, is the short way: **Local Folder…** opens the
-folder picker at once, and each cloud opens Settings on its Locations pane.
+folder picker at once, each cloud opens Settings on its Locations pane, and **FTP…**, **FTPS…** and
+**SFTP…** open a new server account there.
 
 | Provider                                                                       | Connect with                                                                                               |
 |--------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
@@ -26,6 +28,7 @@ folder picker at once, and each cloud opens Settings on its Locations pane.
 | <img src="/format/folder.svg" width="18"> [Dropbox](/storage/dropbox)          | the Dropbox API, signed in with OAuth on a server                                                          |
 | <img src="/format/folder.svg" width="18"> [OneDrive](/storage/onedrive)        | Microsoft Graph, signed in with OAuth on a server; SharePoint libraries too                                |
 | <img src="/format/folder.svg" width="18"> [Box](/storage/box)                  | the Box API, signed in with OAuth on a server                                                              |
+| <img src="/format/folder.svg" width="18"> [FTP, FTPS and SFTP](/storage/ftp)   | a host, a user and a password, or for SFTP a key file; as many accounts as you like                        |
 
 Each account lists the services it opens, each with a tick: Google opens **Google Cloud Storage**
 and **Google BigQuery**, Amazon Web Services opens **Amazon S3**, Microsoft opens **Azure Blob

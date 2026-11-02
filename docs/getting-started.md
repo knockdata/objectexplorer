@@ -6,7 +6,9 @@ command line: a server on `http://127.0.0.1:9421` that opens the same app in you
 
 ## Download {#download}
 
-Every link below fetches the newest release.
+Every link below fetches the newest release. The links go through objectexplorer.com: it sends you
+to GitHub's copy, or, where GitHub cannot be reached, passes the file on itself. The
+[download page](/download) has a switch, **Download from** GitHub or Direct, to choose.
 
 <DownloadTable />
 
@@ -95,6 +97,11 @@ The rest are on [the command line](/reference/command-line#starting-it). If Powe
 in [instant mode](/reference/instant-mode). It reads what you give it, a local folder you pick or a
 share link somebody sent you, and parses it in your browser rather than on a server.
 
+A browser page opens only what its address names: a first visit opens nothing by itself, and
+nothing comes back from an earlier visit. As you open tabs, the address follows them
+(`?pane=…`), so a reload brings back what it says. The desktop app
+reopens the tabs you left open.
+
 What needs a machine of your own stays in the desktop app and the command line: cloud connections,
 the MCP door for agents, Python, the writing tool's sources, and Check for Updates. The browser
 version leaves those panes out rather than showing one that can only fail.
@@ -110,7 +117,7 @@ with Google, or with an email address. The first sign-in turns on Pro for seven 
 you run into, such as a fourth bucket of one provider on the Free plan, offers the same sign-in.
 
 Once signed in, the icon's menu shows your name and email, and **Plan…**, which opens
-Settings → Plan. **Sign out** forgets your name and picture on this machine; your plan stays as it
+**Settings → Account**, where your plan is. **Sign out** forgets your name and picture on this machine; your plan stays as it
 is.
 
 At objectexplorer.com/app the sign-in is kept in your browser: the week of Pro counts there, and
@@ -124,7 +131,9 @@ signing out, or clearing the site's data, ends it.
 2. A short tour opens the demo's train stations, a Parquet file, as rows, and shows you how to
    filter them by a bar and download them as an Excel workbook. Then it lights up the activity bar,
    the tree, **Add a folder**, the tabs, search and settings, one card at a time. The **?** at the
-   bottom of the activity bar shows it again; see [the tour and what is new](/reference/tour).
+   bottom of the activity bar shows it again; see [the tour and what is new](/reference/tour). In a
+   browser the tour does not start by itself: one card points at the **?**, and nothing opens until
+   you click it.
 3. The tree holds the demo folder, a small sample of every kind of file, and the folder you started
    from. The empty pane says what the app is for — "Open any file to see it as itself: a table as
    rows, a model in 3D. Then download it in another format." — with **Add a Folder…** and

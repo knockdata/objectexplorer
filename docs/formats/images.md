@@ -1,7 +1,8 @@
 # Images
 
 `png` `jpg` `jpeg` `webp` `gif` `tiff` `tif` `svg` `ico` `cur` `bmp` `heic` `avif` `jxl` `psd` `tga`
-`jp2` `dcm`, camera raw, and many older kinds
+`jp2` `dcm`, camera raw, design apps' documents by their previews, Flash movies, and many older
+kinds
 
 <AppDemo open="folder/demo/image/archipelago-dusk.jpg" image="/screenshot/image-exif.png" alt="A photo fitted to the pane, with a card over its top right corner: its description, camera settings and GPS position" />
 
@@ -51,7 +52,10 @@ too), LZMA, Zstandard and WebP compression, grey, palette, RGB, CMYK and Lab col
 from 1 bit to 64-bit floats. A file of several pages shows its first, and says how many there are.
 
 **Camera raw** — `cr2` `nef` `arw` `dng` `orf` `rw2` `pef` `srw` `3fr` `iiq` and the other raws
-built on TIFF — shows the largest preview the camera stored. The sensor data is not developed.
+built on TIFF, and Canon's `cr3` and `crw` and Fujifilm's `raf`, which are not — shows the largest
+preview the camera stored, with the make, the model, the exposure, the aperture, the ISO speed, the
+focal length and the lens beside it. The sensor data is not developed, so the picture is only as
+large as the preview the camera kept.
 
 ## Older and specialist formats
 
@@ -65,17 +69,48 @@ built on TIFF — shows the largest preview the camera stored. The sensor data i
 | animations            | `fli` `flc` (the first frame), `mng`                                          |
 | CorelDRAW `cdr`       | the preview the file carries                                                  |
 
+## Design apps' documents
+
+| App               | Files                        | What it opens on                                  |
+|-------------------|------------------------------|---------------------------------------------------|
+| Krita             | `kra`                        | its merged picture; its layers listed             |
+| OpenRaster        | `ora`                        | its merged picture; its layers listed             |
+| Procreate         | `procreate`                  | its thumbnail; its layers listed                  |
+| Sketch            | `sketch`                     | the first page's preview; its pages and artboards |
+| Adobe XD          | `xd`                         | the first artboard's preview; its artboards       |
+| Figma             | `fig`                        | the first page's thumbnail                        |
+| Affinity          | `afphoto` `afdesign` `afpub` | its thumbnail                                     |
+| SketchUp          | `skp`                        | the model's thumbnail                             |
+| Clip Studio Paint | `clip`                       | its canvas preview; its layers and folders listed |
+
+A design app's document opens as the picture it keeps of itself, with what it says about itself
+beside it: the app that wrote it, the size, and its layers, pages or artboards by name. The document
+is never drawn from its layers, so the picture is as large as the app saved it. A file saved with no
+preview says so.
+
 ## Metafiles and PostScript
 
 `emf` `wmf` `pict` `cgm` `swf` `eps` `ps` `ai`
 
 These are drawings, not pixels, and they are drawn as drawings: a Windows metafile (`emf` `wmf`), a
-Mac `pict`, a `cgm` and the first frame of a Flash `swf` are painted by the same painter as an SVG,
+Mac `pict`, a `cgm` and a Flash `swf`'s first frame are painted by the same painter as an SVG,
 sharp at any zoom.
 
 A PostScript file is run by the app's own PostScript interpreter, its pages drawn; a table lists
 the fonts it stood in for and anything it did not follow. An EPS, or an Illustrator file from
 before CS, shows the preview it carries, and is run when it has none. An Illustrator file from CS
 on is a PDF, and opens in [the PDF reader](/formats/pdf).
+
+## Flash movies
+
+A Flash movie (`swf`) of more than one frame plays in the same player as an
+[animated GIF](#animated-gifs): play and pause, a frame back or on, `0.5×` to `2×`, and the strip of
+its frames to scrub. Its shapes, tweens, pictures, text and the clips inside it play at the movie's
+own frame rate, sharp at twice its size.
+
+What it draws, it draws as Flash did; what it does is left out. Its ActionScript is not run, so a
+button shows only its resting look and a click does nothing; a `stop()` in the movie pauses the
+player there, and **Play** goes on past it. Sound and video inside it are not played, and filters
+and blend modes are not drawn. Only a GIF is saved edited.
 
 Next: [audio and video](/formats/media).

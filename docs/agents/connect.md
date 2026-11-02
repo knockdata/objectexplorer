@@ -10,9 +10,9 @@ With no file, nothing is reachable and the pane says so, and lists what a starti
 before you write it. **Write a Starting Rule File** creates one:
 
 - the folders already in your window, as roots
-- all seven tools, every one of them read only: a query is one `SELECT`, and nothing is changed,
-  moved or deleted. What a tool reads of a table, a JSON file or a document goes through the
-  PII rules first
+- seven of the eight tools, every one of them read only: a query is one `SELECT`, and nothing is
+  changed, moved or deleted. What a tool reads of a table, a JSON file or a document goes through
+  the PII rules first. The eighth, `getRawFile`, is left off: it hands a file over as it is
 - the PII floor: column rules for email, phone, national id, card and account numbers, and text rules
   for an email address and a phone number inside any value, plus the detectors for personal numbers,
   cards, IBANs, names and street addresses
@@ -29,8 +29,12 @@ Everything past that is a line you set.
 agent can reach once it is open, and the endpoint every client calls:
 
 ```
-Endpoint   http://127.0.0.1:3417/mcp
+Endpoint   http://127.0.0.1:9421/api/mcp
 ```
+
+It is the app's own port, the one the window is served on, at `/api/mcp`: 9421, or another free
+one when something else holds 9421. When it moves, the app writes the new address into every client
+it installed.
 
 **Each agent has a token of its own, and the token is who it is.** Install (below) makes one for
 the client it installs; **Add Agent** under *Tokens* makes one for anything else, by a name you give
@@ -53,8 +57,9 @@ A root can be one agent's (`agents: [reportBot]`) and only part of it
 (`prefixes: [exports/2024/]`). An older rule file's one `server.token` still works, the old way: whoever
 holds it names itself, and the name must be ticked under `install`.
 
-The server binds the loopback address, in every mode — the desktop app, `npx objectexplorer`, the
-browser front door. It is never mounted on the public host.
+The endpoint answers only a call from this machine, in every mode — the desktop app,
+`npx objectexplorer`, the browser front door. A call from another machine, or from a web page that
+is not on this machine, is refused before anything is read.
 
 ## 3. Install into a client
 
@@ -74,7 +79,7 @@ block on the clipboard, already shaped:
 {
   "objectexplorer": {
     "type": "http",
-    "url": "http://127.0.0.1:3417/mcp",
+    "url": "http://127.0.0.1:9421/api/mcp",
     "headers": { "Authorization": "Bearer 7f2a1c4e9b8d3a6f5e0c2b7d4a9f1e83" }
   }
 }
@@ -90,23 +95,28 @@ through this same door, so the rules, the PII floor, the budget and the log are 
 
 ## 4. Choose what may be called
 
-Seven tools, ticked one by one.
+Eight tools, ticked one by one.
 
-| Tool             | Answers                                                             |
-|------------------|---------------------------------------------------------------------|
-| `listRoots`      | what is reachable at all — an agent starts here                     |
-| `listObjects`    | the children of one folder                                          |
-| `describeObject` | size, time, format and columns of one object                        |
-| `columnSummary`  | per-column statistics of a tabular object                           |
-| `searchText`     | a pattern in one object, or in every object in a folder             |
-| `query`          | one SQL statement, over objects named by URI                        |
-| `getObject`      | one object read whole: rows, text, a tree or bytes, by what it is   |
+| Tool             | Answers                                                            |
+|------------------|--------------------------------------------------------------------|
+| `listRoots`      | what is reachable at all — an agent starts here                    |
+| `listObjects`    | the children of one folder                                         |
+| `describeObject` | size, time, format and columns of one object                       |
+| `columnSummary`  | per-column statistics of a tabular object                          |
+| `searchText`     | a pattern in one object, or in every object in a folder            |
+| `query`          | one SQL statement, over objects named by URI                       |
+| `getObject`      | one object read whole: rows, text or a tree, by what it is         |
+| `getRawFile`     | one object as it is: a picture as an image to look at, else a file |
 
 `query` and `getObject` are the two worth thinking about: they are the ones that read a whole
 object rather than describe one. `query` is what makes the app an analysis engine for the agent
 rather than a catalogue. Both answer through the [PII rules](/agents/pii#what-the-rules-reach-and-what-they-cannot),
 and `getObject` refuses bytes no rule can check — an archive, a model. Untick either one if an agent
 should only look, not read.
+
+`getRawFile` is the one tool the PII rules do not pass: it sends the file's own bytes, up to the
+largest-object limit, so an agent can look at a picture, a chart or a scan. Tick it only for roots
+where that is what you want.
 
 `searchText` searches a document's or code's lines, a table's rows (each hit the row as a CSV line)
 and a JSON or YAML tree, always after the PII rules: a dropped column is not searched, and a

@@ -72,6 +72,16 @@ file on this machine.
 
 **Present** shows the pages one at a time, full screen; `Escape` leaves.
 
+## As a book
+
+**Book**, the open-book icon beside the reader's in the toolbar, shows the pages two at a time on a
+board, turned by their corner — see [ebooks](/formats/ebooks#book).
+
+## Measuring
+
+The ruler before **Search** measures on a page: distances, angles, radii and areas, on paper until
+you set the page's scale from a length you know — see [measuring](/explore/measure#a-pdf-page-or-a-picture).
+
 ## Moving around
 
 The page scrolls. Arrows, `Space`, `PageUp`, `PageDown`, `Home` and `End` move through it the way

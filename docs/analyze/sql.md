@@ -42,6 +42,13 @@ HDF5, NetCDF, NumPy `.npy`, SPSS `.sav`, SAS `.sas7bdat` `.xpt`, Stata `.dta`, d
 `.rds` and `.rdata`, and the tables of SQLite and DuckDB files (GeoPackage and MBTiles are SQLite
 too). A table compressed whole — `orders.csv.gz`, `.zst`, `.bz2` — is queried as the table inside.
 
+Many more files open on tables you can query the same way: older spreadsheets (Lotus 1-2-3,
+Quattro Pro, `xlsb`, Gnumeric), Access, Paradox and FileMaker databases, statistics files from
+Minitab, JMP or EViews, bank statements and ledgers, event logs, bibliographies, measurement logs,
+health records, lab files, map layers, and the parts, nets and pins of a circuit board. A file that
+holds several tables names each one after its path: `'lab/results.hl7/OBX'`. Each family's page
+under [formats](/formats/) says which tables it gives.
+
 ## Running
 
 **Shift+Enter** or **⌘Enter**, or the run button in the cell's toolbar. The cell's label says what came
