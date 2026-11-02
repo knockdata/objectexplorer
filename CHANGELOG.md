@@ -4,6 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.25  —  2026-11-02
+- Check for Updates works where GitHub cannot be reached, through objectexplorer.com
+- simplify a 3D model with one button, keeping its edges and creases; brushes keep detail where you want it and fill holes
+- a PLY model shows its own colours
+- a very wide animated GIF plays instead of closing the app
+- scroll bars are slimmer, and one beside a divider is easy to grab
+- a 3D model opens framed to fit
+
 ## v0.9.24  —  2026-11-01
 - read ebooks, PDFs and Markdown files as a book: two pages on a board, turned by their corner
 - math in Markdown and LaTeX files is drawn as math
