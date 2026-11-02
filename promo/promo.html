@@ -37,7 +37,7 @@ const END_SECONDS = 3
 const FADE = 0.18
 const STAGE = { width: 1280, height: 720 }
 const FULL = { x: 0, y: 0, width: 1280, height: 720 }
-const STILLS = ["start", "documents", "open_factory", "open_washer", "open_amplifier", "open_tour", "open_the-lighthouse-keeper", "open_france", "open_ct-scan", "open_chorale", "open_disk", "open_mailbox", "open_train-stations", "notebook", "sql_empty", "sql_typed", "sql_run", "search_open", "search_typed", "ask_ring", "ask_side", "ask_typed", "ask_answer", "library", "library_tablet", "library_phone"]
+const STILLS = ["measure_on", "measure_first", "measure_moving", "measure_done", "pdf_marks_before", "pdf_marks_circle_mid", "pdf_marks_circle", "pdf_marks_highlight_mid", "pdf_marks_highlight", "pdf_marks_underline_mid", "pdf_marks_all", "slides_open", "slides_present", "slides_drawing", "slides_next", "usage_size", "usage_cost", "usage_insight", "book_spread", "book_lift", "book_turn_1", "book_turn_2", "book_turn_3", "book_turn_4", "book_next", "start", "documents", "open_factory", "open_washer", "open_amplifier", "open_tour", "open_the-lighthouse-keeper", "open_france", "open_ct-scan", "open_chorale", "open_disk", "open_mailbox", "open_train-stations", "notebook", "sql_empty", "sql_typed", "sql_run", "search_open", "search_typed", "ask_ring", "ask_side", "ask_typed", "ask_answer", "library", "library_tablet", "library_phone"]
 
 const pictures = {}
 for (const name of STILLS) {
@@ -75,12 +75,19 @@ function openFile(file, label, beats, previous) {
 	return { beats, screen: moments }
 }
 
+// the two holes measured and the card with the distance
+const MEASURE_VIEW = { x: 540, y: 130, width: 740, height: 480 }
+// the PDF's tools and its first lines
+const MARKS_VIEW = { x: 560, y: 50, width: 700, height: 394 }
+// the drawing on the slide
+const DRAWING_VIEW = { x: 140, y: 170, width: 1000, height: 500 }
+
 const montage = [
 	["factory.glb", "3D models", 8],
 	["washer.stp", "CAD parts", 6],
 	["amplifier.kicad_pcb", "Circuit boards", 6],
 	["tour.pdf", "PDFs", 5],
-	["the-lighthouse-keeper.epub", "Ebooks", 5],
+	["the-lighthouse-keeper.epub", "Ebooks", 6],
 	["france.pmtiles", "Maps", 5],
 	["ct-scan.dcm", "Medical scans", 5],
 	["chorale.mxl", "Music scores", 5],
@@ -88,8 +95,137 @@ const montage = [
 	["mailbox.olm", "Mailboxes", 5],
 	["train-stations.parquet", "Tables", 5],
 ].map(function cut([file, label, beats], index, all) {
-	return openFile(file, label, beats, index > 0 ? all[index - 1][0] : undefined)
+	return file === "the-lighthouse-keeper.epub" ? bookTurn(beats) : openFile(file, label, beats, index > 0 ? all[index - 1][0] : undefined)
 })
+// the board measured right after it is opened, the PDF marked up right after it
+montage.splice(3, 0, measuring())
+montage.splice(5, 0, markingUp())
+
+// measuring on the board: the ruler, a click on one mounting hole, the line following the pointer, a
+// click on the other, the distance in the card
+function measuring() {
+	const from = [targets.measure_from.x, targets.measure_from.y]
+	const to = [targets.measure_to.x, targets.measure_to.y]
+	const middle = [830, 556]
+	const moments = [
+		{ at: 0, show: "open_amplifier" },
+		{ at: 0, view: targets.content.amplifier, beats: 0 },
+		{ at: 0, view: FULL, beats: 0.8 },
+		{ at: 0, cursor: [760, 420], beats: 0 },
+		{ at: 0.2, cursor: centre(targets.measure_button), beats: 1 },
+		{ at: 1.3, click: true },
+		{ at: 1.5, show: "measure_on" },
+		{ at: 1.7, view: MEASURE_VIEW, beats: 1.2 },
+		{ at: 2.2, cursor: from, beats: 1 },
+		{ at: 3.3, click: true },
+		{ at: 3.4, show: "measure_first", fade: 0.1 },
+		{ at: 3.7, cursor: middle, beats: 1.2 },
+		{ at: 3.7, show: "measure_moving", wipe: { x: from[0], y: 520, width: middle[0] - from[0] + 40, height: 80 }, characters: 24, beats: 1.2 },
+		{ at: 5, cursor: to, beats: 1 },
+		{ at: 6.1, click: true },
+		{ at: 6.2, show: "measure_done", fade: 0.15 },
+		{ at: 1.5, caption: "Measure anything", until: 14 },
+	]
+	return { beats: 14, screen: moments }
+}
+
+// marking up the PDF: Annotate, then a circle round the heading, a highlight and an underline, each
+// drawn on by hand as the pointer runs along the words
+function markingUp() {
+	const moments = [
+		{ at: 0, show: "open_tour" },
+		{ at: 0, view: targets.content.tour, beats: 0 },
+		{ at: 0, view: FULL, beats: 0.8 },
+		{ at: 0, cursor: [760, 420], beats: 0 },
+		{ at: 0.2, cursor: centre(targets.pdf_annotate), beats: 1 },
+		{ at: 1.3, click: true },
+		{ at: 1.5, show: "pdf_marks_before" },
+		{ at: 1.7, view: MARKS_VIEW, beats: 1.2 },
+		{ at: 1.9, cursor: centre(targets.pdf_circle), beats: 0.8 },
+		{ at: 2.8, click: true },
+		{ at: 3, cursor: [652, 142], beats: 0.6 },
+		{ at: 3.7, cursor: [937, 142], beats: 0.8 },
+		{ at: 4.5, show: "pdf_marks_circle_mid", fade: 0 },
+		{ at: 4.9, show: "pdf_marks_circle", fade: 0.2 },
+		{ at: 5.2, cursor: centre(targets.pdf_highlight), beats: 0.8 },
+		{ at: 6.1, click: true },
+		{ at: 6.3, cursor: [782, 212], beats: 0.6 },
+		{ at: 7, cursor: [871, 212], beats: 0.5 },
+		{ at: 7.5, show: "pdf_marks_highlight_mid", fade: 0 },
+		{ at: 7.9, show: "pdf_marks_highlight", fade: 0.2 },
+		{ at: 8.2, cursor: centre(targets.pdf_underline), beats: 0.8 },
+		{ at: 9.1, click: true },
+		{ at: 9.3, cursor: [782, 316], beats: 0.6 },
+		{ at: 10, cursor: [1053, 316], beats: 0.8 },
+		{ at: 10.8, show: "pdf_marks_underline_mid", fade: 0 },
+		{ at: 11.2, show: "pdf_marks_all", fade: 0.2 },
+		{ at: 11.4, cursor: [1120, 420], beats: 1 },
+		{ at: 1.5, caption: "Mark up any PDF", until: 16 },
+	]
+	return { beats: 16, screen: moments }
+}
+
+// a deck of slides presented, its second slide a drawing done by hand
+const slides = { beats: 16, screen: [
+	{ at: 0, show: "slides_open" },
+	{ at: 0, view: FULL, beats: 0 },
+	{ at: 0, cursor: [760, 420], beats: 0 },
+	{ at: 0.2, cursor: centre(targets.deck_present), beats: 1 },
+	{ at: 1.3, click: true },
+	{ at: 1.5, show: "slides_present", fade: 0.25 },
+	{ at: 1.6, cursor: [1250, 700], beats: 1 },
+	{ at: 3, keys: ["→"], until: 4.6 },
+	{ at: 3.4, show: "slides_drawing", fade: 0.3 },
+	{ at: 4.2, view: DRAWING_VIEW, beats: 1.6 },
+	{ at: 10.4, keys: ["→"], until: 12 },
+	{ at: 10.6, view: FULL, beats: 0.8 },
+	{ at: 10.8, show: "slides_next", fade: 0.3 },
+	{ at: 1.5, caption: "Slides, with drawings", until: 16 },
+] }
+
+// the ebook cut: Peter Rabbit in the library's book, three pages in, on a spread of two pictures; the
+// cursor lifts the page's corner and turns it, the turn drawn by the stills caught on the way, then the
+// next spread
+function bookTurn(beats) {
+	const corner = [targets.book_corner.x, targets.book_corner.y]
+	const moments = [
+		{ at: 0, show: "book_spread" },
+		{ at: 0, view: targets.book_spread, beats: 0 },
+		{ at: 0, cursor: [760, 420], beats: 0 },
+		{ at: 0.2, cursor: corner, beats: 0.9 },
+		{ at: 1.1, show: "book_lift", fade: 0.15 },
+		{ at: 1.7, click: true },
+		{ at: 1.8, show: "book_turn_1", fade: 0 },
+		{ at: 1.95, show: "book_turn_2", fade: 0 },
+		{ at: 2.1, show: "book_turn_3", fade: 0 },
+		{ at: 2.25, show: "book_turn_4", fade: 0 },
+		{ at: 2.4, show: "book_next", fade: 0.22 },
+		{ at: 2.4, cursor: [corner[0] + 40, corner[1] + 30], beats: 1 },
+		{ at: 1, caption: "Ebooks, read as a book", until: beats },
+	]
+	return { beats, screen: moments }
+}
+
+const USAGE_INSIGHT_VIEW = { x: 330, y: 56, width: 950, height: 534 }
+
+// the usage disc: every bucket and folder on one disc, each pole as tall as what it holds; Size, then
+// Cost, then the findings circled on it (the made-up example the app ships, never a real account)
+const usage = { beats: 15, screen: [
+	{ at: 0, show: "usage_size" },
+	{ at: 0, view: FULL, beats: 0 },
+	{ at: 0, cursor: [760, 520], beats: 0 },
+	{ at: 0.3, cursor: centre(targets.usage_cost), beats: 1.2 },
+	{ at: 1.7, click: true },
+	{ at: 1.9, show: "usage_cost", fade: 0.45 },
+	{ at: 2.2, view: targets.usage_disc, beats: 1.6 },
+	{ at: 1.9, caption: "Size or monthly cost", until: 8.6 },
+	{ at: 7.4, view: FULL, beats: 1 },
+	{ at: 7.6, cursor: centre(targets.usage_insight), beats: 1 },
+	{ at: 8.8, click: true },
+	{ at: 9, show: "usage_insight", fade: 0.3 },
+	{ at: 9.3, view: USAGE_INSIGHT_VIEW, beats: 1.4 },
+	{ at: 9.3, caption: "See where the money goes", until: 15 },
+] }
 
 const NOTEBOOK_VIEW = { x: 340, y: 56, width: 940, height: 400 }
 // the query and the seven rows it answered, above where the caption sits
@@ -121,6 +257,7 @@ const scenes = [
 		{ at: 3, caption: "All your files in one window", until: 8 },
 	] },
 	{ beats: 8, card: "dark", lines: ["From your disk or the cloud"], chips: ["S3", "Azure", "Google Drive", "Dropbox", "OneDrive", "FTP"], pop: 1 },
+	usage,
 	...montage,
 	{ beats: 6, card: "green", lines: ["900+"], small: "kinds of file", size: "huge" },
 	{ beats: 18, screen: [
@@ -158,6 +295,7 @@ const scenes = [
 		{ at: 1.8, caption: "Search inside every file", until: 9 },
 		{ at: 9, caption: "Even inside archives", until: 16 },
 	] },
+	slides,
 	{ beats: 20, screen: [
 		{ at: 0, show: "open_train-stations" },
 		{ at: 0, view: FULL, beats: 0 },
@@ -182,7 +320,7 @@ const scenes = [
 		{ at: 10.4, caption: "It reads your files where they are", until: 20 },
 	] },
 	{ beats: 6, card: "white", lines: ["Mac", "Windows", "Linux"], row: true, pop: 1.5 },
-	{ beats: 10, devices: true, caption: "And on iPhone and iPad" },
+	{ beats: 12, devices: true, caption: "And on iPhone and iPad" },
 	{ beats: 4, card: "dark", lines: ["Your files"] },
 	{ beats: 5, card: "green", lines: ["never leave your machine."] },
 	{ beats: 4, card: "green", lines: ["Any file."] },
@@ -318,10 +456,22 @@ function drawCard(scene, index, local) {
 
 // ---- the screen ----
 
-// the camera on a box of the window: scaled to fit it with a margin, its middle in the frame's middle
+// the camera on a box of the window: scaled to fit it, its middle in the frame's middle. The window always
+// fills the whole frame: never smaller than it, and moved in from an edge rather than show past it
 function camera(view) {
-	const scale = Math.min(2.3, Math.min(STAGE.width / view.width, STAGE.height / view.height) * 0.88)
-	return { x: view.x + view.width / 2, y: view.y + view.height / 2, scale }
+	const scale = Math.min(2.3, Math.min(STAGE.width / view.width, STAGE.height / view.height))
+	return held({ x: view.x + view.width / 2, y: view.y + view.height / 2, scale })
+}
+
+function held(shot) {
+	const scale = Math.max(1, shot.scale)
+	const halfWidth = STAGE.width / 2 / scale
+	const halfHeight = STAGE.height / 2 / scale
+	return {
+		x: Math.min(STAGE.width - halfWidth, Math.max(halfWidth, shot.x)),
+		y: Math.min(STAGE.height - halfHeight, Math.max(halfHeight, shot.y)),
+		scale,
+	}
 }
 
 // the moments of one kind, in order, with the one in force at `beat` and the one before it
@@ -344,12 +494,12 @@ function viewAt(moments, beat) {
 		const target = camera(moment.view)
 		const from = index > 0 ? camera(list[index - 1].view) : target
 		const progress = moment.beats > 0 ? easeInOut(clamp((beat - moment.at) / moment.beats)) : 1
-		shot = {
+		shot = held({
 			x: from.x + (target.x - from.x) * progress,
 			y: from.y + (target.y - from.y) * progress,
 			// a zoom feels even when the scale moves by the same factor each frame, not the same amount
 			scale: from.scale * Math.pow(target.scale / from.scale, progress),
-		}
+		})
 	}
 	return shot
 }
@@ -376,7 +526,8 @@ function layersAt(shows, index, beat) {
 		layers = below.concat([{ still: moment.show, alpha: 1, wipe: moment, progress }])
 	}
 	else {
-		const fade = moment.at === 0 ? 1 : clamp((beat - moment.at) * BEAT / FADE)
+		const seconds = moment.fade ?? FADE
+		const fade = moment.at === 0 || seconds === 0 ? 1 : clamp((beat - moment.at) * BEAT / seconds)
 		const below = fade < 1 && index > 0 ? layersAt(shows, index - 1, Infinity) : []
 		layers = below.concat([{ still: moment.show, alpha: fade }])
 	}
@@ -452,23 +603,13 @@ function drawScreen(scene, local) {
 	const beat = local / BEAT
 	const moments = scene.screen
 	const shot = viewAt(moments, beat)
-	background()
+	context.fillStyle = "#1e1e1e"
+	context.fillRect(0, 0, STAGE.width, STAGE.height)
 	context.save()
 	context.translate(STAGE.width / 2, STAGE.height / 2)
 	context.scale(shot.scale, shot.scale)
 	context.translate(-shot.x, -shot.y)
-	// the window and its shadow, then the stills clipped to its rounded corners
 	context.save()
-	context.shadowColor = "rgba(10, 30, 18, 0.35)"
-	context.shadowBlur = 60 / shot.scale
-	context.shadowOffsetY = 24 / shot.scale
-	roundedRectangle(0, 0, STAGE.width, STAGE.height, 12)
-	context.fillStyle = "#1e1e1e"
-	context.fill()
-	context.restore()
-	context.save()
-	roundedRectangle(0, 0, STAGE.width, STAGE.height, 12)
-	context.clip()
 	const { list, index } = latest(moments, "show", beat)
 	const layers = index >= 0 ? layersAt(list, index, beat) : []
 	for (const layer of layers) {

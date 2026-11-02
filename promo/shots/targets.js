@@ -248,6 +248,90 @@ export const targets = {
 		"height": 20.0,
 		"blank": "#181818"
 	},
+	"usage_cost": {
+		"x": 526.7,
+		"y": 50.0,
+		"width": 44.3,
+		"height": 25.6
+	},
+	"usage_insight": {
+		"x": 590.9,
+		"y": 50.0,
+		"width": 77.2,
+		"height": 25.6
+	},
+	"usage_disc": {
+		"x": 475.0,
+		"y": 64.0,
+		"width": 586.0,
+		"height": 492.0
+	},
+	"measure_button": {
+		"x": 923.7,
+		"y": 37.5,
+		"width": 18.0,
+		"height": 14.0
+	},
+	"measure_from": {
+		"x": 592,
+		"y": 560,
+		"width": 0,
+		"height": 0
+	},
+	"measure_to": {
+		"x": 1036,
+		"y": 560,
+		"width": 0,
+		"height": 0
+	},
+	"measure_card": {
+		"x": 1014.5,
+		"y": 151.5,
+		"width": 247.5,
+		"height": 34.5
+	},
+	"pdf_annotate": {
+		"x": 526.0,
+		"y": 60.0,
+		"width": 24.0,
+		"height": 24.0
+	},
+	"pdf_circle": {
+		"x": 674.0,
+		"y": 60.0,
+		"width": 24.0,
+		"height": 24.0
+	},
+	"pdf_highlight": {
+		"x": 699.0,
+		"y": 60.0,
+		"width": 24.0,
+		"height": 24.0
+	},
+	"pdf_underline": {
+		"x": 624.0,
+		"y": 60.0,
+		"width": 24.0,
+		"height": 24.0
+	},
+	"deck_present": {
+		"x": 526.0,
+		"y": 60.0,
+		"width": 24.0,
+		"height": 24.0
+	},
+	"book_corner": {
+		"x": 963,
+		"y": 613,
+		"width": 0,
+		"height": 0
+	},
+	"book_spread": {
+		"x": 277.0,
+		"y": 119.0,
+		"width": 726.0,
+		"height": 534.0
+	},
 	"ask_answer": {
 		"x": 934.0,
 		"y": 81.0,

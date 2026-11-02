@@ -19,6 +19,8 @@ uv run --with librosa python -I scripts/promo-beats.py promo/music/<track>.mp3
 |----------------------------|-----------------------------------------------------------------------------------------------------------|
 | Every screen in the film   | `promo/shots/*.jpg`, stills foldone's explorer took of itself offscreen, step by step, with `targets.js` (where the cursor goes) read from their layouts |
 | The files on those screens | foldone's `explorer/demo` and `explorer/reference` samples, each with its own licence there                |
+| The book                   | The Tale of Peter Rabbit, Beatrix Potter, the Project Gutenberg ebook (public domain)                      |
+| The usage disc             | the made-up example the app ships (its Demo), no real account                                             |
 | The chalk e                | `assets/mark.png`, ours — the master mark from the app                                                    |
 
 The cursor, the typing, the zooms, the captions and the cards are drawn by the page.
@@ -40,8 +42,8 @@ uv run --with librosa python -I scripts/promo-beats.py promo/music/mrclaps-clapp
 
 It is 119 beats a minute in phrases of 4 bars, each ending on a short stop (librosa alone reads its clap
 pattern as 96). The film is longer than the track, so the recorder plays it to the middle of its last
-stop, then again from the middle of its first one (six phrases, 48.4 s), and on to its own ending, whose
-downbeat lands one beat into the end card.
+stop, then goes back as many phrases as the film needs, from stop to stop (now the six between its first
+and last stops, then one more), and on to its own ending, whose downbeat lands one beat into the end card.
 
 Without that file the recorder takes the first other track in `promo/music/`:
 

@@ -3,6 +3,7 @@
 //   node scripts/promo.mjs                    # frames + mp4 + poster
 //   node scripts/promo.mjs --preview          # one still per cut, into promo/preview
 //   node scripts/promo.mjs --music track.mp3  # with that track under it
+//   node scripts/promo.mjs --encode           # the last recording's frames encoded again
 //
 // The cuts fall on the music's beat: the track's <name>.beats.json beside it (scripts/promo-beats.py)
 // gives the page its tempo and first beat. A track shorter than the film is played again from a stop
@@ -66,8 +67,8 @@ function readBeats(track) {
 }
 
 // The track as long as the film. With stops (beats.loop and beats.hit): to the middle of a stop, then
-// again from the middle of an earlier one as often as needed, so the downbeat of its own ending lands one
-// beat into the end card, then on to its end. Shorter and without stops: to the last whole phrase that
+// again from the middle of an earlier one, as many phrases as needed, so the downbeat of its own ending
+// lands one beat into the end card, then on to its end. Shorter and without stops: to the last whole phrase that
 // ends 2 s before its end, then again from its first beat, faded out where the end card comes. Long
 // enough: as it is.
 function musicFilter(musicEnd, duration) {
@@ -81,23 +82,29 @@ function musicFilter(musicEnd, duration) {
 	return filter
 }
 
+// The film asks for so many phrases more than the track has; they are taken back from its last stop: the
+// whole stretch between the stops as often as it fits, then the rest from a stop that many phrases before
+// the last one (every phrase ends on a stop, so each seam falls in one)
 function stopsFilter(musicEnd, duration) {
 	const period = 60 / beats.tempo
-	const length = beats.loop.to - beats.loop.from
-	const times = Math.max(0, Math.round((musicEnd + period - beats.hit) / length))
-	const landing = beats.hit + times * length
+	const phrase = PHRASE * period
+	const more = Math.max(0, Math.round((musicEnd + period - beats.hit) / phrase))
+	const landing = beats.hit + more * phrase
 	if (Math.abs(landing - (musicEnd + period)) > 0.05) {
-		console.log(`the track's ending lands ${(landing - musicEnd - period).toFixed(2)} s off the end card's first beat: the film's beats do not fit its phrases`)
+		console.log(`the track's ending lands ${(landing - musicEnd - period).toFixed(2)} s off the end card's first beat: the film's beats are not whole phrases from it`)
 	}
 	let pieces = [[0, beats.duration]]
-	if (times > 0) {
+	if (more > 0) {
 		pieces = [[0, beats.loop.to]]
-		for (let count = 1; count < times; count++) {
-			pieces.push([beats.loop.from, beats.loop.to])
+		let left = more
+		while (left > 0) {
+			const span = Math.min(left, beats.loop.phrases)
+			const from = beats.loop.to - span * phrase
+			left -= span
+			pieces.push([from, left > 0 ? beats.loop.to : beats.duration])
 		}
-		pieces.push([beats.loop.from, beats.duration])
 	}
-	console.log(`music: played ${times + 1} times over, from ${beats.loop.from} s to ${beats.loop.to} s (${beats.loop.phrases} phrases), its ending at ${landing.toFixed(2)} s`)
+	console.log(`music: ${more} phrases more than the track, played as ${pieces.map(([from, to]) => `${from.toFixed(2)}–${to.toFixed(2)}`).join(", ")} s; its ending at ${landing.toFixed(2)} s`)
 	return joinPieces(pieces, `apad,atrim=0:${duration.toFixed(3)}`)
 }
 
@@ -298,11 +305,20 @@ async function record() {
 	socket.close()
 	chrome.kill()
 
+	// what the encode needs from the page, kept with the frames so --encode can run again without it
+	const film = { frames, musicEnd, posterAt }
+	fs.writeFileSync(path.join(frameDir, "film.json"), JSON.stringify(film))
+	encode(film)
+}
+
+// the frames into the mp4 with its music, and the poster
+function encode({ frames, musicEnd, posterAt }) {
 	const silent = path.join(frameDir, "silent.mp4")
-	// crf 20 is near what the eye can tell from the frames and keeps the 96 s film under 20 MB; -color_range tv with yuv420p so players
-	// that expect broadcast range read it right, and bt709 because that is what 1080p is shown in
+	// crf 22 is near what the eye can tell from the frames and keeps the 135 s film under 20 MB;
+	// -color_range tv with yuv420p so players that expect broadcast range read it right, and bt709
+	// because that is what 1080p is shown in
 	ffmpeg(["-framerate", String(FPS), "-i", path.join(frameDir, "%05d.png"),
-		"-c:v", "libx264", "-preset", "slow", "-crf", "20", "-pix_fmt", "yuv420p",
+		"-c:v", "libx264", "-preset", "slow", "-crf", "22", "-pix_fmt", "yuv420p",
 		"-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", silent])
 
 	const mp4 = path.join(outDir, "objectexplorer.mp4")
@@ -326,4 +342,10 @@ async function record() {
 	console.log("wrote", outDir)
 }
 
-record()
+// --encode: the frames of the last recording encoded again (another crf, another track), without Chrome
+if (args.includes("--encode")) {
+	encode(JSON.parse(fs.readFileSync(path.join(frameDir, "film.json"), "utf8")))
+}
+else {
+	record()
+}
