@@ -7,274 +7,625 @@
 </head>
 <body>
 <div id="stage">
-	<div id="layers"></div>
-	<div class="shade"></div>
-	<div class="caption" id="caption"></div>
-	<div id="flash"></div>
+	<canvas id="screen"></canvas>
+	<div id="card" class="card"></div>
+	<div id="keys" class="keys"></div>
+	<div id="caption" class="caption"></div>
 </div>
 <script type="module">
-// The promotion film, as one function of time. Nothing animates on its own: the recorder in
-// scripts/promo.mjs sets the clock frame by frame and screenshots each one, so a slow machine
-// cannot drop a frame and the film is the same every time it is built.
+// The product film, as one function of time. Nothing animates on its own: scripts/promo.mjs sets the
+// clock frame by frame and screenshots each one, so a slow machine cannot drop a frame and the film is
+// the same every time it is built. Open it with ?t=12.5 to look at one moment.
 //
-// Open it with ?t=12.5 to look at one moment of it. The squirrel is drawn by ./squirrel.js, a
-// pure function of its pose, so the cartoon cuts are drawn again on every frame.
+// Two kinds of cut, one word or line a card and the explorer's own screen, in the Typeframes style. The
+// screens are stills the explorer took of itself offscreen, step by step (foldone's
+// build/scratch/film/shots.sh, exported by export.py into ./shots with targets.js); the page draws the
+// cursor moving and clicking between them, the typing as a reveal of the next still, and the camera
+// zooming and panning onto what matters.
 //
-// The page is laid out at 1280x720 and recorded at a device scale of 1.5, so the film is 1080p
-// with text drawn at that size and every screenshot sampled from its own full resolution.
-import { squirrel, nut } from "./squirrel.js"
+// Every cut is counted in beats of the music (promo.mjs passes ?tempo= and ?first= from the track's
+// .beats.json, written by scripts/promo-beats.py), so another track is one render away.
+import { targets } from "./shots/targets.js"
 
-const SHOT = "../docs/public/screenshot/"
-// the formats that pour out of the nut when it opens
-const FORMATS = ["PARQUET", "DELTA", "ICEBERG", "CSV", "PDF", "DWG", "FBX", "JSON", "SQLITE", "PPTX"]
+const params = new URLSearchParams(location.search)
+const BEAT = 60 / Number(params.get("tempo") ?? 134)
+const FIRST = Number(params.get("first") ?? 0)
+// the end card is held this long once the last beat is counted, in silence
+const END_SECONDS = 4.5
+// a cross-fade between two stills, seconds
+const FADE = 0.18
+const STAGE = { width: 1280, height: 720 }
+const FULL = { x: 0, y: 0, width: 1280, height: 720 }
+const STILLS = ["start", "documents", "open_factory", "open_washer", "open_amplifier", "open_tour", "open_the-lighthouse-keeper", "open_france", "open_ct-scan", "open_chorale", "open_disk", "open_mailbox", "open_train-stations", "notebook", "sql_empty", "sql_typed", "sql_run", "search_open", "search_typed", "ask_ring", "ask_side", "ask_typed", "ask_answer", "library", "library_tablet", "library_phone"]
 
-// One entry per cut. `at` is when it starts, `hold` how long it is on screen. A cartoon cut has
-// `cartoon`, the name of its drawing below; a screenshot has `src` and `zoom`, how far it pulls
-// back while it plays. `bubble` is what the squirrel says, `lines` the caption under a screenshot.
-const scenes = [
-	{ at: 0.0,  hold: 2.6, cartoon: "found",  bubble: "What's this?" },
-	{ at: 2.6,  hold: 1.2, cartoon: "tool",   tool: "hammer", bubble: "Hammer? <em>Nope.</em>" },
-	{ at: 3.8,  hold: 1.2, cartoon: "tool",   tool: "wrench", bubble: "Wrench? <em>Nope.</em>" },
-	{ at: 5.0,  hold: 1.2, cartoon: "tool",   tool: "drill",  bubble: "Drill? <em>Nope.</em>" },
-	{ at: 6.2,  hold: 1.2, cartoon: "tool",   tool: "torch",  bubble: "Blowtorch? <em>Nope.</em>" },
-	{ at: 7.4,  hold: 1.6, cartoon: "tired",  bubble: "Still can't open it…" },
-	{ at: 9.0,  hold: 2.0, cartoon: "idea",   bubble: "Wait! I have <em>ObjectExplorer!</em>" },
-	{ at: 11.0, hold: 3.2, src: SHOT + "hero.png",                zoom: 1.08, lines: ["One window.", "S3, GCS, Azure, OneLake, local."], small: 1 },
-	{ at: 14.2, hold: 2.8, src: SHOT + "column-summary.png",      zoom: 1.10, lines: ["See the shape", "before you read a row."] },
-	{ at: 17.0, hold: 2.8, src: SHOT + "notebook-chart.png",      zoom: 1.08, lines: ["SQL and a chart,", "where the data lives."] },
-	{ at: 19.8, hold: 2.8, src: SHOT + "notebook-model.png",      zoom: 1.08, lines: ["Train a model.", "See why it decides."] },
-	{ at: 22.6, hold: 2.8, src: SHOT + "format-cad.png",          zoom: 1.08, lines: ["CAD, straight", "from the bucket."] },
-	{ at: 25.4, hold: 2.8, src: SHOT + "format-model.png",        zoom: 1.08, lines: ["Models, textures", "and shaders, drawn."] },
-	{ at: 28.2, hold: 2.8, src: SHOT + "lake-metadata.png",       zoom: 1.08, lines: ["Delta, Iceberg, Hudi —", "just tables."] },
-	{ at: 31.0, hold: 2.8, src: SHOT + "usage-visualization.png", zoom: 1.06, lines: ["See what you store,", "and what it costs."] },
-	{ at: 33.8, hold: 2.8, src: SHOT + "search.png",              zoom: 1.08, lines: ["Search inside", "every file."] },
-	{ at: 36.6, hold: 2.8, src: SHOT + "share.png",               zoom: 1.08, lines: ["Share it masked,", "hashed, and expiring."] },
-	{ at: 39.4, hold: 2.8, cartoon: "inside", bubble: "So many great things inside!" },
-	{ at: 42.2, hold: 4.5, cartoon: "card", end: true },
-]
+const pictures = {}
+for (const name of STILLS) {
+	const image = new Image()
+	image.src = `./shots/${name}.jpg`
+	pictures[name] = image
+}
 
-// the cut into the product half gets one white blink, so the two halves are told apart
-const PRODUCT_AT = scenes.find((scene) => scene.src).at
+function centre(box) {
+	return [box.x + box.width / 2, box.y + box.height / 2]
+}
 
-const DURATION = scenes.at(-1).at + scenes.at(-1).hold
-const stage = { width: 1280, height: 720 }
-const layers = document.getElementById("layers")
-const caption = document.getElementById("caption")
-const flash = document.getElementById("flash")
-const shade = document.querySelector(".shade")
+// where the cursor points on a tree row: a little into its name, not the middle of the row
+function onLabel(name) {
+	const box = targets.tree[name]
+	return [box.x + Math.min(48, box.width / 3), box.y + box.height / 2]
+}
 
-// one layer per scene, built once: a screenshot only has its styles set per frame, a cartoon has
-// its drawing written again
-const built = scenes.map(function build(scene) {
-	const layer = document.createElement("div")
-	layer.className = "layer"
-	layers.appendChild(layer)
-	let entry = { scene, layer }
-	if (scene.src) {
-		layer.innerHTML = `<div class="backdrop"><img src="${scene.src}"></div><div class="frame"><img src="${scene.src}"></div>`
-		entry = { scene, layer, frame: layer.querySelector(".frame"), image: layer.querySelector(".frame img"), backdropImage: layer.querySelector(".backdrop img") }
-	}
-	return entry
+// One cut of the montage: the cursor goes to the file in the tree while the camera pulls back, clicks,
+// the file opens and the camera moves onto what it drew. `previous` is the file before it, where the
+// cursor and the camera start.
+function openFile(file, label, beats, previous) {
+	const name = file.replace(/\.[^.]*$/, "")
+	const moments = [
+		{ at: 0, show: previous === undefined ? "documents" : `open_${previous.replace(/\.[^.]*$/, "")}` },
+		{ at: 0, view: previous === undefined ? FULL : targets.content[previous.replace(/\.[^.]*$/, "")], beats: 0 },
+		{ at: 0, view: FULL, beats: 0.9 },
+		{ at: 0, cursor: previous === undefined ? [700, 420] : onLabel(previous), beats: 0 },
+		{ at: 0.1, cursor: onLabel(file), beats: 0.9 },
+		{ at: 1.1, click: true },
+		{ at: 1.25, show: `open_${name}` },
+		{ at: 1.4, view: targets.content[name], beats: 1.1 },
+		{ at: 1.3, caption: label, until: beats },
+	]
+	return { beats, screen: moments }
+}
+
+const montage = [
+	["factory.glb", "3D models", 8],
+	["washer.stp", "CAD parts", 6],
+	["amplifier.kicad_pcb", "Circuit boards", 6],
+	["tour.pdf", "PDFs", 5],
+	["the-lighthouse-keeper.epub", "Ebooks", 5],
+	["france.pmtiles", "Maps", 5],
+	["ct-scan.dcm", "Medical scans", 5],
+	["chorale.mxl", "Music scores", 5],
+	["disk.dmg", "Disk images and archives", 5],
+	["mailbox.olm", "Mailboxes", 5],
+	["train-stations.parquet", "Tables", 5],
+].map(function cut([file, label, beats], index, all) {
+	return openFile(file, label, beats, index > 0 ? all[index - 1][0] : undefined)
 })
 
-function easeOut(fraction) {
-	return 1 - Math.pow(1 - fraction, 3)
-}
+const NOTEBOOK_VIEW = { x: 340, y: 56, width: 940, height: 400 }
+// the query and the seven rows it answered, above where the caption sits
+const RESULT_VIEW = { x: 350, y: 70, width: 580, height: 380 }
+// the hits: in the ebook's name, 700 lines inside bundle.7z, the letter
+const HITS_VIEW = { x: 0, y: 130, width: 620, height: 349 }
+const SEARCH_VIEW = { x: 0, y: 24, width: 640, height: 360 }
+const RING_VIEW = { x: 30, y: 200, width: 460, height: 260 }
+const INPUT_VIEW = { x: 720, y: 360, width: 560, height: 350 }
+const ANSWER_TOP = { x: 860, y: 70, width: 420, height: 300 }
+const ANSWER_END = { x: 860, y: 320, width: 420, height: 300 }
+
+// One entry per cut, `beats` long. A card has `card` (its colour) and `lines`; `pop` shows its words one
+// every that many beats. A screen has `screen`, its moments at beats from its start: `show` a still (a
+// cut at 0, else a cross-fade; with `wipe` a box of it revealed over `beats`: typing across, an answer
+// coming in down), `view` the box the camera moves onto over `beats`, `cursor` where the pointer goes over
+// `beats`, `click`, `caption` (until a beat), `keys` (until a beat).
+const scenes = [
+	{ beats: 8, card: "white", title: true },
+	{ beats: 4, card: "dark", lines: ["Every file."] },
+	{ beats: 4, card: "green", lines: ["Opened as itself."] },
+	{ beats: 8, screen: [
+		{ at: 0, show: "start" },
+		{ at: 0, view: FULL, beats: 0 },
+		{ at: 0, cursor: [760, 470], beats: 0 },
+		{ at: 1, cursor: onLabel("Documents"), beats: 1.4 },
+		{ at: 2.6, click: true },
+		{ at: 2.8, show: "documents" },
+		{ at: 3, caption: "All your files in one window", until: 8 },
+	] },
+	{ beats: 8, card: "dark", lines: ["From your disk or the cloud"], chips: ["S3", "Azure", "Google Drive", "Dropbox", "OneDrive", "FTP"], pop: 1 },
+	...montage,
+	{ beats: 6, card: "green", lines: ["900+"], small: "kinds of file", size: "huge" },
+	{ beats: 20, screen: [
+		{ at: 0, show: "open_train-stations" },
+		{ at: 0, view: FULL, beats: 0 },
+		{ at: 0, cursor: [700, 420], beats: 0 },
+		{ at: 0.3, cursor: centre(targets.notebook_button), beats: 1.2 },
+		{ at: 1.6, click: true },
+		{ at: 1.8, show: "notebook" },
+		{ at: 2, view: NOTEBOOK_VIEW, beats: 1.2 },
+		{ at: 2.6, cursor: [targets.sql_typed.x + targets.sql_typed.width - 40, targets.editor.y + targets.editor.height / 2], beats: 1 },
+		{ at: 3.7, click: true },
+		{ at: 3.9, show: "sql_empty" },
+		{ at: 4.3, show: "sql_typed", wipe: targets.sql_typed, characters: 103, beats: 5 },
+		{ at: 9.6, keys: ["⌘", "Enter"], until: 11.6 },
+		{ at: 10.2, show: "sql_run" },
+		{ at: 10.4, view: RESULT_VIEW, beats: 1.4 },
+		{ at: 1.8, caption: "Ask any table in SQL", until: 10 },
+		{ at: 10.2, caption: "Nothing to import first", until: 20 },
+	] },
+	{ beats: 16, screen: [
+		{ at: 0, show: "documents" },
+		{ at: 0, view: FULL, beats: 0 },
+		{ at: 0, cursor: [700, 420], beats: 0 },
+		{ at: 0.2, cursor: centre(targets.search_activity), beats: 1.1 },
+		{ at: 1.4, click: true },
+		{ at: 1.6, show: "search_open" },
+		{ at: 1.8, view: SEARCH_VIEW, beats: 1.2 },
+		{ at: 2.2, cursor: [targets.search_query.x + 120, targets.search_query.y + targets.search_query.height / 2], beats: 0.8 },
+		{ at: 3.1, click: true },
+		{ at: 3.4, show: "search_typed", wipe: targets.search_typed, characters: 6, beats: 1.6 },
+		{ at: 5.4, show: "search_typed" },
+		{ at: 5.6, view: HITS_VIEW, beats: 1.6 },
+		{ at: 5.6, cursor: [300, 640], beats: 1.2 },
+		{ at: 1.8, caption: "Search inside every file", until: 9 },
+		{ at: 9, caption: "Even inside archives", until: 16 },
+	] },
+	{ beats: 22, screen: [
+		{ at: 0, show: "open_train-stations" },
+		{ at: 0, view: FULL, beats: 0 },
+		{ at: 0, cursor: [700, 420], beats: 0 },
+		{ at: 0.2, cursor: onLabel("train-stations.parquet"), beats: 1.2 },
+		{ at: 1.5, click: true },
+		{ at: 1.7, show: "ask_ring" },
+		{ at: 1.8, view: RING_VIEW, beats: 1.1 },
+		{ at: 2.6, cursor: centre(targets.gemini), beats: 1 },
+		{ at: 3.7, click: true },
+		{ at: 3.9, show: "ask_side" },
+		{ at: 4, view: INPUT_VIEW, beats: 1.2 },
+		{ at: 4.3, cursor: [targets.agent_input.x + targets.agent_input.width - 60, targets.agent_input.y + 60], beats: 0.8 },
+		{ at: 5.2, click: true },
+		{ at: 5.5, show: "ask_typed", wipe: targets.ask_typed, characters: 44, beats: 4 },
+		{ at: 9.6, keys: ["Enter"], until: 11.2 },
+		{ at: 10, show: "ask_answer", wipe: targets.ask_answer, down: true, beats: 5 },
+		{ at: 10, view: ANSWER_TOP, beats: 1.4 },
+		{ at: 13.4, view: ANSWER_END, beats: 2.4 },
+		{ at: 10, cursor: [1240, 690], beats: 1.5 },
+		{ at: 1.7, caption: "Ask the agent you already use", until: 10 },
+		{ at: 10.4, caption: "It reads your files where they are", until: 22 },
+	] },
+	{ beats: 6, card: "white", lines: ["Mac", "Windows", "Linux"], row: true, pop: 1.5 },
+	{ beats: 10, devices: true, caption: "And on iPhone and iPad" },
+	{ beats: 4, card: "dark", lines: ["Your files"] },
+	{ beats: 6, card: "green", lines: ["never leave your machine."] },
+	{ beats: 4, card: "green", lines: ["Any file."] },
+	{ beats: 4, card: "dark", lines: ["Any device."] },
+	{ beats: 4, card: "grey", lines: ["Nothing uploaded."] },
+	{ beats: 6, card: "green", lines: ["Just ObjectExplorer."] },
+	{ seconds: END_SECONDS, card: "white", title: true, url: true },
+]
+
+// when each cut starts: the first runs from 0 to its last beat, every other one on the beat grid, the
+// end card after the last beat
+let counted = 0
+const starts = scenes.map(function start(scene, index) {
+	const at = index === 0 ? 0 : FIRST + counted * BEAT
+	counted += scene.beats ?? 0
+	return at
+})
+const MUSIC_END = FIRST + counted * BEAT
+const DURATION = MUSIC_END + END_SECONDS
+
+// what reads badly: a caption on screen less than 1.5 s, a card shorter than that
+const warnings = []
+scenes.forEach(function check(scene, index) {
+	const seconds = (scene.beats ?? 0) * BEAT
+	if (scene.card !== undefined && scene.seconds === undefined && seconds < 1.5) {
+		warnings.push(`cut ${index}: a card of ${seconds.toFixed(2)} s`)
+	}
+	for (const moment of scene.screen ?? []) {
+		if (moment.caption !== undefined && (moment.until - moment.at) * BEAT < 1.5) {
+			warnings.push(`cut ${index}: "${moment.caption}" for ${((moment.until - moment.at) * BEAT).toFixed(2)} s`)
+		}
+	}
+})
 
 function clamp(value) {
 	return Math.max(0, Math.min(1, value))
 }
 
-// a blink every few seconds, a quarter of a second long, the same at every build
-function blinkAt(time) {
-	const into = (time + 0.7) % 2.9
-	return into < 0.16 ? Math.sin(into / 0.16 * Math.PI) : 0
+function easeOut(fraction) {
+	return 1 - Math.pow(1 - fraction, 3)
 }
 
-// the forest the cartoon cuts stand in: a soft sky, two rows of trees, and the ground
-function forest() {
-	const trees = [80, 260, 470, 690, 900, 1110, 1240].map(function tree(x, index) {
-		const height = 380 + (index % 3) * 70
-		return `<path d="M${x} ${560 - height} L ${x - 90} 560 L ${x + 90} 560 Z" fill="#1f5a3c" opacity="0.55"/>`
-	}).join("")
-	return `
-	<svg class="forest" viewBox="0 0 1280 720" width="1280" height="720">
-		<defs>
-			<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-				<stop offset="0" stop-color="#bfe8d0"/><stop offset="1" stop-color="#e9f7e4"/>
-			</linearGradient>
-		</defs>
-		<rect width="1280" height="720" fill="url(#sky)"/>
-		<circle cx="1050" cy="130" r="70" fill="#fff6c8"/>
-		${trees}
-		<path d="M0 540 C 300 510, 700 560, 1280 520 V 720 H 0 Z" fill="#7cc576"/>
-		<path d="M0 600 C 400 580, 900 620, 1280 590 V 720 H 0 Z" fill="#5fae5d"/>
-	</svg>`
+function easeInOut(fraction) {
+	return fraction < 0.5 ? 4 * fraction * fraction * fraction : 1 - Math.pow(-2 * fraction + 2, 3) / 2
 }
 
-function bubble(text, x, y, local) {
-	const grow = easeOut(clamp((local - 0.15) / 0.3))
-	return text ? `<div class="bubble" style="left:${x}px;top:${y}px;transform:scale(${grow});opacity:${grow}">${text}</div>` : ""
+// ---- the cards ----
+
+const card = document.getElementById("card")
+const caption = document.getElementById("caption")
+const keys = document.getElementById("keys")
+const canvas = document.getElementById("screen")
+const context = canvas.getContext("2d")
+
+// the loop drawn round the name, as by a brush
+const LOOP = "M 40 118 C 20 40, 260 8, 520 14 C 760 20, 860 70, 840 120 C 820 178, 560 196, 330 190 C 120 184, 6 160, 30 104 C 46 66, 140 44, 220 40"
+
+function titleMarkup(scene) {
+	const url = scene.url ? `<div class="card-url">objectexplorer.com</div>` : ""
+	return `<div class="card-title">
+		<svg class="card-loop" viewBox="0 0 880 210" width="880" height="210"><path d="${LOOP}" pathLength="1"/></svg>
+		<img class="card-mark" src="../assets/mark.png">
+		<span class="card-name">Object<em>Explorer</em></span>
+	</div>
+	<div class="card-tagline">Open any file. Right where it is.</div>
+	${url}`
 }
 
-// one cartoon cut at `local` seconds into it, `time` the film's clock (for the blink)
-function cartoon(scene, local, time) {
-	const sway = Math.sin(time * 2.4)
-	const blink = blinkAt(time)
-	let pose = { blink, tail: sway, mood: "happy", look: 0.6 }
-	let squirrelX = 300
-	let nutState = { crack: 0, glow: 0, shake: 0 }
-	let nutX = 820
-	let extra = ""
-	let speech = bubble(scene.bubble, 560, 120, local)
-	if (scene.cartoon === "found") {
-		// hops in from the left, stops, leans to look
-		const arrive = easeOut(clamp(local / 1.0))
-		squirrelX = -200 + arrive * 500
-		pose = { blink, tail: sway, mood: "curious", look: 1, bounce: Math.abs(Math.sin(local * 9)) * 30 * (1 - arrive) }
+function cardMarkup(scene) {
+	let markup = ""
+	if (scene.title) {
+		markup = titleMarkup(scene)
 	}
-	else if (scene.cartoon === "tool") {
-		// two blows a cut; the nut jumps at each hit and does not care
-		const swing = Math.abs(Math.sin(local * Math.PI * 1.8))
-		const hit = Math.max(0, 1 - Math.abs(local * 1.8 % 1 - 0.5) * 6)
-		squirrelX = 340
-		nutX = 770
-		pose = { blink, tail: sway, mood: "happy", look: 1, tool: scene.tool, swing }
-		nutState = { crack: 0, glow: 0, shake: Math.sin(local * 60) * hit }
-		if (scene.tool === "torch") {
-			extra = `<div class="spark" style="left:680px;top:490px;opacity:${0.6 + 0.4 * Math.sin(local * 40)}"></div>`
+	else {
+		const words = scene.row
+			? `<div class="card-line card-row">${scene.lines.map((line) => `<span class="word">${line}</span>`).join("")}</div>`
+			: scene.lines.map((line) => `<div class="card-line">${line.split(" ").map((word) => `<span class="word">${word}</span>`).join(" ")}</div>`).join("")
+		const small = scene.small ? `<div class="card-small word">${scene.small}</div>` : ""
+		const chips = scene.chips ? `<div class="card-chips">${scene.chips.map((chip) => `<span class="chip word">${chip}</span>`).join("")}</div>` : ""
+		markup = `<div class="card-words ${scene.size ?? ""}">${words}${small}${chips}</div>`
+	}
+	return markup
+}
+
+function drawCard(scene, index, local) {
+	if (card.dataset.index !== String(index)) {
+		card.dataset.index = String(index)
+		card.className = `card card-${scene.card}`
+		card.innerHTML = cardMarkup(scene)
+	}
+	card.style.opacity = "1"
+	// the words come up one after another; with `pop` one every that many beats, the chips one a beat
+	const words = [...card.querySelectorAll(".word")]
+	const chipStart = words.filter((word) => word.classList.contains("chip") === false).length
+	words.forEach(function show(word, order) {
+		let delay = order * 0.07
+		if (word.classList.contains("chip")) {
+			delay = 0.6 + (order - chipStart) * (scene.pop ?? 1) * BEAT
+		}
+		else if (scene.pop !== undefined) {
+			delay = order * scene.pop * BEAT
+		}
+		const shown = easeOut(clamp((local - delay) / 0.28))
+		word.style.opacity = String(shown)
+		word.style.transform = `translateY(${(1 - shown) * 46}px)`
+	})
+	const drift = 1 + local * 0.012
+	const holder = card.querySelector(".card-words")
+	if (holder !== null) {
+		holder.style.transform = `scale(${drift})`
+	}
+	const loop = card.querySelector(".card-loop path")
+	if (loop !== null) {
+		loop.style.strokeDashoffset = String(1 - easeInOut(clamp((local - 0.3) / 1.1)))
+		const title = card.querySelector(".card-title")
+		const shown = easeOut(clamp(local / 0.5))
+		title.style.opacity = String(shown)
+		title.style.transform = `scale(${0.94 + 0.06 * shown + local * 0.006})`
+		const tagline = card.querySelector(".card-tagline")
+		tagline.style.opacity = String(easeOut(clamp((local - 0.9) / 0.5)))
+		const url = card.querySelector(".card-url")
+		if (url !== null) {
+			url.style.opacity = String(easeOut(clamp((local - 1.3) / 0.5)))
 		}
 	}
-	else if (scene.cartoon === "tired") {
-		squirrelX = 340
-		nutX = 770
-		pose = { blink: 0, tail: sway * 0.3, mood: "tired", look: 0, sweat: clamp(local / 0.5) }
-	}
-	else if (scene.cartoon === "idea") {
-		squirrelX = 340
-		nutX = 770
-		const lit = clamp((local - 0.2) / 0.3)
-		pose = { blink, tail: sway * 1.4, mood: "excited", look: 1, bulb: lit, bounce: Math.abs(Math.sin(local * 7)) * 22 * lit }
-	}
-	else if (scene.cartoon === "inside") {
-		// the nut cracks open, glows, and the formats pour out in an arc
-		squirrelX = 40
-		nutX = 780
-		const crack = easeOut(clamp(local / 0.6))
-		nutState = { crack, glow: crack, shake: local < 0.3 ? Math.sin(local * 80) : 0 }
-		pose = { blink, tail: sway * 1.4, mood: "excited", look: 1, bounce: Math.abs(Math.sin(local * 6)) * 14 }
-		speech = bubble(scene.bubble, 380, 70, local)
-		extra = FORMATS.map(function chip(name, index) {
-			const start = 0.45 + index * 0.1
-			const out = easeOut(clamp((local - start) / 0.6))
-			const angle = Math.PI * (1.05 + index / (FORMATS.length - 1) * 0.9)
-			const x = nutX + Math.cos(angle) * 330 * out
-			const y = 520 + Math.sin(angle) * 300 * out
-			return `<div class="chip" style="left:${x}px;top:${y}px;opacity:${out}">${name}</div>`
-		}).join("")
-	}
-	else if (scene.cartoon === "card") {
-		pose = { blink, tail: sway, mood: "happy", look: 0.3, wave: clamp(local / 1.4) * 0.98 + 0.02 }
-		return `<div class="card">
-			<div class="card-mascot">${squirrel(pose)}</div>
-			<div class="card-brand">
-				<div class="card-name"><img src="../assets/mark.png"><span>Object<em>Explorer</em></span></div>
-				<div class="card-tagline">Open anything. Explore everything.</div>
-				<div class="card-url">objectexplorer.com</div>
-			</div>
-		</div>`
-	}
-	return `${forest()}
-		<div class="actor" style="left:${squirrelX}px;top:180px">${squirrel(pose)}</div>
-		<svg class="actor" style="left:${nutX - 150}px;top:390px" width="300" height="300" viewBox="-150 -150 300 300">${nut(nutState)}</svg>
-		${extra}
-		${speech}`
 }
 
-// a screenshot, fitted inside the frame and held a little above centre so the caption band under
-// it lands on empty ground; it pulls back while it plays, so the app ends whole on screen
-function place(frame, image, scale) {
-	const naturalWidth = image.naturalWidth || 1
-	const naturalHeight = image.naturalHeight || 1
-	const fit = Math.min(stage.width / naturalWidth, stage.height / naturalHeight) * 0.86 * scale
-	frame.style.width = `${naturalWidth * fit}px`
-	frame.style.height = `${naturalHeight * fit}px`
-	frame.style.left = `${(stage.width - naturalWidth * fit) / 2}px`
-	frame.style.top = `${(stage.height - naturalHeight * fit) / 2 - 48}px`
-	image.style.width = `${naturalWidth * fit}px`
-	image.style.height = `${naturalHeight * fit}px`
-	image.style.left = "0px"
-	image.style.top = "0px"
+// ---- the screen ----
+
+// the camera on a box of the window: scaled to fit it with a margin, its middle in the frame's middle
+function camera(view) {
+	const scale = Math.min(2.3, Math.min(STAGE.width / view.width, STAGE.height / view.height) * 0.88)
+	return { x: view.x + view.width / 2, y: view.y + view.height / 2, scale }
 }
 
-// the blurred copy behind a screenshot fills the frame
-function cover(image) {
-	const naturalWidth = image.naturalWidth || 1
-	const naturalHeight = image.naturalHeight || 1
-	const scale = Math.max(stage.width / naturalWidth, stage.height / naturalHeight)
-	image.style.width = `${naturalWidth * scale}px`
-	image.style.height = `${naturalHeight * scale}px`
-	image.style.left = `${(stage.width - naturalWidth * scale) / 2}px`
-	image.style.top = `${(stage.height - naturalHeight * scale) / 2}px`
+// the moments of one kind, in order, with the one in force at `beat` and the one before it
+function latest(moments, key, beat) {
+	const list = moments.filter((moment) => moment[key] !== undefined)
+	let index = -1
+	list.forEach(function find(moment, order) {
+		if (moment.at <= beat) {
+			index = order
+		}
+	})
+	return { list, index }
+}
+
+function viewAt(moments, beat) {
+	const { list, index } = latest(moments, "view", beat)
+	let shot = camera(FULL)
+	if (index >= 0) {
+		const moment = list[index]
+		const target = camera(moment.view)
+		const from = index > 0 ? camera(list[index - 1].view) : target
+		const progress = moment.beats > 0 ? easeInOut(clamp((beat - moment.at) / moment.beats)) : 1
+		shot = {
+			x: from.x + (target.x - from.x) * progress,
+			y: from.y + (target.y - from.y) * progress,
+			// a zoom feels even when the scale moves by the same factor each frame, not the same amount
+			scale: from.scale * Math.pow(target.scale / from.scale, progress),
+		}
+	}
+	return shot
+}
+
+function cursorAt(moments, beat) {
+	const { list, index } = latest(moments, "cursor", beat)
+	let point = undefined
+	if (index >= 0) {
+		const moment = list[index]
+		const from = index > 0 ? list[index - 1].cursor : moment.cursor
+		const progress = moment.beats > 0 ? easeInOut(clamp((beat - moment.at) / moment.beats)) : 1
+		point = [from[0] + (moment.cursor[0] - from[0]) * progress, from[1] + (moment.cursor[1] - from[1]) * progress]
+	}
+	return point
+}
+
+// the stills drawn at `beat`, bottom first: the one shown, over what it fades in on or is revealed over
+function layersAt(shows, index, beat) {
+	const moment = shows[index]
+	let layers = []
+	if (moment.wipe !== undefined) {
+		const progress = clamp((beat - moment.at) / moment.beats)
+		const below = index > 0 ? layersAt(shows, index - 1, Infinity) : []
+		layers = below.concat([{ still: moment.show, alpha: 1, wipe: moment, progress }])
+	}
+	else {
+		const fade = moment.at === 0 ? 1 : clamp((beat - moment.at) * BEAT / FADE)
+		const below = fade < 1 && index > 0 ? layersAt(shows, index - 1, Infinity) : []
+		layers = below.concat([{ still: moment.show, alpha: fade }])
+	}
+	return layers
+}
+
+// the box of a still revealed so far: typing goes across a character at a time, an answer comes in down
+function revealed(wipe, progress) {
+	const box = wipe.wipe
+	let shown = { x: box.x, y: box.y, width: box.width, height: box.height }
+	if (wipe.down) {
+		shown.height = box.height * easeOut(progress)
+	}
+	else {
+		const characters = wipe.characters ?? 20
+		shown.width = box.width * Math.floor(progress * characters) / characters
+	}
+	return shown
+}
+
+function roundedRectangle(x, y, width, height, radius) {
+	context.beginPath()
+	context.moveTo(x + radius, y)
+	context.arcTo(x + width, y, x + width, y + height, radius)
+	context.arcTo(x + width, y + height, x, y + height, radius)
+	context.arcTo(x, y + height, x, y, radius)
+	context.arcTo(x, y, x + width, y, radius)
+	context.closePath()
+}
+
+function background() {
+	const gradient = context.createLinearGradient(0, 0, 0, STAGE.height)
+	gradient.addColorStop(0, "#f3f6f3")
+	gradient.addColorStop(1, "#dfe8e1")
+	context.fillStyle = gradient
+	context.fillRect(0, 0, STAGE.width, STAGE.height)
+	const glow = context.createRadialGradient(STAGE.width * 0.8, STAGE.height * 0.1, 0, STAGE.width * 0.8, STAGE.height * 0.1, 700)
+	glow.addColorStop(0, "rgba(61, 204, 112, 0.22)")
+	glow.addColorStop(1, "rgba(61, 204, 112, 0)")
+	context.fillStyle = glow
+	context.fillRect(0, 0, STAGE.width, STAGE.height)
+}
+
+// the macOS pointer: black with a white rim, its tip at the point
+function drawPointer(x, y, pressed) {
+	const size = pressed ? 1.25 : 1.4
+	context.save()
+	context.translate(x, y)
+	context.scale(size, size)
+	context.beginPath()
+	context.moveTo(0, 0)
+	context.lineTo(0, 17)
+	context.lineTo(4.2, 13.2)
+	context.lineTo(7, 19.6)
+	context.lineTo(10, 18.4)
+	context.lineTo(7.3, 12.2)
+	context.lineTo(12.6, 12.2)
+	context.closePath()
+	context.shadowColor = "rgba(0, 0, 0, 0.35)"
+	context.shadowBlur = 4
+	context.shadowOffsetY = 1.5
+	context.lineJoin = "round"
+	context.lineWidth = 1.6
+	context.strokeStyle = "#ffffff"
+	context.stroke()
+	context.shadowColor = "transparent"
+	context.fillStyle = "#111111"
+	context.fill()
+	context.restore()
+}
+
+function drawScreen(scene, local) {
+	const beat = local / BEAT
+	const moments = scene.screen
+	const shot = viewAt(moments, beat)
+	background()
+	context.save()
+	context.translate(STAGE.width / 2, STAGE.height / 2)
+	context.scale(shot.scale, shot.scale)
+	context.translate(-shot.x, -shot.y)
+	// the window and its shadow, then the stills clipped to its rounded corners
+	context.save()
+	context.shadowColor = "rgba(10, 30, 18, 0.35)"
+	context.shadowBlur = 60 / shot.scale
+	context.shadowOffsetY = 24 / shot.scale
+	roundedRectangle(0, 0, STAGE.width, STAGE.height, 12)
+	context.fillStyle = "#1e1e1e"
+	context.fill()
+	context.restore()
+	context.save()
+	roundedRectangle(0, 0, STAGE.width, STAGE.height, 12)
+	context.clip()
+	const { list, index } = latest(moments, "show", beat)
+	const layers = index >= 0 ? layersAt(list, index, beat) : []
+	for (const layer of layers) {
+		// the input emptied first, so what it showed before (a placeholder) does not peek out past the typing
+		if (layer.wipe !== undefined && layer.wipe.wipe.blank !== undefined) {
+			const box = layer.wipe.wipe
+			context.fillStyle = box.blank
+			context.fillRect(box.x, box.y, box.width, box.height)
+		}
+		context.save()
+		context.globalAlpha = layer.alpha
+		if (layer.wipe !== undefined) {
+			const box = revealed(layer.wipe, layer.progress)
+			context.beginPath()
+			context.rect(box.x, box.y, box.width, box.height)
+			context.clip()
+		}
+		context.drawImage(pictures[layer.still], 0, 0, STAGE.width, STAGE.height)
+		context.restore()
+		// the caret at the end of what is typed so far
+		if (layer.wipe !== undefined && layer.wipe.down !== true && layer.progress < 1) {
+			const box = revealed(layer.wipe, layer.progress)
+			context.fillStyle = "#e8e8e8"
+			context.fillRect(box.x + box.width, box.y + 3, 1.2, box.height - 6)
+		}
+	}
+	context.restore()
+	context.restore()
+	// the pointer and its clicks, the same size whatever the zoom
+	const point = cursorAt(moments, beat)
+	if (point !== undefined) {
+		const x = STAGE.width / 2 + (point[0] - shot.x) * shot.scale
+		const y = STAGE.height / 2 + (point[1] - shot.y) * shot.scale
+		let pressed = false
+		for (const moment of moments.filter((item) => item.click)) {
+			const since = (beat - moment.at) * BEAT
+			if (since >= 0 && since < 0.45) {
+				const grow = easeOut(since / 0.45)
+				context.beginPath()
+				context.arc(x, y, 6 + grow * 24, 0, Math.PI * 2)
+				context.strokeStyle = `rgba(61, 204, 112, ${0.9 * (1 - grow)})`
+				context.lineWidth = 4
+				context.stroke()
+				pressed = pressed || since < 0.12
+			}
+		}
+		drawPointer(x, y, pressed)
+	}
+}
+
+// the library on every kind of screen: the desktop's window, an iPad and an iPhone, each sliding up in turn
+function drawDevices(local) {
+	background()
+	const devices = [
+		{ still: "library", x: 40, y: 170, width: 640, height: 360, radius: 12, bezel: 0, delay: 0 },
+		{ still: "library_tablet", x: 726, y: 150, width: 294, height: 392, radius: 20, bezel: 12, delay: 1 },
+		{ still: "library_phone", x: 1066, y: 162, width: 172, height: 373, radius: 26, bezel: 9, delay: 2 },
+	]
+	for (const device of devices) {
+		const shown = easeOut(clamp((local - device.delay * BEAT) / 0.5))
+		const lift = (1 - shown) * 120 - local * 4
+		context.save()
+		context.globalAlpha = shown
+		context.translate(0, lift)
+		context.shadowColor = "rgba(10, 30, 18, 0.35)"
+		context.shadowBlur = 50
+		context.shadowOffsetY = 20
+		roundedRectangle(device.x - device.bezel, device.y - device.bezel, device.width + device.bezel * 2, device.height + device.bezel * 2, device.radius + device.bezel)
+		context.fillStyle = "#0d0f0e"
+		context.fill()
+		context.shadowColor = "transparent"
+		roundedRectangle(device.x, device.y, device.width, device.height, device.radius)
+		context.clip()
+		context.drawImage(pictures[device.still], device.x, device.y, device.width, device.height)
+		context.restore()
+	}
+}
+
+function drawCaption(text, shown, key) {
+	if (caption.dataset.key !== key) {
+		caption.dataset.key = key
+		caption.innerHTML = text === "" ? "" : `<span>${text}</span>`
+	}
+	caption.style.opacity = String(shown)
+	caption.style.transform = `translate(-50%, ${(1 - shown) * 30}px)`
+}
+
+function drawKeys(list, shown, key) {
+	if (keys.dataset.key !== key) {
+		keys.dataset.key = key
+		keys.innerHTML = list.map((name) => `<span class="key">${name}</span>`).join("")
+	}
+	keys.style.opacity = String(shown)
+	keys.style.transform = `translate(-50%, ${(1 - shown) * -20}px) scale(${0.9 + 0.1 * shown})`
+}
+
+// the caption or keys of a cut at `beat`: shown from `at` to `until`, coming up and going quickly
+function overlay(moments, key, beat) {
+	let found = { value: undefined, shown: 0, key: "" }
+	moments.forEach(function find(moment, order) {
+		if (moment[key] !== undefined && beat >= moment.at && beat < moment.until) {
+			const coming = clamp((beat - moment.at) * BEAT / 0.25)
+			const going = clamp((moment.until - beat) * BEAT / 0.2)
+			found = { value: moment[key], shown: easeOut(Math.min(coming, going)), key: `${order}` }
+		}
+	})
+	return found
 }
 
 function renderFrame(time) {
-	const at = Math.max(0, Math.min(time, DURATION))
-	let current = built[0]
-	for (const entry of built) {
-		const { scene, layer } = entry
-		const local = at - scene.at
-		if (local >= 0 && local < scene.hold) {
-			current = entry
-			// a 0.35s cross-fade in, and out only at the very end
-			const fadeIn = Math.min(1, local / 0.35)
-			const fadeOut = scene.end ? Math.min(1, (scene.hold - local) / 0.8) : 1
-			layer.style.opacity = String(Math.min(fadeIn, fadeOut))
-			if (scene.src) {
-				const through = local / scene.hold
-				place(entry.frame, entry.image, scene.zoom - (scene.zoom - 1) * through)
-				cover(entry.backdropImage)
-			}
-			else {
-				layer.innerHTML = cartoon(scene, local, at)
-			}
+	const at = Math.max(0, Math.min(time, DURATION - 0.001))
+	const ratio = window.devicePixelRatio || 1
+	if (canvas.width !== Math.round(STAGE.width * ratio)) {
+		canvas.width = Math.round(STAGE.width * ratio)
+		canvas.height = Math.round(STAGE.height * ratio)
+	}
+	context.setTransform(ratio, 0, 0, ratio, 0, 0)
+	context.imageSmoothingEnabled = true
+	context.imageSmoothingQuality = "high"
+	let index = 0
+	starts.forEach(function find(start, order) {
+		if (start <= at) {
+			index = order
+		}
+	})
+	const scene = scenes[index]
+	const local = at - starts[index]
+	const beat = local / BEAT
+	let moments = []
+	if (scene.card !== undefined) {
+		drawCard(scene, index, local)
+		canvas.style.opacity = "0"
+	}
+	else {
+		card.style.opacity = "0"
+		canvas.style.opacity = "1"
+		if (scene.devices) {
+			drawDevices(local)
+			moments = [{ at: 0.6, caption: scene.caption, until: scene.beats }]
 		}
 		else {
-			layer.style.opacity = "0"
+			drawScreen(scene, local)
+			moments = scene.screen
 		}
 	}
-	drawCaption(current.scene, at - current.scene.at)
-	shade.style.opacity = current.scene.lines ? "1" : "0"
-	const blink = at - PRODUCT_AT
-	flash.style.opacity = blink >= 0 && blink < 0.22 ? String(0.8 * (1 - blink / 0.22)) : "0"
+	const words = overlay(moments, "caption", beat)
+	drawCaption(words.value ?? "", words.shown, `${index}:${words.key}`)
+	const pressed = overlay(moments, "keys", beat)
+	drawKeys(pressed.value ?? [], pressed.shown, `${index}:${pressed.key}`)
 }
 
-function drawCaption(scene, local) {
-	const lines = scene.lines ?? []
-	if (caption.dataset.at !== String(scene.at)) {
-		caption.dataset.at = String(scene.at)
-		caption.innerHTML = lines
-			.map((line, index) => `<div class="line ${scene.small === index ? "small" : ""}">${line}</div>`)
-			.join("")
-	}
-	;[...caption.children].forEach(function show(line, index) {
-		const start = 0.18 + index * 0.16
-		const eased = easeOut(clamp((local - start) / 0.5))
-		const leaving = scene.hold - local < 0.3 ? (scene.hold - local) / 0.3 : 1
-		line.style.opacity = String(eased * Math.max(0, leaving))
-		line.style.transform = `translateY(${(1 - eased) * 26}px)`
-	})
-}
-
-const params = new URLSearchParams(location.search)
 window.promoDuration = DURATION
-window.promoScenes = scenes.map((scene) => scene.at)
+window.promoScenes = starts
+window.promoMusicEnd = MUSIC_END
+// the poster: the end card once its name and address are in
+window.promoPoster = MUSIC_END + 2.2
+window.promoWarnings = warnings
 window.renderFrame = renderFrame
-renderFrame(Number(params.get("t") ?? 0))
-// every picture has to be decoded before the first frame is asked for, or a cut lands on an
-// empty box
-const pictures = built.filter((entry) => entry.image).flatMap((entry) => [entry.image, entry.backdropImage])
-window.promoReady = Promise.all(pictures.map((picture) => picture.decode().catch(() => undefined)))
+// every picture decoded and the fonts loaded before the first frame is asked for, or a cut lands on
+// an empty box
+const mark = new Image()
+mark.src = "../assets/mark.png"
+window.promoReady = Promise.all([...Object.values(pictures), mark].map((picture) => picture.decode().catch(() => undefined)))
+	.then(() => document.fonts.ready)
 	.then(() => renderFrame(Number(params.get("t") ?? 0)))
 </script>
 </body>

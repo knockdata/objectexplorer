@@ -1,7 +1,12 @@
 // Records promo/promo.html into a video, frame by frame.
 //
-//   node scripts/promo.mjs                    # frames + mp4 + webm + poster
-//   node scripts/promo.mjs --music track.mp3  # and lay that track under it
+//   node scripts/promo.mjs                    # frames + mp4 + poster
+//   node scripts/promo.mjs --preview          # one still per cut, into promo/preview
+//   node scripts/promo.mjs --music track.mp3  # with that track under it
+//
+// The cuts fall on the music's beat: the track's <name>.beats.json beside it (scripts/promo-beats.py)
+// gives the page its tempo and first beat. A track shorter than the film is looped on a phrase (16
+// beats), and it stops under the end card.
 //
 // The page is a function of time (`window.renderFrame(t)`), so every frame is asked for and then
 // screenshotted: nothing is captured in real time, which is what keeps a busy machine from
@@ -16,7 +21,6 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(here, "..")
-const page = pathToFileURL(path.join(root, "promo", "promo.html")).href
 const frameDir = path.join(root, "promo", "frames")
 const outDir = path.join(root, "docs", "public", "video")
 const profileDir = path.join(os.tmpdir(), "chrome-promo")
@@ -27,8 +31,8 @@ const WIDTH = 1280
 const HEIGHT = 720
 const SCALE = 1.5
 const FPS = 30
-// when the poster is taken: the end card, once it has faded in
-const POSTER_AT = 43.5
+// a track is looped on a phrase of this many beats
+const PHRASE = 16
 // a fixed port is somebody else's the moment two things debug a browser on this machine, and the
 // poll below would then talk to their Chrome instead of ours
 const PORT = 9400 + Math.floor(Math.random() * 90)
@@ -37,6 +41,47 @@ const args = process.argv.slice(2)
 const preview = args.includes("--preview")
 const musicArg = args.indexOf("--music")
 const music = musicArg >= 0 ? args[musicArg + 1] : defaultMusic()
+const beats = readBeats(music)
+const page = `${pathToFileURL(path.join(root, "promo", "promo.html")).href}?tempo=${beats.tempo}&first=${beats.first}`
+
+// the track's tempo, first beat and length (scripts/promo-beats.py); without one, 134 beats a minute from 0
+function readBeats(track) {
+	let found = { tempo: 134, first: 0, duration: Infinity }
+	if (track) {
+		const file = track.replace(/\.[^.]*$/, ".beats.json")
+		if (fs.existsSync(file)) {
+			found = JSON.parse(fs.readFileSync(file, "utf8"))
+		}
+		else {
+			console.log(`no ${path.basename(file)}: the cuts are not on the track's beat (scripts/promo-beats.py)`)
+		}
+	}
+	return found
+}
+
+// the track as long as the music runs: from its start to the last whole phrase that ends 2 s before its
+// end, then again from its first beat, as often as needed; faded out quickly where the end card comes
+function musicFilter(musicEnd, duration) {
+	const period = 60 / beats.tempo
+	const phrase = PHRASE * period
+	const loopEnd = beats.first + Math.floor((beats.duration - beats.first - 2) / phrase) * phrase
+	// the whole first time, then from the first beat on
+	const pieces = [[0, loopEnd]]
+	let covered = loopEnd
+	while (covered < musicEnd) {
+		pieces.push([beats.first, loopEnd])
+		covered += loopEnd - beats.first
+	}
+	// the input is read once: asplit hands each piece its own copy to trim
+	const copies = pieces.map((piece, index) => `[copy${index}]`).join("")
+	const trims = pieces.map(([from, to], index) => `[copy${index}]atrim=${from.toFixed(3)}:${to.toFixed(3)},asetpts=PTS-STARTPTS[piece${index}]`)
+	const joined = pieces.map((piece, index) => `[piece${index}]`).join("")
+	return [
+		`[1:a]asplit=${pieces.length}${copies}`,
+		...trims,
+		`${joined}concat=n=${pieces.length}:v=0:a=1,afade=t=out:st=${(musicEnd - 0.6).toFixed(3)}:d=0.6,apad,atrim=0:${duration.toFixed(3)}[a]`,
+	].join(";")
+}
 
 function defaultMusic() {
 	const dir = path.join(root, "promo", "music")
@@ -162,6 +207,12 @@ async function record() {
 	// the page decodes every picture before it draws its first frame
 	await evaluate(socket, sessionId, "window.promoReady")
 	const duration = await evaluate(socket, sessionId, "window.promoDuration")
+	const musicEnd = await evaluate(socket, sessionId, "window.promoMusicEnd")
+	const posterAt = await evaluate(socket, sessionId, "window.promoPoster")
+	const warnings = await evaluate(socket, sessionId, "window.promoWarnings")
+	for (const warning of warnings) {
+		console.log("reads badly:", warning)
+	}
 	const frames = Math.round(duration * FPS)
 
 	// --preview writes one still per scene into promo/preview instead of the film, which is how
@@ -198,18 +249,18 @@ async function record() {
 	chrome.kill()
 
 	const silent = path.join(frameDir, "silent.mp4")
-	// crf 18 is near what the eye can tell from the frames; -color_range tv with yuv420p so players
+	// crf 20 is near what the eye can tell from the frames and keeps the 96 s film under 20 MB; -color_range tv with yuv420p so players
 	// that expect broadcast range read it right, and bt709 because that is what 1080p is shown in
 	ffmpeg(["-framerate", String(FPS), "-i", path.join(frameDir, "%05d.png"),
-		"-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p",
+		"-c:v", "libx264", "-preset", "slow", "-crf", "20", "-pix_fmt", "yuv420p",
 		"-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", silent])
 
 	const mp4 = path.join(outDir, "objectexplorer.mp4")
 	if (music) {
 		console.log("music:", music)
 		ffmpeg(["-i", silent, "-i", music,
-			"-filter_complex", `[1:a]afade=t=out:st=${(frames / FPS - 2.5).toFixed(2)}:d=2.5[a]`,
-			"-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-shortest",
+			"-filter_complex", musicFilter(musicEnd, frames / FPS),
+			"-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k",
 		"-movflags", "+faststart", mp4])
 	}
 	else {
@@ -220,7 +271,7 @@ async function record() {
 	// One encode, with its music. The page plays it behind controls rather than autoplaying, so
 	// there is no silent copy to keep: a reader who wants it quiet uses the mute button.
 	// poster.png is what HeroVideo.vue shows before play
-	fs.copyFileSync(path.join(frameDir, `${String(Math.round(POSTER_AT * FPS)).padStart(5, "0")}.png`), path.join(outDir, "poster.png"))
+	fs.copyFileSync(path.join(frameDir, `${String(Math.min(frames - 1, Math.round(posterAt * FPS))).padStart(5, "0")}.png`), path.join(outDir, "poster.png"))
 
 	console.log("wrote", outDir)
 }

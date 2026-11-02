@@ -1,125 +1,182 @@
 :root {
-	--bg: #0b0d10;
-	--text: #f2f4f8;
-	--dim: #9aa4b2;
-	--accent: #4dff9f;
+	--dark: #0c110e;
+	--green: #3dcc70;
+	--green-ink: #062012;
+	--grey: #e4e8e5;
+	--ink: #0c110e;
+	--paper: #ffffff;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #000; }
+body { background: #000000; }
 #stage {
-	position: relative;
-	width: 1280px;
+	background: var(--paper);
+	color: var(--ink);
+	font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
 	height: 720px;
 	overflow: hidden;
-	background: var(--bg);
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-	color: var(--text);
+	position: relative;
+	width: 1280px;
 }
-.layer {
+#screen {
+	height: 720px;
+	left: 0;
 	position: absolute;
-	inset: 0;
-	overflow: hidden;
-	opacity: 0;
+	top: 0;
+	width: 1280px;
 }
-.frame {
-	position: absolute;
-	border-radius: 10px;
-	box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-	overflow: hidden;
-}
-.backdrop {
-	position: absolute;
-	inset: 0;
-	overflow: hidden;
-}
-.backdrop img {
-	filter: blur(34px) brightness(0.45) saturate(0.8);
-	position: absolute;
-	transform: scale(1.15);
-}
-.layer img {
-	position: absolute;
-}
-.shade {
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(to top, rgba(6, 8, 11, 0.92) 0%, rgba(6, 8, 11, 0.55) 28%, rgba(6, 8, 11, 0) 60%);
-}
-.caption {
-	position: absolute;
-	left: 64px;
-	right: 64px;
-	bottom: 68px;
-}
-.line {
-	font-size: 52px;
-	font-weight: 700;
-	letter-spacing: -0.02em;
-	line-height: 1.14;
-	opacity: 0;
-}
-.line.small {
-	font-size: 30px;
-	font-weight: 500;
-	color: var(--dim);
-	margin-top: 14px;
-}
-.line em { font-style: normal; color: var(--accent); }
-#flash {
-	position: absolute;
-	inset: 0;
-	background: #fff;
-	opacity: 0;
-	pointer-events: none;
-}
-/* the end card: the drawn squirrel waving beside the chalk e and the name */
+/* a card: one word or one short line on a plain colour */
 .card {
 	align-items: center;
-	background: radial-gradient(ellipse at 70% 45%, rgba(77, 255, 159, 0.10), rgba(11, 13, 16, 0) 60%), var(--bg);
 	display: flex;
-	gap: 64px;
+	flex-direction: column;
 	inset: 0;
 	justify-content: center;
 	position: absolute;
 }
-.card-mascot { height: 460px; width: 400px; }
-.card-brand { display: flex; flex-direction: column; gap: 18px; }
-.card-name { align-items: center; display: flex; font-size: 66px; font-weight: 700; gap: 14px; letter-spacing: -0.02em; }
-.card-name img { height: 96px; position: static; width: 96px; }
-.card-name em { color: var(--accent); font-style: normal; }
-.card-tagline { color: var(--dim); font-size: 30px; font-weight: 500; }
-.card-url { color: var(--accent); font-size: 32px; font-weight: 600; margin-top: 18px; }
-/* the cartoon cuts: the forest, the squirrel and the nut, what it says, the formats */
-.forest { left: 0; position: absolute; top: 0; }
-.actor { position: absolute; }
-.bubble {
-	background: #fff;
-	border: 4px solid #4a2a14;
-	border-radius: 28px;
-	color: #2a1a0c;
+.card-white { background: var(--paper); color: var(--ink); }
+.card-dark { background: var(--dark); color: #f4f7f5; }
+.card-green { background: var(--green); color: var(--green-ink); }
+.card-grey { background: var(--grey); color: var(--ink); }
+.card-words {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	text-align: center;
+}
+.card-line {
+	font-size: 112px;
+	font-weight: 800;
+	letter-spacing: -0.035em;
+	line-height: 1.04;
+	max-width: 1120px;
+}
+.card-dark .card-line:first-child { color: #ffffff; }
+.card-row {
+	display: flex;
+	gap: 64px;
+}
+.word {
+	display: inline-block;
+	opacity: 0;
+}
+.huge .card-line {
+	font-size: 300px;
+	letter-spacing: -0.05em;
+	line-height: 0.9;
+}
+.card-small {
+	font-size: 56px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+.card-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 18px;
+	justify-content: center;
+	margin-top: 28px;
+	max-width: 1000px;
+}
+.chip {
+	background: var(--green);
+	border-radius: 999px;
+	color: var(--green-ink);
+	font-size: 40px;
+	font-weight: 700;
+	padding: 10px 28px;
+}
+.card-dark .card-words .card-line { font-size: 72px; }
+/* the name card: the mark, the name, a brush loop drawn round it */
+.card-title {
+	align-items: center;
+	display: flex;
+	gap: 18px;
+	position: relative;
+}
+.card-mark {
+	height: 132px;
+	width: 132px;
+}
+.card-name {
+	font-size: 104px;
+	font-weight: 800;
+	letter-spacing: -0.035em;
+}
+.card-name em {
+	color: var(--green);
+	font-style: normal;
+}
+.card-loop {
+	left: 50%;
+	overflow: visible;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%) scale(1.14, 1.34);
+}
+.card-loop path {
+	fill: none;
+	stroke: var(--green);
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+	stroke-linecap: round;
+	stroke-width: 9;
+}
+.card-tagline {
+	color: #4a544e;
+	font-size: 40px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	margin-top: 54px;
+	opacity: 0;
+}
+.card-url {
+	background: var(--green);
+	border-radius: 999px;
+	color: var(--green-ink);
 	font-size: 40px;
 	font-weight: 800;
-	padding: 18px 30px;
+	margin-top: 28px;
+	opacity: 0;
+	padding: 10px 34px;
+}
+/* a caption over the screen, and the keys pressed */
+.caption {
+	bottom: 34px;
+	left: 50%;
+	opacity: 0;
 	position: absolute;
-	transform-origin: 0 100%;
 	white-space: nowrap;
 }
-.bubble em { color: #1f9d5c; font-style: normal; }
-.chip {
-	background: #12301f;
-	border: 3px solid #4dff9f;
-	border-radius: 12px;
-	color: #e9fff2;
-	font-size: 24px;
+.caption span {
+	background: var(--green);
+	border-radius: 16px;
+	box-shadow: 0 18px 40px rgba(6, 32, 18, 0.35);
+	color: var(--green-ink);
+	display: inline-block;
+	font-size: 46px;
 	font-weight: 800;
-	padding: 8px 16px;
-	position: absolute;
-	transform: translate(-50%, -50%);
+	letter-spacing: -0.025em;
+	padding: 12px 30px 14px;
 }
-.spark {
-	background: radial-gradient(circle, #fff 0%, #7fd4ff 35%, rgba(127, 212, 255, 0) 70%);
-	border-radius: 50%;
-	height: 90px;
+.keys {
+	display: flex;
+	gap: 14px;
+	left: 50%;
+	opacity: 0;
 	position: absolute;
-	width: 90px;
+	top: 40px;
+}
+.key {
+	background: #ffffff;
+	border: 2px solid #c9d2cc;
+	border-bottom-width: 6px;
+	border-radius: 14px;
+	box-shadow: 0 14px 30px rgba(6, 32, 18, 0.3);
+	color: var(--ink);
+	font-size: 40px;
+	font-weight: 700;
+	min-width: 74px;
+	padding: 10px 22px;
+	text-align: center;
 }
