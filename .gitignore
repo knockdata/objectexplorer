@@ -32,4 +32,7 @@ next.md
 # the promo film is built from these; only the video in docs/public/video is kept
 promo/frames/
 promo/preview/
+# the film's music, made on this Mac from Logic's Apple Loops by scripts/promo-music.py: Logic's licence
+# allows a soundtrack, not the loops or a music bed handed out, so it is never committed
+promo/music/soundtrack.*
 RELEASENOTE.md

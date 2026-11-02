@@ -6,7 +6,8 @@
 //
 // The cuts fall on the music's beat: the track's <name>.beats.json beside it (scripts/promo-beats.py)
 // gives the page its tempo and first beat. A track shorter than the film is looped on a phrase (16
-// beats), and it stops under the end card.
+// beats), and it stops under the end card. scripts/promo-music.py makes promo/music/soundtrack.wav,
+// which is taken before any other track.
 //
 // The page is a function of time (`window.renderFrame(t)`), so every frame is asked for and then
 // screenshotted: nothing is captured in real time, which is what keeps a busy machine from
@@ -59,9 +60,19 @@ function readBeats(track) {
 	return found
 }
 
-// the track as long as the music runs: from its start to the last whole phrase that ends 2 s before its
-// end, then again from its first beat, as often as needed; faded out quickly where the end card comes
+// the track as long as the music runs. One made for the film (as long as it, its own ending on the last
+// beat) is laid as it is. A shorter one is played from its start to the last whole phrase that ends 2 s
+// before its end, then again from its first beat, as often as needed, and faded out quickly where the
+// end card comes
 function musicFilter(musicEnd, duration) {
+	let filter = `[1:a]apad,atrim=0:${duration.toFixed(3)}[a]`
+	if (beats.duration < musicEnd) {
+		filter = loopFilter(musicEnd, duration)
+	}
+	return filter
+}
+
+function loopFilter(musicEnd, duration) {
 	const period = 60 / beats.tempo
 	const phrase = PHRASE * period
 	const loopEnd = beats.first + Math.floor((beats.duration - beats.first - 2) / phrase) * phrase
@@ -83,10 +94,15 @@ function musicFilter(musicEnd, duration) {
 	].join(";")
 }
 
+// the soundtrack made by scripts/promo-music.py when it is there, else the first track in promo/music
 function defaultMusic() {
 	const dir = path.join(root, "promo", "music")
+	const soundtrack = path.join(dir, "soundtrack.wav")
 	let found = null
-	if (fs.existsSync(dir)) {
+	if (fs.existsSync(soundtrack)) {
+		found = soundtrack
+	}
+	else if (fs.existsSync(dir)) {
 		const tracks = fs.readdirSync(dir).filter((name) => name.endsWith(".mp3") || name.endsWith(".m4a") || name.endsWith(".wav"))
 		if (tracks.length) {
 			found = path.join(dir, tracks[0])
