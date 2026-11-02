@@ -48,7 +48,7 @@ defineProps({
 		</div>
 		<div v-if="pinned === false" class="landing-hero-demo">
 			<HeroVideo />
-			<p class="landing-hero-caption">The 40-second tour. Click it to play.</p>
+			<p class="landing-hero-caption">The two-minute tour. Click it to play.</p>
 		</div>
 	</section>
 </template>
