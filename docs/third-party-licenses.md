@@ -583,6 +583,18 @@ OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
+### Virtuosity Drums
+
+The drum kit of a notebook's music cell, by Versilian Studios and Karoryfer Samples (github.com/sfzinstruments/virtuosity_drums).
+
+**CC0 1.0** (public domain dedication) · [the deed](https://creativecommons.org/publicdomain/zero/1.0/)
+
+### Salamander Grand Piano
+
+The piano of a notebook's music cell: Salamander Grand Piano V3 by Alexander Holm (archive.org/details/SalamanderGrandPianoV3), some of its notes made mono, shorter and faded out.
+
+**Creative Commons Attribution 3.0** · [the licence](https://creativecommons.org/licenses/by/3.0/)
+
 ## In the Windows app
 
 ### WebView2 loader
