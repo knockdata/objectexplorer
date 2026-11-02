@@ -3,7 +3,6 @@ import { computed, onMounted, ref } from "vue"
 import { readVisitor } from "../composables/visitor.js"
 import AppSection from "./AppSection.vue"
 import DownloadBlock from "./DownloadBlock.vue"
-import LandingFeatures from "./LandingFeatures.vue"
 import LandingHero from "./LandingHero.vue"
 import LandingNav from "./LandingNav.vue"
 import StoryGrid from "./StoryGrid.vue"
@@ -30,7 +29,6 @@ onMounted(function () {
 			<main>
 				<LandingHero :pinned="appQuery !== ''" :app-link="appLink" />
 				<AppSection v-if="appQuery" :query="appQuery" />
-				<LandingFeatures />
 				<StoryGrid />
 				<DownloadBlock />
 			</main>
