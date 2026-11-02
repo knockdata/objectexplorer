@@ -25,26 +25,29 @@ The cursor, the typing, the zooms, the captions and the cards are drawn by the p
 
 ## Music
 
-The film's music is made on this Mac by `scripts/promo-music.py` from the Apple Loops that Logic Pro
-installs (`/Library/Audio/Apple Loops/Apple`), arranged to the film's cuts: Indie Disco's Reflex set
-(bass, rhythm and lead guitar, synth, in A minor at 130 beats a minute) over Electro House's Disco Core
-Beat and Tight House Topper, stretched from 128. Its other songs (`electro-house`, `disco-funk`) are one
-argument away.
+| Track    | Author  | Source                                                                  | Licence                                                                                                  |
+|----------|---------|-------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| Clapping | mrclaps | [Pixabay](https://pixabay.com/music/rock-clapping-492559/) (53.5 s)      | Pixabay Content License: free for commercial use, no attribution required, not to be redistributed on its own |
+
+The track is not in this repository: Pixabay's licence lets it be used in the film but not handed out by
+itself, so only the film carries it (`promo/music/mrclaps-*.mp3` is ignored by git). To build the film,
+download it from the page above as `promo/music/mrclaps-clapping-492559.mp3`. Its beat is measured once
+into `mrclaps-clapping-492559.beats.json` (kept in git; it holds only times):
 
 ```sh
-uv run --with numpy python -I scripts/promo-music.py     # promo/music/soundtrack.wav and its .beats.json
+uv run --with librosa python -I scripts/promo-beats.py promo/music/mrclaps-clapping-492559.mp3 --tempo 119
 ```
 
-Logic Pro's licence lets its loops be used royalty-free in a soundtrack of our own, and the film with it
-may be published; the loops may not be handed out on their own or repackaged as music beds. So no loop
-and no soundtrack is in this repository (`promo/music/soundtrack.*` is ignored): the script reads the
-loops where Logic keeps them, and the film carries the mix.
+It is 119 beats a minute in phrases of 4 bars, each ending on a short stop (librosa alone reads its clap
+pattern as 96). The film is longer than the track, so the recorder plays it to the middle of its last
+stop, then again from the middle of its first one (six phrases, 48.4 s), and on to its own ending, whose
+downbeat lands one beat into the end card.
 
-Without a soundtrack the recorder takes the first other audio file in `promo/music/`, with its
-`.beats.json` beside it:
+Without that file the recorder takes the first other track in `promo/music/`:
 
 | Track              | Author                                              | Source                                                          | Licence                                          |
 |--------------------|-----------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------|
 | Hyperflight Racing | cynicmusic ([cynicmusic.com](http://cynicmusic.com)) | [OpenGameArt](https://opengameart.org/content/hyperflight-racing) | CC0 1.0 — public domain, no attribution required |
 
-It is 61 s at 134 beats a minute; the film loops it on a phrase of 16 beats.
+CC0 asks for nothing, but the author asks to hear about projects that use it, which is why they are
+named here.

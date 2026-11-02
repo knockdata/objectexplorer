@@ -5,9 +5,12 @@
 //   node scripts/promo.mjs --music track.mp3  # with that track under it
 //
 // The cuts fall on the music's beat: the track's <name>.beats.json beside it (scripts/promo-beats.py)
-// gives the page its tempo and first beat. A track shorter than the film is looped on a phrase (16
-// beats), and it stops under the end card. scripts/promo-music.py makes promo/music/soundtrack.wav,
-// which is taken before any other track.
+// gives the page its tempo and first beat. A track shorter than the film is played again from a stop
+// to a later stop (whole phrases), as often as the film needs, so that its own ending comes as the end
+// card does; one without stops is looped on a phrase of 16 beats and faded under the end card.
+//
+// The film's track is TRACK in promo/music, which is not in git (Pixabay's licence: never handed out on
+// its own; promo/CREDITS.md says where to get it); without it, the first other track there.
 //
 // The page is a function of time (`window.renderFrame(t)`), so every frame is asked for and then
 // screenshotted: nothing is captured in real time, which is what keeps a busy machine from
@@ -32,8 +35,10 @@ const WIDTH = 1280
 const HEIGHT = 720
 const SCALE = 1.5
 const FPS = 30
-// a track is looped on a phrase of this many beats
+// a track without stops is looped on a phrase of this many beats
 const PHRASE = 16
+// the film's music, in promo/music
+const TRACK = "mrclaps-clapping-492559.mp3"
 // a fixed port is somebody else's the moment two things debug a browser on this machine, and the
 // poll below would then talk to their Chrome instead of ours
 const PORT = 9400 + Math.floor(Math.random() * 90)
@@ -60,19 +65,43 @@ function readBeats(track) {
 	return found
 }
 
-// the track as long as the music runs. One made for the film (as long as it, its own ending on the last
-// beat) is laid as it is. A shorter one is played from its start to the last whole phrase that ends 2 s
-// before its end, then again from its first beat, as often as needed, and faded out quickly where the
-// end card comes
+// The track as long as the film. With stops (beats.loop and beats.hit): to the middle of a stop, then
+// again from the middle of an earlier one as often as needed, so the downbeat of its own ending lands one
+// beat into the end card, then on to its end. Shorter and without stops: to the last whole phrase that
+// ends 2 s before its end, then again from its first beat, faded out where the end card comes. Long
+// enough: as it is.
 function musicFilter(musicEnd, duration) {
 	let filter = `[1:a]apad,atrim=0:${duration.toFixed(3)}[a]`
-	if (beats.duration < musicEnd) {
-		filter = loopFilter(musicEnd, duration)
+	if (beats.loop !== undefined) {
+		filter = stopsFilter(musicEnd, duration)
+	}
+	else if (beats.duration < musicEnd) {
+		filter = phraseFilter(musicEnd, duration)
 	}
 	return filter
 }
 
-function loopFilter(musicEnd, duration) {
+function stopsFilter(musicEnd, duration) {
+	const period = 60 / beats.tempo
+	const length = beats.loop.to - beats.loop.from
+	const times = Math.max(0, Math.round((musicEnd + period - beats.hit) / length))
+	const landing = beats.hit + times * length
+	if (Math.abs(landing - (musicEnd + period)) > 0.05) {
+		console.log(`the track's ending lands ${(landing - musicEnd - period).toFixed(2)} s off the end card's first beat: the film's beats do not fit its phrases`)
+	}
+	let pieces = [[0, beats.duration]]
+	if (times > 0) {
+		pieces = [[0, beats.loop.to]]
+		for (let count = 1; count < times; count++) {
+			pieces.push([beats.loop.from, beats.loop.to])
+		}
+		pieces.push([beats.loop.from, beats.duration])
+	}
+	console.log(`music: played ${times + 1} times over, from ${beats.loop.from} s to ${beats.loop.to} s (${beats.loop.phrases} phrases), its ending at ${landing.toFixed(2)} s`)
+	return joinPieces(pieces, `apad,atrim=0:${duration.toFixed(3)}`)
+}
+
+function phraseFilter(musicEnd, duration) {
 	const period = 60 / beats.tempo
 	const phrase = PHRASE * period
 	const loopEnd = beats.first + Math.floor((beats.duration - beats.first - 2) / phrase) * phrase
@@ -83,26 +112,31 @@ function loopFilter(musicEnd, duration) {
 		pieces.push([beats.first, loopEnd])
 		covered += loopEnd - beats.first
 	}
-	// the input is read once: asplit hands each piece its own copy to trim
-	const copies = pieces.map((piece, index) => `[copy${index}]`).join("")
-	const trims = pieces.map(([from, to], index) => `[copy${index}]atrim=${from.toFixed(3)}:${to.toFixed(3)},asetpts=PTS-STARTPTS[piece${index}]`)
-	const joined = pieces.map((piece, index) => `[piece${index}]`).join("")
-	return [
-		`[1:a]asplit=${pieces.length}${copies}`,
-		...trims,
-		`${joined}concat=n=${pieces.length}:v=0:a=1,afade=t=out:st=${(musicEnd - 0.6).toFixed(3)}:d=0.6,apad,atrim=0:${duration.toFixed(3)}[a]`,
-	].join(";")
+	return joinPieces(pieces, `afade=t=out:st=${(musicEnd - 0.6).toFixed(3)}:d=0.6,apad,atrim=0:${duration.toFixed(3)}`)
 }
 
-// the soundtrack made by scripts/promo-music.py when it is there, else the first track in promo/music
+// pieces of the track one after another, each seam faded over 10 ms so it cannot click; the input is
+// read once and asplit hands each piece its own copy to trim
+function joinPieces(pieces, after) {
+	const copies = pieces.map((piece, index) => `[copy${index}]`).join("")
+	const trims = pieces.map(function trim([from, to], index) {
+		const fadeIn = index > 0 ? ",afade=t=in:d=0.01" : ""
+		const fadeOut = index < pieces.length - 1 ? `,afade=t=out:st=${(to - from - 0.01).toFixed(3)}:d=0.01` : ""
+		return `[copy${index}]atrim=${from.toFixed(3)}:${to.toFixed(3)},asetpts=PTS-STARTPTS${fadeIn}${fadeOut}[piece${index}]`
+	})
+	const joined = pieces.map((piece, index) => `[piece${index}]`).join("")
+	return [`[1:a]asplit=${pieces.length}${copies}`, ...trims, `${joined}concat=n=${pieces.length}:v=0:a=1,${after}[a]`].join(";")
+}
+
+// the film's track when it is there, else the first other one in promo/music
 function defaultMusic() {
 	const dir = path.join(root, "promo", "music")
-	const soundtrack = path.join(dir, "soundtrack.wav")
 	let found = null
-	if (fs.existsSync(soundtrack)) {
-		found = soundtrack
+	if (fs.existsSync(path.join(dir, TRACK))) {
+		found = path.join(dir, TRACK)
 	}
 	else if (fs.existsSync(dir)) {
+		console.log(`no promo/music/${TRACK} (promo/CREDITS.md says where to get it): the film takes another track`)
 		const tracks = fs.readdirSync(dir).filter((name) => name.endsWith(".mp3") || name.endsWith(".m4a") || name.endsWith(".wav"))
 		if (tracks.length) {
 			found = path.join(dir, tracks[0])

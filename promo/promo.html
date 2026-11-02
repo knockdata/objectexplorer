@@ -30,8 +30,9 @@ import { targets } from "./shots/targets.js"
 const params = new URLSearchParams(location.search)
 const BEAT = 60 / Number(params.get("tempo") ?? 134)
 const FIRST = Number(params.get("first") ?? 0)
-// the end card is held this long once the last beat is counted, in silence
-const END_SECONDS = 4.5
+// the end card is held this long once the last beat is counted: it comes in on the music's last stop, the
+// track's own ending lands on its first beat and rings out under it, and the film ends as that does
+const END_SECONDS = 3
 // a cross-fade between two stills, seconds
 const FADE = 0.18
 const STAGE = { width: 1280, height: 720 }
@@ -122,7 +123,7 @@ const scenes = [
 	{ beats: 8, card: "dark", lines: ["From your disk or the cloud"], chips: ["S3", "Azure", "Google Drive", "Dropbox", "OneDrive", "FTP"], pop: 1 },
 	...montage,
 	{ beats: 6, card: "green", lines: ["900+"], small: "kinds of file", size: "huge" },
-	{ beats: 20, screen: [
+	{ beats: 18, screen: [
 		{ at: 0, show: "open_train-stations" },
 		{ at: 0, view: FULL, beats: 0 },
 		{ at: 0, cursor: [700, 420], beats: 0 },
@@ -138,7 +139,7 @@ const scenes = [
 		{ at: 10.2, show: "sql_run" },
 		{ at: 10.4, view: RESULT_VIEW, beats: 1.4 },
 		{ at: 1.8, caption: "Ask any table in SQL", until: 10 },
-		{ at: 10.2, caption: "Nothing to import first", until: 20 },
+		{ at: 10.2, caption: "Nothing to import first", until: 18 },
 	] },
 	{ beats: 16, screen: [
 		{ at: 0, show: "documents" },
@@ -157,7 +158,7 @@ const scenes = [
 		{ at: 1.8, caption: "Search inside every file", until: 9 },
 		{ at: 9, caption: "Even inside archives", until: 16 },
 	] },
-	{ beats: 22, screen: [
+	{ beats: 20, screen: [
 		{ at: 0, show: "open_train-stations" },
 		{ at: 0, view: FULL, beats: 0 },
 		{ at: 0, cursor: [700, 420], beats: 0 },
@@ -178,12 +179,12 @@ const scenes = [
 		{ at: 13.4, view: ANSWER_END, beats: 2.4 },
 		{ at: 10, cursor: [1240, 690], beats: 1.5 },
 		{ at: 1.7, caption: "Ask the agent you already use", until: 10 },
-		{ at: 10.4, caption: "It reads your files where they are", until: 22 },
+		{ at: 10.4, caption: "It reads your files where they are", until: 20 },
 	] },
 	{ beats: 6, card: "white", lines: ["Mac", "Windows", "Linux"], row: true, pop: 1.5 },
 	{ beats: 10, devices: true, caption: "And on iPhone and iPad" },
 	{ beats: 4, card: "dark", lines: ["Your files"] },
-	{ beats: 6, card: "green", lines: ["never leave your machine."] },
+	{ beats: 5, card: "green", lines: ["never leave your machine."] },
 	{ beats: 4, card: "green", lines: ["Any file."] },
 	{ beats: 4, card: "dark", lines: ["Any device."] },
 	{ beats: 4, card: "grey", lines: ["Nothing uploaded."] },
@@ -295,16 +296,22 @@ function drawCard(scene, index, local) {
 	}
 	const loop = card.querySelector(".card-loop path")
 	if (loop !== null) {
-		loop.style.strokeDashoffset = String(1 - easeInOut(clamp((local - 0.3) / 1.1)))
+		loop.style.strokeDashoffset = String(scene.url ? 1 - easeInOut(clamp(local / 0.7)) : 1 - easeInOut(clamp((local - 0.3) / 1.1)))
 		const title = card.querySelector(".card-title")
-		const shown = easeOut(clamp(local / 0.5))
+		const shown = easeOut(clamp(local / (scene.url ? 0.2 : 0.5)))
 		title.style.opacity = String(shown)
 		title.style.transform = `scale(${0.94 + 0.06 * shown + local * 0.006})`
+		// the end card shows its address at once, so it is on screen long enough to read
+		const quick = scene.url === true
 		const tagline = card.querySelector(".card-tagline")
-		tagline.style.opacity = String(easeOut(clamp((local - 0.9) / 0.5)))
+		tagline.style.opacity = String(easeOut(clamp((local - (quick ? 0.1 : 0.9)) / (quick ? 0.25 : 0.5))))
 		const url = card.querySelector(".card-url")
 		if (url !== null) {
-			url.style.opacity = String(easeOut(clamp((local - 1.3) / 0.5)))
+			url.style.opacity = String(easeOut(clamp((local - 0.2) / 0.25)))
+			// a small bump as the music's ending lands, one beat in
+			const since = local - BEAT
+			const bump = since >= 0 && since < 0.35 ? Math.sin(since / 0.35 * Math.PI) * 0.06 : 0
+			url.style.transform = `scale(${1 + bump})`
 		}
 	}
 }
@@ -617,7 +624,7 @@ window.promoDuration = DURATION
 window.promoScenes = starts
 window.promoMusicEnd = MUSIC_END
 // the poster: the end card once its name and address are in
-window.promoPoster = MUSIC_END + 2.2
+window.promoPoster = MUSIC_END + 1.5
 window.promoWarnings = warnings
 window.renderFrame = renderFrame
 // every picture decoded and the fonts loaded before the first frame is asked for, or a cut lands on
