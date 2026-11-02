@@ -1,6 +1,7 @@
 // Records promo/promo.html into a video, frame by frame.
 //
-//   node scripts/promo.mjs                    # frames + mp4 + poster
+//   node scripts/promo.mjs                    # frames + mp4 (the poster is not the film's: docs/public/video/poster.png,
+//                                             # the usage disc cut from docs/public/screenshot/usage-visualization.png)
 //   node scripts/promo.mjs --preview          # one still per cut, into promo/preview
 //   node scripts/promo.mjs --music track.mp3  # with that track under it
 //   node scripts/promo.mjs --encode           # the last recording's frames encoded again
@@ -265,7 +266,6 @@ async function record() {
 	await evaluate(socket, sessionId, "window.promoReady")
 	const duration = await evaluate(socket, sessionId, "window.promoDuration")
 	const musicEnd = await evaluate(socket, sessionId, "window.promoMusicEnd")
-	const posterAt = await evaluate(socket, sessionId, "window.promoPoster")
 	const warnings = await evaluate(socket, sessionId, "window.promoWarnings")
 	for (const warning of warnings) {
 		console.log("reads badly:", warning)
@@ -306,13 +306,13 @@ async function record() {
 	chrome.kill()
 
 	// what the encode needs from the page, kept with the frames so --encode can run again without it
-	const film = { frames, musicEnd, posterAt }
+	const film = { frames, musicEnd }
 	fs.writeFileSync(path.join(frameDir, "film.json"), JSON.stringify(film))
 	encode(film)
 }
 
-// the frames into the mp4 with its music, and the poster
-function encode({ frames, musicEnd, posterAt }) {
+// the frames into the mp4 with its music
+function encode({ frames, musicEnd }) {
 	const silent = path.join(frameDir, "silent.mp4")
 	// crf 22 is near what the eye can tell from the frames and keeps the 135 s film under 20 MB;
 	// -color_range tv with yuv420p so players that expect broadcast range read it right, and bt709
@@ -336,8 +336,6 @@ function encode({ frames, musicEnd, posterAt }) {
 
 	// One encode, with its music. The page plays it behind controls rather than autoplaying, so
 	// there is no silent copy to keep: a reader who wants it quiet uses the mute button.
-	// poster.png is what HeroVideo.vue shows before play
-	fs.copyFileSync(path.join(frameDir, `${String(Math.min(frames - 1, Math.round(posterAt * FPS))).padStart(5, "0")}.png`), path.join(outDir, "poster.png"))
 
 	console.log("wrote", outDir)
 }
