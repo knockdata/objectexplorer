@@ -105,6 +105,12 @@ own machine reads it.
 **A trial sign-up.** It keeps the email you gave and the address it came from, encrypted the same
 way, and your id, if you have one.
 
+**A sign-up in the iPhone and iPad app.** With Apple or Google, the site keeps a fingerprint of your
+email (its SHA-256), never the email itself. With your email address, it also keeps the address,
+encrypted with our public key so that only our own machine reads it: we mail you the link that
+finishes the sign-up by hand, within a day. **Delete Account** in the app removes the fingerprint; to
+have the mailed address removed from our records too, write to us.
+
 <a id="partner-links"></a>**Your id.** A link a partner shares carries their code as your id
 (`?id=K7QM`). The site keeps it in one cookie, `id`, so a download or a sign-up later credits that
 partner, and the links of the page carry it on, so a link you pass on credits them too. It is the

@@ -4,7 +4,7 @@ import { withBase } from "vitepress"
 
 // Signing up for Pro from this page, with an address and a password.
 //
-// It lands where the app's own sign-up lands — POST /plan/signup on this host — in the same shape,
+// It lands where the app's own sign-up lands — POST /api/licence/signup on this host — in the same shape,
 // so the host cannot tell which one sent it:
 //   emailHash   sha256 of the trimmed, lower-cased address
 //   sealed      { email, name, verified } encrypted to the licence key, RSA-OAEP with SHA-256
@@ -55,7 +55,7 @@ async function signup() {
 			sealed: await seal({ email: address, name: "", verified: false }),
 			secretHash: await sha256Hex(await secretOf(password.value, address.toLowerCase())),
 		}
-		const response = await fetch("/plan/signup", {
+		const response = await fetch("/api/licence/signup", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(body),

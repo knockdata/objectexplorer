@@ -4,6 +4,9 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.26  —  2026-11-02
+- sharing, Chat with Rockie and bug reports reach objectexplorer.com at its new addresses: an older version stops sending them, so update to this one
+
 ## v0.9.25  —  2026-11-02
 - Check for Updates works where GitHub cannot be reached, through objectexplorer.com
 - simplify a 3D model with one button, keeping its edges and creases; brushes keep detail where you want it and fill holes
