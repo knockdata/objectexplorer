@@ -4,6 +4,16 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.27  —  2026-11-03
+- the iPhone app starts again, and a PDF's text in system fonts draws on the phone
+- the app fits a phone: narrow columns, a drawer for contents, bars that hide with a tap
+- pinch to zoom PDFs, diagrams, ebooks and 3D models, double tap to fit
+- Present works on the phone: swipe up or down to move between slides
+- videos play smoothly at the sound's pace, and much faster on a Mac or iPhone
+- PADS Logic schematics open, and every electronics drawing pans and zooms smoothly
+- a music sheet in the browser shows its lyrics, which you can select
+- the web version shows its first page sooner
+
 ## v0.9.26  —  2026-11-02
 - sharing, Chat with Rockie and bug reports reach objectexplorer.com at its new addresses: an older version stops sending them, so update to this one
 
