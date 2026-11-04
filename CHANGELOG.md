@@ -4,6 +4,18 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.28  —  2026-11-04
+- SketchUp models from 2013 to 2020 open, drawn with their materials
+- AutoCAD drawings open on the view they were saved with, and Chinese texts in older DWG files read right
+- large models, drawings and schematics show at once and fill in as they load, using far less memory
+- a schematic's sheets and a drawing's layouts are tabs, each read when you open it
+- a file too large to open shows what it is, with Open Anyway
+- a trackpad's two-finger double tap zooms, and two fingers zoom, move and turn a drawing at once
+- Open in Browser opens the same file in the browser version
+- select text by pressing beside it; Claude's answers have a copy button
+- a Markdown link or picture whose path holds Chinese opens
+- the update check tells objectexplorer.com your version once a day; Settings → Check for Updates turns it off
+
 ## v0.9.27  —  2026-11-03
 - the iPhone app starts again, and a PDF's text in system fonts draws on the phone
 - the app fits a phone: narrow columns, a drawer for contents, bars that hide with a tap
