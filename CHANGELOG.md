@@ -4,6 +4,12 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.29  —  2026-11-05
+- the app speaks Simplified Chinese, on the web, the desktop and the iPhone
+- SketchUp models from 2021 on open, drawn like older ones
+- a SketchUp model's Fun mode shows the facts it hides, such as its scale figure that always faces you
+- Settings → Cache picks where the cache lives, typed, pasted or chosen, and Clear Cache removes only the cache's own copies
+
 ## v0.9.28  —  2026-11-04
 - SketchUp models from 2013 to 2020 open, drawn with their materials
 - AutoCAD drawings open on the view they were saved with, and Chinese texts in older DWG files read right
