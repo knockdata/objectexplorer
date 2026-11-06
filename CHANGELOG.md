@@ -4,6 +4,15 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.30  —  2026-11-06
+- Search finds inside Markdown pages, decks, documents, tables, hex views, boards, drawings and 3D models, stepping through each match
+- Find in File… searches one file from its menu, and a search finds a word inside a longer word
+- Ask can use Kiro
+- Update installs the new version and restarts the app in place, also for Homebrew
+- in the web demo, what needs the app offers its download for your computer
+- best moment groups only photos that look alike and are the same size; mark a group as not one moment, or a photo as not the best
+- a USD model whose parts sit in files beside it opens in the browser version
+
 ## v0.9.29  —  2026-11-05
 - the app speaks Simplified Chinese, on the web, the desktop and the iPhone
 - SketchUp models from 2021 on open, drawn like older ones
