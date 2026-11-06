@@ -2,12 +2,19 @@
 import { withBase } from "vitepress"
 import { copyright, footerLinks, headerLinks, linkOf, socialLinks } from "../data/siteLinks.js"
 import ShareLink from "./ShareLink.vue"
+import { chooseLanguage, LANGUAGES, useLanguage } from "../language/language.js"
 
 defineProps({
 	appLink: { type: String, default: "https://objectexplorer.com/app/" },
 })
 
 const emit = defineEmits(["close"])
+const { current, translate } = useLanguage()
+
+// the switch to the other language's landing, as the header's row has it on a wider screen
+function otherLanguage() {
+	return LANGUAGES.find(language => language.name !== current().name)
+}
 
 // the header's pages, then the footer's that the header does not already carry
 const menuLinks = [...headerLinks, ...footerLinks.filter(footerLink => headerLinks.every(headerLink => headerLink.link !== footerLink.link))]
@@ -17,28 +24,29 @@ const menuLinks = [...headerLinks, ...footerLinks.filter(footerLink => headerLin
      LandingNav. -->
 <template>
 	<div id="site-menu" class="site-menu">
-		<nav class="site-menu-links" aria-label="Menu">
-			<a v-for="menuLink in menuLinks" :key="menuLink.name" :href="linkOf(menuLink.link)" @click="emit('close')">{{ menuLink.name }}</a>
+		<nav class="site-menu-links" :aria-label="translate('Menu')">
+			<a v-for="menuLink in menuLinks" :key="menuLink.name" :href="linkOf(menuLink.link)" @click="emit('close')">{{ translate(menuLink.name) }}</a>
+			<a :href="withBase(otherLanguage().landing)" :lang="otherLanguage().code" target="_self" @click="chooseLanguage(otherLanguage().name)">{{ otherLanguage().title }}</a>
 		</nav>
 		<div class="site-menu-action">
-			<a class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
-			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
+			<a class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">{{ translate("Open App") }}</a>
+			<a class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">{{ translate("Download") }}</a>
 			<ShareLink
 				class="landing-nav-action mobile-only"
 				url="https://objectexplorer.com/"
 				title="ObjectExplorer"
-				text="The VS Code for cloud storage. Open it on the computer you work on."
-				label="App link"
+				:text="translate('The VS Code for cloud storage. Open it on the computer you work on.')"
+				:label="translate('App link')"
 			/>
 		</div>
-		<nav class="site-menu-social" aria-label="Social media">
+		<nav class="site-menu-social" :aria-label="translate('Social media')">
 			<a v-for="socialLink in socialLinks" :key="socialLink.name" :href="socialLink.link" :aria-label="socialLink.name" :title="socialLink.name" target="_blank" rel="noopener noreferrer">
 				<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
 					<path :d="socialLink.path" />
 				</svg>
 			</a>
 		</nav>
-		<p class="site-menu-copyright">{{ copyright }}</p>
+		<p class="site-menu-copyright">{{ translate(copyright) }}</p>
 	</div>
 </template>
 

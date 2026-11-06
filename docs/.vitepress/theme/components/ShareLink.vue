@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue"
 import { withVisitor } from "../composables/visitor.js"
+import { useLanguage } from "../language/language.js"
 
 const props = defineProps({
 	url: { type: String, required: true },
@@ -10,6 +11,7 @@ const props = defineProps({
 })
 
 const copied = ref(false)
+const { translate } = useLanguage()
 
 // The device's own share sheet where there is one; a copied link where there is not — desktop
 // Firefox has no navigator.share at all. Decided by what the browser can do, never by its width.
@@ -48,7 +50,7 @@ async function share() {
 			<path d="m16 6-4-4-4 4" />
 			<path d="M12 2v13" />
 		</svg>
-		<span>{{ copied ? "Link copied" : label }}</span>
+		<span>{{ copied ? translate("Link copied") : label }}</span>
 	</button>
 </template>
 

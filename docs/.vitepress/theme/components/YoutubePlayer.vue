@@ -1,6 +1,7 @@
 <script setup>
 import { withBase } from "vitepress"
 import { onBeforeUnmount, onMounted, ref } from "vue"
+import { useLanguage } from "../language/language.js"
 
 // A film on YouTube. Until it is clicked it is our own poster image, so the page loads nothing from
 // Google and needs no cookie notice. The click is the viewer asking for the film: only then is the
@@ -22,6 +23,7 @@ const props = defineProps({
 const PLAYER_ORIGIN = "https://www.youtube-nocookie.com"
 const PLAYING = 1
 
+const { translate } = useLanguage()
 const playing = ref(false)
 const playing_own = ref(false)
 const frame = ref(null)
@@ -90,7 +92,7 @@ onBeforeUnmount(function () {
 		allowfullscreen
 		@load="on_player_load"
 	></iframe>
-	<button v-else class="youtube-player-poster" type="button" @click="play" aria-label="Play the film">
+	<button v-else class="youtube-player-poster" type="button" @click="play" :aria-label="translate('Play the film')">
 		<img class="youtube-player" :src="withBase(poster)" alt="" />
 		<span class="youtube-player-play">
 			<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>

@@ -2,6 +2,7 @@
 import { withBase } from "vitepress"
 import { ref } from "vue"
 import YoutubePlayer from "./YoutubePlayer.vue"
+import { useLanguage } from "../language/language.js"
 
 defineProps({
 	story: { type: Object, required: true },
@@ -9,6 +10,7 @@ defineProps({
 
 // Play swaps the poster for the film, a YouTube short when the story has `youtube`, else the screen
 // recording; both are 9:16 like the card, and play in place.
+const { translate } = useLanguage()
 const playing = ref(false)
 
 function playRecording() {
@@ -86,18 +88,18 @@ function pauseVideo(event) {
 						<path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z" />
 						<path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z" />
 					</svg>
-					<span>Read</span>
+					<span>{{ translate("Read") }}</span>
 				</a>
 				<button v-if="story.youtube || story.recording" class="story-card-badge" type="button" @click="playRecording">
 					<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
 						<path d="M8 5v14l11-7z" />
 					</svg>
-					<span>Play</span>
+					<span>{{ translate("Play") }}</span>
 				</button>
 			</span>
 		</span>
 		<a class="story-card-text" :href="withBase(story.url)">
-			<span class="story-card-question">{{ story.title }} ?</span>
+			<span class="story-card-question">{{ story.title }}</span>
 			<span class="story-card-subtitle">{{ story.subtitle }}</span>
 		</a>
 	</div>

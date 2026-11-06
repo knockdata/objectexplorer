@@ -1,6 +1,7 @@
 <script setup>
 import { withBase } from "vitepress"
 import { onMounted, ref } from "vue"
+import { useLanguage } from "../language/language.js"
 
 // A link like objectexplorer.com?open=*usage/ pins one use case: the app is a section of the
 // page, opened on what the query names, instead of the stage behind the glass.
@@ -12,6 +13,7 @@ const appUrl = "https://objectexplorer.com/app" + props.query
 // The app only lets our own sites frame it (rock2/server/common/Headers.js).
 const homeSites = ["https://objectexplorer.com", "https://knockdata.github.io"]
 const canFrame = ref(false)
+const { translate } = useLanguage()
 
 onMounted(function () {
 	canFrame.value = homeSites.includes(location.origin) || location.hostname === "localhost"
@@ -21,7 +23,7 @@ onMounted(function () {
 <template>
 	<section class="app-section landing-wrap">
 		<div class="app-section-frame">
-			<a v-if="canFrame" class="app-section-expand" :href="appUrl" title="Open full app" aria-label="Open full app">
+			<a v-if="canFrame" class="app-section-expand" :href="appUrl" :title="translate('Open full app')" :aria-label="translate('Open full app')">
 				<svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
 					<path d="M1.5 5.5v-4h4M12.5 5.5v-4h-4M1.5 8.5v4h4M12.5 8.5v4h-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
 				</svg>
@@ -38,7 +40,7 @@ onMounted(function () {
 			</a>
 		</div>
 		<p class="app-section-caption">
-			It runs right here. <a :href="appUrl">Open full app ↗</a>
+			{{ translate("It runs right here.") }} <a :href="appUrl">{{ translate("Open full app") }} ↗</a>
 		</p>
 	</section>
 </template>

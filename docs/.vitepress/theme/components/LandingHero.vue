@@ -1,54 +1,57 @@
 <script setup>
 import HeroVideo from "./HeroVideo.vue"
 import ShareLink from "./ShareLink.vue"
+import { useLanguage } from "../language/language.js"
 
 defineProps({
 	pinned: { type: Boolean, default: false },
 	appLink: { type: String, default: "https://objectexplorer.com/app/" },
 })
+
+const { translate } = useLanguage()
 </script>
 
 <template>
 	<section class="landing-hero landing-wrap">
 		<div class="landing-hero-copy">
 			<h1 class="rock">
-				<span style="font-weight: bold">This Shouldn't Be That Hard</span>
-				<span class="landing-hero-sub">to work with cloud storage.</span>
+				<span style="font-weight: bold">{{ translate("Can't open the file?") }}</span>
+				<span class="landing-hero-sub">{{ translate("Try ObjectExplorer") }}</span>
 			</h1>
 			<!-- the one drawn mark on the page: a squeegee stroke, echoing the wipe -->
 			<svg class="landing-hero-stroke" viewBox="0 0 340 16" fill="none" aria-hidden="true">
 				<path d="M2 11.5c54-6 96 2 148-2.5C196 5 246 12 338 5.5" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
 			</svg>
 			<p class="landing-hero-lede">
-				One app to explore, query and plot what is in S3, GCS, Azure Blob, Drive, FTP and your own disk, every file opened as itself.
+				{{ translate("Fed up with the cumbersome cloud console and its many tabs? Just use ObjectExplorer: one click opens any file at any location") }}
 			</p>
 			<p class="landing-hero-lede">
-				An agent is just another user: your rules, every call audited.
+				{{ translate("Worried an agent reads your secrets? Download ObjectExplorer: we remove PII before an agent reads it") }}
 			</p>
 			<div class="landing-hero-actions" style="display: flex;">
-				<a v-glass="'brand'" class="landing-hero-primary desktop-only" :href="appLink" target="_self">Open App</a>
+				<a v-glass="'brand'" class="landing-hero-primary desktop-only" :href="appLink" target="_self">{{ translate("Open App") }}</a>
 				<p class="landing-hero-note desktop-only">
-					<span style="display: block;">It opens right here.</span>
-					<span style="display: block;">Nothing leaves your browser.</span>
+					<span style="display: block;">{{ translate("It opens right here.") }}</span>
+					<span style="display: block;">{{ translate("Nothing leaves your browser.") }}</span>
 				</p>
 				<ShareLink
 					v-glass="'clear'"
 					class="landing-hero-primary mobile-only"
 					url="https://objectexplorer.com/download"
-					title="Download ObjectExplorer"
-					text="ObjectExplorer is a desktop app. Open this link on your computer to install it."
-					label="Share the download link"
+					:title="translate('Download ObjectExplorer')"
+					:text="translate('ObjectExplorer is a desktop app. Open this link on your computer to install it.')"
+					:label="translate('Share the download link')"
 				/>
 			</div>
 			
 			<p class="landing-hero-note mobile-only">
-				A desktop app: a tree, a grid and a notebook side by side.
-				<b>Send the link to the computer you work on.</b>
+				{{ translate("A desktop app: a tree, a grid and a notebook side by side.") }}
+				<b>{{ translate("Send the link to the computer you work on.") }}</b>
 			</p>
 		</div>
 		<div v-if="pinned === false" class="landing-hero-demo">
 			<HeroVideo />
-			<p class="landing-hero-caption">The two-minute tour. Click it to play.</p>
+			<p class="landing-hero-caption">{{ translate("The two-minute tour. Click it to play.") }}</p>
 		</div>
 	</section>
 </template>
@@ -75,7 +78,7 @@ defineProps({
 .landing-hero-sub {
 	color: var(--chalk-2);
 	display: block;
-	font-size: clamp(1.2rem, 2.1vw, 1.7rem);
+	font-size: 3rem;
 	font-weight: 400;
 	letter-spacing: -0.016em;
 	line-height: 1.16;

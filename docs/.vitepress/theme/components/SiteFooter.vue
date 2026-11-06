@@ -1,15 +1,18 @@
 <script setup>
 import { copyright, footerLinks, linkOf, socialLinks } from "../data/siteLinks.js"
+import { useLanguage } from "../language/language.js"
+
+const { translate } = useLanguage()
 </script>
 
 <!-- the links and the social marks live in data/siteLinks.js, which the phone menu shows too -->
 <template>
 	<footer class="site-footer landing-wrap">
-		<nav class="site-footer-links" aria-label="Footer">
-			<a v-for="footerLink in footerLinks" :key="footerLink.name" :href="linkOf(footerLink.link)">{{ footerLink.name }}</a>
-			<span>{{ copyright }}</span>
+		<nav class="site-footer-links" :aria-label="translate('Footer')">
+			<a v-for="footerLink in footerLinks" :key="footerLink.name" :href="linkOf(footerLink.link)">{{ translate(footerLink.name) }}</a>
+			<span>{{ translate(copyright) }}</span>
 		</nav>
-		<nav class="site-footer-social" aria-label="Social media">
+		<nav class="site-footer-social" :aria-label="translate('Social media')">
 			<a v-for="socialLink in socialLinks" :key="socialLink.name" :href="socialLink.link" :aria-label="socialLink.name" :title="socialLink.name" target="_blank" rel="noopener noreferrer">
 				<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
 					<path :d="socialLink.path" />

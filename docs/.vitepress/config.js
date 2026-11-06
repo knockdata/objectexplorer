@@ -74,6 +74,12 @@ export default defineConfig({
 	// is dark, every screenshot here was taken in it, and the site is one surface.
 	appearance: "force-dark",
 	cleanUrls: true,
+	// The landing in each language (theme/language/language.js): / English, /chinese/ Simplified Chinese.
+	// The documentation is English only, so the Chinese locale is the landing alone.
+	locales: {
+		root: { label: "English", lang: "en" },
+		chinese: { label: "简体中文", lang: "zh-Hans", link: "/chinese/" },
+	},
 	lastUpdated: true,
 	head: [
 		// the favicon, by the colour scheme the tab bar is drawn in: on a dark one the mark alone, on a
@@ -106,7 +112,15 @@ export default defineConfig({
 		const title = [pageTitle(frontmatter), pageData.title, "ObjectExplorer"].find(Boolean)
 		const description = frontmatter.description ?? defaultDescription
 		const image = `${site}${frontmatter.poster ?? "/screenshot/hero.png"}`
+		// the landing names its other languages, so a search engine shows a visitor the one they read
+		const isLanding = relativePath === "index.md" || relativePath === "chinese/index.md"
+		const alternates = [
+			["link", { rel: "alternate", hreflang: "en", href: `${site}/` }],
+			["link", { rel: "alternate", hreflang: "zh-Hans", href: `${site}/chinese/` }],
+			["link", { rel: "alternate", hreflang: "x-default", href: `${site}/` }],
+		]
 		return [
+			...(isLanding ? alternates : []),
 			["link", { rel: "canonical", href: pageUrl }],
 			["meta", { property: "og:type", content: isStory ? "article" : "website" }],
 			["meta", { property: "og:title", content: title }],

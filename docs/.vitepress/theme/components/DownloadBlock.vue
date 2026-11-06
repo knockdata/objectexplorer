@@ -5,12 +5,14 @@ import { readVisitor, visitorId } from "../composables/visitor.js"
 import { brewCommands, downloadLink, downloadName, downloadPlatforms, downloadSources, releasesPage } from "../data/downloadPlatforms.js"
 import { socialLinks } from "../data/siteLinks.js"
 import ShareLink from "./ShareLink.vue"
+import { useLanguage } from "../language/language.js"
 
 // the commands under the download cards: npx, and Homebrew's formula and cask
 const runs = [
 	{ title: "Run in Command Line", text: "Use in your browser", commands: ["npx @knockdata/objectexplorer"] },
 	{ title: "Install with Homebrew", text: "macOS and Linux: the command line, then the desktop app", commands: brewCommands },
 ]
+const { translate } = useLanguage()
 const release = useRelease()
 const channel = ref("")
 // the command last put on the clipboard, while its tick shows
@@ -44,16 +46,14 @@ function choose(id) {
 	chosen.value = id
 }
 
-// the full filename, and its size once the release lookup has answered
+// the full filename, as the link shows it
+function downloadFileName(target) {
+	return release.value.names[target] ?? downloadName(target)
+}
+
+// the file's size once the release lookup has answered, else its name
 function downloadTitle(target) {
-	const name = release.value.names[target] ?? downloadName(target)
-	const size = release.value.sizes[target]
-	if (size) {
-		return `${name} · ${size}`
-	}
-	else {
-		return name
-	}
+	return release.value.sizes[target] || downloadFileName(target)
 }
 
 async function copyCommand(text) {
@@ -75,15 +75,14 @@ async function copyCommand(text) {
      start rather than jumping there once the page is hydrated. -->
 <template>
 	<section id="download" class="download landing-wrap">
-		<h2>Open it once and see your own storage in it.</h2>
+		<h2>{{ translate("Open it once and see your own storage in it.") }}</h2>
 		<div class="download-lede-row">
 			<p class="download-lede">
-				The desktop app runs on your machine. Credentials stay in <code>~/.objectexplorer</code> and
-				your platform's own keychain, and there is no backend that sees your objects, because there is none.
+				{{ translate("Runs completely on your own machine, no data leaves it") }}
 			</p>
 			<div v-if="release.direct" class="download-source desktop-only">
-				<span class="download-source-label">Download from</span>
-				<div class="download-source-choices" role="radiogroup" aria-label="Download from">
+				<span class="download-source-label">{{ translate("Download from") }}</span>
+				<div class="download-source-choices" role="radiogroup" :aria-label="translate('Download from')">
 					<button
 						v-for="choice in downloadSources"
 						:key="choice.id"
@@ -92,7 +91,7 @@ async function copyCommand(text) {
 						class="download-source-choice"
 						:class="{ 'download-source-chosen': source() === choice.id }"
 						:aria-checked="source() === choice.id ? 'true' : 'false'"
-						:title="choice.title"
+						:title="translate(choice.title)"
 						@click="choose(choice.id)"
 					>
 						<svg v-if="choice.id === 'github'" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
@@ -105,7 +104,7 @@ async function copyCommand(text) {
 							<line x1="6" x2="6.01" y1="6" y2="6" />
 							<line x1="6" x2="6.01" y1="18" y2="18" />
 						</svg>
-						<span>{{ choice.name }}</span>
+						<span>{{ translate(choice.name) }}</span>
 					</button>
 				</div>
 			</div>
@@ -113,10 +112,10 @@ async function copyCommand(text) {
 
 		<div class="download-platforms desktop-only">
 			<div v-for="platform in downloadPlatforms" :key="platform.id" class="download-platform" :class="`download-platform-${platform.id}`">
-				<h3>{{ platform.name }}<span class="download-here">Your system</span></h3>
+				<h3>{{ platform.name }}<span class="download-here">{{ translate("Your system") }}</span></h3>
 				<ul>
 					<li v-for="download in platform.downloads" :key="download.label" class="download-architecture">
-						<span class="download-architecture-name">{{ download.label }}</span>
+						<span class="download-architecture-name">{{ translate(download.label) }}</span>
 						<!-- target: VitePress's router takes a link of this site for one of its pages when it does
 						     not know the extension (.dmg, .msix, .appinstaller) and shows its 404; a link with a
 						     target it leaves to the browser -->
@@ -127,35 +126,35 @@ async function copyCommand(text) {
 							target="_self"
 							:href="downloadLink(file.target, channel, visitorId(), source())"
 							:title="downloadTitle(file.target)"
-						>{{ file.extension }}</a>
+						>{{ downloadFileName(file.target) }}</a>
 					</li>
 				</ul>
-				<p class="download-note">{{ platform.note }}</p>
+				<p class="download-note">{{ translate(platform.note) }}</p>
 			</div>
 		</div>
 
 		<div class="download-share mobile-only">
-			<h3>Install it on the computer you work on</h3>
-			<p>ObjectExplorer is a desktop app for macOS, Windows and Linux. Send yourself the link and open it there.</p>
+			<h3>{{ translate("Install it on the computer you work on") }}</h3>
+			<p>{{ translate("ObjectExplorer is a desktop app for macOS, Windows and Linux. Send yourself the link and open it there.") }}</p>
 			<ShareLink
 				class="download-share-button"
 				url="https://objectexplorer.com/download"
-				title="Download ObjectExplorer"
-				text="ObjectExplorer is a desktop app. Open this link on your computer to install it."
-				label="Share the download link"
+				:title="translate('Download ObjectExplorer')"
+				:text="translate('ObjectExplorer is a desktop app. Open this link on your computer to install it.')"
+				:label="translate('Share the download link')"
 			/>
 		</div>
 
 		<div v-for="run in runs" :key="run.title" class="download-run">
 			<div class="download-run-text">
-				<h3>{{ run.title }}</h3>
-				<p>{{ run.text }}</p>
+				<h3>{{ translate(run.title) }}</h3>
+				<p>{{ translate(run.text) }}</p>
 			</div>
 			<div class="download-commands">
 				<div v-for="line in run.commands" :key="line" class="download-command">
 					<!-- a line may break after each slash (wbr, which a copied selection leaves out) -->
 					<code><template v-for="(part, index) in line.split('/')" :key="index">{{ index > 0 ? "/" : "" }}<wbr v-if="index > 0">{{ part }}</template></code>
-					<button type="button" :aria-label="copied === line ? 'Copied' : 'Copy the command'" :title="copied === line ? 'Copied' : 'Copy'" @click="copyCommand(line)">
+					<button type="button" :aria-label="translate(copied === line ? 'Copied' : 'Copy the command')" :title="translate(copied === line ? 'Copied' : 'Copy')" @click="copyCommand(line)">
 						<svg v-if="copied === line" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<polyline points="20 6 9 17 4 12" />
 						</svg>
@@ -169,7 +168,7 @@ async function copyCommand(text) {
 		</div>
 
 		<p class="download-all">
-			<a :href="releasesPage">{{ release.version ? `${release.version} · ` : "" }}All packages and release notes on GitHub</a>
+			<a :href="releasesPage">{{ release.version ? `${release.version} · ` : "" }}{{ translate("All packages and release notes on GitHub") }}</a>
 		</p>
 	</section>
 </template>

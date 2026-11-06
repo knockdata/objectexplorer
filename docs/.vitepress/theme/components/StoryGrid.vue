@@ -4,6 +4,7 @@ import { computed } from "vue"
 import { data as stories } from "../data/story.data.js"
 import { featuredCount } from "../data/stories.js"
 import StoryCard from "./StoryCard.vue"
+import { useLanguage } from "../language/language.js"
 
 // One component, two layouts: the landing is a rail of 9:16 cards at every width, the list a grid
 // of the same cards, 2, 3 or 5 across. `list` is the /story page, which shows every story in stories.js order; the landing shows
@@ -11,6 +12,8 @@ import StoryCard from "./StoryCard.vue"
 const props = defineProps({
 	list: { type: Boolean, default: false },
 })
+
+const { translate } = useLanguage()
 
 const visibleStories = computed(function () {
 	if (props.list) {
@@ -26,19 +29,18 @@ const visibleStories = computed(function () {
 	<section class="story" :class="list ? 'story-list' : 'story-landing'">
 		<div class="landing-wrap">
 			<div v-if="list" class="story-list-head">
-				<h1 class="rock">This Shouldn't Be That Hard</h1>
+				<h1 class="rock">Usage Scenarios</h1>
 				<p>
 					Each one is an afternoon it happens in: how it goes today, and how it goes in ObjectExplorer.
 					Articles for now; the lightboard video joins each one as it is recorded.
 				</p>
 			</div>
 			<div v-else class="story-head">
-				<h2 style="text-transform: uppercase;">This Shouldn't Be That Hard</h2>
-				<p class="rock">ONE at a time</p>
+				<h2 style="text-transform: uppercase;">{{ translate("Usage Scenarios") }}</h2>
 			</div>
 			<div class="story-rail">
 				<StoryCard v-for="story in visibleStories" :key="story.url" :story="story" />
-				<a v-if="list === false" class="story-card story-card-more" :href="withBase('/story/')">More …</a>
+				<a v-if="list === false" class="story-card story-card-more" :href="withBase('/story/')">{{ translate("More …") }}</a>
 			</div>
 		</div>
 	</section>

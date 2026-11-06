@@ -1,10 +1,13 @@
 <script setup>
 import YoutubePlayer from "./YoutubePlayer.vue"
+import { useLanguage } from "../language/language.js"
+
+const { translate } = useLanguage()
 </script>
 
 <template>
 	<div class="hero-video-frame">
-		<YoutubePlayer video="hDgvhjoIy4Y" poster="/video/poster.png" title="ObjectExplorer, the two-minute tour" own="/video/objectexplorer.mp4" />
+		<YoutubePlayer video="hDgvhjoIy4Y" poster="/video/poster.png" :title="translate('ObjectExplorer, the two-minute tour')" own="/video/objectexplorer.mp4" />
 	</div>
 </template>
 

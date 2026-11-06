@@ -3,6 +3,7 @@ import { withBase } from "vitepress"
 import { VPNavBarSearch } from "vitepress/theme"
 import { onMounted, onUnmounted, ref, watch } from "vue"
 import { headerLinks, linkOf } from "../data/siteLinks.js"
+import { chooseLanguage, LANGUAGES, useLanguage } from "../language/language.js"
 import { attachGlass, detachGlass } from "../glass/glass.js"
 import ShareLink from "./ShareLink.vue"
 import SiteMenu from "./SiteMenu.vue"
@@ -17,6 +18,12 @@ defineProps({
 // On a phone the header's links, its app action and the footer fold into one menu (SiteMenu). While it is open the
 // page under it stays put (the class on <html>); Escape or following a link closes it.
 const menuOpen = ref(false)
+const { current, translate, landing } = useLanguage()
+
+// the switch to the other language's landing; choosing it is kept, as the app keeps its own
+function otherLanguage() {
+	return LANGUAGES.find(language => language.name !== current().name)
+}
 const header = ref()
 let searchButton = undefined
 
@@ -55,25 +62,26 @@ onUnmounted(function () {
 <template>
 	<header ref="header" class="landing-nav">
 		<div class="landing-nav-inner">
-			<a class="landing-nav-mark" :href="withBase('/')">
+			<a class="landing-nav-mark" :href="landing()">
 				<img :src="withBase('/img/64.png')" alt="" width="24" height="24">
 				ObjectExplorer
 			</a>
 			<VPNavBarSearch />
-			<nav class="landing-nav-links" aria-label="Site">
-				<a v-for="headerLink in headerLinks" :key="headerLink.name" :href="linkOf(headerLink.link)">{{ headerLink.name }}</a>
+			<nav class="landing-nav-links" :aria-label="translate('Site')">
+				<a v-for="headerLink in headerLinks" :key="headerLink.name" :href="linkOf(headerLink.link)">{{ translate(headerLink.name) }}</a>
 			</nav>
+			<a class="landing-nav-language" :href="withBase(otherLanguage().landing)" :lang="otherLanguage().code" target="_self" @click="chooseLanguage(otherLanguage().name)">{{ otherLanguage().title }}</a>
 			<!-- target: VitePress's router leaves a link with one alone, so this is a real page load -->
-			<a class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">Open App</a>
-			<a v-glass="'brand'" class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">Download</a>
+			<a class="landing-nav-action landing-nav-secondary desktop-only" :href="appLink" target="_self">{{ translate("Open App") }}</a>
+			<a v-glass="'brand'" class="landing-nav-action landing-nav-primary desktop-only" :href="withBase('/download')">{{ translate("Download") }}</a>
 			<ShareLink
 				class="landing-nav-action mobile-only"
 				url="https://objectexplorer.com/"
 				title="ObjectExplorer"
-				text="The VS Code for cloud storage. Open it on the computer you work on."
-				label="App link"
+				:text="translate('The VS Code for cloud storage. Open it on the computer you work on.')"
+				:label="translate('App link')"
 			/>
-			<button class="landing-nav-menu-button" type="button" aria-controls="site-menu" :aria-expanded="menuOpen" aria-label="Menu" @click="toggleMenu">
+			<button class="landing-nav-menu-button" type="button" aria-controls="site-menu" :aria-expanded="menuOpen" :aria-label="translate('Menu')" @click="toggleMenu">
 				<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
 					<path v-if="menuOpen" d="M6 6l12 12M18 6 6 18" />
 					<path v-else d="M4 7h16M4 12h16M4 17h16" />
@@ -152,6 +160,19 @@ onUnmounted(function () {
 	color: var(--chalk);
 }
 
+/* the other language, as one more link of the row; on a phone it is in the menu (SiteMenu) */
+.landing-nav .landing-nav-language {
+	color: var(--chalk-2);
+	font-size: 15px;
+	padding: 4px 0;
+	text-wrap: nowrap;
+	user-select: none;
+}
+
+.landing-nav .landing-nav-language:hover {
+	color: var(--chalk);
+}
+
 /* the same rounded rectangle as the landing's own primary button */
 .landing-nav .landing-nav-action {
 	background: transparent;
@@ -221,7 +242,8 @@ onUnmounted(function () {
 		width: 32px;
 	}
 
-	.landing-nav-inner > .landing-nav-action {
+	.landing-nav-inner > .landing-nav-action,
+	.landing-nav-inner > .landing-nav-language {
 		display: none;
 	}
 }
