@@ -1,6 +1,6 @@
 ---
-title: "Visualize usage"
-subtitle: "See where our money goes"
+title: "Hard to see where your money goes?"
+subtitle: "ObjectExplorer visualizes it all in one view"
 episode: 5
 runtime: null
 video: null

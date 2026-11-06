@@ -1,6 +1,6 @@
 ---
-title: "Search across a bucket"
-subtitle: "Type, search, every match."
+title: "Searching a bucket one folder at a time?"
+subtitle: "Type in ObjectExplorer, get every match"
 episode: 2
 runtime: null
 video: null

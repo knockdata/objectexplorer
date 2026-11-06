@@ -1,6 +1,6 @@
 ---
-title: "Prove what the agent read"
-subtitle: "Every call, written down first."
+title: "Can you prove what the agent read?"
+subtitle: "ObjectExplorer writes every call down first"
 episode: 15
 runtime: null
 video: null

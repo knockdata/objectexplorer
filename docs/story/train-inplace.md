@@ -1,6 +1,6 @@
 ---
-title: "Train inplace"
-subtitle: "The rows stay. The answer leaves."
+title: "Must your rows leave to train a model?"
+subtitle: "In ObjectExplorer the rows stay, the answer leaves"
 episode: 12
 runtime: null
 video: null

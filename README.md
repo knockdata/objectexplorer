@@ -13,8 +13,8 @@ and modelled in place, on your machine.
 
 | Platform                   | Download                                                |
 |:---------------------------|:--------------------------------------------------------|
-| macOS, Apple silicon       | [objectexplorer-app-darwin-arm64.dmg][mac-arm64.dmg]    |
-| macOS, Intel               | [objectexplorer-app-darwin-x64.dmg][mac-x64.dmg]        |
+| macOS, Apple silicon       | [objectexplorer-mac-arm64.dmg][mac-arm64.dmg]           |
+| macOS, Intel               | [objectexplorer-mac-x64.dmg][mac-x64.dmg]               |
 | Windows, x64 installer     | [objectexplorer-windows-x64.msix][windows-x64.msix]     |
 | Windows, ARM64 installer   | [objectexplorer-windows-arm64.msix][windows-arm64.msix] |
 | Windows, x64 portable      | [objectexplorer-windows-x64.zip][windows-x64.zip]       |
@@ -22,8 +22,8 @@ and modelled in place, on your machine.
 | Linux, x64                 | [objectexplorer-linux-x64.tar.gz][linux-x64.tar.gz]     |
 | Linux, ARM64               | [objectexplorer-linux-arm64.tar.gz][linux-arm64.tar.gz] |
 
-[mac-arm64.dmg]: https://objectexplorer.com/download/app-darwin-arm64.dmg?channel=github
-[mac-x64.dmg]: https://objectexplorer.com/download/app-darwin-x64.dmg?channel=github
+[mac-arm64.dmg]: https://objectexplorer.com/download/mac-arm64.dmg?channel=github
+[mac-x64.dmg]: https://objectexplorer.com/download/mac-x64.dmg?channel=github
 [windows-x64.msix]: https://objectexplorer.com/download/windows-x64.msix?channel=github
 [windows-arm64.msix]: https://objectexplorer.com/download/windows-arm64.msix?channel=github
 [windows-x64.zip]: https://objectexplorer.com/download/windows-x64.zip?channel=github

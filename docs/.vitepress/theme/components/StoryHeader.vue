@@ -10,7 +10,7 @@ const { frontmatter } = useData()
      here: the story places it in its Ideal (StoryPoster). -->
 <template>
 	<header class="story-header">
-		<h1 class="rock"><span>{{ frontmatter.title }}</span><span> shouldn't be that hard</span></h1>
+		<h1 class="rock"><span>{{ frontmatter.title }}</span></h1>
 		<p class="story-header-subtitle">{{ frontmatter.subtitle }}</p>
 		<div v-if="frontmatter.youtube && !frontmatter.videoInIdeal" class="story-header-short">
 			<YoutubePlayer :video="frontmatter.youtube" :poster="`/video/${frontmatter.youtube}.jpg`" :title="frontmatter.title" :own="frontmatter.recording ?? frontmatter.video ?? ''" />

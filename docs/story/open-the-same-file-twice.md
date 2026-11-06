@@ -1,6 +1,6 @@
 ---
-title: "Open the same file twice"
-subtitle: "The second look is free."
+title: "Waiting again to reopen the same file?"
+subtitle: "In ObjectExplorer the second look is free"
 episode: 16
 runtime: null
 video: null

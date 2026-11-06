@@ -1,6 +1,6 @@
 ---
-title: "Train a model"
-subtitle: "Choose data, one click to train."
+title: "Hard to train a model on your data?"
+subtitle: "Choose the data in ObjectExplorer, one click to train"
 episode: 6
 runtime: null
 video: null

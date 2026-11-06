@@ -1,6 +1,6 @@
 ---
-title: "Know if a file is really here"
-subtitle: "A file is here, or it isn't."
+title: "Is that file really there?"
+subtitle: "ObjectExplorer tells you: it is here, or it isn't"
 episode: 18
 runtime: null
 video: null

@@ -1,6 +1,6 @@
 ---
-title: "Plot a binary file"
-subtitle: "Click file, choose your chart."
+title: "Cannot plot a binary file?"
+subtitle: "Click the file in ObjectExplorer, choose your chart"
 episode: 4
 runtime: null
 video: null

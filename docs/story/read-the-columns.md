@@ -1,6 +1,6 @@
 ---
-title: "Read the columns without downloading"
-subtitle: "Read the label. Not the whole jar."
+title: "Downloading a whole file just to read its columns?"
+subtitle: "ObjectExplorer reads the label, not the whole jar"
 episode: 19
 runtime: null
 video: null

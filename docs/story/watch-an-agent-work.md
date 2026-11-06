@@ -1,6 +1,6 @@
 ---
-title: "Watch an agent work"
-subtitle: "See what it reads, while it reads."
+title: "Waiting blind while an agent works?"
+subtitle: "ObjectExplorer shows what it reads, while it reads"
 episode: 23
 runtime: null
 video: null

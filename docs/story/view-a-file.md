@@ -1,6 +1,6 @@
 ---
-title: "View a file"
-subtitle: "One click, rendered."
+title: "Can't open the file?"
+subtitle: "ObjectExplorer renders it in one click"
 episode: 1
 runtime: null
 video: null

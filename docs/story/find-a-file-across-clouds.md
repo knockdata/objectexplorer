@@ -1,6 +1,6 @@
 ---
-title: "Find a file across clouds"
-subtitle: "A folder is a folder. Learn it once."
+title: "Which cloud holds that file?"
+subtitle: "ObjectExplorer treats a folder as a folder, anywhere"
 episode: 17
 runtime: null
 video: null

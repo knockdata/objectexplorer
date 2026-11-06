@@ -1,6 +1,6 @@
 ---
-title: "Count yesterday's files without a script"
-subtitle: "Ask the question. Get the answer."
+title: "Need yesterday's file count, without a script?"
+subtitle: "Ask ObjectExplorer the question, get the answer"
 episode: 22
 runtime: null
 video: null

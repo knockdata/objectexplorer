@@ -1,6 +1,6 @@
 ---
-title: "Query data folders"
-subtitle: "One prefix, one table."
+title: "Need SQL over a whole folder of files?"
+subtitle: "ObjectExplorer turns one prefix into one table"
 episode: 10
 runtime: null
 video: null

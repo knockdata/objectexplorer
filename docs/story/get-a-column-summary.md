@@ -1,6 +1,6 @@
 ---
-title: "Get a column summary"
-subtitle: "One click, full stats."
+title: "Writing a query just for a column summary?"
+subtitle: "ObjectExplorer gives full stats in one click"
 episode: 3
 runtime: null
 video: null

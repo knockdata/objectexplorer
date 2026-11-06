@@ -1,5 +1,5 @@
 // Every download a release carries, as its target: the asset's name after "objectexplorer-"
-// (app-darwin-arm64.dmg is objectexplorer-app-darwin-arm64.dmg). Every link points at
+// (mac-arm64.dmg is objectexplorer-mac-arm64.dmg). Every link points at
 // objectexplorer.com/download/<target>, which hands out that file of the newest release from its
 // source and keeps a record of the download (the privacy page says what it keeps): ?source=github
 // sends the browser on to GitHub's file, ?source=direct passes GitHub's file on through
@@ -23,20 +23,20 @@ export const downloadPlatforms = [
 	{
 		id: "mac",
 		name: "macOS",
-		note: "Signed and notarized. Open the .dmg and drag ObjectExplorer to Applications; the .tar.gz is the command line alone.",
+		note: "Open the .dmg file and drag ObjectExplorer to the Applications folder",
 		downloads: [
 			{
 				label: "Apple silicon",
 				files: [
-					{ target: "app-darwin-arm64.dmg", extension: ".dmg" },
-					{ target: "darwin-arm64.tar.gz", extension: ".tar.gz" },
+					{ target: "mac-arm64.dmg", extension: ".dmg" },
+					{ target: "mac-arm64.tar.gz", extension: ".tar.gz" },
 				],
 			},
 			{
 				label: "Intel",
 				files: [
-					{ target: "app-darwin-x64.dmg", extension: ".dmg" },
-					{ target: "darwin-x64.tar.gz", extension: ".tar.gz" },
+					{ target: "mac-x64.dmg", extension: ".dmg" },
+					{ target: "mac-x64.tar.gz", extension: ".tar.gz" },
 				],
 			},
 		],
@@ -44,7 +44,7 @@ export const downloadPlatforms = [
 	{
 		id: "windows",
 		name: "Windows",
-		note: "Signed. Open the .msix and Windows installs it, with its Start menu entry; the portable .zip runs where it is unpacked.",
+		note: "Double-click the .msix file to install",
 		downloads: [
 			{
 				label: "x64 / AMD64",
@@ -65,7 +65,7 @@ export const downloadPlatforms = [
 	{
 		id: "linux",
 		name: "Linux",
-		note: "One binary for glibc 2.28 and later (Debian 10, RHEL 8, Ubuntu 20.04 on); its README.txt says where it and the menu entry go.",
+		note: "Unzip to your own folder",
 		downloads: [
 			{ label: "x64 / AMD64", files: [{ target: "linux-x64.tar.gz", extension: ".tar.gz" }] },
 			{ label: "ARM64", files: [{ target: "linux-arm64.tar.gz", extension: ".tar.gz" }] },

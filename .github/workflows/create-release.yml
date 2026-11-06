@@ -188,7 +188,7 @@ jobs:
           if [ "$RUNNER_OS" = "Windows" ]; then
             powershell -NoProfile -Command "Expand-Archive -Path candidate/objectexplorer-$TARGET.zip -DestinationPath unpacked"
           else
-            tar -xzf "candidate/objectexplorer-$TARGET.tar.gz" -C unpacked
+            tar -xzf "candidate/objectexplorer-${TARGET/darwin-/mac-}.tar.gz" -C unpacked
           fi
           ls -la unpacked
       - name: the binary
@@ -251,7 +251,7 @@ jobs:
         run: |
           for cpu in arm64 x64; do
             mkdir -p "work/darwin-$cpu" "work/app-$cpu"
-            tar -xzf "candidate/objectexplorer-darwin-$cpu.tar.gz" -C "work/darwin-$cpu"
+            tar -xzf "candidate/objectexplorer-mac-$cpu.tar.gz" -C "work/darwin-$cpu"
             ditto -x -k "candidate/objectexplorer-app-darwin-$cpu.zip" "work/app-$cpu"
           done
       # the hardened runtime and a secure timestamp, both of which notarization asks for;
@@ -297,7 +297,7 @@ jobs:
         run: |
           mkdir signed
           for cpu in arm64 x64; do
-            tar -czf "signed/objectexplorer-darwin-$cpu.tar.gz" -C "work/darwin-$cpu" objectexplorer oe objectexplorer.install.json
+            tar -czf "signed/objectexplorer-mac-$cpu.tar.gz" -C "work/darwin-$cpu" objectexplorer oe objectexplorer.install.json
             (cd "work/app-$cpu" && ditto -c -k --keepParent ObjectExplorer.app "../../signed/objectexplorer-app-darwin-$cpu.zip")
           done
           ls -la signed
@@ -308,7 +308,7 @@ jobs:
           set -euo pipefail
           python3 -m venv "$RUNNER_TEMP/dmg" && "$RUNNER_TEMP/dmg/bin/pip" install --quiet dmgbuild
           for cpu in arm64 x64; do
-            "$RUNNER_TEMP/dmg/bin/dmgbuild" -s candidate/dmg/settings.py -D app="work/app-$cpu/ObjectExplorer.app" -D background="candidate/dmg/background.tiff" ObjectExplorer "signed/objectexplorer-app-darwin-$cpu.dmg"
+            "$RUNNER_TEMP/dmg/bin/dmgbuild" -s candidate/dmg/settings.py -D app="work/app-$cpu/ObjectExplorer.app" -D background="candidate/dmg/background.tiff" ObjectExplorer "signed/objectexplorer-mac-$cpu.dmg"
           done
       - name: Sign, notarize and staple the dmg
         if: steps.identity.outputs.signed == 'true'
@@ -318,7 +318,7 @@ jobs:
           set -euo pipefail
           echo "$PRIVATE_KEY" > "$RUNNER_TEMP/AuthKey.p8"
           for cpu in arm64 x64; do
-            dmg="signed/objectexplorer-app-darwin-$cpu.dmg"
+            dmg="signed/objectexplorer-mac-$cpu.dmg"
             codesign --force --timestamp --sign "$IDENTITY" "$dmg"
             xcrun notarytool submit "$dmg" --key "$RUNNER_TEMP/AuthKey.p8" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait --output-format json > notary-dmg.json
             cat notary-dmg.json
@@ -509,7 +509,7 @@ jobs:
           mkdir -p npm extracted
           for target in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
             mkdir -p "extracted/$target"
-            tar -xzf "assets/objectexplorer-$target.tar.gz" -C "extracted/$target" objectexplorer
+            tar -xzf "assets/objectexplorer-${target/darwin-/mac-}.tar.gz" -C "extracted/$target" objectexplorer
             cp "extracted/$target/objectexplorer" "candidate/npm/objectexplorer-$target/bin/objectexplorer"
             chmod +x "candidate/npm/objectexplorer-$target/bin/objectexplorer"
           done
@@ -527,13 +527,13 @@ jobs:
           set -euo pipefail
           sum() { sha256sum "assets/$1" | cut -d' ' -f1; }
           mkdir brew
-          sed -e "s/SHA_DARWIN_ARM64/$(sum objectexplorer-darwin-arm64.tar.gz)/" \
-            -e "s/SHA_DARWIN_X64/$(sum objectexplorer-darwin-x64.tar.gz)/" \
+          sed -e "s/SHA_DARWIN_ARM64/$(sum objectexplorer-mac-arm64.tar.gz)/" \
+            -e "s/SHA_DARWIN_X64/$(sum objectexplorer-mac-x64.tar.gz)/" \
             -e "s/SHA_LINUX_ARM64/$(sum objectexplorer-linux-arm64.tar.gz)/" \
             -e "s/SHA_LINUX_X64/$(sum objectexplorer-linux-x64.tar.gz)/" \
             candidate/brew/objectexplorer.rb > brew/objectexplorer.rb
-          sed -e "s/SHA_APP_ARM64/$(sum objectexplorer-app-darwin-arm64.dmg)/" \
-            -e "s/SHA_APP_X64/$(sum objectexplorer-app-darwin-x64.dmg)/" \
+          sed -e "s/SHA_APP_ARM64/$(sum objectexplorer-mac-arm64.dmg)/" \
+            -e "s/SHA_APP_X64/$(sum objectexplorer-mac-x64.dmg)/" \
             candidate/brew/objectexplorer-app.rb > brew/objectexplorer-app.rb
           grep -n "sha256\|version" brew/*.rb
       # the one asset of the draft release publish-<version>, so release.yml needs nothing but it:
@@ -606,7 +606,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir unpacked
-          tar -xzf "assets/objectexplorer-$TARGET.tar.gz" -C unpacked
+          tar -xzf "assets/objectexplorer-${TARGET/darwin-/mac-}.tar.gz" -C unpacked
           ditto -x -k "assets/objectexplorer-app-$TARGET.zip" app
           if [ "$MAC_SIGNED" = "true" ]; then
             codesign --verify --strict --verbose=2 unpacked/objectexplorer
@@ -617,10 +617,10 @@ jobs:
             validate app/ObjectExplorer.app
             codesign -dv --verbose=4 app/ObjectExplorer.app 2>&1 | grep -E "Authority|TeamIdentifier|Runtime" >> "$GITHUB_STEP_SUMMARY"
             # the dmg: signed, notarized, stapled, and the app inside it the same signed app
-            codesign --verify --strict --verbose=2 "assets/objectexplorer-app-$TARGET.dmg"
-            spctl --assess --type open --context context:primary-signature --verbose=4 "assets/objectexplorer-app-$TARGET.dmg"
-            validate "assets/objectexplorer-app-$TARGET.dmg"
-            mounted=$(hdiutil attach -nobrowse -readonly "assets/objectexplorer-app-$TARGET.dmg" | tail -1 | awk -F'\t' '{print $NF}')
+            codesign --verify --strict --verbose=2 "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg"
+            spctl --assess --type open --context context:primary-signature --verbose=4 "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg"
+            validate "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg"
+            mounted=$(hdiutil attach -nobrowse -readonly "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg" | tail -1 | awk -F'\t' '{print $NF}')
             codesign --verify --deep --strict "$mounted/ObjectExplorer.app"
             test -L "$mounted/Applications"
             hdiutil detach "$mounted" -quiet
@@ -633,7 +633,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           mkdir unpacked
-          tar -xzf "assets/objectexplorer-$TARGET.tar.gz" -C unpacked
+          tar -xzf "assets/objectexplorer-${TARGET/darwin-/mac-}.tar.gz" -C unpacked
           bash .github/check-binary.sh unpacked/objectexplorer "$VERSION"
       - name: Windows signatures
         if: runner.os == 'Windows'

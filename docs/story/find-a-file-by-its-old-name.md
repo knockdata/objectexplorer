@@ -1,6 +1,6 @@
 ---
-title: "Find a file by its old name"
-subtitle: "Rename a file. It's still that file."
+title: "Lost a file after renaming it?"
+subtitle: "In ObjectExplorer a renamed file is still that file"
 episode: 20
 runtime: null
 video: null

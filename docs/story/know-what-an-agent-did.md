@@ -1,6 +1,6 @@
 ---
-title: "Know what an agent did"
-subtitle: "Play the session back, call by call."
+title: "Cannot tell what an agent did?"
+subtitle: "ObjectExplorer plays the session back, call by call"
 episode: 24
 runtime: null
 video: null

@@ -1,6 +1,6 @@
 ---
-title: "Find one image in a stack"
-subtitle: "The folder is a grid of pictures."
+title: "Opening images one by one to find one?"
+subtitle: "ObjectExplorer shows the folder as a grid of pictures"
 episode: 8
 runtime: null
 video: null

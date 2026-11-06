@@ -1,6 +1,6 @@
 ---
-title: "Move files across clouds"
-subtitle: "Drag and copy."
+title: "Moving files between clouds is a chore?"
+subtitle: "Drag and copy in ObjectExplorer"
 episode: 7
 runtime: null
 video: null

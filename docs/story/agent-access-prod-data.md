@@ -1,6 +1,6 @@
 ---
-title: "Agent access prod data"
-subtitle: "An agent gets rows, never keys."
+title: "Worried an agent touches production data?"
+subtitle: "ObjectExplorer gives it rows, never keys"
 episode: 14
 runtime: null
 video: null

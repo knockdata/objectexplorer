@@ -1,6 +1,6 @@
 ---
-title: "Draw facing the audience"
-subtitle: "Draw on the glass. Face to root."
+title: "Drawing with your back to the audience?"
+subtitle: "ObjectExplorer lets you draw on the glass and face them"
 episode: 25
 runtime: "2:35"
 video: /video/lightboarding.mp4

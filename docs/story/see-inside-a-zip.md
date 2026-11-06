@@ -1,6 +1,6 @@
 ---
-title: "See inside a zip"
-subtitle: "Every zip has a packing list. Show it."
+title: "Unzipping just to see what is inside?"
+subtitle: "ObjectExplorer shows the zip's packing list"
 episode: 21
 runtime: null
 video: null

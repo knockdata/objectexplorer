@@ -1,6 +1,6 @@
 ---
-title: "Safe share without the PII"
-subtitle: "Remove sensative information"
+title: "Afraid to share a file with personal data in it?"
+subtitle: "ObjectExplorer removes the PII before you share"
 episode: 9
 runtime: null
 video: null

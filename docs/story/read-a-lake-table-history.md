@@ -1,6 +1,6 @@
 ---
-title: "Read a lake table's history"
-subtitle: "Every commit, on a timeline."
+title: "Lost in a lake table's history?"
+subtitle: "ObjectExplorer shows every commit on a timeline"
 episode: 11
 runtime: null
 video: null

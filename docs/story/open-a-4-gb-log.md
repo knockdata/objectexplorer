@@ -1,6 +1,6 @@
 ---
-title: "Open a 4 GB log"
-subtitle: "Line nine million, as fast as line one."
+title: "Cannot open a 4 GB log?"
+subtitle: "ObjectExplorer reaches line nine million as fast as line one"
 episode: 13
 runtime: null
 video: null

@@ -14,7 +14,7 @@ const REPOSITORY = "https://github.com/knockdata/objectexplorer";
 
 // one line a system: its downloads by processor
 const DOWNLOADS = [
-	{ system: "macOS", files: [{ label: "Apple silicon", name: "objectexplorer-app-darwin-arm64.dmg" }, { label: "Intel", name: "objectexplorer-app-darwin-x64.dmg" }] },
+	{ system: "macOS", files: [{ label: "Apple silicon", name: "objectexplorer-mac-arm64.dmg" }, { label: "Intel", name: "objectexplorer-mac-x64.dmg" }] },
 	{ system: "Windows", files: [{ label: "x64", name: "objectexplorer-windows-x64.msix" }, { label: "Arm", name: "objectexplorer-windows-arm64.msix" }] },
 	{ system: "Linux", files: [{ label: "x64", name: "objectexplorer-linux-x64.tar.gz" }, { label: "Arm", name: "objectexplorer-linux-arm64.tar.gz" }] },
 ];
