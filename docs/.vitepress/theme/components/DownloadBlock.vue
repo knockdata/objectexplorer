@@ -6,6 +6,7 @@ import { brewCommands, downloadLink, downloadName, downloadPlatforms, downloadSo
 import { socialLinks } from "../data/siteLinks.js"
 import ShareLink from "./ShareLink.vue"
 import { useLanguage } from "../language/language.js"
+import { useChina } from "../composables/china.js"
 
 // the commands under the download cards: npx, and Homebrew's formula and cask
 const runs = [
@@ -14,6 +15,9 @@ const runs = [
 ]
 const { translate } = useLanguage()
 const release = useRelease()
+// on cn.objectexplorer.com the files come from our own server (GitHub is not reached from mainland
+// China): no switch, the same cards and links as objectexplorer.com's, Direct
+const { inChina } = useChina()
 const channel = ref("")
 // the command last put on the clipboard, while its tick shows
 const copied = ref("")
@@ -34,7 +38,10 @@ onMounted(function () {
 // address (Direct in mainland China). "" while the server has not answered or has no Direct (a
 // server from before it): the links stay as they were and the server decides.
 function source() {
-	if (release.value.direct) {
+	if (inChina.value) {
+		return "direct"
+	}
+	else if (release.value.direct) {
 		return chosen.value || release.value.source
 	}
 	else {
@@ -80,7 +87,7 @@ async function copyCommand(text) {
 			<p class="download-lede">
 				{{ translate("Runs completely on your own machine, no data leaves it") }}
 			</p>
-			<div v-if="release.direct" class="download-source desktop-only">
+			<div v-if="release.direct && !inChina" class="download-source desktop-only">
 				<span class="download-source-label">{{ translate("Download from") }}</span>
 				<div class="download-source-choices" role="radiogroup" :aria-label="translate('Download from')">
 					<button
