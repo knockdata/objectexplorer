@@ -1,6 +1,7 @@
 <script setup>
 import { withBase } from "vitepress"
 import { onBeforeUnmount, onMounted, ref } from "vue"
+import { useChina } from "../composables/china.js"
 import { useLanguage } from "../language/language.js"
 
 // A film on YouTube. Until it is clicked it is our own poster image, so the page loads nothing from
@@ -24,6 +25,7 @@ const PLAYER_ORIGIN = "https://www.youtube-nocookie.com"
 const PLAYING = 1
 
 const { translate } = useLanguage()
+const { inChina } = useChina()
 const playing = ref(false)
 const playing_own = ref(false)
 const frame = ref(null)
@@ -40,7 +42,8 @@ function youtube_refused() {
 }
 
 function play() {
-	playing_own.value = props.own !== "" && youtube_refused()
+	// cn.objectexplorer.com always plays our own copy (composables/china.js)
+	playing_own.value = props.own !== "" && (inChina.value || youtube_refused())
 	playing.value = true
 	window.addEventListener("message", on_player_message)
 }
@@ -97,7 +100,7 @@ onBeforeUnmount(function () {
 		<span class="youtube-player-play">
 			<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
 		</span>
-		<span class="youtube-player-notice">Plays from YouTube; their privacy policy applies.</span>
+		<span v-if="!inChina" class="youtube-player-notice">Plays from YouTube; their privacy policy applies.</span>
 	</button>
 </template>
 
