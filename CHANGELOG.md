@@ -4,6 +4,13 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.32  —  2026-11-07
+- Ask can use Antigravity, Google's agent that signs in with your Google account
+- Ask can use Gemini with an API key from Google AI Studio
+- ChatGPT's agent is now called Codex in Ask
+- Settings → Ask says how to install each assistant and sign in to it
+- running a notebook on the website without the app offers the app's download
+
 ## v0.9.31  —  2026-11-07
 - a Jupyter notebook runs and saves: Python, JavaScript, TypeScript and Java cells, edited in place
 - Settings → Notebook Kernels sets up Python, Node.js and Java, with your project's packages
