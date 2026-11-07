@@ -4,6 +4,15 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.31  —  2026-11-07
+- a Jupyter notebook runs and saves: Python, JavaScript, TypeScript and Java cells, edited in place
+- Settings → Notebook Kernels sets up Python, Node.js and Java, with your project's packages
+- drawings in a notebook, made and edited inside its cells
+- Ask shows each assistant with its own icon
+- the Mac app draws faster and uses less memory, drawing only what changed
+- File: Open File… opens a full path you paste
+- closing the agent side bar hides it; Open Agent Sidebar brings it back
+
 ## v0.9.30  —  2026-11-06
 - Search finds inside Markdown pages, decks, documents, tables, hex views, boards, drawings and 3D models, stepping through each match
 - Find in File… searches one file from its menu, and a search finds a word inside a longer word
