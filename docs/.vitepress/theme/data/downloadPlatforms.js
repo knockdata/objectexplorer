@@ -14,7 +14,7 @@ export const releaseFacts = "/download/release.json"
 // where a file comes from: the switch above the cards
 export const downloadSources = [
 	{ id: "github", name: "GitHub", title: "Download from GitHub's release" },
-	{ id: "direct", name: "Direct", title: "Download through objectexplorer.com, for where GitHub cannot be reached" },
+	{ id: "direct", name: "Direct", title: "Download through our own server, for where GitHub cannot be reached" },
 ]
 
 // One row per architecture, and one link per file in it. The first file of the first row is the

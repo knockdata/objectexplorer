@@ -55,7 +55,7 @@ export default {
 	"Download from": "下载渠道",
 	"Direct": "直连下载",
 	"Download from GitHub's release": "从 GitHub Releases 下载",
-	"Download through objectexplorer.com, for where GitHub cannot be reached": "经 objectexplorer.com 直连下载，GitHub 无法访问时使用",
+	"Download through our own server, for where GitHub cannot be reached": "经我们自己的服务器直连下载，GitHub 无法访问时使用",
 	"Your system": "当前系统",
 	"Apple silicon": "Apple 芯片",
 	"Open the .dmg file and drag ObjectExplorer to the Applications folder": "打开 .dmg 文件，将 ObjectExplorer 拖入“应用程序”文件夹",

@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Every page of the published site opened in headless Chrome, and what is wrong with it reported:
-# dead links (and #anchors no page has), videos and YouTube films that cannot play, and pages that
+# dead links (and #anchors no page has), links to the other of our two sites, videos and YouTube films that cannot play, and pages that
 # show an error (console errors, exceptions, failed requests, the not-found page). test/site.mjs
 # says how each is found.
 #
 #   ./test.sh                              https://objectexplorer.com/
+#   ./test.sh https://cn.objectexplorer.com/   mainland China's copy (none of its links may go to objectexplorer.com)
 #   ./test.sh http://localhost:5173/       the local VitePress (npm run docs:dev), or staging
 #   EXTERNAL=0 ./test.sh                   links to other sites left out
 #   TABS=8 PLAY_SECONDS=20 ./test.sh       pages opened at once (4); the seconds a video may take to start (10)

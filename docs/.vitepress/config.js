@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync, writeFileSync } from "node:fs"
+import path from "node:path"
 import { fileURLToPath, URL } from "node:url"
 import { defineConfig } from "vitepress"
 
@@ -6,8 +8,40 @@ import { defineConfig } from "vitepress"
 // so. Everything VitePress generates — assets, links, the logo — is prefixed with this.
 const base = process.env.DOCS_BASE ?? "/"
 
-// Every absolute URL a crawler or a share preview sees names the real site, whichever copy built it.
-const site = "https://objectexplorer.com"
+// The site this build is for: objectexplorer.com, or cn.objectexplorer.com (mainland China's, served
+// from Hong Kong; foldone's tools/deploy-landing.sh builds once per host, SITE saying which). A page
+// of one never sends its visitor to the other (1108-3): every "https://objectexplorer.com" written in
+// the site's sources (pages, components, data) is this one, by ownSite below, so a link is written
+// once, as objectexplorer.com's. The GitHub Pages copy names objectexplorer.com.
+const homeSite = "https://objectexplorer.com"
+const site = process.env.SITE ?? homeSite
+
+// every source file read with our address made this build's: links, canonical addresses, the app's
+const ownSite = {
+	name: "own-site",
+	enforce: "pre",
+	transform(code, id) {
+		if (site !== homeSite && /\.(md|vue|js)$/.test(id.split("?")[0]) && !id.includes("node_modules") && code.includes(homeSite)) {
+			return code.replaceAll(homeSite, site)
+		}
+		else {
+			return undefined
+		}
+	},
+}
+
+// the public folder's text files (robots.txt, .well-known/security.txt) are copied, not read by Vite:
+// their address is made this build's once the build is written
+function ownSiteInCopies(outDir) {
+	if (site !== homeSite) {
+		for (const entry of readdirSync(outDir, { recursive: true, withFileTypes: true })) {
+			if (entry.isFile() && entry.name.endsWith(".txt")) {
+				const file = path.join(entry.parentPath, entry.name)
+				writeFileSync(file, readFileSync(file, "utf8").replaceAll(homeSite, site))
+			}
+		}
+	}
+}
 const defaultDescription = "The VS Code for cloud storage. Every byte stays on your machine."
 
 // Who publishes the site, in the form search engines and URL classifiers read: a company with a
@@ -93,6 +127,9 @@ export default defineConfig({
 	],
 	// a story is an article: no sidebar and no outline beside it, and no documentation page as its
 	// previous or next — StoryFooter links the stories either side of it
+	buildEnd(siteConfig) {
+		ownSiteInCopies(siteConfig.outDir)
+	},
 	transformPageData(pageData) {
 		if (pageData.relativePath.startsWith("story/")) {
 			pageData.frontmatter.sidebar = false
@@ -142,10 +179,11 @@ export default defineConfig({
 	// for ThemeNav and ThemeFooter, the override VitePress documents for its internal components. Its
 	// outline item is swapped too, for ThemeOutlineItem, which lays a release out as version and date.
 	vite: {
+		plugins: [ownSite],
 		// The app the docs frame: the live one unless APP_URL says otherwise, so a change can be
 		// tried against a local app before it ships — APP_URL=http://localhost:3034/ npm run docs:dev
 		define: {
-			__APP_URL__: JSON.stringify(process.env.APP_URL ?? "https://objectexplorer.com/app/"),
+			__APP_URL__: JSON.stringify(process.env.APP_URL ?? `${site}/app/`),
 		},
 		resolve: {
 			alias: [

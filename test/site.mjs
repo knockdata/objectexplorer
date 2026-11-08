@@ -7,6 +7,8 @@
 //                 Play is pressed and that YouTube says is missing, private or not embeddable (its oEmbed)
 //   error         a console error, an uncaught exception or a failed request on the page (in its frames too:
 //                 the app the landing frames), and a page that is the site's own "not found" page
+//   other site    a link, image, video or frame on objectexplorer.com that goes to cn.objectexplorer.com, or the
+//                 other way round: each site keeps its visitor (1108-3; mainland China cannot reach the first)
 //
 // The pages: the sitemap's, and every page of the site a visited page links to (the app, /app/, is
 // opened but not crawled further). Links to other sites are checked once each; EXTERNAL=0 leaves them out.
@@ -24,6 +26,8 @@ const playSeconds = Number(process.env.PLAY_SECONDS ?? 10)
 const pageSeconds = Number(process.env.PAGE_SECONDS ?? 30)
 const debugPort = Number(process.env.DEBUG_PORT ?? 9333)
 const reportFolder = "build/test"
+// our two sites: a page of one never names the other
+const ourSites = ["objectexplorer.com", "cn.objectexplorer.com"]
 // pages that are the host's, not the site's: opened when linked, never crawled
 const notCrawled = ["/app/", "/demo/", "/learning/", "/releases/"]
 // a browser user agent: some sites answer a script's default one with 403
@@ -347,6 +351,14 @@ async function status(address) {
 }
 
 async function checkLinks(visited) {
+	for (const [address, link] of links) {
+		const host = new URL(address).hostname
+		if (ourSites.includes(host) && host !== site.hostname) {
+			for (const page of link.pages) {
+				report("other site", page, address, `not ${site.hostname}`)
+			}
+		}
+	}
 	const pending = [...links.entries()].filter(([address]) => !visited.has(address) && !shareLink(address) && (onSite(address) || checkExternal))
 	console.log(`== ${pending.length} links not opened as pages, checked (${checkExternal ? "other sites too" : "this site only: EXTERNAL=0"})`)
 	// one request at a time to each host: GitHub answers 429 to eight at once
@@ -485,7 +497,7 @@ async function main() {
 	await checkFilms()
 
 	mkdirSync(reportFolder, { recursive: true })
-	const kinds = ["dead link", "cannot play", "error"]
+	const kinds = ["dead link", "other site", "cannot play", "error"]
 	const lines = [`${site.href}: ${visited.size} pages, ${links.size} links, ${youtubeFilms.size} films; ${issues.length} issues`]
 	for (const kind of kinds) {
 		const ofKind = issues.filter((issue) => issue.kind === kind)
