@@ -4,6 +4,14 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.33  —  2026-11-08
+- QLingo learns words with you: flash cards in every language you pick, in a side bar beside the agent's
+- select a word and Translate shows it in each of your languages, with its pronunciation
+- Mark New Words highlights the words you are learning in Markdown, PDF, ebooks and slides
+- Find New Words picks the words to learn from a document, and Ask answers bring their hardest words
+- a notebook's text cell grows as you type, and drawings in it open wide to edit
+- visitors in mainland China get the website from cn.objectexplorer.com
+
 ## v0.9.32  —  2026-11-07
 - Ask can use Antigravity, Google's agent that signs in with your Google account
 - Ask can use Gemini with an API key from Google AI Studio
