@@ -134,9 +134,24 @@ async function startBrowser() {
 }
 
 // a tab with its own socket: send(method, params) and the events of the page
+// a page in a window of its own: tabs sharing a window are hidden but one, and Chrome pauses a muted film in
+// a hidden tab ("video-only background media was paused to save power"), 1108-3
+async function newWindow() {
+	const version = await (await fetch(`http://127.0.0.1:${debugPort}/json/version`)).json()
+	const browser = new WebSocket(version.webSocketDebuggerUrl)
+	await new Promise((resolve, reject) => {
+		browser.addEventListener("open", resolve)
+		browser.addEventListener("error", reject)
+	})
+	const created = new Promise((resolve) => browser.addEventListener("message", (event) => resolve(JSON.parse(event.data))))
+	browser.send(JSON.stringify({ id: 1, method: "Target.createTarget", params: { url: "about:blank", newWindow: true } }))
+	const answer = await created
+	browser.close()
+	return { id: answer.result.targetId, webSocketDebuggerUrl: `ws://127.0.0.1:${debugPort}/devtools/page/${answer.result.targetId}` }
+}
+
 async function openTab() {
-	const response = await fetch(`http://127.0.0.1:${debugPort}/json/new?about:blank`, { method: "PUT" })
-	const target = await response.json()
+	const target = await newWindow()
 	const socket = new WebSocket(target.webSocketDebuggerUrl)
 	await new Promise((resolve, reject) => {
 		socket.addEventListener("open", resolve)
