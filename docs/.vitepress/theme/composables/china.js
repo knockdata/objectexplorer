@@ -6,10 +6,15 @@ import { onMounted, ref } from "vue"
 // the pages are first drawn as objectexplorer.com's.
 const CHINA_HOST = /^cn\./
 
+// whether this page is served by cn.objectexplorer.com; in the browser only
+export function isChinaSite() {
+	return CHINA_HOST.test(window.location.hostname)
+}
+
 export function useChina() {
 	const inChina = ref(false)
 	onMounted(function () {
-		inChina.value = CHINA_HOST.test(window.location.hostname)
+		inChina.value = isChinaSite()
 	})
 	return { inChina }
 }

@@ -1,5 +1,6 @@
 import { useData, withBase } from "vitepress"
 import simplified_chinese from "./simplified_chinese.js"
+import { isChinaSite } from "../composables/china.js"
 
 // The language the landing speaks, as the explorer does it (foldone 1105-1): every text is written in
 // English in the components and goes through translate(english), which gives it from the catalog of
@@ -27,20 +28,20 @@ function languageNamed(name) {
 	return LANGUAGES.find(language => language.name === name)
 }
 
-// the language the browser asks for: the first of its languages there is a landing for; any Chinese is
+// the language the browser asks for, by the site (1108-3): objectexplorer.com speaks English unless the
+// browser's first language is Chinese; cn.objectexplorer.com speaks Chinese unless the browser names
+// languages and none of them is Chinese. A browser that names none gets the site's own. Any Chinese is
 // Simplified Chinese, the one Chinese there is
 function browserLanguage() {
-	let found
-	for (const code of navigator.languages ?? [navigator.language]) {
-		const lower = code.toLowerCase()
-		if (found === undefined && lower.startsWith("zh")) {
-			found = languageNamed("simplified_chinese")
-		}
-		else if (found === undefined && lower.startsWith("en")) {
-			found = languageNamed("english")
-		}
+	const codes = (navigator.languages ?? [navigator.language]).filter(Boolean).map(code => code.toLowerCase())
+	let chinese
+	if (isChinaSite()) {
+		chinese = codes.length === 0 || codes.some(code => code.startsWith("zh"))
 	}
-	return found ?? LANGUAGES[0]
+	else {
+		chinese = codes.length > 0 && codes[0].startsWith("zh")
+	}
+	return languageNamed(chinese ? "simplified_chinese" : "english")
 }
 
 // the person's kept choice, undefined when none is kept (or storage cannot be read)
