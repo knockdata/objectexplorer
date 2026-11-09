@@ -4,6 +4,16 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.35  —  2026-11-09
+- call Rockie from the Mac app itself, with its camera and microphone
+- Find Duplicate Pictures in any folder, also the same picture saved at another size
+- Test each agent in Settings → Ask and QLingo and see its answer at once
+- edit text and source files in the browser too
+- learn how a computer holds numbers and text in bits with eleven new Java notebooks
+- a drawing in a notebook is as tall as what it holds, and a markdown cell's editor grows by dragging its divider
+- QLingo learns English alone until you pick more languages
+- Jupyter's icon in its own colours
+
 ## v0.9.34  —  2026-11-09
 - call Rockie from Chat with Rockie: voice and camera, and show your app while you talk
 - code in a notebook, a text file or a query keeps its colours while you edit it, with tabs four wide
