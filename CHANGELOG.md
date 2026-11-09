@@ -4,6 +4,10 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.34  —  2026-11-09
+- call Rockie from Chat with Rockie: voice and camera, and show your app while you talk
+- code in a notebook, a text file or a query keeps its colours while you edit it, with tabs four wide
+
 ## v0.9.33  —  2026-11-08
 - QLingo learns words with you: flash cards in every language you pick, in a side bar beside the agent's
 - select a word and Translate shows it in each of your languages, with its pronunciation
