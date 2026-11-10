@@ -252,6 +252,7 @@ export default defineConfig({
 					{ text: "Sessions, replay and audit", link: "/agents/sessions" },
 					{ text: "Ask an agent", link: "/agents/ask" },
 					{ text: "Agentic tasks", link: "/agents/tasks" },
+					{ text: "Better voices for QLingo", link: "/agents/qlingo-voices" },
 				],
 			},
 			{
