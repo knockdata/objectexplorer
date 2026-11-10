@@ -4,6 +4,23 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.36  —  2026-11-10
+- QLingo's Already Know slashes the card one to three times, its pieces flying apart
+- QLingo speaks with your system's best voice, and Settings → QLingo shows how to get a better one on macOS, Windows and Linux
+- a PDF page is drawn sharp as vectors in the browser and on the phone
+- Present and an ebook zoom sharp: once your fingers stop, the page is drawn again at its new size
+- a music cell plays its channels together in time, shows or hides each one, and plays a single line
+- a lake table and a hive folder open on their Table first, and dragging the scroll bar fills the rows in a moment
+- a notebook histogram over dates bins on whole years, months or days
+- a phone screenshot fits the pane, with Zoom In, Zoom Out and Background in the toolbar
+- a drawing on a touch screen fits its whole main part, and labels no longer pile on each other
+- Copy To offers folders by their whole path
+- a lighter, clearer light theme
+- the palette adds Downloads, Documents, Home and more as locations in one step
+- OneLake and ADLS folders open as folders
+- a closed file gives its memory back, and the iPad starts again
+- Show me around is four short steps
+
 ## v0.9.35  —  2026-11-09
 - call Rockie from the Mac app itself, with its camera and microphone
 - Find Duplicate Pictures in any folder, also the same picture saved at another size
