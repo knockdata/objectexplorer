@@ -17,13 +17,21 @@ the list opens the steps for your system, and on a Mac or on Windows the system'
 
    <img src="/screenshot/qlingo-voice-mac-read-speak.png" alt="System Settings, Accessibility → Read & Speak: Accessibility Reader, Speak selection, Speak item under the pointer, Speak announcements, Speak typing feedback, then System speech language and System voice (Samantha) with its menu">
 
-2. Open the **System voice** menu and choose **Manage Voices…**.
-3. Choose a language on the left, then press the download button beside a voice marked **Premium**
-   (the best) or **Enhanced**.
-4. Press **Done**. QLingo uses the new voice at once: its language's row names it.
+2. Press **ⓘ** beside **System voice**.
+3. Choose the language in the list on the left.
 
-The Siri voices in that list are not given to apps, so QLingo cannot use them: pick a Premium or an
-Enhanced voice instead.
+   <img src="/screenshot/qlingo-voice-mac-menu.png" alt="The System voice box: the languages down the left with each one's voice, French selected with Amélie (Premium), and on the right French's Voice, Rate, Pitch, Speech Volume and the Done button">
+
+4. Press **Voice**, then the download button beside a voice marked **Premium** (the best) or
+   **Enhanced**.
+
+   <img src="/screenshot/qlingo-voice-download.png" alt="French's voices: Aude and Aude (Enhanced) with their download buttons and sizes, French (Canada)'s Amélie, Amélie (Enhanced) 71.6 MB, Amélie (Premium) in use, Chantal and Chantal (Enhanced)">
+
+5. Press **Done**. QLingo uses the new voice at once: its language's row names it.
+
+A voice of another region (French of Canada for French) does as well: QLingo takes the best voice of
+the language. The Siri voices in that list are not given to apps, so QLingo cannot use them: pick a
+Premium or an Enhanced voice instead.
 
 ## On Windows
 
