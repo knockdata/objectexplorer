@@ -14,9 +14,9 @@ const REPOSITORY = "https://github.com/knockdata/objectexplorer";
 
 // one line a system: its downloads by processor
 const DOWNLOADS = [
-	{ system: "macOS", files: [{ label: "Apple silicon", name: "objectexplorer-mac-arm64.dmg" }, { label: "Intel", name: "objectexplorer-mac-x64.dmg" }] },
-	{ system: "Windows", files: [{ label: "x64", name: "objectexplorer-windows-x64.msix" }, { label: "Arm", name: "objectexplorer-windows-arm64.msix" }] },
-	{ system: "Linux", files: [{ label: "x64", name: "objectexplorer-linux-x64.tar.gz" }, { label: "Arm", name: "objectexplorer-linux-arm64.tar.gz" }] },
+	{ system: "macOS", files: [{ label: "Apple silicon", name: "objectexplorer-mac-arm64.dmg" }, { label: "Intel", name: "objectexplorer-mac-amd64.dmg" }] },
+	{ system: "Windows", files: [{ label: "x64", name: "objectexplorer-win-amd64.msix" }, { label: "Arm", name: "objectexplorer-win-arm64.msix" }] },
+	{ system: "Linux", files: [{ label: "x64", name: "objectexplorer-linux-amd64.tar.gz" }, { label: "Arm", name: "objectexplorer-linux-arm64.tar.gz" }] },
 ];
 
 const [tag, changelogPath, folder] = process.argv.slice(2);

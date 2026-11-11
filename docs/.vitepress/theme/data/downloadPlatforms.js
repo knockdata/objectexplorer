@@ -38,8 +38,8 @@ export const downloadPlatforms = [
 			{
 				label: "Intel",
 				files: [
-					{ target: "mac-x64.dmg", extension: ".dmg" },
-					{ target: "mac-x64.tar.gz", extension: ".tar.gz" },
+					{ target: "mac-amd64.dmg", extension: ".dmg" },
+					{ target: "mac-amd64.tar.gz", extension: ".tar.gz" },
 				],
 			},
 		],
@@ -52,15 +52,15 @@ export const downloadPlatforms = [
 			{
 				label: "x64 / AMD64",
 				files: [
-					{ target: "windows-x64.msix", extension: ".msix" },
-					{ target: "windows-x64.zip", extension: ".zip" },
+					{ target: "win-amd64.msix", extension: ".msix" },
+					{ target: "win-amd64.zip", extension: ".zip" },
 				],
 			},
 			{
 				label: "ARM64",
 				files: [
-					{ target: "windows-arm64.msix", extension: ".msix" },
-					{ target: "windows-arm64.zip", extension: ".zip" },
+					{ target: "win-arm64.msix", extension: ".msix" },
+					{ target: "win-arm64.zip", extension: ".zip" },
 				],
 			},
 		],
@@ -70,7 +70,7 @@ export const downloadPlatforms = [
 		name: "Linux",
 		note: "Unzip to your own folder",
 		downloads: [
-			{ label: "x64 / AMD64", files: [{ target: "linux-x64.tar.gz", extension: ".tar.gz" }] },
+			{ label: "x64 / AMD64", files: [{ target: "linux-amd64.tar.gz", extension: ".tar.gz" }] },
 			{ label: "ARM64", files: [{ target: "linux-arm64.tar.gz", extension: ".tar.gz" }] },
 		],
 	},

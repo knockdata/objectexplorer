@@ -38,7 +38,7 @@ One `.tar.gz` per processor. The binary runs on any distribution with glibc 2.28
 RHEL 8, Ubuntu 20.04 and newer. The window needs Wayland.
 
 ```sh
-tar -xzf objectexplorer-linux-x64.tar.gz
+tar -xzf objectexplorer-linux-amd64.tar.gz
 ./objectexplorer                  # the command line: opens the app in your browser
 ./objectexplorer window=true      # the desktop window
 ```

@@ -157,17 +157,17 @@ jobs:
       matrix:
         include:
           - runner: ubuntu-latest
-            target: linux-x64
+            asset: linux-amd64
           - runner: ubuntu-24.04-arm
-            target: linux-arm64
+            asset: linux-arm64
           - runner: macos-latest
-            target: darwin-arm64
+            asset: mac-arm64
           - runner: macos-15-intel
-            target: darwin-x64
+            asset: mac-amd64
           - runner: windows-latest
-            target: windows-x64
+            asset: win-amd64
           - runner: windows-11-arm
-            target: windows-arm64
+            asset: win-arm64
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 15
     defaults:
@@ -175,7 +175,7 @@ jobs:
         shell: bash
     env:
       VERSION: ${{ needs.source.outputs.version }}
-      TARGET: ${{ matrix.target }}
+      ASSET: ${{ matrix.asset }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/download-artifact@v7
@@ -186,9 +186,9 @@ jobs:
         run: |
           mkdir unpacked
           if [ "$RUNNER_OS" = "Windows" ]; then
-            powershell -NoProfile -Command "Expand-Archive -Path candidate/objectexplorer-$TARGET.zip -DestinationPath unpacked"
+            powershell -NoProfile -Command "Expand-Archive -Path candidate/objectexplorer-$ASSET.zip -DestinationPath unpacked"
           else
-            tar -xzf "candidate/objectexplorer-${TARGET/darwin-/mac-}.tar.gz" -C unpacked
+            tar -xzf "candidate/objectexplorer-$ASSET.tar.gz" -C unpacked
           fi
           ls -la unpacked
       - name: the binary
@@ -202,7 +202,7 @@ jobs:
       - name: the app
         if: runner.os == 'macOS'
         run: |
-          ditto -x -k "candidate/objectexplorer-app-$TARGET.zip" app
+          ditto -x -k "candidate/objectexplorer-$ASSET.zip" app
           PORT=9433 bash .github/check-binary.sh app/ObjectExplorer.app/Contents/MacOS/ObjectExplorer "$VERSION"
 
   sign-macos:
@@ -249,10 +249,10 @@ jobs:
           fi
       - name: Unpack
         run: |
-          for cpu in arm64 x64; do
+          for cpu in arm64 amd64; do
             mkdir -p "work/darwin-$cpu" "work/app-$cpu"
             tar -xzf "candidate/objectexplorer-mac-$cpu.tar.gz" -C "work/darwin-$cpu"
-            ditto -x -k "candidate/objectexplorer-app-darwin-$cpu.zip" "work/app-$cpu"
+            ditto -x -k "candidate/objectexplorer-mac-$cpu.zip" "work/app-$cpu"
           done
       # the hardened runtime and a secure timestamp, both of which notarization asks for;
       # the .app's marker (Contents/Resources) is inside the seal. Its Finder extensions
@@ -265,7 +265,7 @@ jobs:
           printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' '<plist version="1.0">' '<dict>' '<key>com.apple.security.app-sandbox</key>' '<true/>' '</dict>' '</plist>' > extension.entitlements
           # the app's own: the camera and microphone, refused under the hardened runtime without (Call with Rockie), and the Photos library, refused without asking the person (foldone's explorer/bundle/entitlements.plist)
           printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' '<plist version="1.0">' '<dict>' '<key>com.apple.security.device.audio-input</key>' '<true/>' '<key>com.apple.security.device.camera</key>' '<true/>' '<key>com.apple.security.personal-information.photos-library</key>' '<true/>' '</dict>' '</plist>' > app.entitlements
-          for cpu in arm64 x64; do
+          for cpu in arm64 amd64; do
             codesign --force --options runtime --timestamp --sign "$IDENTITY" "work/darwin-$cpu/objectexplorer"
             for extension in "work/app-$cpu/ObjectExplorer.app/Contents/PlugIns/"*.appex; do
               if [ -d "$extension" ]; then
@@ -287,7 +287,7 @@ jobs:
           id=$(python3 -c 'import json; print(json.load(open("notary.json"))["id"])')
           status=$(python3 -c 'import json; print(json.load(open("notary.json"))["status"])')
           if [ "$status" = "Accepted" ]; then
-            for cpu in arm64 x64; do
+            for cpu in arm64 amd64; do
               xcrun stapler staple "work/app-$cpu/ObjectExplorer.app"
             done
           else
@@ -298,9 +298,9 @@ jobs:
       - name: Pack
         run: |
           mkdir signed
-          for cpu in arm64 x64; do
+          for cpu in arm64 amd64; do
             tar -czf "signed/objectexplorer-mac-$cpu.tar.gz" -C "work/darwin-$cpu" objectexplorer oe objectexplorer.install.json
-            (cd "work/app-$cpu" && ditto -c -k --keepParent ObjectExplorer.app "../../signed/objectexplorer-app-darwin-$cpu.zip")
+            (cd "work/app-$cpu" && ditto -c -k --keepParent ObjectExplorer.app "../../signed/objectexplorer-mac-$cpu.zip")
           done
           ls -la signed
       # the download: the stapled app in a .dmg with a link to Applications and a line saying to drag it
@@ -309,7 +309,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m venv "$RUNNER_TEMP/dmg" && "$RUNNER_TEMP/dmg/bin/pip" install --quiet dmgbuild
-          for cpu in arm64 x64; do
+          for cpu in arm64 amd64; do
             "$RUNNER_TEMP/dmg/bin/dmgbuild" -s candidate/dmg/settings.py -D app="work/app-$cpu/ObjectExplorer.app" -D background="candidate/dmg/background.tiff" ObjectExplorer "signed/objectexplorer-mac-$cpu.dmg"
           done
       - name: Sign, notarize and staple the dmg
@@ -319,7 +319,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "$PRIVATE_KEY" > "$RUNNER_TEMP/AuthKey.p8"
-          for cpu in arm64 x64; do
+          for cpu in arm64 amd64; do
             dmg="signed/objectexplorer-mac-$cpu.dmg"
             codesign --force --timestamp --sign "$IDENTITY" "$dmg"
             xcrun notarytool submit "$dmg" --key "$RUNNER_TEMP/AuthKey.p8" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait --output-format json > notary-dmg.json
@@ -377,7 +377,8 @@ jobs:
         shell: powershell
         run: |
           foreach ($cpu in "arm64", "x64") {
-            Expand-Archive -Path "candidate\objectexplorer-windows-$cpu.zip" -DestinationPath "work\windows-$cpu"
+            $asset = "win-" + $cpu.Replace("x64", "amd64")
+            Expand-Archive -Path "candidate\objectexplorer-$asset.zip" -DestinationPath "work\windows-$cpu"
           }
           Get-ChildItem -Recurse work
       # every program of both zips: the window's .exe, the command line's door (.com), and oe.exe,
@@ -419,13 +420,14 @@ jobs:
           $makeappx = (Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\10.*\x64\makeappx.exe" | Sort-Object FullName | Select-Object -Last 1).FullName
           New-Item -ItemType Directory -Force -Path packages | Out-Null
           foreach ($cpu in "arm64", "x64") {
+            $asset = "win-" + $cpu.Replace("x64", "amd64")
             $folder = "candidate\msix\windows-$cpu"
             Copy-Item "work\windows-$cpu\ObjectExplorer.exe", "work\windows-$cpu\oe.exe" $folder
             $manifest = Get-Content "$folder\AppxManifest.xml" -Raw
             $publisher = [System.Security.SecurityElement]::Escape($env:MSIX_PUBLISHER)
             $manifest = $manifest -replace 'Publisher="[^"]*"', "Publisher=`"$publisher`""
             [System.IO.File]::WriteAllText("$PWD\$folder\AppxManifest.xml", $manifest)
-            & $makeappx pack /o /d $folder /p "packages\objectexplorer-windows-$cpu.msix"
+            & $makeappx pack /o /d $folder /p "packages\objectexplorer-$asset.msix"
             if ($LASTEXITCODE -ne 0) { throw "makeappx failed for $cpu" }
           }
       - name: Sign the msix
@@ -451,21 +453,22 @@ jobs:
           $base = "https://github.com/knockdata/objectexplorer/releases/latest/download"
           if ($env:PRERELEASE -eq "true") { $base = "https://github.com/knockdata/objectexplorer/releases/download/v$env:VERSION" }
           foreach ($cpu in "arm64", "x64") {
+            $asset = "win-" + $cpu.Replace("x64", "amd64")
             $files = "ObjectExplorer.exe", "ObjectExplorer.com", "oe.exe", "oe.com", "objectexplorer.install.json" | ForEach-Object { "work\windows-$cpu\$_" }
-            Compress-Archive -Path $files -DestinationPath "signed\objectexplorer-windows-$cpu.zip"
-            if (Test-Path "packages\objectexplorer-windows-$cpu.msix") {
-              Copy-Item "packages\objectexplorer-windows-$cpu.msix" signed
+            Compress-Archive -Path $files -DestinationPath "signed\objectexplorer-$asset.zip"
+            if (Test-Path "packages\objectexplorer-$asset.msix") {
+              Copy-Item "packages\objectexplorer-$asset.msix" signed
               $publisher = [System.Security.SecurityElement]::Escape($env:MSIX_PUBLISHER)
               $installer = @"
           <?xml version="1.0" encoding="utf-8"?>
-          <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018" Version="$env:MSIX_VERSION" Uri="$base/objectexplorer-windows-$cpu.appinstaller">
-          	<MainPackage Name="KnockData.ObjectExplorer" Publisher="$publisher" Version="$env:MSIX_VERSION" ProcessorArchitecture="$cpu" Uri="$base/objectexplorer-windows-$cpu.msix" />
+          <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018" Version="$env:MSIX_VERSION" Uri="$base/objectexplorer-$asset.appinstaller">
+          	<MainPackage Name="KnockData.ObjectExplorer" Publisher="$publisher" Version="$env:MSIX_VERSION" ProcessorArchitecture="$cpu" Uri="$base/objectexplorer-$asset.msix" />
           	<UpdateSettings>
           		<OnLaunch HoursBetweenUpdateChecks="0" />
           	</UpdateSettings>
           </AppInstaller>
           "@
-              [System.IO.File]::WriteAllText("$PWD\signed\objectexplorer-windows-$cpu.appinstaller", $installer)
+              [System.IO.File]::WriteAllText("$PWD\signed\objectexplorer-$asset.appinstaller", $installer)
             }
           }
           Get-ChildItem signed
@@ -511,13 +514,14 @@ jobs:
           mkdir -p npm extracted
           for target in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
             mkdir -p "extracted/$target"
-            tar -xzf "assets/objectexplorer-${target/darwin-/mac-}.tar.gz" -C "extracted/$target" objectexplorer
+            asset=${target/darwin-/mac-}
+            tar -xzf "assets/objectexplorer-${asset/x64/amd64}.tar.gz" -C "extracted/$target" objectexplorer
             cp "extracted/$target/objectexplorer" "candidate/npm/objectexplorer-$target/bin/objectexplorer"
             chmod +x "candidate/npm/objectexplorer-$target/bin/objectexplorer"
           done
           for cpu in arm64 x64; do
             mkdir -p "extracted/windows-$cpu"
-            unzip -q "assets/objectexplorer-windows-$cpu.zip" ObjectExplorer.exe -d "extracted/windows-$cpu"
+            unzip -q "assets/objectexplorer-win-${cpu/x64/amd64}.zip" ObjectExplorer.exe -d "extracted/windows-$cpu"
             cp "extracted/windows-$cpu/ObjectExplorer.exe" "candidate/npm/objectexplorer-win32-$cpu/bin/objectexplorer.exe"
           done
           for package in candidate/npm/*/; do
@@ -530,12 +534,12 @@ jobs:
           sum() { sha256sum "assets/$1" | cut -d' ' -f1; }
           mkdir brew
           sed -e "s/SHA_DARWIN_ARM64/$(sum objectexplorer-mac-arm64.tar.gz)/" \
-            -e "s/SHA_DARWIN_X64/$(sum objectexplorer-mac-x64.tar.gz)/" \
+            -e "s/SHA_DARWIN_AMD64/$(sum objectexplorer-mac-amd64.tar.gz)/" \
             -e "s/SHA_LINUX_ARM64/$(sum objectexplorer-linux-arm64.tar.gz)/" \
-            -e "s/SHA_LINUX_X64/$(sum objectexplorer-linux-x64.tar.gz)/" \
+            -e "s/SHA_LINUX_AMD64/$(sum objectexplorer-linux-amd64.tar.gz)/" \
             candidate/brew/objectexplorer.rb > brew/objectexplorer.rb
           sed -e "s/SHA_APP_ARM64/$(sum objectexplorer-mac-arm64.dmg)/" \
-            -e "s/SHA_APP_X64/$(sum objectexplorer-mac-x64.dmg)/" \
+            -e "s/SHA_APP_AMD64/$(sum objectexplorer-mac-amd64.dmg)/" \
             candidate/brew/objectexplorer-app.rb > brew/objectexplorer-app.rb
           grep -n "sha256\|version" brew/*.rb
       # the one asset of the draft release publish-<version>, so release.yml needs nothing but it:
@@ -568,17 +572,17 @@ jobs:
       matrix:
         include:
           - runner: ubuntu-latest
-            target: linux-x64
+            asset: linux-amd64
           - runner: ubuntu-24.04-arm
-            target: linux-arm64
+            asset: linux-arm64
           - runner: macos-latest
-            target: darwin-arm64
+            asset: mac-arm64
           - runner: macos-15-intel
-            target: darwin-x64
+            asset: mac-amd64
           - runner: windows-latest
-            target: windows-x64
+            asset: win-amd64
           - runner: windows-11-arm
-            target: windows-arm64
+            asset: win-arm64
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 15
     defaults:
@@ -586,7 +590,7 @@ jobs:
         shell: bash
     env:
       VERSION: ${{ needs.source.outputs.version }}
-      TARGET: ${{ matrix.target }}
+      ASSET: ${{ matrix.asset }}
       MAC_SIGNED: ${{ needs.sign-macos.outputs.signed }}
       WINDOWS_SIGNED: ${{ needs.sign-windows.outputs.signed }}
     steps:
@@ -608,8 +612,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir unpacked
-          tar -xzf "assets/objectexplorer-${TARGET/darwin-/mac-}.tar.gz" -C unpacked
-          ditto -x -k "assets/objectexplorer-app-$TARGET.zip" app
+          tar -xzf "assets/objectexplorer-$ASSET.tar.gz" -C unpacked
+          ditto -x -k "assets/objectexplorer-$ASSET.zip" app
           if [ "$MAC_SIGNED" = "true" ]; then
             codesign --verify --strict --verbose=2 unpacked/objectexplorer
             codesign --verify --deep --strict --verbose=2 app/ObjectExplorer.app
@@ -619,10 +623,10 @@ jobs:
             validate app/ObjectExplorer.app
             codesign -dv --verbose=4 app/ObjectExplorer.app 2>&1 | grep -E "Authority|TeamIdentifier|Runtime" >> "$GITHUB_STEP_SUMMARY"
             # the dmg: signed, notarized, stapled, and the app inside it the same signed app
-            codesign --verify --strict --verbose=2 "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg"
-            spctl --assess --type open --context context:primary-signature --verbose=4 "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg"
-            validate "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg"
-            mounted=$(hdiutil attach -nobrowse -readonly "assets/objectexplorer-${TARGET/darwin-/mac-}.dmg" | tail -1 | awk -F'\t' '{print $NF}')
+            codesign --verify --strict --verbose=2 "assets/objectexplorer-$ASSET.dmg"
+            spctl --assess --type open --context context:primary-signature --verbose=4 "assets/objectexplorer-$ASSET.dmg"
+            validate "assets/objectexplorer-$ASSET.dmg"
+            mounted=$(hdiutil attach -nobrowse -readonly "assets/objectexplorer-$ASSET.dmg" | tail -1 | awk -F'\t' '{print $NF}')
             codesign --verify --deep --strict "$mounted/ObjectExplorer.app"
             test -L "$mounted/Applications"
             hdiutil detach "$mounted" -quiet
@@ -635,20 +639,20 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           mkdir unpacked
-          tar -xzf "assets/objectexplorer-${TARGET/darwin-/mac-}.tar.gz" -C unpacked
+          tar -xzf "assets/objectexplorer-$ASSET.tar.gz" -C unpacked
           bash .github/check-binary.sh unpacked/objectexplorer "$VERSION"
       - name: Windows signatures
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          Expand-Archive -Path "assets\objectexplorer-$env:TARGET.zip" -DestinationPath unpacked
+          Expand-Archive -Path "assets\objectexplorer-$env:ASSET.zip" -DestinationPath unpacked
           if ($env:WINDOWS_SIGNED -eq "true") {
             foreach ($file in Get-ChildItem unpacked\*.exe, unpacked\*.com) {
               $signature = Get-AuthenticodeSignature $file.FullName
               Write-Output "$($file.Name): $($signature.Status) $($signature.SignerCertificate.Subject)"
               if ($signature.Status -ne "Valid") { throw "$($file.Name) is not signed: $($signature.Status)" }
             }
-            $msix = Get-AuthenticodeSignature "assets\objectexplorer-$env:TARGET.msix"
+            $msix = Get-AuthenticodeSignature "assets\objectexplorer-$env:ASSET.msix"
             if ($msix.Status -ne "Valid") { throw "the msix is not signed: $($msix.Status)" }
           } else {
             Write-Output "::warning::dry run without Azure Trusted Signing: signatures not checked"
@@ -680,7 +684,7 @@ jobs:
           }
           Write-Output "$([Environment]::OSVersion.VersionString), $(whoami), elevated: $(([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))"
           Show-Folders "before the package"
-          Add-AppxPackage -Path "assets\objectexplorer-$env:TARGET.msix"
+          Add-AppxPackage -Path "assets\objectexplorer-$env:ASSET.msix"
           $package = Get-AppxPackage KnockData.ObjectExplorer
           Write-Output "installed $($package.PackageFullName) at $($package.InstallLocation)"
           $said = & "$($package.InstallLocation)\ObjectExplorer.exe" --version window=false | Out-String

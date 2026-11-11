@@ -53,14 +53,16 @@ function choose(id) {
 	chosen.value = id
 }
 
-// the full filename, as the link shows it
-function downloadFileName(target) {
-	return release.value.names[target] ?? downloadName(target)
-}
-
-// the file's size once the release lookup has answered, else its name
+// the real file name and its size once the release lookup has answered: shown on hover, the card says only the extension
 function downloadTitle(target) {
-	return release.value.sizes[target] || downloadFileName(target)
+	const name = release.value.names[target] ?? downloadName(target)
+	const size = release.value.sizes[target]
+	if (size) {
+		return `${name} · ${size}`
+	}
+	else {
+		return name
+	}
 }
 
 async function copyCommand(text) {
@@ -133,7 +135,7 @@ async function copyCommand(text) {
 							target="_self"
 							:href="downloadLink(file.target, channel, visitorId(), source())"
 							:title="downloadTitle(file.target)"
-						>{{ downloadFileName(file.target) }}</a>
+						>{{ file.extension }}</a>
 					</li>
 				</ul>
 				<p class="download-note">{{ translate(platform.note) }}</p>
