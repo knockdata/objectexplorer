@@ -292,6 +292,10 @@ html[data-platform="windows"] .download .download-platform-windows li:first-chil
 	margin: 22px 2px 0;
 }
 
+.download-all-separator {
+	color: var(--chalk-3);
+}
+
 .download .download-all a {
 	border-bottom: 1px solid var(--rule);
 	color: var(--chalk-3);

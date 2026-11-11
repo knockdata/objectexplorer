@@ -71,4 +71,6 @@ export default {
 	"Copy the command": "复制命令",
 	"Copy": "复制",
 	"All packages and release notes on GitHub": "GitHub 上的全部安装包与发布说明",
+	"SHA-256 checksums": "SHA-256 校验和",
+	"Check a download: shasum -a 256 -c SHA256SUMS --ignore-missing": "校验下载：shasum -a 256 -c SHA256SUMS --ignore-missing",
 }

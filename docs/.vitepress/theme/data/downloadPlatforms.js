@@ -7,6 +7,9 @@
 // visitor's address (Direct in mainland China, else GitHub).
 export const downloadSite = "https://objectexplorer.com/download/"
 export const releasesPage = "https://github.com/knockdata/objectexplorer/releases/latest"
+// the newest release's SHA256SUMS: "<sha256>  <file>" of every signed file it publishes, so a
+// download can be checked with `shasum -a 256 -c SHA256SUMS --ignore-missing`
+export const checksumsFile = "https://github.com/knockdata/objectexplorer/releases/latest/download/SHA256SUMS"
 // the newest release's version, file sizes and this visitor's default source, from the server that
 // served the page (objectexplorer.com; the local VitePress has none and asks GitHub instead)
 export const releaseFacts = "/download/release.json"

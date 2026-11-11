@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue"
 import useRelease from "../composables/useRelease.js"
 import { readVisitor, visitorId } from "../composables/visitor.js"
-import { brewCommands, downloadLink, downloadName, downloadPlatforms, downloadSources, releasesPage } from "../data/downloadPlatforms.js"
+import { brewCommands, checksumsFile, downloadLink, downloadName, downloadPlatforms, downloadSources, releasesPage } from "../data/downloadPlatforms.js"
 import { socialLinks } from "../data/siteLinks.js"
 import ShareLink from "./ShareLink.vue"
 import { useLanguage } from "../language/language.js"
@@ -176,6 +176,8 @@ async function copyCommand(text) {
 
 		<p class="download-all">
 			<a :href="releasesPage">{{ release.version ? `${release.version} · ` : "" }}{{ translate("All packages and release notes on GitHub") }}</a>
+			<span class="download-all-separator"> · </span>
+			<a :href="checksumsFile" target="_self" :title="translate('Check a download: shasum -a 256 -c SHA256SUMS --ignore-missing')">{{ translate("SHA-256 checksums") }}</a>
 		</p>
 	</section>
 </template>

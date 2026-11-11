@@ -50,9 +50,16 @@ data or a path on this machine, except a file you send us yourself.
 | Google: signing in                            | when you sign in with Google                                                |
 | Google: your picture                          | whenever the account icon shows it, after you signed in with Google         |
 | Let's Encrypt: a certificate for your domain  | a server started with `tls=auto`, at its first start and before it runs out |
+| objectexplorer.com: anonymous usage counts    | on iOS, once a day, only after you said yes                                 |
 
-There is no usage reporting and no crash reporting. What the app measures about itself — how long
-each file took to open, what its memory was made of — stays in `~/.objectexplorer`.
+**Usage reporting is opt-in, on iOS only.** The iOS app asks once at its first start whether it
+may send anonymous counts, and once more later; it sends nothing until you say yes. A yes sends,
+once a day, the kinds of files opened the days before (their extension, a size range, how long
+they stayed open): never a name, a path, the content, or anything that tells who or which device
+sent it. Your answer is a switch on ObjectExplorer's page in the Settings app, which you can turn
+off at any time. In mainland China the question is never asked and nothing is sent. The desktop
+app has no usage reporting, and no app has crash reporting. What the app measures about itself —
+how long each file took to open, what its memory was made of — stays in `~/.objectexplorer`.
 
 **A message to Rockie, when you write one.** **Chat with Rockie** in the side bar sends what you
 type to us. Each message is encrypted on your machine with our public key before it leaves, the
