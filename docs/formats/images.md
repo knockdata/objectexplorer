@@ -43,9 +43,12 @@ changed. An MNG animation plays too, but only a GIF is saved.
 
 ## Photos and modern formats
 
-**HEIC**, **AVIF** and **JPEG XL** open as pictures on every platform, with their EXIF in the card.
-A Live Photo export (`.livp`) opens as its still picture; its movie is inside it, and opens as a
-video.
+**AVIF** and **JPEG XL** open as pictures on every platform, with their EXIF in the card.
+**HEIC** (and a Live Photo export, `.livp`) is decoded by the system: it is there on a Mac and an iPhone
+or iPad; Windows needs HEIF Image Extensions and HEVC Video Extensions from the Microsoft Store; Linux needs
+`libheif` with its HEVC plugin (`libheif-plugin-libde265` or the one your distribution names).
+A Live Photo opens as its still picture; its movie is inside it, and opens as a video, which needs
+the same system decoders as any [video](/formats/media).
 
 **TIFF** is read in full: strips or tiles, BigTIFF, fax, LZW, Deflate, PackBits, JPEG (old-style
 too), LZMA, Zstandard and WebP compression, grey, palette, RGB, CMYK and Lab colour, and any depth

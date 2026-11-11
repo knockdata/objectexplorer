@@ -76,6 +76,11 @@ format is left out.
 | a font: `ttf` `otf` `woff` `woff2` `eot` …           | TrueType, OpenType, WOFF, EOT                                  |
 | an archive, a folder, or several files               | ZIP, gzipped tar, tar, the file list as CSV                    |
 
+A sound turned into M4A (AAC), and a video turned into MP4 or MOV, are written by the system's own
+encoders: they are there on a Mac and an iPhone or iPad, and on Windows. On Linux they need the full
+FFmpeg (`libavcodec-extra` on Debian and Ubuntu, `ffmpeg` from RPM Fusion on Fedora, `ffmpeg` on Arch).
+Without one, the app says what to install.
+
 What each one keeps is said on the format before you pick it: a PDF turned into a picture is its
 first page, slides into a PDF are a page a slide, a model into STL is the shape without its colours.
 

@@ -6,13 +6,25 @@ video as `mp4` `mov` `mkv` `webm` `avi` `wmv` `flv` `m2ts` `ts` `mpg` `vob` `ogv
 
 <img src="/screenshot/audio.png" alt="An mp3 in structure mode: MPEG audio, 21 frames, each with its bitrate and byte size">
 
-Audio and video play in place, with the app's own player and its own decoders. Nothing has to be
-installed, and no codec is fetched.
+Audio and video play in place, with the app's own player. Most formats are decoded by the app itself,
+so nothing has to be installed and no codec is fetched. Five are left to the system's own decoders:
+H.264, HEVC and VC-1 video, and AAC sound (HE-AAC too).
 
-| Kind    | Decoded                                                                                                                                  |
-|---------|------------------------------------------------------------------------------------------------------------------------------------------|
-| picture | H.264, HEVC, VP8, VP9, AV1, MPEG-1 and MPEG-2, MPEG-4 Part 2, Microsoft MPEG-4 and WMV, VC-1, Theora, ProRes, QuickTime Animation, MJPEG |
-| sound   | AAC (HE-AAC too), MP3, FLAC, Opus, Vorbis, PCM, Apple Lossless, AC-3 and E-AC-3, DTS, WMA, WavPack, Monkey's Audio, TTA, DSD, AMR        |
+| Kind    | Decoded by the app                                                                                                           |
+|---------|------------------------------------------------------------------------------------------------------------------------------|
+| picture | VP8, VP9, AV1, MPEG-1 and MPEG-2, MPEG-4 Part 2, Microsoft MPEG-4 and WMV, Theora, ProRes, QuickTime Animation, MJPEG        |
+| sound   | MP3, FLAC, Opus, Vorbis, PCM, Apple Lossless, AC-3 and E-AC-3, DTS, WMA, WavPack, Monkey's Audio, TTA, DSD, AMR              |
+
+| Decoded by the system | Mac and iOS         | Windows                                                         | Linux                                         |
+|-----------------------|---------------------|-----------------------------------------------------------------|-----------------------------------------------|
+| H.264 and AAC         | always there        | built in                                                        | the distribution's FFmpeg (see below)         |
+| HEVC                  | always there        | needs HEVC Video Extensions from the Microsoft Store            | the distribution's FFmpeg (see below)         |
+| VC-1                  | not played          | built in                                                        | the distribution's FFmpeg (see below)         |
+
+On a Windows N edition, install the Media Feature Pack first. On Linux install the full FFmpeg:
+`libavcodec-extra` on Debian and Ubuntu, `ffmpeg` from RPM Fusion on Fedora, `ffmpeg` on Arch. When a
+file needs something that is missing, the player says what to install in place of that track and
+plays the rest.
 
 The bar under the picture seeks, plays and pauses, and sets the volume. `Space` or `K` plays and
 pauses, `←` and `→` skip five seconds, `↑` and `↓` change the volume, and `M` mutes.

@@ -83,21 +83,6 @@ Portions derived from 3GPP TS 26.073 (ANSI-C code for the Adaptive Multi-Rate sp
 Modified: rewritten in C for ObjectExplorer.
 ```
 
-### PacketVideo AAC decoder and 3GPP Enhanced aacPlus
-
-Table values of the AAC decoder's SBR and TNS from PacketVideo's AAC decoder (Android media/libstagefright/codecs/aacdec), and the parametric stereo's tables and baseline method after 3GPP TS 26.410 (Enhanced aacPlus general audio codec, floating-point ANSI-C code).
-
-**Apache License 2.0** (PacketVideo; text at the end of this page) · 3GPP TS 26.410
-
-```text
-Copyright (C) 1998-2009 PacketVideo
-
-3GPP TS 26.410: © 3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, TTA, TTC).
-All rights reserved.
-
-Modified: rewritten in C for ObjectExplorer.
-```
-
 ### dav1d
 
 The AV1 video decoder and its tables, ported from dav1d (code.videolan.org/videolan/dav1d).
@@ -819,7 +804,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Apache License 2.0
 
-The text Mbed TLS, opencore-amr and PacketVideo's AAC decoder are used under.
+The text Mbed TLS and opencore-amr are used under.
 
 ```text
                                  Apache License

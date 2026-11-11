@@ -13,7 +13,7 @@ spelled out in words.
 **Structure** mode shows how its blocks are laid out.
 
 A Live Photo exported as `.livp` opens as its still picture, with its EXIF. Its movie is inside it,
-and opens as a video of its own — see [images](/formats/images#photos-and-modern-formats).
+and opens as a video of its own, where the system decodes it — see [images](/formats/images#photos-and-modern-formats).
 
 An Apple Mail message (`.emlx`), a page Safari saved (`.webarchive`), Safari's `History.db`, the
 Messages app's `chat.db` and a Finder web location (`.webloc`) are on
