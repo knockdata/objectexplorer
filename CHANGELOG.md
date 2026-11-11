@@ -4,6 +4,24 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.37  —  2026-11-11
+- a Browser in the desktop window on Mac and Windows: tabs kept across starts, back, forward, reload, and a search from the address bar
+- Heroes follow the people you choose: their GitHub activity, blog posts, Hacker News, Reddit, Mastodon, Bluesky and YouTube, newest first
+- right-click Translate wherever you select text: a PDF, code, a text field
+- search on the Mac answers at once from Spotlight in a folder it has not indexed yet
+- videos and photos in H.264, HEVC, HEIC and AAC play through your system, and when it lacks one the app says what to install, with a button
+- Tools shows how much processor and memory ObjectExplorer itself takes
+- paste a screenshot into Chat with Rockie
+- Copilot and the other agents start faster, and Translate keeps one running instead of starting it for every word
+- a conversation lost when the app started again can be asked again in a new one
+- adding your Photos Library asks for access at once
+- a spinner shows while a file is read
+- a partitioned folder's table shows its first rows at once
+- PADS schematics show their pins' numbers and names, with KiCad's part library built in
+- the update offer says what is new
+- QLingo no longer opens by itself
+- no crash when a side view opens over a schematic, and a large drawing no longer runs Windows out of memory
+
 ## v0.9.36  —  2026-11-10
 - QLingo's Already Know slashes the card one to three times, its pieces flying apart
 - QLingo speaks with your system's best voice, and Settings → QLingo shows how to get a better one on macOS, Windows and Linux
