@@ -5,6 +5,12 @@ What changed in each version. Every build is on the
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
 ## v0.9.37  —  2026-11-11
+- a shell in a pane on the Mac: right-click a folder, Open Shell in the Left or Right Pane, and the commands of every shell share one history (`history`)
+- the shell opens in the browser page too, when the page comes from your own machine
+- the Browser's Heroes show By Time, everyone's newest on top, or By Hero
+- Bookmarks in the Browser: the star at the end of the address bar adds the page under a name you choose, and the Bookmarks tab lists them by name
+- a hero's item opens in the tab you are on
+- download files are named by system and processor: objectexplorer-mac-arm64.dmg, objectexplorer-win-amd64.msix, objectexplorer-linux-amd64.tar.gz
 - a Browser in the desktop window on Mac and Windows: tabs kept across starts, back, forward, reload, and a search from the address bar
 - Heroes follow the people you choose: their GitHub activity, blog posts, Hacker News, Reddit, Mastodon, Bluesky and YouTube, newest first
 - right-click Translate wherever you select text: a PDF, code, a text field
@@ -21,6 +27,8 @@ What changed in each version. Every build is on the
 - the update offer says what is new
 - QLingo no longer opens by itself
 - no crash when a side view opens over a schematic, and a large drawing no longer runs Windows out of memory
+- a Browser tab's name is no longer cut at the bottom, closing a tab no longer redraws the others, and the address text sits in the middle of its box
+- dragging across the window no longer selects buttons and labels
 
 ## v0.9.36  —  2026-11-10
 - QLingo's Already Know slashes the card one to three times, its pieces flying apart
