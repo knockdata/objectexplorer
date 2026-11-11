@@ -595,6 +595,22 @@ The piano of a notebook's music cell: Salamander Grand Piano V3 by Alexander Hol
 
 **Creative Commons Attribution 3.0** · [the licence](https://creativecommons.org/licenses/by/3.0/)
 
+### KiCad symbols
+
+The names and pins of the parts in KiCad's symbol library, release 10.0.8, by the KiCad Libraries Team (gitlab.com/kicad/libraries/kicad-symbols): a schematic whose file does not name a part's pins shows the library's names, marked as taken from it. Changed: only the symbols' names and pins are kept, packed into a table; their drawings and fields are left out. That table is shared under the same licence and exception as the library; the rest of the app is not part of it.
+
+**Creative Commons Attribution-ShareAlike 4.0**, with KiCad's library exception · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/legalcode) · [KiCad's library licence](https://www.kicad.org/libraries/license/) · [its LICENSE.md](https://gitlab.com/kicad/libraries/kicad-symbols/-/blob/10.0.8/LICENSE.md)
+
+```text
+The KiCad libraries are licensed under the Creative Commons CC-BY-SA 4.0 License, with the
+following exception:
+
+To the extent that the creation of electronic designs that use 'Licensed Material' can be
+considered to be 'Adapted Material', then the copyright holder waives article 3 of the license
+with respect to these designs and any generated files which use data provided as part of the
+'Licensed Material'.
+```
+
 ## In the Windows app
 
 ### WebView2 loader
