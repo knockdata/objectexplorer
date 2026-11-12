@@ -11,24 +11,24 @@ and modelled in place, on your machine.
 
 ## Install
 
-| Platform                 | Download                                                |
-|:-------------------------|:--------------------------------------------------------|
-| macOS, Apple silicon     | [objectexplorer-mac-arm64.dmg][mac-arm64.dmg]           |
-| macOS, Intel             | [objectexplorer-mac-amd64.dmg][mac-amd64.dmg]           |
-| Windows, x64 installer   | [objectexplorer-win-amd64.msix][win-amd64.msix]         |
-| Windows, ARM64 installer | [objectexplorer-win-arm64.msix][win-arm64.msix]         |
-| Windows, x64 portable    | [objectexplorer-win-amd64.zip][win-amd64.zip]           |
-| Windows, ARM64 portable  | [objectexplorer-win-arm64.zip][win-arm64.zip]           |
-| Linux, x64               | [objectexplorer-linux-amd64.tar.gz][linux-amd64.tar.gz] |
-| Linux, ARM64             | [objectexplorer-linux-arm64.tar.gz][linux-arm64.tar.gz] |
+| Platform                   | Download                                                |
+|:---------------------------|:--------------------------------------------------------|
+| macOS, Apple silicon       | [objectexplorer-mac-arm64.dmg][mac-arm64.dmg]           |
+| macOS, Intel               | [objectexplorer-mac-x64.dmg][mac-x64.dmg]               |
+| Windows, x64 installer     | [objectexplorer-windows-x64.msix][windows-x64.msix]     |
+| Windows, ARM64 installer   | [objectexplorer-windows-arm64.msix][windows-arm64.msix] |
+| Windows, x64 portable      | [objectexplorer-windows-x64.zip][windows-x64.zip]       |
+| Windows, ARM64 portable    | [objectexplorer-windows-arm64.zip][windows-arm64.zip]   |
+| Linux, x64                 | [objectexplorer-linux-x64.tar.gz][linux-x64.tar.gz]     |
+| Linux, ARM64               | [objectexplorer-linux-arm64.tar.gz][linux-arm64.tar.gz] |
 
 [mac-arm64.dmg]: https://objectexplorer.com/download/mac-arm64.dmg?channel=github
-[mac-amd64.dmg]: https://objectexplorer.com/download/mac-amd64.dmg?channel=github
-[win-amd64.msix]: https://objectexplorer.com/download/win-amd64.msix?channel=github
-[win-arm64.msix]: https://objectexplorer.com/download/win-arm64.msix?channel=github
-[win-amd64.zip]: https://objectexplorer.com/download/win-amd64.zip?channel=github
-[win-arm64.zip]: https://objectexplorer.com/download/win-arm64.zip?channel=github
-[linux-amd64.tar.gz]: https://objectexplorer.com/download/linux-amd64.tar.gz?channel=github
+[mac-x64.dmg]: https://objectexplorer.com/download/mac-x64.dmg?channel=github
+[windows-x64.msix]: https://objectexplorer.com/download/windows-x64.msix?channel=github
+[windows-arm64.msix]: https://objectexplorer.com/download/windows-arm64.msix?channel=github
+[windows-x64.zip]: https://objectexplorer.com/download/windows-x64.zip?channel=github
+[windows-arm64.zip]: https://objectexplorer.com/download/windows-arm64.zip?channel=github
+[linux-x64.tar.gz]: https://objectexplorer.com/download/linux-x64.tar.gz?channel=github
 [linux-arm64.tar.gz]: https://objectexplorer.com/download/linux-arm64.tar.gz?channel=github
 
 Every link fetches the file from the newest release. Older versions, and the release notes for

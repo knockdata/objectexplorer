@@ -236,7 +236,7 @@ jobs:
             base="https://github.com/${{ github.repository }}/releases/download/v$VERSION"
             GITHUB_TOKEN="$WINGET_TOKEN" "$komac" update KnockData.ObjectExplorer \
               --version "$VERSION" \
-              --urls "$base/objectexplorer-win-amd64.msix" "$base/objectexplorer-win-arm64.msix" \
+              --urls "$base/objectexplorer-windows-x64.msix" "$base/objectexplorer-windows-arm64.msix" \
               --submit
             echo "winget: KnockData.ObjectExplorer $VERSION proposed" >> "$GITHUB_STEP_SUMMARY"
           fi

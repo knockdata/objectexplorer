@@ -10,7 +10,6 @@ What changed in each version. Every build is on the
 - the Browser's Heroes show By Time, everyone's newest on top, or By Hero
 - Bookmarks in the Browser: the star at the end of the address bar adds the page under a name you choose, and the Bookmarks tab lists them by name
 - a hero's item opens in the tab you are on
-- download files are named by system and processor: objectexplorer-mac-arm64.dmg, objectexplorer-win-amd64.msix, objectexplorer-linux-amd64.tar.gz
 - a Browser in the desktop window on Mac and Windows: tabs kept across starts, back, forward, reload, and a search from the address bar
 - Heroes follow the people you choose: their GitHub activity, blog posts, Hacker News, Reddit, Mastodon, Bluesky and YouTube, newest first
 - right-click Translate wherever you select text: a PDF, code, a text field
