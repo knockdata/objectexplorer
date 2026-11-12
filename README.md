@@ -120,4 +120,5 @@ AB, under the terms in the package's `LICENSE.md`. Versions up to and including 
 under MIT.
 
 The app bundles work by other people, each under its own terms. Every one of them is named, with
-its licence text, on the [third-party licenses](https://objectexplorer.com/third-party-licenses) page.
+its licence text, on the [third-party licenses](https://objectexplorer.com/third-party-licenses) page, in
+the app under **Settings → About → Licences**, and in `THIRD-PARTY-NOTICES.md` in every download.

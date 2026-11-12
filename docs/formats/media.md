@@ -1,27 +1,29 @@
 # Audio and video
 
-`mp3` `wav` `m4a` `m4b` `aac` `aiff` `flac` `ogg` `opus` `wma` `ac3` `dts` `wv` `ape` `dsf` `caf`,
-video as `mp4` `mov` `mkv` `webm` `avi` `wmv` `flv` `m2ts` `ts` `mpg` `vob` `ogv`, MIDI as `mid`
+`mp3` `wav` `m4a` `m4b` `aac` `aiff` `flac` `ogg` `opus` `ac3` `wv` `ape` `dsf` `caf`,
+video as `mp4` `mov` `mkv` `webm` `avi` `flv` `m2ts` `ts` `mpg` `vob` `ogv`, MIDI as `mid`
 `midi`, and subtitles
 
 <img src="/screenshot/audio.png" alt="An mp3 in structure mode: MPEG audio, 21 frames, each with its bitrate and byte size">
 
 Audio and video play in place, with the app's own player. Most formats are decoded by the app itself,
-so nothing has to be installed and no codec is fetched. Five are left to the system's own decoders:
-H.264, HEVC and VC-1 video, and AAC sound (HE-AAC too).
+so nothing has to be installed and no codec is fetched. Some are left to the system's own decoders:
+H.264, HEVC, VC-1, MPEG-4 Part 2 (DivX and Xvid) and H.263 video, and AAC sound (HE-AAC too).
 
-| Kind    | Decoded by the app                                                                                                           |
-|---------|------------------------------------------------------------------------------------------------------------------------------|
-| picture | VP8, VP9, AV1, MPEG-1 and MPEG-2, MPEG-4 Part 2, Microsoft MPEG-4 and WMV, Theora, ProRes, QuickTime Animation, MJPEG        |
-| sound   | MP3, FLAC, Opus, Vorbis, PCM, Apple Lossless, AC-3 and E-AC-3, DTS, WMA, WavPack, Monkey's Audio, TTA, DSD, AMR              |
+| Kind    | Decoded by the app                                                                                    |
+|---------|-------------------------------------------------------------------------------------------------------|
+| picture | VP8, VP9, AV1, MPEG-1 and MPEG-2, Theora, ProRes, QuickTime Animation, MJPEG                          |
+| sound   | MP3, FLAC, Opus, Vorbis, PCM, Apple Lossless, AC-3 and E-AC-3, WavPack, Monkey's Audio, TTA, DSD, AMR |
 
-| Decoded by the system | Mac and iOS         | Windows                                                         | Linux                                         |
-|-----------------------|---------------------|-----------------------------------------------------------------|-----------------------------------------------|
-| H.264 and AAC         | always there        | built in                                                        | the distribution's FFmpeg (see below)         |
-| HEVC                  | always there        | needs HEVC Video Extensions from the Microsoft Store            | the distribution's FFmpeg (see below)         |
-| VC-1                  | not played          | built in                                                        | the distribution's FFmpeg (see below)         |
+| Decoded by the system   | Mac and iOS  | Windows                                              | Linux                                         |
+|-------------------------|--------------|------------------------------------------------------|-----------------------------------------------|
+| H.264 and AAC           | always there | built in                                             | the distribution's FFmpeg (see below)         |
+| HEVC                    | always there | needs HEVC Video Extensions from the Microsoft Store | the distribution's FFmpeg (see below)         |
+| VC-1                    | not played   | built in                                             | the distribution's FFmpeg (see below)         |
+| MPEG-4 Part 2 and H.263 | on a Mac     | handed to the system's decoder, not yet tried        | handed to the system's decoder, not yet tried |
 
-On a Windows N edition, install the Media Feature Pack first. On Linux install the full FFmpeg:
+In the browser at objectexplorer.com/app, MPEG-4 Part 2 and H.263 do not play. On a Windows N
+edition, install the Media Feature Pack first. On Linux install the full FFmpeg:
 `libavcodec-extra` on Debian and Ubuntu, `ffmpeg` from RPM Fusion on Fedora, `ffmpeg` on Arch. When a
 file needs something that is missing, the player says what to install in place of that track and
 plays the rest.

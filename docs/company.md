@@ -33,4 +33,5 @@ through our servers. See [your data stays here](/privacy).
 
 - [Terms of use](/terms)
 - [Privacy](/privacy)
-- [Third-party licenses](/third-party-licenses)
+- [Third-party licenses](/third-party-licenses) — also in the app, **Settings → About → Licences**, and in
+  `THIRD-PARTY-NOTICES.md` in every download

@@ -10,7 +10,7 @@ office suite has to be installed.
 | **Documents**             | `docx` `dotx` `docm` `doc` `odt` `ott` `fodt` `rtf` `pages`, `hwp` `hwpx` (Hangul), `ofd`, AbiWord `abw` `zabw`               |
 | **Older word processors** | WordPerfect `wpd`, Works and WPS `wps`, Write `wri`, MacWrite `mcw`, ClarisWorks `cwk`, T602 `602`                            |
 | **OpenOffice.org 1.x**    | `sxw` `stw` documents, `sxc` `stc` sheets, `sxi` `sti` presentations, `sxd` `std` drawings                                    |
-| **Scanned and printed**   | DjVu `djvu` `djv`, XPS `xps` and OpenXPS `oxps` — see [pages](#djvu-and-xps)                                                  |
+| **Printed**               | XPS `xps` and OpenXPS `oxps` — see [pages](#xps)                                                                              |
 | **Spreadsheets**          | `xlsx` `xlsm` `xltx` `xls` `xlt` `ods` `fods` `numbers` `et`                                                                  |
 | **Presentations**         | `pptx` `potx` `ppsx` `ppt` `pot` `pps` `odp` `fodp` `key` `dps`                                                               |
 | **Text only**             | Publisher `pub` and OneNote `one` — their words, as a document                                                                |
@@ -56,15 +56,10 @@ opens as a table, a row a message, each message one click from opening as an e-m
 too. An Outlook data file (`.pst`, `.ost`) or an Outlook for Mac archive (`.olm`) opens as its
 messages — see [mail, chats and personal files](/formats/mail).
 
-## DjVu and XPS
-
-A DjVu file (`.djvu`), the format of many scanned books, opens as its pages, a strip of them beside
-the one on show: each page's text and pictures painted from its layers, and its hidden text layer
-read for [search](/explore/search). A single-page file and a bundled book are read; a book split over
-several files is not.
+## XPS
 
 An XPS or OpenXPS document (`.xps`, `.oxps`), what Windows prints to when it prints to a file, opens
-the same way, a page at a time. Its zip of pages can be browsed too.
+as its pages, a strip of them beside the one on show. Its zip of pages can be browsed too.
 
 ## Search and inside the file
 
