@@ -120,8 +120,7 @@ is your data going to the agent you chose, so the PII rules do not apply there. 
 a folder ticked **Agents read through PII**, the agent reads only through this app's MCP server, and
 they do. → [Ask an agent](/agents/ask)
 
-**Create Agentic Task…** goes one step further: the agent researches or builds a piece of work in
-your repository and leaves a slide deck for you to review, accept or reject.
-→ [Agentic tasks](/agents/tasks)
+**Translate** on a word you selected asks the same agent for it in every language you learn.
+→ [Translate and QLingo](/agents/translate)
 
 Next: [connecting an agent](/agents/connect).

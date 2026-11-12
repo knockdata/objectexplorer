@@ -97,7 +97,7 @@ all, and stays that way. What the session did is behind the icon for whenever yo
 environment lives in one place:
 
 ```
-~/.objectexplorer/venvs/
+~/.objectexplorer/data/venvs/
 ```
 
 Name an environment, pick a version, and it is made. The versions in that box are the Pythons found
@@ -217,7 +217,7 @@ back in.
 environment, named after it:
 
 ```
-export SPARK_CONF_DIR=~/.objectexplorer/spark-conf/default
+export SPARK_CONF_DIR=~/.objectexplorer/data/spark-conf/default
 ```
 
 The cached files a session reads are on this machine, so a cluster whose executors cannot see your
@@ -234,4 +234,4 @@ interpreter to run it in, and the Python cell is not offered there. Environments
 packages installed only on the server's own machine or from the command line, and other people signed
 in to a server run Python only when its owner turned that on.
 
-Next: [charts](/analyze/charts).
+Next: [Node.js and Java cells](/analyze/kernels).

@@ -29,4 +29,6 @@ To reach those services without their sync app, see [Google Drive](/storage/gdri
 `npx @knockdata/objectexplorer ~/data` opens on that folder and adds it as a root, so the next start
 finds it already there.
 
-Next: [Google Drive](/storage/gdrive).
+On a Mac, the Photos library can be a root too — see [the Photos library](/storage/photos).
+
+Next: [the Photos library](/storage/photos).

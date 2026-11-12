@@ -182,4 +182,4 @@ with the copies and where each is used, and Claude may change the files in the c
 in the files of the same folder: a CSS rule's classes and ids in HTML, JavaScript and JSX, and a
 JavaScript, JSX or C name wherever it appears.
 
-Next: [agentic tasks](/agents/tasks).
+Next: [Translate and QLingo](/agents/translate).

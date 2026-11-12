@@ -38,14 +38,16 @@ the data and everything under it — the chart, the model, the code — sees wha
 A cell runs from its run button, **Shift+Enter** or **⌘Enter**, so what you change is drawn when you ask
 for it.
 
-| Cell         | What it is                                                                                          |
-|--------------|-----------------------------------------------------------------------------------------------------|
-| **SQL**      | [SQL](/analyze/sql), with the rows as a grid — column summaries and all                             |
-| **Chart**    | [a plot](/analyze/charts) of the rows above, as source you can edit                                 |
-| **Model**    | [gradient boosting](/analyze/model) over the rows above                                             |
-| **Code**     | JavaScript over the same rows, with `rows`, `columns`, `Plot` and a small pandas-like `pd` in scope |
-| **Python**   | [real Python](/analyze/python) in a venv you made, in a session that keeps its variables, with `oe` |
-| **Markdown** | prose, shown when you run it; double-click to edit it again                                         |
+| Cell         | What it is                                                                                                        |
+|--------------|-------------------------------------------------------------------------------------------------------------------|
+| **SQL**      | [SQL](/analyze/sql), with the rows as a grid — column summaries and all                                           |
+| **Chart**    | [a plot](/analyze/charts) of the rows above, as source you can edit                                               |
+| **Model**    | [gradient boosting](/analyze/model) over the rows above                                                           |
+| **Code**     | JavaScript over the same rows, with `rows`, `columns`, `Plot` and a small pandas-like `pd` in scope               |
+| **Python**   | [real Python](/analyze/python) in a venv you made, in a session that keeps its variables, with `oe`               |
+| **Node.js**  | [JavaScript in Node.js](/analyze/kernels), with the packages you installed, in a process that keeps its variables |
+| **Java**     | [Java](/analyze/kernels) through jshell, with the Maven dependencies you added                                    |
+| **Markdown** | prose, shown when you run it; double-click to edit it again                                                       |
 
 A Code cell's last value is its answer, with no `return` to write: rows or a `pd` frame become a grid
 that the cells below read, a `Plot.plot(…)` a chart, anything else is printed. `console.log` lines

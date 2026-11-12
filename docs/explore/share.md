@@ -37,7 +37,7 @@ places:
 |----------------|-------------------------------------------------|---------------------------------------------------|
 | **Per column** | you can change any column, for this share alone | the rules as written, with no way to ask for less |
 | **Drop**       | opens as **Hash**                               | the column is left out                            |
-| **Key**        | one made for this share when the dialog opens   | one per install, `~/.objectexplorer/mcp/key`      |
+| **Key**        | one made for this share when the dialog opens   | one per install, `~/.objectexplorer/account/mcp_key`      |
 
 The share's key never enters the link — **Copy Key**, shown while a column is Hash or FPE, is the
 only way it leaves this machine, and it is the key that share's Hash and FPE columns were made with,
@@ -73,4 +73,4 @@ A trained model is not shared by link. The [model cell](/analyze/model)'s **copy
 on the clipboard as LightGBM's own `model.txt` text, so it can be loaded in Python with
 `lgb.Booster(model_str=…)` — without a single training row going with it.
 
-Next: [the notebook](/analyze/notebook).
+Next: [the Browser](/explore/browser).
