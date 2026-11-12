@@ -7,7 +7,7 @@ bytes again.
 Most files are copied whole. A zip over 64 MB is not: only its directory and the entries you open
 are copied, in 64 KB pages, so stepping into a large archive does not download all of it.
 
-The copies live in one folder, `~/.objectexplorer/cache/remote` — see
+The copies live in one folder, `~/.objectexplorer/cache` — see
 [where your data lives](/reference/data-locations). Nothing is ever written into the bucket.
 
 ## How much it may take

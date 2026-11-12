@@ -5,7 +5,7 @@ same token reads the objects.
 
 ## Ways to connect
 
-- **Use what this machine already has.** **Settings → Accounts → Google** walks the chain below and
+- **Use what this machine already has.** **Settings → Connections → Google** walks the chain below and
   says who it signed in as, and through what.
 - **Sign in with Google.** The button runs `gcloud auth login --update-adc`: your browser opens once
   to sign in, and the Application Default Credentials the app reads are written. When `gcloud` is
@@ -37,7 +37,7 @@ Storage** and **Google BigQuery** apart, so either can be turned off.
 
 ## Projects
 
-A bucket belongs to a project. **Settings → Locations → Google Cloud Platform** lists the projects
+A bucket belongs to a project. **Settings → Locations → Google Cloud Storage** lists the projects
 your account can see, each with its buckets and a tick for each bucket.
 
 An organisation can hand out hundreds of projects, so five or fewer open at once, and more show the

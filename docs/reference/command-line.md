@@ -31,22 +31,22 @@ objectexplorer --version
 `npx @knockdata/objectexplorer` passes its arguments on as they are, so everything here works the
 same through npx.
 
-| Argument        | Default                         | What it does                                                                                      |
-|-----------------|---------------------------------|---------------------------------------------------------------------------------------------------|
-| `http_port=`    | `9421`                          | the port; `0` takes any free one, as does a busy 9421 when no port was given                      |
-| `host=`         | `127.0.0.1`                     | where it listens; `0.0.0.0` lets other machines in, and then they must sign in                    |
-| `open=`         | `true`                          | `false` does not open the browser                                                                 |
-| `window=`       | as started                      | `true` the desktop window, `false` the command line                                               |
-| `folder=`       |                                 | a folder for the tree on the first run; give it once per folder                                   |
-| `connect=`      |                                 | the window as a client of that server                                                             |
-| `token=`        |                                 | the session the server knows this window by; kept in the keychain after                           |
-| `mode=`         | `full`                          | `instant`: one read-only folder, nothing signed in — see [instant mode](/reference/instant-mode)  |
-| `cloud=`        | `on`                            | `off`: no cloud storage is offered or can be added                                                |
-| `record=`       | a new file                      | where this window's session is recorded; `false` records nothing                                  |
-| `replay=`       |                                 | a recording played back into the window — see [recording a session](/reference/session-recording) |
-| `replay_speed=` | `fast`                          | how fast a recording plays back: `fast`, or `1` for real time, `2` twice as fast                  |
-| `tour=`         | on                              | `off`: neither [the tour](/reference/tour) nor a card about something new starts by itself        |
-| `config=`       | `~/.objectexplorer/server.json` | a server's settings, as JSON                                                                      |
+| Argument        | Default                                  | What it does                                                                                      |
+|-----------------|------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `http_port=`    | `9421`                                   | the port; `0` takes any free one, as does a busy 9421 when no port was given                      |
+| `host=`         | `127.0.0.1`                              | where it listens; `0.0.0.0` lets other machines in, and then they must sign in                    |
+| `open=`         | `true`                                   | `false` does not open the browser                                                                 |
+| `window=`       | as started                               | `true` the desktop window, `false` the command line                                               |
+| `folder=`       |                                          | a folder for the tree on the first run; give it once per folder                                   |
+| `connect=`      |                                          | the window as a client of that server                                                             |
+| `token=`        |                                          | the session the server knows this window by; kept in the keychain after                           |
+| `mode=`         | `full`                                   | `instant`: one read-only folder, nothing signed in — see [instant mode](/reference/instant-mode)  |
+| `cloud=`        | `on`                                     | `off`: no cloud storage is offered or can be added                                                |
+| `record=`       | a new file                               | where this window's session is recorded; `false` records nothing                                  |
+| `replay=`       |                                          | a recording played back into the window — see [recording a session](/reference/session-recording) |
+| `replay_speed=` | `fast`                                   | how fast a recording plays back: `fast`, or `1` for real time, `2` twice as fast                  |
+| `tour=`         | on                                       | `off`: neither [the tour](/reference/tour) nor a card about something new starts by itself        |
+| `config=`       | `~/.objectexplorer/settings/server.json` | a server's settings, as JSON                                                                      |
 
 A server takes more: `https_port=`, `tls=`, `domain=`, `public=`, `licence=`, `base=` and `data=`,
 all on [running your own server](/self-hosting/).
@@ -93,7 +93,7 @@ oe settings set mcp.limits.rowsPerCall 500
 | `theme`                      | Appearance   | `dark`, `light`                                            |
 | `folders`                    | Local folder | the folders and buckets in the tree                        |
 | `hidden`                     | Local folder | folders kept out of the tree                               |
-| `off`                        | Accounts     | services turned off: `gcs`, `s3`, `azure`, `onelake`       |
+| `off`                        | Connections  | services turned off: `gcs`, `s3`, `azure`, `onelake`       |
 | `cache.limit`                | Cache        | whole gigabytes, 1 or more                                 |
 | `writing.show_passages`      | Writing tool | `true`, `false`                                            |
 | `writing.show_phrases`       | Writing tool | `true`, `false`                                            |
@@ -161,7 +161,7 @@ These work on files on this machine, and need no window, no sign-in and no app a
 oe anonymize customers.csv                  # customers.anonymized.csv beside it
 oe compare orders.parquet orders.csv --mode diff --key order_id
 oe test ~/data                               # every file of ~/data opened, a line each
-oe replay export ~/.objectexplorer/replay/2026-10-11T17-36-44.166Z.replay session.replay
+oe replay export ~/.objectexplorer/log/replay/2026-10-11T17-36-44.166Z.replay session.replay
 ```
 
 | Command                              | What it does                                                                                                                                |
@@ -233,7 +233,7 @@ oe pii reveals
 `oe pii reveal` is **Settings → PII → Reveal** on the command line: the system asks for your login
 first (Touch ID or the password on macOS), then the real value is printed. Quote the token, or the
 shell reads `<` and `>` as redirections. Every ask, answered or not, is a line in
-`~/.objectexplorer/mcp/reveal.ndjson`, marked as asked from the command line, without the value;
+`~/.objectexplorer/log/mcp/reveal.ndjson`, marked as asked from the command line, without the value;
 `oe pii reveals` lists them, newest first: when, the token, who asked, the user, what the login
 said, and whether the token was found. Windows and Linux cannot ask for the login yet, so there
 nothing is revealed. `--json` prints JSON.

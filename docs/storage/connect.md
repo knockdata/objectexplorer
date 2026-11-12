@@ -1,10 +1,10 @@
 # Connecting storage
 
-<img src="/screenshot/settings.png" alt="Settings: the Accounts and Locations groups on the left, and the Google account with its two services ticked, Cloud Storage and BigQuery">
+<img src="/screenshot/settings.png" alt="Settings: the Connections and Locations groups on the left, and the Google account with its two services ticked, Cloud Storage and BigQuery">
 
 Open **Settings** from the activity bar. Two groups on the left do the work:
 
-- **Accounts**: who the app signs in as — Google, Amazon Web Services, Microsoft, each S3
+- **Connections**: who the app signs in as — Google, Amazon Web Services, Microsoft, each S3
   compatible endpoint you added, and each FTP, FTPS or SFTP server account. An account that is
   signed in carries a check. The **+** beside the group adds an S3 compatible endpoint or a server
   account: **S3-compatible Endpoint…**, **FTP…**, **FTPS…** or **SFTP…**.
@@ -12,7 +12,7 @@ Open **Settings** from the activity bar. Two groups on the left do the work:
   workspaces of each service that is on.
 
 The **+** in the side bar's header, **Add a location**, is the short way: **Local Folder…** opens the
-folder picker at once, each cloud opens Settings on its Locations pane, and **FTP…**, **FTPS…** and
+folder picker at once, **Photos Library** on a Mac adds [the Photos library](/storage/photos), each cloud opens Settings on its Locations pane, and **FTP…**, **FTPS…** and
 **SFTP…** open a new server account there.
 
 | Provider                                                                       | Connect with                                                                                               |
@@ -46,7 +46,7 @@ it, type the bucket's name instead.
 A local folder can be unchecked to take it out of the tree without forgetting it, and checked again
 later.
 
-The Free plan adds up to three cloud roots per provider and five local folders. Pro lifts both
+The Free plan adds up to five cloud roots per provider and ten local folders. Pro lifts both
 caps; see [pricing](/pricing). A folder or bucket the plan had no room for waits, and is added by
 itself once the plan changes, a trial or a licence, while the window stays open.
 
@@ -77,14 +77,14 @@ picks the change up.
 
 Signing in, adding a key and adding a root happen only on the machine the app runs on, or with `oe`.
 When the app serves other people — a server they reach in their browser, or a desktop started with
-`connect=<server address>` — their pages have no Accounts, and a remote signed-in user sees only the
+`connect=<server address>` — their pages have no Connections, and a remote signed-in user sees only the
 roots the owner turned on in **Settings → Admin → Other machines**. A request counts as local only
 when it comes from this machine and did not pass through a proxy; an ssh tunnel counts as local.
 The keys stay on the server: a connected window reads the buckets without ever seeing them.
 
 ## Where the credentials go
 
-What you add is saved in `storage.json` in the app's folder, and every secret in it — a key, a
+What you add is saved in `settings/locations.json` in the app's folder, and every secret in it — a key, a
 token, a service account — goes to the system keychain (the macOS keychain, the Windows Credential
 Manager, the Linux Secret Service), the file keeping only a reference. What your cloud's own tools
 already hold stays where they keep it: an AWS SSO sign-in in `~/.aws`, a Google sign-in in

@@ -4,7 +4,8 @@ ObjectExplorer is an explorer for cloud storage and local folders — for you, a
 beside you. It puts Amazon S3 and any [S3 compatible provider](/storage/s3-compatible), Google Cloud
 Storage, Google BigQuery, Azure Blob Storage, Microsoft OneLake, Google Drive, OneDrive, Dropbox,
 Box, FTP and SFTP servers, and every folder on your disk, in one tree — and opens what is inside them, including the formats a cloud
-console will never render.
+console will never render. Google Drive, OneDrive, Dropbox and Box need a sign-in app of your own (an
+OAuth client) for now, set up once on a server — see [Google Drive](/storage/gdrive).
 
 <!-- <img src="/screenshot/hero.png" alt="A folder of parquet, delta, SPSS and SAS files, with cloud buckets in the tree beside it"> -->
 
@@ -34,7 +35,7 @@ including the one folder it can write into your own buckets, is in [how it works
 |                     |                                                                                                                                                                                                                                                                          |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Explores**        | every provider in one tree, as a list or a grid of previews, with copy, move, rename, delete and an undo that works across buckets — see [the tree and the list](/explore/tree)                                                                                          |
-| **Opens**           | more than 900 kinds of file as what they are: tables, office files, pictures and camera raw, audio and video, scans and medical recordings, circuit boards, mailboxes, maps, molecules, disk images and archives, and hex for everything else — see [formats](/formats/) |
+| **Opens**           | more than 900 file extensions as what they are: tables, office files, pictures and camera raw, audio and video, scans and medical recordings, circuit boards, mailboxes, maps, molecules, disk images and archives, and hex for everything else — see [formats](/formats/) |
 | **Converts**        | a table to Excel or CSV, a picture to PNG, a document or a deck to PDF or Word, a folder to a zip: Download in the toolbar, or Convert To… on a file — see [download in another format](/explore/download)                                                               |
 | **Reads**           | PDFs in its own reader with marks and notes, and ebooks, PDFs and Markdown as a book, turned by their corner — see [the PDF reader](/formats/pdf)                                                                                                                        |
 | **Measures**        | distances, angles, radii, areas and volumes on drawings, 3D models, circuit boards, PDF pages and pictures — see [measuring](/explore/measure)                                                                                                                           |

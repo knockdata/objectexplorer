@@ -19,7 +19,7 @@ Type your server's domain, and the commands and addresses on this page use it.
 
 Everything is done on the server, as the account that runs it, with `oe` (or `objectexplorer`
 followed by the same words). It writes into the server's
-[config](/self-hosting/#the-config-file), `~/.objectexplorer/server.json`, or the file given with
+[config](/self-hosting/#the-config-file), `~/.objectexplorer/settings/server.json`, or the file given with
 `config=`.
 
 ### 1. The addresses to register

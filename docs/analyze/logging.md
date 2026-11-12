@@ -7,7 +7,7 @@ elsewhere and starts again after a restart.
 Run **Cloud Logging: Tail a Project Live** from the command palette and type the project id. A filter
 in the Logging query language can follow it — `acme-prod severity>=ERROR` keeps only the errors. The
 tail reads the last hour first, then asks for what is newer every 10 seconds, and writes it to
-`~/.objectexplorer/logs/<project>.log`. **Cloud Logging: Open a Live Tail** opens one you started
+`~/.objectexplorer/log/live/<project>.log`. **Cloud Logging: Open a Live Tail** opens one you started
 before. It signs in with your Google Cloud sign-in, and only on the machine the app runs on.
 
 The viewer shows the project as live, with a **stop** button. Stopping ends the tail and keeps what it

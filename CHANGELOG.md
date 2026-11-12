@@ -144,7 +144,6 @@ What changed in each version. Every build is on the
 - menus in the browser have their background again
 - a spinner sits level with the words beside it
 - a kept FTP or SFTP password shows as dots, and Disconnect closes an account until you connect it again
-- Create Agentic Task… on a file, folder or tab: an AI agent researches it, builds it and leaves a deck for you to review
 
 ## v0.9.23  —  2026-11-01
 - a message to Chat with Rockie arrives at once, and so does the answer
@@ -155,7 +154,7 @@ What changed in each version. Every build is on the
 - Windows no longer closes when a web page is shut while it is still opening
 - a medical recording opened on Windows finds its signal file beside it
 - your secrets are kept in one place in the keychain, so a new version asks for it once
-- Talk to Users and Chat with Rockie each show where they should
+- Chat with Rockie shows where it should
 
 ## v0.9.21  —  2026-10-31
 - a server you run yourself no longer freezes its page on a Print Replica book or a medical file's PDF
@@ -238,7 +237,6 @@ What changed in each version. Every build is on the
 - a long Markdown page scrolls to its last line in the desktop app
 - a storage location your plan had no room for is added once the plan changes
 - the tree's context menu in groups
-- source maps for debugging any copy in the browser, to the developer's password only
 
 ## v0.9.11  —  2026-10-20
 - pipelines: a dbt model's columns each list the upstream columns they come from (direct, derived or aggregated); `adapter.get_columns_in_relation`, `dbt_utils.star`, `is_incremental()` and the like are answered from catalog.json or the profile's DuckDB or SQLite file, and an incremental model shows both of its renders

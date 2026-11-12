@@ -1,10 +1,22 @@
 <script setup>
 import { withBase } from "vitepress"
 import PricingSignup from "./PricingSignup.vue"
+import { PLANS } from "../data/plans.js"
 
-// What each plan covers, as its card lists it. The limits are the ones in rock2
-// explorer/src/components/PlanTiers.jsx, which is what the app shows, and
-// server/src/plan/planFeatures.js, which is what the app enforces. Change one, change all three.
+// What each plan covers, as its card lists it. The numbers are data/plans.js's, the same as the
+// product's own (foldone service/plan/features.js; scripts/check_plans.py compares them).
+const { free, pro, enterprise } = PLANS
+
+// a limit as a card line: its number, or Unlimited
+function limit(value, words) {
+	if (value === undefined) {
+		return `Unlimited ${words}`
+	}
+	else {
+		return `${value} ${words}`
+	}
+}
+
 const plans = [
 	{
 		id: "free",
@@ -17,13 +29,13 @@ const plans = [
 		href: "/download",
 		includes: "What you get:",
 		features: [
-			"Preview 60+ formats in place",
+			"Preview more than 900 file extensions in place",
 			"SQL, charts and notebooks on your machine",
-			"3 cloud roots per provider",
-			"5 local folders",
-			"5 PII column rules and 5 full-text rules",
-			"7 days of audit log history",
-			"Community support",
+			limit(free.max_cloud_roots_per_provider, "cloud roots per provider"),
+			limit(free.max_local_folders, "local folders"),
+			`${free.max_pii_columns} PII column rules and ${free.max_pii_text_rules} full-text rules`,
+			`${free.audit_retention_days} days of audit log history`,
+			`${free.support} support`,
 		],
 	},
 	{
@@ -34,11 +46,12 @@ const plans = [
 		period: "per month",
 		lifetime: "€300",
 		includes: "Everything in Free and:",
+		buy: "mailto:rockie@knockdata.com?subject=ObjectExplorer%20Pro",
 		features: [
-			"Unlimited cloud roots per provider",
-			"Unlimited local folders",
+			limit(pro.max_cloud_roots_per_provider, "cloud roots per provider"),
+			limit(pro.max_local_folders, "local folders"),
 			"Unlimited PII column and full-text rules",
-			"365 days of audit log history",
+			`${pro.audit_retention_days} days of audit log history`,
 			"Best-effort support",
 		],
 	},
@@ -55,8 +68,8 @@ const plans = [
 		features: [
 			"Single sign-on, OIDC & SAML",
 			"Hardware-bound encryption",
-			"Unlimited audit log history",
-			"Support within 1 business day",
+			limit(enterprise.audit_retention_days, "audit log history"),
+			`Support within ${enterprise.support}`,
 		],
 	},
 ]
@@ -84,6 +97,7 @@ function linkOf(href) {
 					<p class="pricing-tagline">{{ plan.tagline }}</p>
 					<p class="pricing-price">{{ plan.price }}<span v-if="plan.period"> {{ plan.period }}</span><template v-if="plan.lifetime"><span>/</span> {{ plan.lifetime }}<span>lifetime</span></template></p>
 					<PricingSignup v-if="plan.id === 'pro'" />
+					<p v-if="plan.buy" class="pricing-buy">The sign-up starts seven days of Pro. To buy it, <a :href="plan.buy">contact us</a>.</p>
 					<a v-else class="pricing-action" :href="linkOf(plan.href)">{{ plan.action }}</a>
 				</div>
 				<div class="pricing-plan-features">
@@ -200,6 +214,12 @@ function linkOf(href) {
 	text-align: center;
 	text-decoration: none;
 	transition: border-color 0.2s, color 0.2s;
+}
+
+.pricing-buy {
+	color: var(--vp-c-text-2);
+	font-size: 13px;
+	margin: 8px 0 0;
 }
 
 .pricing-action:hover {

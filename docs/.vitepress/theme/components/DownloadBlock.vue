@@ -11,7 +11,7 @@ import { useChina } from "../composables/china.js"
 // the commands under the download cards: npx, and Homebrew's formula and cask
 const runs = [
 	{ title: "Run in Command Line", text: "Use in your browser", commands: ["npx @knockdata/objectexplorer"] },
-	{ title: "Install with Homebrew", text: "macOS and Linux: the command line, then the desktop app", commands: brewCommands },
+	{ title: "Install with Homebrew", text: "The command line on macOS and Linux, then the desktop app on macOS", commands: brewCommands },
 ]
 const { translate } = useLanguage()
 const release = useRelease()

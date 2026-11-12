@@ -3,7 +3,11 @@
 New versions are published as [GitHub releases](https://github.com/knockdata/objectexplorer/releases),
 and that is where the app looks for them. Where GitHub cannot be reached, objectexplorer.com passes
 the same releases on, and the app asks it next; a download goes on from there too. The check
-carries nothing about you. It is one of the few requests ObjectExplorer makes that are not to your
+carries nothing about you. Once you allowed it, the desktop app also tells objectexplorer.com, at
+most once a day, which version this install runs: a key fingerprint made on this computer, the
+version and the platform. It asks before the first time, and the tick **Tell objectexplorer.com once
+a day which version this install runs** in **Settings → Check for Updates** changes your answer.
+These are among the few requests ObjectExplorer makes that are not to your
 own storage — [your data stays here](/privacy#what-does-leave-and-when) lists them all.
 
 ## A newer version is offered
@@ -26,7 +30,7 @@ one.
 
 **Settings → Check for Updates** asks for the latest release when you open it. When there is a
 newer version, **Update to 0.9.24** downloads it into
-`~/.objectexplorer/update`, checks its sha256 against the release's own list, and only then puts it
+`~/.objectexplorer/work/update`, checks its sha256 against the release's own list, and only then puts it
 where the next start finds it. Nothing changes while you work. The button then turns into
 **Restart to Finish**: the app closes and opens again on the new version, on the same port, and a
 browser page waits for it and reloads.

@@ -56,21 +56,21 @@ machine through the browser: see [where a file is parsed](/reference/where-files
 Everything the app keeps is in `~/.objectexplorer` — the full list is in
 [where your data lives](/reference/data-locations).
 
-| Kept                                    | Where          | Holds your data?                                                                                                                    |
-|-----------------------------------------|----------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| The folders you listed                  | `explorer.db`  | names, sizes, dates, storage classes — not contents                                                                                 |
-| Notebooks                               | `explorer.db`  | the code of each cell, never its results                                                                                            |
-| How long each opening took              | `explorer.db`  | the path, the format, the time and the memory it took                                                                               |
-| Cached copies of cloud objects          | `cache/`       | yes: the parts of objects you opened, up to the limit you set (10 GB by default), the least recently used dropped first             |
-| The search index                        | `index/`       | yes, in part: the words found in each file                                                                                          |
-| Every agent call                        | `mcp/<agent>/` | the tool, the path, the decision, the size of the answer — never the rows                                                           |
-| Credentials                             | the keychain   | the system's own; `storage.json` holds only a reference                                                                             |
-| The rules an agent is held to           | `mcp.yaml`     | your rules, including PII rules                                                                                                     |
-| The key PII rules hash and encrypt with | `mcp/key`      | a secret; it never leaves the machine                                                                                               |
-| Python environments                     | `venvs/`       | what you installed into them                                                                                                        |
-| Window sessions                         | `replay/`      | yes: what you clicked and typed in the last sessions, kept to replay them — see [recording a session](/reference/session-recording) |
-| The app's log                           | `app.log`      | the messages the app printed: paths, timings, errors; the one before is kept as `app.log.1` once it passes 8 MB                     |
-| The demo folder                         | `demo/`        | the sample files the installed app shows in its tree, fetched from objectexplorer.com                                               |
+| Kept                                    | Where               | Holds your data?                                                                                                                    |
+|-----------------------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| The folders you listed                  | `data/explorer.db`  | names, sizes, dates, storage classes — not contents                                                                                 |
+| Notebooks                               | `data/explorer.db`  | the code of each cell, never its results                                                                                            |
+| How long each opening took              | `data/explorer.db`  | the path, the format, the time and the memory it took                                                                               |
+| Cached copies of cloud objects          | `cache/`            | yes: the parts of objects you opened, up to the limit you set (10 GB by default), the least recently used dropped first             |
+| The search index                        | `cache/index/`      | yes, in part: the words found in each file                                                                                          |
+| Every agent call                        | `log/mcp/<agent>/`  | the tool, the path, the decision, the size of the answer — never the rows                                                           |
+| Credentials                             | the keychain        | the system's own; `settings/locations.json` holds only a reference                                                                  |
+| The rules an agent is held to           | `settings/mcp.yaml` | your rules, including PII rules                                                                                                     |
+| The key PII rules hash and encrypt with | `account/mcp_key`   | a secret; it never leaves the machine                                                                                               |
+| Python environments                     | `data/venvs/`       | what you installed into them                                                                                                        |
+| Window sessions                         | `log/replay/`       | yes: what you clicked and typed in the last sessions, kept to replay them — see [recording a session](/reference/session-recording) |
+| The app's log                           | `log/app.log`       | the messages the app printed: paths, timings, errors; the one before is kept as `app.log.1` once it passes 8 MB                     |
+| The demo folder                         | `work/demo/`        | the sample files the installed app shows in its tree, fetched from objectexplorer.com                                               |
 
 One thing is written outside that folder, into the storage you browse: **a delete in a cloud
 bucket** moves the object into a `.trash` folder at the top of that root, kept for 30 days, so it
@@ -85,7 +85,8 @@ purpose: a copy, a move, a rename, a file you save.
   for your licence, the demo folder, the list of assistants **Ask…** knows and a share link too
   big to fit in its own URL, and gets a file only when you send one yourself: a bug report, an
   anonymized copy or the app's log, sealed so only we can open it. The update check goes to
-  GitHub — the full list is in [your data stays here](/privacy).
+  GitHub, and, once you allowed it, tells objectexplorer.com which version this install runs — the
+  full list is in [your data stays here](/privacy).
 
 ## Deleting it all
 

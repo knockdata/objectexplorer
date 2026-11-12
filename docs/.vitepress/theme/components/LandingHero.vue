@@ -24,6 +24,7 @@ const { translate } = useLanguage()
 			</svg>
 			<p class="landing-hero-lede">
 				{{ translate("Fed up with the cumbersome cloud console and its many tabs? Just use ObjectExplorer: one click opens any file at any location") }}
+				<span class="landing-hero-aside">{{ translate("Google Drive, Dropbox, OneDrive and Box need a sign-in app of your own for now.") }}</span>
 			</p>
 			<p class="landing-hero-lede">
 				{{ translate("Worried an agent reads your secrets? Download ObjectExplorer: we remove PII before an agent reads it") }}
@@ -100,6 +101,13 @@ const { translate } = useLanguage()
 	font-size: clamp(1rem, 1.25vw, 1.11rem);
 	margin: 10px 0;
 	max-width: 500px;
+}
+
+.landing-hero-aside {
+	color: var(--chalk-3);
+	display: block;
+	font-size: 14.5px;
+	margin-top: 4px;
 }
 
 .landing-hero-actions {

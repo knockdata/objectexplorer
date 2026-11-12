@@ -32,7 +32,7 @@ them by the published rate for that bucket's region.
 | Pale top of the stack             | what is already on this machine: a cloud object's copy in the cache, a disk's file whole                        |                                                                                                       |
 | The ring on the cap               | how many reads the pole has had, drawn as an area on the same scale as the cap                                  | a ring the size of its cap is about one read per object                                               |
 | Pale arc of the base              | the openings of the pole's objects in this window                                                               | counted when a tab opens a cloud object, and by nothing else                                          |
-| Dark arc of the base              | the agent door's log in `~/.objectexplorer/mcp`                                                                 | one line per call, matched back to an object by the URI the agent used                                |
+| Dark arc of the base              | the agent door's log in `~/.objectexplorer/log/mcp`                                                             | one line per call, matched back to an object by the URI the agent used                                |
 | Thickness of the base             | bytes those reads moved, against the busiest pole on the disc                                                   | one figure for the pole, not split between person and agent — see below                               |
 | An arch between two poles         | the same bytes found in both                                                                                    | matched by the provider's tag where both sides have a plain MD5, otherwise by name and size           |
 | Saved, on the card                | three terms, below                                                                                              |                                                                                                       |
@@ -113,11 +113,11 @@ card.
 
 Everything the disc reads is on this machine, in `~/.objectexplorer`:
 
-|               | What it holds                                                                                  |
-|---------------|------------------------------------------------------------------------------------------------|
-| `explorer.db` | the kept listings: objects, sizes, ages, classes; the openings and reads; each bucket's region |
-| `cache/`      | the cached copies, whose size on disk is the pale top of a stack                               |
-| `mcp/`        | one file per agent session, which is the dark arc of a base                                    |
+|                    | What it holds                                                                                  |
+|--------------------|------------------------------------------------------------------------------------------------|
+| `data/explorer.db` | the kept listings: objects, sizes, ages, classes; the openings and reads; each bucket's region |
+| `cache/`           | the cached copies, whose size on disk is the pale top of a stack                               |
+| `log/mcp/`         | one file per agent session, which is the dark arc of a base                                    |
 
 None of it is sent anywhere. See [where your data lives](/reference/data-locations).
 

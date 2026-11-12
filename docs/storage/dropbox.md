@@ -11,7 +11,7 @@ from a terminal, which serves the app to your browser — and only from that ser
 
 1. Create an app in the Dropbox App Console, and add the server's redirect address to it:
    `http://127.0.0.1:9421/oauth/callback`, with the port your server listens on.
-2. Put the app's key in the server's config, `server.json` in the app's folder:
+2. Put the app's key in the server's config, `settings/server.json` in the app's folder:
 
    ```json
    {

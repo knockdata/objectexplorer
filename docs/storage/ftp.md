@@ -10,7 +10,7 @@ several servers.
 
 ## Adding an account
 
-The **+** beside **Accounts** in Settings, or the **+** in the side bar's header, offers **FTP…**,
+The **+** beside **Connections** in Settings, or the **+** in the side bar's header, offers **FTP…**,
 **FTPS…** and **SFTP…**. Each opens an empty account:
 
 | Field          | What goes in it                                                                   |
@@ -45,7 +45,7 @@ in its `authorized_keys`, as for `ssh`.
 ## Is the server the one you meant?
 
 An SSH server proves itself with its host key. The app looks for it in `~/.ssh/known_hosts`, which
-it reads and never writes, and in its own `known_hosts` in the app's folder. A server found in
+it reads and never writes, and in its own `account/known_hosts` in the app's folder. A server found in
 neither asks once, showing its key's SHA-256 fingerprint: **Trust and Connect** keeps it in the
 app's file. A server whose key has changed since is refused, since someone may be in between; if
 the key was changed on purpose, remove its line from the file that holds it.
@@ -78,7 +78,7 @@ asked again in the background, coming back by itself once the server answers.
 ## Where the password goes
 
 The password, and a key's passphrase, go to the system keychain (the macOS keychain, the Windows
-Credential Manager, the Linux Secret Service); `storage.json` keeps only a reference to it. In the
+Credential Manager, the Linux Secret Service); `settings/locations.json` keeps only a reference to it. In the
 account's pane a kept password shows as dots. See
 [where the credentials go](/storage/connect#where-the-credentials-go).
 

@@ -1,7 +1,7 @@
 # Connecting an agent
 
 Everything here is **Settings → MCP**. Each control on that pane is one line of
-`~/.objectexplorer/mcp.yaml`, and the file is read again whenever it changes — so editing it in the
+`~/.objectexplorer/settings/mcp.yaml`, and the file is read again whenever it changes — so editing it in the
 pane and editing it in an editor are the same act.
 
 ## 1. Write a starting rule file

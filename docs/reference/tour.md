@@ -4,24 +4,17 @@
 
 <img src="/screenshot/tour.png" alt="The tour's first card, Open, look, export, over the demo's train stations opened as a table">
 
-The first time the desktop window opens, a short tour shows you around. Each card lights up one part of the
-window and darkens the rest. The first three are a small task on the demo folder's train stations:
+The first time the desktop window opens, a short tour shows you around: four cards, each lighting
+up one part of the window and darkening the rest.
 
-1. **Open, look, export**: the stations, a Parquet file, open as rows; nothing is imported or
-   uploaded;
-2. **Look: click a bar**: the bars under a column's name filter the rows by that value;
-3. **Export: hold Download**: the whole file written as an Excel workbook, or in another format.
-
-The rest are the window's parts:
-
-4. the activity bar, which decides what the side bar shows;
-5. the tree, every folder you added, on this machine or in the cloud;
-6. **Add a folder**, the **+** that adds a folder on this machine, or the buckets of a cloud set up in
-   Settings;
-7. the tabs, and splitting to read two side by side;
-8. search, by name with `⌘P` or inside every file;
-9. settings: folders, cloud accounts, the cache, the plan and updates;
-10. the **?**, which shows the tour again.
+1. **The activity bar**: each icon down the left shows its view beside it — Explorer, the tree of
+   your folders, and Search at the top; account, settings, the tour's **?** and the theme at the
+   bottom;
+2. **Add a location**: the **+** that adds a location to the tree — **Local Folder…** picks a folder
+   on this machine, a cloud set up in Settings adds its buckets; nothing is copied or uploaded;
+3. **Click an item in the tree**: a folder opens, a file shows in the pane;
+4. **The file in the pane**: after **Next**, the demo's train stations, a Parquet file, open as
+   rows; nothing is imported or uploaded.
 
 **Next** (`→` or `Enter`) and **Back** (`←`) walk the cards, and the last one says **Done**;
 **Skip**, the ✕ or `Esc` ends it. Once it has been shown it never starts by itself again. The **?**
@@ -44,8 +37,8 @@ you have neither used nor been shown, with one card: what it is, and **Got It**.
 comes up by itself a day, and none on the day the tour ran. Something you have already done is
 never pointed at.
 
-What you have seen and used is kept on this machine, in `~/.objectexplorer/onboarding.json`. On a
+What you have seen and used is kept on this machine, in `~/.objectexplorer/settings/onboarding.json`. On a
 server, what a signed-in person has used is kept by their email, so a card they dismissed in one
 browser does not come back in another.
 
-Next: [memory](/reference/memory).
+Next: [where the usage numbers come from](/reference/usage-data).

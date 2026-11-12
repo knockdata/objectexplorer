@@ -174,7 +174,7 @@ signing in. Restarting the server ends every session.
 ## The config file
 
 Everything the command line takes, and what it cannot, is kept in one JSON file: `config=<file>`, or
-else `server.json` in the [data folder](#the-data-folder), `~/.objectexplorer/server.json`, when it
+else `settings/server.json` in the [data folder](#the-data-folder), `~/.objectexplorer/settings/server.json`, when it
 exists. An argument on the command line wins over the
 file.
 
@@ -207,21 +207,21 @@ file.
 
 ## Start settings
 
-| Setting      | Values                                | Default              | What it does                                                                                     |
-|--------------|---------------------------------------|----------------------|--------------------------------------------------------------------------------------------------|
-| `host`       | `127.0.0.1`, `0.0.0.0`, or an address | `127.0.0.1`          | where it listens; `127.0.0.1` is this machine only                                               |
-| `http_port`  | a number                              | `9421`               | the plain listener; with `tls` it answers Let's Encrypt and sends the rest to https              |
-| `https_port` | a number                              |                      | the TLS listener, needed with `tls`                                                              |
-| `tls`        | `auto`, or `<chain.pem>,<key.pem>`    |                      | https with a certificate from Let's Encrypt, or with your own                                    |
-| `domain`     | a name, like `oe.example.com`         |                      | the name people use to reach it; the certificate's name; a licence for a domain counts only here |
-| `public`     | `true`                                | `false`              | serve other machines without sign-in                                                             |
-| `licence`    | a licence file, or its text           |                      | installed before the server starts; one that does not verify stops the start                     |
-| `mode`       | `full`, `instant`                     | `full`               | `instant`: one read-only folder, see [instant mode](/reference/instant-mode)                     |
-| `cloud`      | `on`, `off`                           | `on`                 | `off`: storage is the disk only; no cloud can be added                                           |
-| `base`       | a folder                              | the built-in app     | read only, served as it is — see [the base folder](#the-base-folder)                             |
-| `data`       | a folder                              | `~/.objectexplorer`  | where the server writes — see [the data folder](#the-data-folder)                                |
-| `open`       | `true`, `false`                       | `true`               | open the browser when it starts                                                                  |
-| `config`     | a JSON file                           | `<data>/server.json` | everything else                                                                                  |
+| Setting      | Values                                | Default                       | What it does                                                                                     |
+|--------------|---------------------------------------|-------------------------------|--------------------------------------------------------------------------------------------------|
+| `host`       | `127.0.0.1`, `0.0.0.0`, or an address | `127.0.0.1`                   | where it listens; `127.0.0.1` is this machine only                                               |
+| `http_port`  | a number                              | `9421`                        | the plain listener; with `tls` it answers Let's Encrypt and sends the rest to https              |
+| `https_port` | a number                              |                               | the TLS listener, needed with `tls`                                                              |
+| `tls`        | `auto`, or `<chain.pem>,<key.pem>`    |                               | https with a certificate from Let's Encrypt, or with your own                                    |
+| `domain`     | a name, like `oe.example.com`         |                               | the name people use to reach it; the certificate's name; a licence for a domain counts only here |
+| `public`     | `true`                                | `false`                       | serve other machines without sign-in                                                             |
+| `licence`    | a licence file, or its text           |                               | installed before the server starts; one that does not verify stops the start                     |
+| `mode`       | `full`, `instant`                     | `full`                        | `instant`: one read-only folder, see [instant mode](/reference/instant-mode)                     |
+| `cloud`      | `on`, `off`                           | `on`                          | `off`: storage is the disk only; no cloud can be added                                           |
+| `base`       | a folder                              | the built-in app              | read only, served as it is — see [the base folder](#the-base-folder)                             |
+| `data`       | a folder                              | `~/.objectexplorer`           | where the server writes — see [the data folder](#the-data-folder)                                |
+| `open`       | `true`, `false`                       | `true`                        | open the browser when it starts                                                                  |
+| `config`     | a JSON file                           | `<data>/settings/server.json` | everything else                                                                                  |
 
 The window's own settings, `window=`, `connect=`, `record=` and the rest, are on
 [the command line](/reference/command-line#starting-it).
@@ -239,13 +239,13 @@ The server refuses to start, with a message, when the settings cannot work: `tls
 Everything the server writes goes in one folder, `~/.objectexplorer` of the account that runs it.
 `data=<folder>` moves it, all of it together:
 
-| In the data folder | What it is                                                                            |
-|--------------------|---------------------------------------------------------------------------------------|
-| `server.json`      | the [config file](#the-config-file), unless `config=` names another                   |
-| `licence`          | the [licence](#installing-a-licence)                                                  |
-| `certs/<domain>/`  | the [certificate](/self-hosting/domain-and-certificate#where-the-certificate-is-kept) |
-| `audit/`           | the [audit log](#the-audit-log)                                                       |
-| `explorer.db`      | what the app remembers — see [where your data lives](/reference/data-locations)       |
+| In the data folder        | What it is                                                                            |
+|---------------------------|---------------------------------------------------------------------------------------|
+| `settings/server.json`    | the [config file](#the-config-file), unless `config=` names another                   |
+| `account/licence`         | the [licence](#installing-a-licence)                                                  |
+| `account/certs/<domain>/` | the [certificate](/self-hosting/domain-and-certificate#where-the-certificate-is-kept) |
+| `log/audit/`              | the [audit log](#the-audit-log)                                                       |
+| `data/explorer.db`        | what the app remembers — see [where your data lives](/reference/data-locations)       |
 
 ```sh
 objectexplorer data=/srv/objectexplorer
@@ -319,7 +319,7 @@ that `domain=`.
 ## The audit log
 
 A server that signs people in, or an enterprise one, writes one line per event to
-`~/.objectexplorer/audit/<date>.ndjson`: sign-ins (and failed ones, with the reason), sign-outs,
+`~/.objectexplorer/log/audit/<date>.ndjson`: sign-ins (and failed ones, with the reason), sign-outs,
 uploads, copies and deletes (a rename is a copy and a delete), agent calls, changes to its
 configuration (including the account that ran `oe sso`), updates, rollbacks and licences.
 
@@ -404,6 +404,6 @@ On Linux with systemd, as an account of its own named `objectexplorer`:
    ```
 
 On a Mac, `brew services start objectexplorer` runs the Homebrew copy the same way, as your own
-account, with `open=false`; settings go in `~/.objectexplorer/server.json`.
+account, with `open=false`; settings go in `~/.objectexplorer/settings/server.json`.
 
 Next: [domain and certificate](/self-hosting/domain-and-certificate).

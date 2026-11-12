@@ -33,7 +33,7 @@ next one and `⇧Enter` back.
 - **Help: Check for Updates** — asks now whether a newer version is out, see
   [updating](/reference/updating);
 - **Shell Command: Install 'oe' command in PATH** — see [the command line](/reference/command-line);
-- **Toggle Theme**, **Add Folder…**, **View: Hidden Objects**, **View: Deleted Objects**,
+- **Toggle Theme**, **Add Folder…**, **Add a location**, **View: Hidden Objects**, **View: Deleted Objects**,
   **File: Copy Path** and **Reveal in Finder** (Show in File Explorer on Windows).
 
 ## Two sides

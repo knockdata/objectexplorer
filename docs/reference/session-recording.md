@@ -20,7 +20,7 @@ already written.
 Each recording is encrypted as it is written, line by line, with a key of this install. The key is
 made the first time a session is recorded and kept in the system's keychain: the macOS Keychain, the
 Windows Credential Manager, or the Secret Service on Linux (where there is none, such as on a
-server, a file only you can read in `~/.objectexplorer/keychain`). The app reads it without asking
+server, a file only you can read in `~/.objectexplorer/account/keychain`). The app reads it without asking
 for a password. So the text you typed cannot be read from the file: not by another program, not
 from a backup or a copy of the disk. Playing a session back decrypts it on the way; a recording
 from another computer or another install cannot be played, and says so.
@@ -29,20 +29,20 @@ from another computer or another install cannot be played, and says so.
 
 <img src="/screenshot/session-recording.png" alt="The replay folder in the tree and listed beside it, a recording per session named by when it started">
 
-Each window session is a file of its own in `~/.objectexplorer/replay`, named by when it started.
+Each window session is a file of its own in `~/.objectexplorer/log/replay`, named by when it started.
 The last 20 sessions are kept, and never more than 50 MB in all; one session stops growing at 50 MB.
 The browser version records nothing.
 
 | Start with      | What happens                                           |
 |-----------------|--------------------------------------------------------|
-| nothing         | this session is recorded in `~/.objectexplorer/replay` |
+| nothing         | this session is recorded in `~/.objectexplorer/log/replay` |
 | `record=<file>` | this session is recorded in that file instead          |
 | `record=false`  | nothing is recorded                                    |
 
 ## Playing it back
 
 ```sh
-objectexplorer window=true replay=~/.objectexplorer/replay/2026-10-11T17-36-44.166Z.replay
+objectexplorer window=true replay=~/.objectexplorer/log/replay/2026-10-11T17-36-44.166Z.replay
 ```
 
 The window opens and the session is played into it, input by input. Each click goes to the element
@@ -65,7 +65,7 @@ end of the app's log, encrypted so only we can read it. When the steps that led 
 send the recording:
 
 ```sh
-oe replay export ~/.objectexplorer/replay/2026-10-11T17-36-44.166Z.replay session.replay
+oe replay export ~/.objectexplorer/log/replay/2026-10-11T17-36-44.166Z.replay session.replay
 ```
 
 writes a decrypted copy, `session.replay`, that plays on any computer. It is written on this

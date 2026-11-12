@@ -7,7 +7,7 @@
 One set of rules protects two audiences: **an agent reading over MCP or the `oe` command line**, and
 **a person opening a [share link](/explore/share)**. Both are data leaving this machine, and both go through the same
 code in the app's own server, reading the same two lists from the same file,
-`~/.objectexplorer/mcp.yaml`. Someone who decides once that `email` is never shared plainly has
+`~/.objectexplorer/settings/mcp.yaml`. Someone who decides once that `email` is never shared plainly has
 decided it for both. An edit in the pane holds from the next call or the next share — the file is
 read again every time, with no restart.
 
@@ -20,7 +20,7 @@ of its own and reads every file through the MCP server, under these rules.
 | **Which rules**           | both lists, on every call                          | both lists, on every share                                   |
 | **Who can loosen one**    | nobody — no call can ask for less                  | the sender, one column at a time, for that one share         |
 | **Drop or Token**         | as the rule says                                   | opens as **Hash**: no column left out, no token sent         |
-| **The key**               | one per install, in `~/.objectexplorer/mcp/key`    | one per share, made when the dialog opens, never in the link |
+| **The key**               | one per install, in `~/.objectexplorer/account/mcp_key`    | one per share, made when the dialog opens, never in the link |
 | **How it is told**        | every rewritten column is marked `encrypted: true` | a rewritten column reaches the receiver's grid as text       |
 
 Everything else is the same: the methods below, the 16 hex characters a hash comes back as,
@@ -70,7 +70,7 @@ in every file, every session and every agent's answers — `Anna.Berg@Example.co
 agent can still follow one person across documents, and it is never in doubt that it holds a stand-in.
 A rule's `type` names the token (`type: PERSON`); without one it is read off the pattern.
 
-The tokens live in a vault, `~/.objectexplorer/mcp/vault.db`: SQLite, each real value encrypted
+The tokens live in a vault, `~/.objectexplorer/data/mcp/vault.db`: SQLite, each real value encrypted
 (AES-256-GCM) under a key kept in the system keychain, never in the file. The file copied elsewhere
 holds nothing readable.
 
@@ -90,7 +90,7 @@ in the vault: it shows the type and a digest, `<EMAIL_bdd8e64f>`, where an agent
 
 **Settings → PII → Reveal** turns a token back into the real value, for the person who owns this
 machine: the system asks for the login first (Touch ID or the password on macOS), and every ask —
-answered or not — is a line in `~/.objectexplorer/mcp/reveal.ndjson`, with the token, who asked and
+answered or not — is a line in `~/.objectexplorer/log/mcp/reveal.ndjson`, with the token, who asked and
 what the login said, never the value. Windows and Linux cannot ask for the login yet, so there
 nothing is revealed. On the command line the same is `oe pii reveal '<PERSON_17>'`, and
 `oe pii reveals` lists the asks ([the command line](/reference/command-line#revealing-a-pseudonym)).
@@ -100,7 +100,7 @@ nothing is revealed. On the command line the same is `oe pii reveal '<PERSON_17>
 Hash and FPE are both keyed, and the key is the one place the two audiences part.
 
 **An agent** is answered under one key per install, generated on first use and kept in
-`~/.objectexplorer/mcp/key` — never in the rule file and never on the wire. So an encrypted value is
+`~/.objectexplorer/account/mcp_key` — never in the rule file and never on the wire. So an encrypted value is
 stable across sessions on this machine, and means nothing on any other.
 
 **A share** is encrypted under a key of its own, made when the share dialog opens. It never enters

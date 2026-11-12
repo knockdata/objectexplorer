@@ -14,7 +14,7 @@ DELETE http://127.0.0.1:9421/api/mcp      end this session
 MCP's Streamable HTTP transport, protocol version `2025-06-18`, on **the app's own port**, at
 `/api/mcp`: the port the window or `npx objectexplorer` is served on, 9421 unless something else
 holds it. A desktop window with no server of its own answers `/api/mcp` on 9421, or on any free port
-when that one is busy. The address in use is kept in `~/.objectexplorer/mcp/url`, shown as
+when that one is busy. The address in use is kept in `~/.objectexplorer/data/mcp/url`, shown as
 **Endpoint** in Settings → MCP, and written again into each installed client's config when it
 changes. It lets an agent in only while `server.enabled` is on and a token is written.
 

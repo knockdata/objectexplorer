@@ -28,10 +28,26 @@ every read-and-burn link, is stored on objectexplorer.com until it expires.
 
 **What you ask an assistant.** **Ask…** in a file's menu hands the file to the assistant you picked
 — Claude, ChatGPT, Gemini, or one that runs on this machine such as Ollama — through that
-assistant's own program or address, under its own terms. It happens only when you pick it, and
+assistant's own program or address, under its own terms. [Translate](/agents/translate) does the
+same with the word you selected and the sentence around it. It happens only when you pick it, and
 only to the one you picked.
 
-Everything else the app asks of the outside world is listed here. None of it carries a row of your
+**The web pages you open.** The [Browser](/explore/browser) loads the pages you go to, as any
+browser does, and words typed in its address bar are searched with DuckDuckGo. The
+[Heroes](/explore/heroes) you follow are read from the links you gave them: their blog's feed,
+YouTube, GitHub, Mastodon, Bluesky, Hacker News (through Algolia's search of it), Reddit or Medium,
+each asked at most every so often and only while the Heroes show or you press Refresh. On a Mac, an
+X or LinkedIn link is read through the Browser's own sign-in to that site, in a page you do not see.
+
+**Which version this install runs, once a day, after you said yes.** When the desktop app checks
+for a newer version, it can also tell objectexplorer.com this install's key fingerprint (a random
+key made on this computer, with no name in it), the version it runs and its platform, so we see
+which versions are in use. The site keeps it encrypted to our key, without your address. The app
+asks once, before the first report, with **Allow** and **Not now**; nothing is sent before you
+answer, and nothing after a **Not now**. The tick **Tell objectexplorer.com once a day which version
+this install runs**, in **Settings → Check for Updates**, changes your answer at any time.
+
+The other calls the app makes of the outside world are listed here. None of it carries a row of your
 data or a path on this machine, except a file you send us yourself.
 
 | Call                                          | When                                                                        |
@@ -39,6 +55,7 @@ data or a path on this machine, except a file you send us yourself.
 | GitHub: what is the newest release?           | at most once a day, and when you open **Settings → Check for Updates**      |
 | GitHub: the new version itself                | when you press **Update** — see [updating](/reference/updating)             |
 | objectexplorer.com: the same two, passed on   | only when GitHub cannot be reached                                          |
+| objectexplorer.com: which version this runs   | at most once a day, with the update check, only after you said yes (above)  |
 | uv: a Python build, and the packages you name | when you make a [Python environment](/analyze/python) or install into one   |
 | The web pages you added as style sources      | when you add or reindex one in [the writing tool](/analyze/writing)         |
 | objectexplorer.com: your licence              | at start, and in a plan's last three days, only once you have signed up     |
@@ -58,7 +75,8 @@ once a day, the kinds of files opened the days before (their extension, a size r
 they stayed open): never a name, a path, the content, or anything that tells who or which device
 sent it. Your answer is a switch on ObjectExplorer's page in the Settings app, which you can turn
 off at any time. In mainland China the question is never asked and nothing is sent. The desktop
-app has no usage reporting, and no app has crash reporting. What the app measures about itself —
+app sends no counts of what you open: only the daily line of which version it runs, above, once you
+allowed it. No app has crash reporting. What the app measures about itself —
 how long each file took to open, what its memory was made of — stays in `~/.objectexplorer`.
 
 **A message to Rockie, when you write one.** **Chat with Rockie** in the side bar sends what you
@@ -77,7 +95,7 @@ read it, and none of them runs on its own.
 **Your window sessions.** The desktop window records each session as it happens: what you clicked,
 the keys you pressed, the text you typed, and the messages the app printed. It is kept so a session
 can be played back after something went wrong. Only the last 20 are kept, and never more than 50 MB
-in all, in `~/.objectexplorer/replay`; nothing of it is sent anywhere. Each file is encrypted with a
+in all, in `~/.objectexplorer/log/replay`; nothing of it is sent anywhere. Each file is encrypted with a
 key kept in your system's keychain (made the first time, never shown), so what you typed cannot be
 read from the file, by another program or from a copy of your disk. To give a session to someone,
 for a bug report, `oe replay export <file> <out>` writes a readable copy; it holds what you typed,
@@ -85,7 +103,7 @@ so look at it first. Start with `record=false` to record nothing — see
 [recording a session](/reference/session-recording). The browser version records nothing.
 
 **The app's log.** The desktop app writes the messages it prints, with the paths of the files it
-opened, to `~/.objectexplorer/app.log`, and keeps the one before as `app.log.1` once it passes 8 MB.
+opened, to `~/.objectexplorer/log/app.log`, and keeps the one before as `app.log.1` once it passes 8 MB.
 It stays here unless you send it to us.
 
 ## What an agent sees
@@ -93,7 +111,7 @@ It stays here unless you send it to us.
 An MCP client on this machine is not an exception to any of the above: it reaches storage only
 through this app, only at `127.0.0.1`, only in the roots you ticked, and only with PII already
 rewritten — by the same [PII rules](/agents/pii) a share link goes through. It never holds a
-credential, and every call it made is on your disk in `~/.objectexplorer/mcp/`. The door is shut
+credential, and every call it made is on your disk in `~/.objectexplorer/log/mcp/`. The door is shut
 until you open it — see [ObjectExplorer for agents](/agents/).
 
 ## What a cloud provider sees

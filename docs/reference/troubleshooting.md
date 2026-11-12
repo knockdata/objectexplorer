@@ -22,7 +22,7 @@ The window is drawn on Wayland. Under an X11 session, or over ssh, run the comma
 ## A bucket lists nothing, or asks me to sign in again
 
 The provider answered, and it said no. Open **Settings** and the account for that provider under
-**Accounts** — **Amazon Web Services**, **Google** or **Microsoft**. **What was checked** lists which
+**Connections** — **Amazon Web Services**, **Google** or **Microsoft**. **What was checked** lists which
 credential source was tried and what each one said; a source that is not configured on this machine
 is skipped rather than failed, so the list says which step is missing. Installed a CLI or signed in
 in a terminal since? **Refresh** at the top of the pane looks again. See [Amazon S3](/storage/s3),
@@ -51,7 +51,7 @@ Settings → General → Login Items & Extensions → Finder**. See
 **Help: Report Bug with a Screenshot** in the command palette (`⇧⌘P`) sends us a picture of the
 window, a line on what went wrong if you like, the version and the end of the app's log, encrypted
 so only we can read it. **Help: Share Application Log for Debugging** sends the log alone. The log
-itself is `~/.objectexplorer/app.log`. A file that will not open can be sent too, without its
+itself is `~/.objectexplorer/log/app.log`. A file that will not open can be sent too, without its
 contents: **Share Anonymized for Debugging** in its right-click menu sends a copy with every value
 replaced by one of the same shape.
 

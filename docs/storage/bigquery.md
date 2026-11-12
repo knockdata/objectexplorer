@@ -9,7 +9,7 @@ and a query is priced before it runs and runs only under a limit you set.
 
 BigQuery uses the Google sign-in, the same one [Google Cloud Storage](/storage/gcs) uses: Application
 Default Credentials, **Sign in with Google** through `gcloud`, or a service account key, in
-**Settings → Accounts → Google**. The pane ticks **Google Cloud Storage** and **Google BigQuery**
+**Settings → Connections → Google**. The pane ticks **Google Cloud Storage** and **Google BigQuery**
 apart, so either can be turned off.
 
 **Settings → Locations → BigQuery** then lists the projects your account may use, each with a tick;

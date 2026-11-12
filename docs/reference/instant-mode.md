@@ -25,7 +25,7 @@ and a file or folder dragged onto the window is taken in too. What you give it s
 under a `browser://` root, is parsed in the page itself, and is never sent to the server — see
 [where a file is parsed](/reference/where-files-are-parsed). It is gone when the page is.
 
-There is no limit on how many folders you add this way: the Free plan's five local folders count
+There is no limit on how many folders you add this way: the Free plan's ten local folders count
 only folders on a machine of your own.
 
 ## What else the page has

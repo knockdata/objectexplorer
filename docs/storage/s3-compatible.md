@@ -4,7 +4,7 @@ Any storage that speaks the S3 API on its own endpoint is added as an **S3 compa
 Each one is a provider of its own, so its buckets list separately from [Amazon S3](/storage/s3) and
 from each other.
 
-Add one with the **+** beside **Accounts** in Settings. It needs a name and the endpoint's URL, and
+Add one with the **+** beside **Connections** in Settings. It needs a name and the endpoint's URL, and
 takes a description, an access key and a secret; **Connect** checks it and keeps it:
 
 ```
@@ -24,7 +24,7 @@ From the command line, `oe signin s3 minio --endpoint http://localhost:9000` doe
 the key pair from the input (`--anonymous` keeps none).
 
 Requests are signed exactly as S3's are, in path style against your endpoint, with the region
-`us-east-1` unless the endpoint's entry in `storage.json` names another. Everything else in the
+`us-east-1` unless the endpoint's entry in `settings/locations.json` names another. Everything else in the
 app — [preview](/explore/preview), [search](/explore/search),
 [copy and move](/explore/file-management) — behaves as it does for any other bucket.
 

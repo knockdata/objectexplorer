@@ -4,26 +4,29 @@
 OneDrive, Box, FTP and SFTP servers and local disks in one window — every object opened, queried
 and modelled in place, on your machine.
 
-[<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/video/poster.png" width="800" alt="Forty seconds of ObjectExplorer">](https://objectexplorer.com)
+[<img src="https://raw.githubusercontent.com/knockdata/objectexplorer/main/docs/public/video/poster.png" width="800" alt="Two minutes of ObjectExplorer">](https://objectexplorer.com)
 
 [objectexplorer.com](https://objectexplorer.com) · [Open it in a browser](https://objectexplorer.com/app) ·
 [Documentation](https://objectexplorer.com/what-is-objectexplorer) · [Pricing](https://objectexplorer.com/pricing)
 
 ## Install
 
-| Platform                   | Download                                                |
-|:---------------------------|:--------------------------------------------------------|
-| macOS, Apple silicon       | [objectexplorer-mac-arm64.dmg][mac-arm64.dmg]           |
-| macOS, Intel               | [objectexplorer-mac-x64.dmg][mac-x64.dmg]               |
-| Windows, x64 installer     | [objectexplorer-windows-x64.msix][windows-x64.msix]     |
-| Windows, ARM64 installer   | [objectexplorer-windows-arm64.msix][windows-arm64.msix] |
-| Windows, x64 portable      | [objectexplorer-windows-x64.zip][windows-x64.zip]       |
-| Windows, ARM64 portable    | [objectexplorer-windows-arm64.zip][windows-arm64.zip]   |
-| Linux, x64                 | [objectexplorer-linux-x64.tar.gz][linux-x64.tar.gz]     |
-| Linux, ARM64               | [objectexplorer-linux-arm64.tar.gz][linux-arm64.tar.gz] |
+| Platform                 | Download                                                   |
+|--------------------------|------------------------------------------------------------|
+| macOS, Apple silicon     | [objectexplorer-mac-arm64.dmg][mac-arm64.dmg]              |
+| macOS, Intel             | [objectexplorer-mac-x64.dmg][mac-x64.dmg]                  |
+| macOS, command line      | [Apple silicon][mac-arm64.tar.gz], [Intel][mac-x64.tar.gz] |
+| Windows, x64 installer   | [objectexplorer-windows-x64.msix][windows-x64.msix]        |
+| Windows, ARM64 installer | [objectexplorer-windows-arm64.msix][windows-arm64.msix]    |
+| Windows, x64 portable    | [objectexplorer-windows-x64.zip][windows-x64.zip]          |
+| Windows, ARM64 portable  | [objectexplorer-windows-arm64.zip][windows-arm64.zip]      |
+| Linux, x64               | [objectexplorer-linux-x64.tar.gz][linux-x64.tar.gz]        |
+| Linux, ARM64             | [objectexplorer-linux-arm64.tar.gz][linux-arm64.tar.gz]    |
 
 [mac-arm64.dmg]: https://objectexplorer.com/download/mac-arm64.dmg?channel=github
 [mac-x64.dmg]: https://objectexplorer.com/download/mac-x64.dmg?channel=github
+[mac-arm64.tar.gz]: https://objectexplorer.com/download/mac-arm64.tar.gz?channel=github
+[mac-x64.tar.gz]: https://objectexplorer.com/download/mac-x64.tar.gz?channel=github
 [windows-x64.msix]: https://objectexplorer.com/download/windows-x64.msix?channel=github
 [windows-arm64.msix]: https://objectexplorer.com/download/windows-arm64.msix?channel=github
 [windows-x64.zip]: https://objectexplorer.com/download/windows-x64.zip?channel=github
@@ -36,11 +39,11 @@ each one, are on the [releases page](https://github.com/knockdata/objectexplorer
 Per-platform notes — notarization, SmartScreen, where the Linux binary goes — are in
 [getting started](https://objectexplorer.com/getting-started).
 
-With Homebrew, on macOS and Linux:
+With Homebrew:
 
 ```sh
-brew install knockdata/tap/objectexplorer             # the command line
-brew install --cask knockdata/tap/objectexplorer-app  # the desktop app
+brew install knockdata/tap/objectexplorer             # the command line, macOS and Linux
+brew install --cask knockdata/tap/objectexplorer-app  # the desktop app, macOS
 ```
 
 Or run it with no install at all, if you have Node 20+:
@@ -49,24 +52,25 @@ Or run it with no install at all, if you have Node 20+:
 npx @knockdata/objectexplorer
 ```
 
-The Free plan is a real tool, not a trial: three cloud roots on every provider and five local
+The Free plan is a real tool, not a trial: five cloud roots on every provider and ten local
 folders. Pro lifts every cap — see [pricing](https://objectexplorer.com/pricing).
 
 ## What it does
 
 - **One tree for every storage.** S3 and S3 compatible providers, Google Cloud Storage, BigQuery,
   Azure Blob, OneLake, Google Drive, Dropbox, OneDrive, Box, FTP, FTPS and SFTP servers, and the
-  folders on your disk, with the same keyboard, as a list or a grid of previews.
+  folders on your disk, with the same keyboard, as a list or a grid of previews. Google Drive,
+  Dropbox, OneDrive and Box need a sign-in app of your own (an OAuth client) for now.
   → [connecting storage](https://objectexplorer.com/storage/connect)
-- **Every file opened as itself.** More than 900 kinds of file: tables, office files, PDFs and ebooks, pictures and
+- **Every file opened as itself.** More than 900 file extensions: tables, office files, PDFs and ebooks, pictures and
   camera raw, audio and video, CAD parts, building and 3D models, point clouds, circuit boards,
   scans and medical recordings, mailboxes and chats, maps, molecules, disk images and archives. A
   file is told by its content, not its name. → [every format](https://objectexplorer.com/formats/)
 - **SQL over the object, where it lives.** The app's own engine queries a Parquet, CSV, sheet,
   database file or lake table in place; nothing is imported first.
   → [SQL](https://objectexplorer.com/analyze/sql)
-- **A notebook per object.** A table opens with a query and a chart already written; Table, Chart,
-  Model, Python, JavaScript and Text cells. → [the notebook](https://objectexplorer.com/analyze/notebook)
+- **A notebook per object.** A table opens with a query and a chart already written; SQL, Chart,
+  Model, JavaScript, Python, Node.js, Java and Markdown cells. → [the notebook](https://objectexplorer.com/analyze/notebook)
 - **Lake formats read as tables.** Delta, Iceberg and Hudi parsed to their own specifications, with
   deletes, schema evolution and time travel. → [data lake tables](https://objectexplorer.com/analyze/lake)
 - **Read, measure and edit.** A PDF reader with notes, ebooks and PDFs read as a book, distances and

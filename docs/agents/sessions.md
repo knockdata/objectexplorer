@@ -6,7 +6,7 @@ with that record — while it happens, and afterwards.
 ## The log
 
 ```
-~/.objectexplorer/mcp/<agent>/<session>.ndjson
+~/.objectexplorer/log/mcp/<agent>/<session>.ndjson
 ```
 
 One line per call, **written and flushed before the answer leaves the server**, so a process that is
@@ -126,7 +126,7 @@ listObjects  sales-lake  exports/          allowed → allowed
 query        sales-lake  delta/orders/     allowed → denied  (deny ^exports/hr/)
 ```
 
-It is the **Recheck** button on a session in Settings → MCP → Sessions.
+It is the **Recheck** button on a session in **Settings → MCP sessions**.
 So a rule file that was just tightened can be checked against the traffic it will actually meet, and
 a denial that surprised someone can be reproduced on demand.
 

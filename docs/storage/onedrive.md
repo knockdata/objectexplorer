@@ -12,7 +12,7 @@ app to your browser — and only from that server's own machine:
 
 1. Register an app in Microsoft Entra ID, and add the server's redirect address to it:
    `http://127.0.0.1:9421/oauth/callback`, with the port your server listens on.
-2. Put its client ID in the server's config, `server.json` in the app's folder, with its secret if
+2. Put its client ID in the server's config, `settings/server.json` in the app's folder, with its secret if
    it has one:
 
    ```json

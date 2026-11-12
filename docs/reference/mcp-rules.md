@@ -7,7 +7,7 @@ agent never gets a credential and never talks to a provider: it asks this app, a
 What it may ask for is one file:
 
 ```
-~/.objectexplorer/mcp.yaml
+~/.objectexplorer/settings/mcp.yaml
 ```
 
 No file means the MCP server is off. That is the whole safety story in one line: **nothing is
@@ -195,7 +195,7 @@ Two things are recorded, and they are what the log is split by:
   new terminal is a new session under the same agent.
 
 ```
-~/.objectexplorer/mcp/<agent>/<session>.ndjson
+~/.objectexplorer/log/mcp/<agent>/<session>.ndjson
 ```
 
 One line per call, written and flushed before the answer is sent, so a killed process still has
@@ -270,7 +270,7 @@ returned as it is.
 | `drop`      | the column is not in the result at all                        | nothing               |
 
 **`pseudonym` is the default**, and a rule that names no action gets it: a typed token,
-`<PERSON_17>`, from the vault (`~/.objectexplorer/mcp/vault.db`, values encrypted under a key in the
+`<PERSON_17>`, from the vault (`~/.objectexplorer/data/mcp/vault.db`, values encrypted under a key in the
 system keychain), the same for one value in every file, session and agent. `type:` names the token
 (`PERSON`, `EMAIL`, `ID` …); without it the type is read off the pattern. A text rule whose `match`
 starts with `@` (`@person`, `@address`, `@id`, `@card`, `@iban`, `@email`, `@phone`) uses a
@@ -281,7 +281,7 @@ Where it cannot preserve the format — a float, a timestamp, a blob — the val
 which is the one place an action is decided for you. Every encrypted column is named as encrypted by
 `describeObject` and beside the results of `query`, so an agent knows an id it is holding is not the
 real id and never quotes it back to a human as one. FPE and hash share one key, kept in
-`~/.objectexplorer/mcp/key` — never in this file, and never off the machine. It is per install, so a
+`~/.objectexplorer/account/mcp_key` — never in this file, and never off the machine. It is per install, so a
 value is stable across sessions and means nothing anywhere else. A [share link](/explore/share) goes
 through the same rules under a key of its own, made for that one share.
 

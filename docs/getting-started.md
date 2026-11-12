@@ -114,7 +114,7 @@ no such icon; it is already installed.
 
 The account icon at the bottom of the activity bar, above the settings gear, is where you sign in:
 with Google, or with an email address. The first sign-in turns on Pro for seven days, and any limit
-you run into, such as a fourth bucket of one provider on the Free plan, offers the same sign-in.
+you run into, such as a sixth bucket of one provider on the Free plan, offers the same sign-in.
 
 Once signed in, the icon's menu shows your name and email, and **Plan…**, which opens
 **Settings → Account**, where your plan is. **Sign out** forgets your name and picture on this machine; your plan stays as it
@@ -128,17 +128,16 @@ signing out, or clearing the site's data, ends it.
 1. On macOS and Windows, Settings opens once on **OS Extension**, where you choose what the app adds
    to the Finder's or File Explorer's menu — see [Finder, File Explorer and file
    managers](/reference/os-integration). Close it and the tour starts.
-2. A short tour opens the demo's train stations, a Parquet file, as rows, and shows you how to
-   filter them by a bar and download them as an Excel workbook. Then it lights up the activity bar,
-   the tree, **Add a folder**, the tabs, search and settings, one card at a time. The **?** at the
-   bottom of the activity bar shows it again; see [the tour and what is new](/reference/tour). In a
+2. A short tour of four cards lights up the activity bar, then the **+** that adds a location, then
+   the tree, and last opens the demo's train stations, a Parquet file, as rows in the pane. The
+   **?** at the bottom of the activity bar shows it again; see [the tour and what is new](/reference/tour). In a
    browser the tour does not start by itself: one card points at the **?**, and nothing opens until
    you click it.
 3. The tree holds the demo folder, a small sample of every kind of file, and the folder you started
    from. The empty pane says what the app is for — "Open any file to see it as itself: a table as
    rows, a model in 3D. Then download it in another format." — with **Add a Folder…** and
    **Open the Demo** under it, and the files you opened last once there are some.
-4. **+** in the sidebar's header, or **Add a Folder…**, adds a folder: **Local Folder…** picks one on
+4. **+** in the sidebar's header, **Add a location**, or **Add a Folder…** in the empty pane, adds one: **Local Folder…** picks one on
    this machine, and a cloud's entry opens its pane in **Settings** — see
    [connecting storage](/storage/connect).
 5. Click a file and it opens as itself: a table as rows, a picture as a picture. **Download** in its

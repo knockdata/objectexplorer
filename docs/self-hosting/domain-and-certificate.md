@@ -79,9 +79,9 @@ https.
 
 ### Where the certificate is kept
 
-It is fetched at the first start and kept in `~/.objectexplorer/certs/oe.example.com/`: `chain.pem`
+It is fetched at the first start and kept in `~/.objectexplorer/account/certs/oe.example.com/`: `chain.pem`
 the certificate, `key.pem` its private key, and `account.key` the Let's Encrypt account that got
-it. With `data=<folder>`, it is `<folder>/certs/oe.example.com/`. A later start that finds a
+it. With `data=<folder>`, it is `<folder>/account/certs/oe.example.com/`. A later start that finds a
 certificate that has not run out uses it, without asking Let's Encrypt again.
 
 ### Renewal
@@ -142,7 +142,7 @@ See [installing a licence](/self-hosting/#installing-a-licence).
 ### 4. Turn on dns-01 in the config
 
 There is no start argument for it. In the [config file](/self-hosting/#the-config-file),
-`~/.objectexplorer/server.json`, add `"acme": { "challenge": "dns-01" }` beside `"tls": "auto"`:
+`~/.objectexplorer/settings/server.json`, add `"acme": { "challenge": "dns-01" }` beside `"tls": "auto"`:
 
 ```json
 {
@@ -198,14 +198,14 @@ starts, so restart it after you renew the certificate.
 
 The `acme` key of the config file tunes how `tls=auto` gets its certificate. Every key is optional.
 
-| `acme` key  | Default                   | What it does                                                                     |
-|-------------|---------------------------|----------------------------------------------------------------------------------|
-| `email`     |                           | the contact Let's Encrypt writes to before a certificate runs out                |
-| `directory` | `production`              | `staging` uses Let's Encrypt's test CA, whose certificates browsers do not trust |
-| `http_port` | the server's `http_port`  | where the http-01 check is answered                                              |
-| `folder`    | `~/.objectexplorer/certs` | where certificates are kept; `<data>/certs` with `data=`                         |
-| `challenge` | `http-01`                 | `dns-01`: through the CNAME above, for a server the internet cannot reach        |
-| `licence`   | the licence installed     | dns-01's proof that the domain is yours: a licence issued for `domain`           |
+| `acme` key  | Default                           | What it does                                                                     |
+|-------------|-----------------------------------|----------------------------------------------------------------------------------|
+| `email`     |                                   | the contact Let's Encrypt writes to before a certificate runs out                |
+| `directory` | `production`                      | `staging` uses Let's Encrypt's test CA, whose certificates browsers do not trust |
+| `http_port` | the server's `http_port`          | where the http-01 check is answered                                              |
+| `folder`    | `~/.objectexplorer/account/certs` | where certificates are kept; `<data>/account/certs` with `data=`                 |
+| `challenge` | `http-01`                         | `dns-01`: through the CNAME above, for a server the internet cannot reach        |
+| `licence`   | the licence installed             | dns-01's proof that the domain is yours: a licence issued for `domain`           |
 
 `aliases`, beside `domain` at the top of the config, adds more names to the certificate, like
 `www.oe.example.com`. Each one is answered with a redirect to `domain`. http-01 only.
