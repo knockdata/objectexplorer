@@ -4,8 +4,12 @@
 #
 #   uv run --no-project python scripts/check_formats.py <foldone> [--list]
 #
+# The registry lists what a development build reads too; what a release does not open is listed in
+# <foldone>/tools/site_release_left_out.txt (one extension a line).
+#
 # Wrong (exit 1): a backticked extension in the table of docs/formats/index.md or in the first
-# paragraph of a format page that the product does not know; a stated count ("more than 900 file
+# paragraph of a format page that the product does not know; one, anywhere on a format page, that a
+# release does not open; a stated count ("more than 900 file
 # extensions", "900+ formats") above what the product opens, or under 85 % of it (the site undersells).
 # Told, not wrong: how many extensions the product opens that no format page names (--list prints them).
 import glob
@@ -56,6 +60,19 @@ def product_extensions(foldone):
 	return opens, known
 
 
+def release_left_out(foldone):
+	# the extensions a release does not open, from the product's list; a missing list is a failure
+	file = f"{foldone}/tools/site_release_left_out.txt"
+	words = set()
+	if os.path.isfile(file):
+		lines = [line.strip().lower() for line in open(file, encoding="utf-8").read().split("\n")]
+		words = set(line for line in lines if line != "" and line.startswith("#") is False)
+	else:
+		# the check below says so
+		pass
+	return file, words
+
+
 def backticked(line):
 	return [token.strip().lstrip(".").lower() for token in re.findall(r"`([^`]+)`", line)]
 
@@ -97,11 +114,20 @@ def stated_counts(file):
 def main():
 	foldone = sys.argv[1]
 	opens, known = product_extensions(foldone)
-	failures = []
+	list_file, left_out = release_left_out(foldone)
+	opens = opens - left_out
+	failures = [] if os.path.isfile(list_file) else [f"{list_file}: missing, the list of what a release does not open"]
 	named_on_site = set()
 	for page in sorted(glob.glob(f"{SITE}/formats/*.md")):
-		for entry in lines_of(page):
-			named_on_site.update(word for word in backticked(entry[1]) if is_extension_like(word))
+		for number, line, inside_code in lines_of(page):
+			words = [word for word in backticked(line) if is_extension_like(word)]
+			named_on_site.update(words)
+			for word in words:
+				if word in left_out:
+					failures.append(f"{relative(page)}:{number} `{word}` is named, but a release does not open it")
+				else:
+					# a release opens it, or it is no extension
+					pass
 		for number, line, inside_code in named_lines(page):
 			for word in backticked(line):
 				if is_extension_like(word) and word not in known and word not in WHOLE_NAMES | TOLD_OTHERWISE:
