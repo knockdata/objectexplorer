@@ -4,6 +4,9 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.38  —  2026-11-12
+- Check for Updates works again on copies of v0.9.36 and older, and the download files keep their earlier names
+
 ## v0.9.37  —  2026-11-11
 - a shell in a pane on the Mac: right-click a folder, Open Shell in the Left or Right Pane, and the commands of every shell share one history (`history`)
 - the shell opens in the browser page too, when the page comes from your own machine
