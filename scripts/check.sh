@@ -1,6 +1,7 @@
 #!/bin/bash
 # check.sh — every check that the site says what the product does, in one run: links, formats, plan
-# numbers, app folder paths, settings paths, the words the site leaves out, the newest release notes.
+# numbers, app folder paths, settings paths, the words the site leaves out, the newest release notes,
+# the third-party notices page against what the product's inventory writes.
 # Each check prints what is wrong; this ends with 1 when any of them found something.
 #
 #   scripts/check.sh <foldone>      e.g. scripts/check.sh ~/git/foldone
@@ -21,6 +22,7 @@ if [ -n "$foldone" ] && [ -d "$foldone/service" ]; then
 	run "$here/check_settings.py" "$foldone/explorer/ui/settings"
 	run "$here/check_words.py" "$foldone/tools/site_left_out.txt"
 	run "$here/check_changelog.py" "$here/../CHANGELOG.md"
+	run "$here/check_notices.py" "$foldone"
 	exit $failed
 else
 	echo "usage: scripts/check.sh <foldone>   (the product's source, with service/ in it)"

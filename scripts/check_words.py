@@ -5,8 +5,8 @@
 # One name is allowed with a condition: Minecraft, a file format the product reads. Its owner's usage
 # guidelines (https://www.minecraft.net/en-us/usage-guidelines, "Naming guidelines" and "Essential
 # guidelines") allow the name in a description, and ask for their disclaimer on every page that uses it.
-# So it may stand on the format pages (docs/formats/) and in the release notes, each page (each version,
-# in CHANGELOG.md) with DISCLAIMER on it, and nowhere else.
+# So it may stand on the format pages (docs/formats/), in the release notes and on the third-party
+# notices page, each page (each version, in CHANGELOG.md) with DISCLAIMER on it, and nowhere else.
 #
 #   uv run --no-project python scripts/check_words.py <file of patterns>
 #
@@ -22,6 +22,7 @@ from site_pages import ROOT, SITE, pages, theme_files, lines_of, relative, repor
 FORMAT_NAME = re.compile(r"(?i)\bminecraft\b")
 DISCLAIMER = "NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT"
 CHANGELOG = f"{ROOT}/CHANGELOG.md"
+NOTICES = f"{SITE}/third-party-licenses.md"
 
 
 def patterns_of(file):
@@ -45,11 +46,11 @@ def sections_of(file):
 
 def check_format_name(file, part, failures):
 	named = [entry for entry in part if FORMAT_NAME.search(entry[1]) is not None and DISCLAIMER not in entry[1]]
-	allowed_here = file.startswith(f"{SITE}/formats/") or file == CHANGELOG
+	allowed_here = file.startswith(f"{SITE}/formats/") or file == CHANGELOG or file == NOTICES
 	has_disclaimer = any(DISCLAIMER in entry[1] for entry in part)
 	for number, line, inside_code in named:
 		if allowed_here is False:
-			failures.append(f"{relative(file)}:{number} names Minecraft off the format pages and the release notes")
+			failures.append(f"{relative(file)}:{number} names Minecraft off the format pages, the release notes and the notices page")
 		elif has_disclaimer is False:
 			failures.append(f"{relative(file)}:{number} names Minecraft without its owner's disclaimer: “{DISCLAIMER}”")
 		else:
