@@ -5,16 +5,19 @@ What changed in each version. Every build is on the
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
 ## v0.9.39  —  2026-11-13
+- open another window on the Mac with ⌘N or Open in New Window: each is a whole explorer of its own, as a new browser window is
 - a shell tab on Windows too, in the Linux subsystem's zsh when it is there
 - choose which shell a shell tab starts in Settings; your usual one by default
 - a drag onto a folder moves or copies the same way in the tree, the folder list and the grid
+- what you drag follows the pointer with its icon and name
 - a move inside Google Drive, OneDrive, Dropbox or Box keeps the item's sharing and history
 - a move out of S3, Google Cloud Storage or Azure keeps the original in its .trash for 30 days, and ⌘Z brings it back
 - Windows copies a symbolic link or a junction as a link
 - Show Hidden Objects and Show Deleted Objects have a check mark while on, and the tree shows them too
 - the command palette finds a command by its words in any order
 - a bookmark is renamed in place
-- KiCad 5 schematics and symbol libraries open, and electronics drawings open in the browser page too
+- KiCad 5 to 10 schematics, boards, symbol libraries and footprints open, drawn as KiCad draws them, and in the browser page too
+- a KiCad 5 schematic lists its nets and their pins, and shows its pictures
 - a damaged or crafted file shows what is wrong with it instead of stopping the app
 - files are read in less memory: a large workbook in a fraction of what it took
 - an FTP server that does not answer is marked at once
