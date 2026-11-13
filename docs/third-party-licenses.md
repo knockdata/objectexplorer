@@ -1944,7 +1944,7 @@ Changed: no code or data of theirs: blocks drawn in colours of our own
 NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 
 ObjectExplorer opens the world files Minecraft (Java Edition) saves, and draws their blocks in colours of its own;
-it holds no code, texture or other data of the game. Minecraft is a trademark of Mojang Synergies AB.
+it holds no code, texture or other data of Minecraft. Minecraft is a trademark of Mojang Synergies AB.
 ```
 
 ## DICOM dictionary (DICOM PS3.6) 2026d
