@@ -2122,7 +2122,7 @@ Changed: each folder's README says its source and licence
 ## PADS sample board
 
 Licence: MIT  
-Source: explorer/format/pads/pads-sample-board-LICENSE.txt
+Source: explorer/demo/pads/pads-sample-board-LICENSE.txt
 
 ```text
 MIT License
