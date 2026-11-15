@@ -9,6 +9,9 @@
 //                 the app the landing frames), and a page that is the site's own "not found" page
 //   other site    a link, image, video or frame on objectexplorer.com that goes to cn.objectexplorer.com, or the
 //                 other way round: each site keeps its visitor (1108-3; mainland China cannot reach the first)
+//   blank app     a page's framed app (AppDemo), opened at its own address with its query, that draws nothing
+//                 within PAGE_SECONDS, or whose item does not open ("Cannot read this file"): the address
+//                 names a key the app stopped on, or an item no longer in its demo (foldone 1115-8)
 //
 // The pages: the sitemap's, and every page of the site a visited page links to (the app, /app/, is
 // opened but not crawled further). Links to other sites are checked once each; EXTERNAL=0 leaves them out.
@@ -48,6 +51,8 @@ const links = new Map()
 // page url → Set of the element ids it has, for #anchor checks
 const pageIds = new Map()
 const youtubeFilms = new Map()
+// a framed app's address, with its query → Set of the pages framing it
+const appFrames = new Map()
 // page url → the HTTP status its document answered with
 const pageStatus = new Map()
 
@@ -221,6 +226,7 @@ const readPage = `(() => {
 		addresses,
 		ids: [...document.querySelectorAll("[id]")].map((element) => element.id),
 		notFound: document.querySelector(".NotFound") !== null,
+		appFrames: [...document.querySelectorAll(".app-demo-frame iframe[src]")].map((element) => new URL(element.getAttribute("src"), document.baseURI).href),
 	}
 })()`
 
@@ -462,6 +468,61 @@ async function sitemapPages() {
 	return result
 }
 
+// ---------------------------------------------------------------------------
+// The framed apps, each opened at its own address
+// ---------------------------------------------------------------------------
+
+// what the app shows: its text, and whether a tab says it cannot read its item
+const readApp = `(() => ({
+	text: document.body ? document.body.innerText.trim().length : 0,
+	unreadable: [...document.querySelectorAll(".unreachable_reason")].map((element) => element.innerText),
+}))()`
+
+// a frame drew nothing (the app stopped before drawing) or opened its item with an error; its
+// console lines said with it, since the app's own reason is there (objectexplorer: not an argument …)
+async function checkAppFrame(frame, pages) {
+	const tab = await openTab()
+	const lines = []
+	tab.listeners.add(function (message) {
+		if (message.method === "Runtime.consoleAPICalled" && message.params.args.some((argument) => String(argument.value ?? "").startsWith("objectexplorer:"))) {
+			lines.push(message.params.args.map((argument) => argument.value ?? "").join(" "))
+		}
+	})
+	const page = [...pages][0]
+	try {
+		await tab.send("Page.navigate", { url: frame })
+		let shown = { text: 0, unreadable: [] }
+		const until = Date.now() + pageSeconds * 1000
+		while (shown.text === 0 && Date.now() < until) {
+			await wait(1000)
+			shown = await tab.evaluate(readApp)
+		}
+		// an item opens a moment after the window draws
+		await wait(3000)
+		shown = await tab.evaluate(readApp)
+		if (shown.text === 0) {
+			report("blank app", page, frame, lines.join("; ") || `nothing drawn in ${pageSeconds} s`)
+		} else if (shown.unreadable.length > 0) {
+			report("blank app", page, frame, shown.unreadable.join("; "))
+		}
+	} catch (error) {
+		report("blank app", page, frame, error.message)
+	}
+	await tab.close()
+}
+
+async function checkAppFrames() {
+	console.log(`== ${appFrames.size} framed apps`)
+	const entries = [...appFrames.entries()]
+	async function worker() {
+		while (entries.length > 0) {
+			const [frame, pages] = entries.shift()
+			await checkAppFrame(frame, pages)
+		}
+	}
+	await Promise.all(Array.from({ length: tabs }, worker))
+}
+
 async function main() {
 	console.log(`== ${site.href}`)
 	const browser = await startBrowser()
@@ -487,6 +548,12 @@ async function main() {
 		visited.add(address)
 		if (content) {
 			pageIds.set(address, new Set(content.ids))
+			for (const frame of content.appFrames) {
+				if (!appFrames.has(frame)) {
+					appFrames.set(frame, new Set())
+				}
+				appFrames.get(frame).add(address)
+			}
 			for (const { kind, address: linked } of content.addresses) {
 				remember(linked, address, kind)
 				if (kind === "link" && onSite(linked) && crawled(linked) || kind === "frame" && onSite(linked)) {
@@ -504,6 +571,8 @@ async function main() {
 	}
 	try {
 		await Promise.all(Array.from({ length: tabs }, worker))
+		// with the browser still open: each opens a tab
+		await checkAppFrames()
 	} finally {
 		await browser.stop()
 	}
@@ -512,7 +581,7 @@ async function main() {
 	await checkFilms()
 
 	mkdirSync(reportFolder, { recursive: true })
-	const kinds = ["dead link", "other site", "cannot play", "error"]
+	const kinds = ["dead link", "other site", "cannot play", "blank app", "error"]
 	const lines = [`${site.href}: ${visited.size} pages, ${links.size} links, ${youtubeFilms.size} films; ${issues.length} issues`]
 	for (const kind of kinds) {
 		const ofKind = issues.filter((issue) => issue.kind === kind)

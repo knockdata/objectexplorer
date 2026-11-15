@@ -6,8 +6,8 @@ import { onMounted, ref } from "vue"
 //
 //   <AppDemo open="folder/demo/nl_train_stations.parquet" view="hex" :off="['tour', 'auth']" />
 //
-// The frame turns off the parts of the app the page is not about — by default all of them, so only
-// the object shows (rock2/explorer/query-parameters.md has every parameter). The corner icon opens
+// The frame opens the object in the whole app, its tour off (query below says which keys it sends).
+// The corner icon opens
 // the full app on whatever the frame shows now, so a reader who went somewhere keeps going.
 const props = defineProps({
 	// an item in the public app's demo folder, the only root objectexplorer.com/app serves:
@@ -30,32 +30,22 @@ const props = defineProps({
 	alt: { type: String, default: "ObjectExplorer" },
 })
 
-const framedComponent = { controls: "off", ...props.component }
+// the app's own address for an item: pane=*<place>, the place from the tree's demo folder
+// ("folder/demo/cad/x.stp" is "demo/cad/x.stp"); the usage disc is not in this app, so "usage/"
+// opens the demo folder
+function pane(open) {
+	return "*" + (open === "usage/" ? "demo/" : open.replace(/^folder\//, ""))
+}
 
-// framed: the frame's own URL, with its parts turned off; the full app has everything
+// framed: the frame's own URL. Only the keys the app knows (foldone service/server/arguments.js KEYS):
+// an app before 1115-8 stops on any other and the frame stays blank, and one after leaves it out. The
+// view, cells, search, tree path, components and parts turned off are the earlier app's keys, kept
+// as props for when the app reads them again; test/site.mjs's "blank app" opens every frame.
 function query(framed) {
 	const params = new URLSearchParams()
-	params.set("open", "*" + props.open)
-	if (props.view) {
-		params.set("view", props.view)
-	}
-	for (const cell of props.cells) {
-		params.append("cell", cell)
-	}
-	if (props.search) {
-		params.set("search", props.search)
-	}
-	if (props.treePath) {
-		params.set("treePath", props.treePath)
-	}
-	const handed = framed ? framedComponent : props.component
-	for (const [name, value] of Object.entries(handed)) {
-		params.set("component." + name, value)
-	}
+	params.set("pane", pane(props.open))
 	if (framed) {
-		for (const part of props.off) {
-			params.set(part, "off")
-		}
+		params.set("tour", "off")
 	}
 	return params.toString()
 }
@@ -78,12 +68,9 @@ function openFull(event) {
 	let search = query(false)
 	try {
 		const current = new URLSearchParams($frame.value.contentWindow.location.search)
-		const moved = current.get("open") !== "*" + props.open
+		const moved = current.get("pane") !== pane(props.open)
 		if (moved) {
-			for (const part of props.off) {
-				current.delete(part)
-			}
-			current.delete("component.controls")
+			current.delete("tour")
 			search = current.toString()
 		}
 		else {
