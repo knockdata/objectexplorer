@@ -5,6 +5,12 @@ What changed in each version. Every build is on the
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
 ## v0.9.40  —  2026-11-15
+### What's new
+- Safer and better browser
+- Easy to add more words you want to learn
+- Better Shell support
+
+### All changes
 - the Browser blocks ads and trackers and answers cookie banners with Reject all, each its own setting, on by default
 - the shield in the Browser's toolbar shows what was blocked on a page and turns blocking off for that site alone
 - the Browser upgrades http addresses to https, removes tracking parameters from links and asks sites not to sell your data

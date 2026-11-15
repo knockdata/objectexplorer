@@ -2,6 +2,12 @@
 // below is GitHub's, sorted by name, the first ten shown: the updaters' zips and .appinstaller
 // files take those places), this version's bullets, and a link to the full list on the site.
 //
+// A version's section in CHANGELOG.md may be in two parts (since v0.9.40): "### What's new", a few
+// new things in the user's words, and "### All changes", every item. The notes then keep both under
+// the same headings. The app's Check for Updates and its update offer show the "What's new" items
+// alone (foldone explorer/lib/release_notes.js); a copy older than that takes the first three items
+// after "What's new", which are the same few. A section with no such headings is one "What's new".
+//
 //   node scripts/release-notes.mjs v0.5.6 CHANGELOG.md [release-files] > notes.md
 //
 // release-files: the folder of the release's assets; a download is listed only when its file is
@@ -24,7 +30,9 @@ process.stdout.write(releaseNotes(fs.readFileSync(changelogPath, "utf8"), tag, f
 
 export function releaseNotes(changelog, tag, folder) {
 	const downloads = folder !== undefined ? downloadLines(tag, folder) : [];
-	const bullets = bulletsOf(sectionOf(changelog, tag));
+	const section = sectionOf(changelog, tag);
+	const allChanges = bulletsOf(partOf(section, "### All changes"));
+	const bullets = allChanges.length > 0 ? bulletsOf(partOf(section, "### What's new")) : bulletsOf(section);
 	const parts = [];
 	if (downloads.length > 0) {
 		parts.push("### Download", "", ...downloads, "", `or from [objectexplorer.com/download](https://objectexplorer.com/download), which also reaches you where GitHub cannot`, "");
@@ -33,7 +41,10 @@ export function releaseNotes(changelog, tag, folder) {
 		// no assets named
 	}
 	if (bullets.length > 0 && downloads.length > 0) {
-		parts.push("### What's new", "", ...bullets, "", "[Full release notes](https://objectexplorer.com/changelog)", "");
+		parts.push("### What's new", "", ...bullets, "", ...allChangesLines(allChanges), "[Full release notes](https://objectexplorer.com/changelog)", "");
+	}
+	else if (bullets.length > 0 && allChanges.length > 0) {
+		parts.push("### What's new", "", ...bullets, "", ...allChangesLines(allChanges), "[Full release notes](https://objectexplorer.com/changelog)", "");
 	}
 	else if (bullets.length > 0) {
 		parts.push(...bullets, "", "[Full release notes](https://objectexplorer.com/changelog)", "");
@@ -77,6 +88,34 @@ function sectionOf(changelog, tag) {
 		// no section for this tag
 	}
 	return section;
+}
+
+// The lines of a section under a heading (`### What's new`) down to the next heading; "" when it has none.
+function partOf(section, heading) {
+	const lines = section.split("\n");
+	const start = lines.findIndex(line => line.trim() === heading);
+	let part = "";
+	if (start >= 0) {
+		const rest = lines.slice(start + 1);
+		const end = rest.findIndex(line => line.startsWith("#"));
+		part = (end >= 0 ? rest.slice(0, end) : rest).join("\n");
+	}
+	else {
+		// no such part
+	}
+	return part;
+}
+
+// "### All changes" and its items, then a blank line; nothing when the version has no such part
+function allChangesLines(items) {
+	let lines = [];
+	if (items.length > 0) {
+		lines = ["### All changes", "", ...items, ""];
+	}
+	else {
+		// the version's What's new is all of it
+	}
+	return lines;
 }
 
 // Every `- ` line of the section, as it is written. The changelog is already one bullet per change.
