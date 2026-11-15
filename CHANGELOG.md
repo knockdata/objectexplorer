@@ -4,6 +4,26 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.41  —  2026-11-15
+### What's new
+- Network and Disk Diagnose
+- Heroes show posts as their sites do
+- QLingo topic words without an agent
+
+### All changes
+- a stethoscope at the Tools panel's Network and Disk opens Network or Disk Diagnose, its checks running in a shell beside it
+- Network Diagnose checks the sites you type, names the VPN you are connected to and shows where the internet sees you
+- the Browser's pages follow the app's light or dark theme
+- a Heroes card shows a post as its site has it, and a push's commit messages read as paragraphs
+- the Heroes' tree closes on a click outside it
+- QLingo fills words about a topic without an agent set up
+- Check for Updates shows the few new things of a release
+- copying from the Shell works with a double click and ⌘C
+- Python 3.14 .pyc files open
+- a page playing a sound the Mac converts no longer hangs
+- the dividers between panels and the boxes' borders look as they did before 0.9.40
+- the recording view's slider sits in the middle of its bar
+
 ## v0.9.40  —  2026-11-15
 ### What's new
 - Safer and better browser
