@@ -4,6 +4,29 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.40  —  2026-11-15
+- the Browser blocks ads and trackers and answers cookie banners with Reject all, each its own setting, on by default
+- the shield in the Browser's toolbar shows what was blocked on a page and turns blocking off for that site alone
+- the Browser upgrades http addresses to https, removes tracking parameters from links and asks sites not to sell your data
+- choose the search engine for words typed in the address bar, Google by default
+- restored tabs load only when you open them, and videos wait for their play button
+- the Browser takes a browser's keys and gestures: zoom per site, back and forward, reload, print and the tab keys
+- a page's full screen works, YouTube's too
+- a filter in the Browser's side bar finds tabs, heroes and bookmarks, and each tab and bookmark shows its site's icon
+- a chat site (ChatGPT, Claude, Gemini …) opens beside your files in a side bar on the right
+- Ask… puts a file into the chat in the side bar, as an upload where you are signed in, with Explain, Summarize or Find Problems
+- Translate works without an agent set up
+- keep your passwords in the app, locked by a master password, with a generator, a filter and import from other browsers and password managers
+- set your agents up once for Ask and QLingo, and edit the questions they are asked
+- QLingo fills more words about a topic you type
+- shell scripts and the shell's start files are coloured and fold
+- a text file in another encoding shows its letters, such as µ, as they are
+- a drawing, a model or a PDF that sits still no longer uses the processor
+- a slider's label follows its thumb while dragged
+- ⌘C with text selected copies the text, not the files chosen
+- a folder added twice by another spelling is not added again
+- the app uses far less memory over a long session of opening files, on Linux especially
+
 ## v0.9.39  —  2026-11-13
 - open another window on the Mac with ⌘N or Open in New Window: each is a whole explorer of its own, as a new browser window is
 - a shell tab on Windows too, in the Linux subsystem's zsh when it is there
