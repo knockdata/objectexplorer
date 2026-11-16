@@ -4,6 +4,29 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.42  —  2026-11-16
+### What's new
+- Python pickles open as tables or JSON
+- Machine-learning models open as their trees and layers
+- Tree models predict and explain each prediction
+
+### All changes
+- any Python pickle opens: a DataFrame, Series, NumPy array or list of records as a table, any other object as JSON with its class named, never run; a .pkl.gz too
+- LightGBM, XGBoost, CatBoost, TensorFlow Lite, Core ML, TensorFlow and Keras models open as their trees, layers and weights
+- a LightGBM, XGBoost, CatBoost or Core ML tree model predicts the rows of the .csv beside it, and shows how much each feature moved each prediction
+- an EPS file with no preview of its own draws
+- Disk Diagnose lists the largest files first, from the system's search index
+- Ctrl+C in the Shell stops the running program
+- the Browser offers a saved password when you click an empty password field, and in the right-click menu
+- Unlock Passwords asks for the master password in a small dialog over the page
+- Passwords has a wider filter, and a shown password has its own copy button
+- Baidu is the default search engine in mainland China until you choose one
+- Network Diagnose asks once more before it counts a check as failed
+- a Heroes card that only repeats the start of its post shows no title
+- a Google Drive PDF named .gslides or .gdoc shows its first page in the library
+- a chat opens at its newest message
+- a divider's line lights at once under the pointer, along the border
+
 ## v0.9.41  —  2026-11-15
 ### What's new
 - Network and Disk Diagnose
