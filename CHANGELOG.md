@@ -17,6 +17,8 @@ What changed in each version. Every build is on the
 - a GIF on a slide starts playing when its click shows it
 - a two-column slide can have a heading across its columns, and more than two columns
 - Cmd+F in the Browser finds text in the page and says which match of how many is shown
+- a Browser tab left hidden for a while lets its page go to save memory, after a time you choose in Settings, and hovering a tab shows how much memory its page takes (Mac)
+- the presentation on a second display can be dragged to another monitor (Mac)
 - DjVu documents open again
 - large SketchUp models open in the browser app, and about four times faster in the app
 - the browser app shows HEIC pictures and Live Photos, and plays sound and video whose format the browser cannot play
