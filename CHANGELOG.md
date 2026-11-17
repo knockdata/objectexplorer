@@ -4,6 +4,26 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.43  —  2026-11-17
+### What's new
+- Present slides on a second display, with the next slide and your notes on the laptop
+- Slides show their parts one click at a time
+- Find text in a Browser page with Cmd+F
+
+### All changes
+- a deck presented with a second display connected fills that display, and the laptop shows the next slide with the current slide's notes as large bullets (Mac)
+- a slide shows its parts one click at a time, and a drawing on it builds up piece by piece, each part flying in as it appears
+- a GIF on a slide starts playing when its click shows it
+- a two-column slide can have a heading across its columns, and more than two columns
+- Cmd+F in the Browser finds text in the page and says which match of how many is shown
+- DjVu documents open again
+- large SketchUp models open in the browser app, and about four times faster in the app
+- the browser app shows HEIC pictures and Live Photos, and plays sound and video whose format the browser cannot play
+- MPEG-TS videos with H.264 play on the Mac
+- QLingo starts with the languages of your system and its keyboards
+- the application log keeps being written after the app is started a second time
+- opening compressed files and pickles uses far less memory
+
 ## v0.9.42  —  2026-11-16
 ### What's new
 - Python pickles open as tables or JSON
