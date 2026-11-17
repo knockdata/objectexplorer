@@ -7,7 +7,7 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 # objectexplorer's GitHub release comes from this one run: the binaries, the desktop app as a
 # .dmg (the download) and a .zip (the updater's), the Windows msix (the download), zip and
 # .appinstaller, SHA256SUMS, all from the same signed files; and publish.tar, what release.yml
-# takes to npm, the Homebrew tap and winget later, on a draft release of its own, publish-<version>
+# takes to npm and the Homebrew tap later, on a draft release of its own, publish-<version>
 # (the run's artifacts expire after 5 days, a release's assets do not; a draft is seen by the
 # repository's writers alone, so it is not among the downloads every visitor sees).
 #
@@ -34,7 +34,7 @@ run-name: ObjectExplorer ${{ inputs.version && format('v{0}{1}', inputs.version,
 #                    rc, 1.2.3-rc.1, is a prerelease: /releases/latest and so Check for Updates
 #                    never offer it)
 #
-# npm, brew and winget: release.yml, dispatched by foldone's tools/publish-release.sh <version>.
+# npm and brew: release.yml, dispatched by foldone's tools/publish-release.sh <version>.
 # A dispatch with dry_run (the default) runs everything up to check and publishes nothing.
 on:
   push:
