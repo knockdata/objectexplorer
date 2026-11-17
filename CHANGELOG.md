@@ -11,7 +11,7 @@ What changed in each version. Every build is on the
 - Find text in a Browser page with Cmd+F
 
 ### All changes
-- a deck presented with a second display connected fills that display, and the laptop shows the slide presented and the next one, each with its notes beside it as large bullets (Mac)
+- presenting with a second display, the laptop shows this slide and the next, each with its notes as large bullets (Mac)
 - an ended call closes by itself when you open another tab
 - a slide shows its parts one click at a time, and a drawing on it builds up piece by piece, each part flying in as it appears
 - a GIF on a slide starts playing when its click shows it
