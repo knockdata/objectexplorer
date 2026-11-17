@@ -6,12 +6,13 @@ What changed in each version. Every build is on the
 
 ## v0.9.43  —  2026-11-17
 ### What's new
-- Present slides on a second display, with the next slide and your notes on the laptop
+- Present slides on a second display, with this slide, the next one and your notes on the laptop
 - Slides show their parts one click at a time
 - Find text in a Browser page with Cmd+F
 
 ### All changes
-- a deck presented with a second display connected fills that display, and the laptop shows the next slide with the current slide's notes as large bullets (Mac)
+- a deck presented with a second display connected fills that display, and the laptop shows the slide presented and the next one, each with its notes beside it as large bullets (Mac)
+- an ended call closes by itself when you open another tab
 - a slide shows its parts one click at a time, and a drawing on it builds up piece by piece, each part flying in as it appears
 - a GIF on a slide starts playing when its click shows it
 - a two-column slide can have a heading across its columns, and more than two columns
