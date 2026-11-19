@@ -4,6 +4,35 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.44  —  2026-11-19
+### What's new
+- A menu bar on the Mac with all the app's commands
+- MIDAS Civil, MIDAS FEA NX and Parasolid models open in 3D
+- Large AutoCAD drawings need a third of the memory, and the pictures in them are drawn
+
+### All changes
+- the Mac has a menu bar (File, Edit, View, Go, Window, Help) with the app's commands; on Windows and Linux the same menus open from the ≡ at the top of the activity bar
+- the web page needs no menu: the ≡ is gone there
+- MIDAS Civil and Gen models (.mcb) open drawn in 3D, with their nodes, elements and sections as sheets
+- MIDAS FEA NX and GTS NX models (.fea) open drawn in 3D, a model not meshed yet as its solids, with its tables as sheets
+- Parasolid files (.x_t, .x_b) open as 3D models
+- a DWG drawing's pictures are drawn in it
+- large DWG drawings open with about a third of the memory, and a warning comes before one too large for the memory left
+- beside Present, a menu to present from the start, rehearse with the presenter view alone, or present without it
+- a deck can choose its accent colour, and a slide's footer shows its number alone
+- Private tabs (Shift+Cmd+N) keep nothing once closed
+- Open Link in New Tab and Open Link in New Window in the Browser's link menu
+- the Browser's address field suggests open tabs, bookmarks and pages you visit as you type
+- Back in a tab a page opened closes it and shows the page that opened it
+- pages in the Browser follow the app's light or dark theme
+- File → Add a Location… opens Settings on Local Folder
+- a folder shows a spinner while it is listed, and buttons show one while their work runs
+- Settings can be walked with the keyboard alone
+- Heroes refresh as they come into view
+- choose Read Only or Read and Write when the Photos library is first added
+- a second window no longer hides the first window's Browser page
+- shorter labels and descriptions across the app
+
 ## v0.9.43  —  2026-11-17
 ### What's new
 - Present slides on a second display, with this slide, the next one and your notes on the laptop
