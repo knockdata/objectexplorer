@@ -384,13 +384,13 @@ jobs:
       # oe.com (the same door under the short name)
       - name: Sign the programs
         if: steps.secrets.outputs.signed == 'true'
-        uses: azure/trusted-signing-action@v0
+        uses: azure/artifact-signing-action@v2
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           endpoint: https://neu.codesigning.azure.net/
-          trusted-signing-account-name: knockdata
+          signing-account-name: knockdata
           certificate-profile-name: KnockData
           files-folder: ${{ github.workspace }}\work
           files-folder-filter: exe,com
@@ -430,13 +430,13 @@ jobs:
           }
       - name: Sign the msix
         if: steps.secrets.outputs.signed == 'true'
-        uses: azure/trusted-signing-action@v0
+        uses: azure/artifact-signing-action@v2
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           endpoint: https://neu.codesigning.azure.net/
-          trusted-signing-account-name: knockdata
+          signing-account-name: knockdata
           certificate-profile-name: KnockData
           files-folder: ${{ github.workspace }}\packages
           files-folder-filter: msix
