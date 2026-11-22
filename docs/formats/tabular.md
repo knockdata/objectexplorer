@@ -79,7 +79,7 @@ Files that hold records in another shape open as their table, their text a click
 | Weka's `arff`, `ltsv`, fixed-width `fwf` | row                          |
 | a browser's HTTP Archive, `har`          | request                      |
 | a calendar `ics`, contacts `vcf`         | event, contact               |
-| a packet capture, `pcap` `pcapng`        | packet                       |
+| a packet capture, `pcap` `pcapng`        | packet, and [sessions](/formats/network) |
 | a web archive, `warc` `warc.gz`          | record                       |
 | an LDAP export, `ldif`                   | entry                        |
 | RDF: `ttl` `nt` `nq` `trig` `jsonld`     | triple                       |

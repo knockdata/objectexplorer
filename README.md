@@ -62,7 +62,7 @@ folders. Pro lifts every cap — see [pricing](https://objectexplorer.com/pricin
   folders on your disk, with the same keyboard, as a list or a grid of previews. Google Drive,
   Dropbox, OneDrive and Box need a sign-in app of your own (an OAuth client) for now.
   → [connecting storage](https://objectexplorer.com/storage/connect)
-- **Every file opened as itself.** More than 900 file extensions: tables, office files, PDFs and ebooks, pictures and
+- **Every file opened as itself.** more than 1000 file extensions: tables, office files, PDFs and ebooks, pictures and
   camera raw, audio and video, CAD parts, building and 3D models, point clouds, circuit boards,
   scans and medical recordings, mailboxes and chats, maps, molecules, disk images and archives. A
   file is told by its content, not its name. → [every format](https://objectexplorer.com/formats/)

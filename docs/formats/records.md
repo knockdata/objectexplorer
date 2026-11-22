@@ -70,6 +70,31 @@ A Windows event's own data is a column of JSON, a member a field. A journal's fi
 each, and a payload compressed with LZ4, Zstandard or XZ is read. A log cut short reads as far as it
 goes.
 
+## Call records
+
+Phone systems write a record for each call, and three kinds open as tables, each told by what is
+inside the file, not by its name:
+
+| File                                                                                                | Its tables                                  |
+|-----------------------------------------------------------------------------------------------------|---------------------------------------------|
+| 3GPP (the mobile networks' standards body) charging data records, the billing files                 | a table for each record type the file holds |
+| Asterisk's `Master.csv` (the call log of the open source phone exchange)                            | one table, a row for each call leg          |
+| Cisco Unified Communications Manager call records, its call detail records and call quality records | one table, a row for each record            |
+
+A charging file is a table for each kind of record in it — a packet gateway's sessions, a call, a
+text message — a row for each record, and a column for each field the standard gives it, written in
+words: times as times, a phone number with its `+`, a number's meaning as its name (`volume limit`).
+A packet or 5G record also has its `uplink_volume` and `downlink_volume`. Every table starts with the
+record's `record_number` and its `offset` in the file. A field the standard does not know keeps its
+bytes in a `tag_` column, and a record of an unknown type or not in the standard encoding goes to a
+table of its own with its `bytes`.
+
+An Asterisk call leg has its `source`, `destination`, `caller_id`, `channel`, `start`, `answer`,
+`end`, `duration`, `billable_seconds` and `disposition`, and the `unique_id`, `user_field`, `linked_id`
+and `sequence` when the exchange writes them. A Cisco record's columns are the names its first line
+gives, in words (`date_time_origination`, `originating_ip_address`), its times as times and its
+addresses as addresses.
+
 ## Bibliographies
 
 | File                                                                | A row for each                            |

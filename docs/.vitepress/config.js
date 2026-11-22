@@ -271,6 +271,7 @@ export default defineConfig({
 					{ text: "Lab and life science", link: "/formats/lab" },
 					{ text: "Medical and health", link: "/formats/medical" },
 					{ text: "Records and finance", link: "/formats/records" },
+					{ text: "Packet captures", link: "/formats/network" },
 					{ text: "Databases", link: "/formats/databases" },
 					{ text: "Documents", link: "/formats/documents" },
 					{ text: "Mail, chats and personal files", link: "/formats/mail" },

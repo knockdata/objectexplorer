@@ -29,7 +29,7 @@ const plans = [
 		href: "/download",
 		includes: "What you get:",
 		features: [
-			"Preview more than 900 file extensions in place",
+			"Preview more than 1000 file extensions in place",
 			"SQL, charts and notebooks on your machine",
 			limit(free.max_cloud_roots_per_provider, "cloud roots per provider"),
 			limit(free.max_local_folders, "local folders"),

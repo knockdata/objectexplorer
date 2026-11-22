@@ -59,6 +59,30 @@ is, the channel, the note and its velocity, a controller and its value, and any 
 **Structure** mode shows its header — the format, the track count, the ticks to a quarter note — and
 every track with its name and how many events of each kind it holds.
 
+## Tracker modules and SoundFonts
+
+`mod` `xm` `s3m` `it` `sf2`
+
+A tracker module (`.mod`, `.xm`, `.s3m`, `.it`) is a song written as a grid of notes plus the short
+recorded sounds it plays. A SoundFont (`.sf2`) is a bank of such sounds for a synthesizer. Both open
+as the list of their tables, a row each, and the notebook queries one by its name after the file's
+path: `SELECT * FROM 'songs/tune.xm/samples'`.
+
+| File           | Its tables                            |
+|----------------|---------------------------------------|
+| tracker module | `patterns`, `samples`, `instruments`  |
+| SoundFont      | `presets`, `instruments`, `samples`   |
+
+A module's `patterns` table has a row for each cell that holds anything: `pattern`, `row`, `channel`,
+`note`, `instrument`, `volume`, `effect` and `parameter`. Its `samples` table has the sound's `name`,
+`frames`, `bits`, `channels`, `rate`, `volume`, `loop` and its loop's start and end. Its `instruments`
+table (the formats that have them) has the `name`, how many `samples` its notes play, and how many
+points each of its volume, panning and pitch envelopes has.
+
+A SoundFont's `presets` are what a player picks (`name`, `preset`, `bank`, `zones`, and the
+`instruments` they play); its `instruments` name the `samples` they use; its `samples` table has each
+sound's `frames`, `rate`, `original_key`, loop start and end, and `type`.
+
 ## Subtitles
 
 `srt` `vtt` `ass` `ssa` `lrc` `ttml` `dfxp` `scc` `smi` `sami` `sub`
