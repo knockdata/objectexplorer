@@ -4,6 +4,41 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.45  —  2026-11-23
+### What's new
+- Packet captures (.pcap, .pcapng) open as sessions: each lookup and connection told step by step, with what went wrong
+- KiCad schematics run: a circuit of resistors, capacitors, diodes, LEDs and transistors simulated live on its drawing
+- Notes in every ebook, and in a PDF's Book view
+
+### All changes
+- a packet capture opens on its sessions: each lookup with the connections that used it, its steps (lookup, connect, secure, exchange, close) on a timeline, a packet's layers and bytes, filters, and the problems found (no answer, reset, sent again, failed lookup, slow, an alert)
+- a packet capture's sessions, steps, connections, DNS, TLS, HTTP and other messages can be queried with SQL
+- a KiCad schematic has a Run mode: the circuit simulated as it runs, each part's voltage and current beside it, the LEDs lit, a value changed at once
+- a KiCad schematic's nets are joined as KiCad names them
+- notes, highlights and marks in every ebook, kept on their words when the text is laid out again
+- notes in a PDF's Book view, shared with its pages view
+- typing a note no longer turns or scrolls the pages under it
+- Remove Background for a scanned PDF: the paper made plain, the ink kept, a cover or picture page left as it is
+- an ebook opens as its Book; One Page reads as one scroll
+- a page turn in a Book is softer, and a scanned page lies flat
+- a deck offers no Book view
+- the ebook's scroll bar sits at the pane's right edge
+- Search marks every match in a text file and a Markdown file's text, with buttons for the previous and the next match
+- Search in a diff
+- long lines wrap in Markdown and plain text files
+- trackpad scrolling keeps the box it began on and no longer slows down mid-swipe
+- a hover shows at once
+- a right-click on a word selects it and shows the menu for the selection
+- each activity keeps its side bar open or closed as you left it
+- the files opened last can be filtered, and More… shows the rest
+- a PDF presented on a second display keeps the window's side bar, and Escape ends it
+- the Browser shows the current tab, a new tab keeps the address field, and links in a deck or a Markdown file open in the app's Browser
+- File → Open URL… downloads a file and opens it
+- open a file from the side bar's + or by dropping it on the window
+- a cover picture on a recording's clip
+- Tools can keep the Mac awake with the lid closed, and shows the processor's temperature
+- the scroll bar is easier to take, and a text box scrolls by trackpad
+
 ## v0.9.44  —  2026-11-19
 ### What's new
 - A menu bar on the Mac with all the app's commands
