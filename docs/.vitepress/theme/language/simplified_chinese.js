@@ -13,6 +13,7 @@ export default {
 	"Terms": "服务条款",
 	"Company": "关于我们",
 	"Contact": "联系我们",
+	"Jobs": "招聘",
 	"Open App": "立即体验",
 	"Menu": "菜单",
 	"Site": "网站",

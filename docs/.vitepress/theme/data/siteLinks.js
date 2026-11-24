@@ -10,12 +10,10 @@ export const headerLinks = [
 ]
 
 export const footerLinks = [
-	{ name: "Docs", link: "/what-is-objectexplorer" },
 	{ name: "Pricing", link: "/pricing" },
-	{ name: "Changelog", link: "/changelog" },
 	{ name: "Privacy", link: "/privacy" },
 	{ name: "Terms", link: "/terms" },
-	{ name: "Company", link: "/company" },
+	{ name: "Jobs", link: "/jobs" },
 	{ name: "Contact", link: "mailto:rockie@knockdata.com" },
 ]
 
