@@ -10,9 +10,16 @@ next: false
 
 # Jobs
 
-## Partner: Business Development
+## Business Development Partner
 
-ObjectExplorer opens the files other tools cannot: CAD drawings, circuit boards, 3D models, databases, archives and more than a thousand other formats, on your own machine. We are looking for partners who bring it to the people and teams who need it.
+ObjectExplorer opens any file in any location. 
+* Files types: CAD drawings, circuit boards, 3D models, databases, archives and more than a thousand other formats, 
+* Location: local folder, ftp/sftp/ftps, S3, GCS, Azure, Google Drive, OneDrive
+
+It is specialized on exploring/consuming resource, avoid context switch and maximize your productivity. Example like
+* Get full columns summary and filter without even leaving the table
+* Translate any word inplace without even leaving the place
+* Explain a concept in any of those files
 
 ### What you do
 
@@ -22,11 +29,13 @@ ObjectExplorer opens the files other tools cannot: CAD drawings, circuit boards,
 
 ### How you are paid
 
-You earn a share of the revenue from the customers you bring, for as long as they stay customers. There is no fixed salary: the more customers you bring, the more you earn. Each partner has a personal referral link, so every customer you bring is counted as yours. The terms are set out in a partnership agreement we sign together.
+You get 50% of net revenue from the customers you bring, for as long as they stay customers. The more customers you bring, the more you earn. 
+
+Each partner has a personal referral link, so every customer you bring is counted as yours. The terms are set out in a partnership agreement we sign together.
 
 ### Who we are looking for
 
-- You know an industry where files are a daily problem, and the people in it.
+- You believe that ObjectExplorer is great product.
 - You explain clearly and honestly what a product does.
 - You work on your own, anywhere in the world.
 
@@ -34,5 +43,5 @@ You earn a share of the revenue from the customers you bring, for as long as the
 
 1. [Download ObjectExplorer](/download) and install it.
 2. Use it on files of your own field for a while.
-3. Record a demo of about 3 minutes with ObjectExplorer's own **Record a Demo** (in the command palette): show the files you would show a customer, and say why they would care.
+3. Record a demo of about 3 minutes with ObjectExplorer's own **Record a Demo** (in the command palette, Cmd + Shift + P): show the files you would show a customer, and say why they would care.
 4. Send the link to your recording to [rockie@knockdata.com](mailto:rockie@knockdata.com?subject=Partner%3A%20Business%20Development), with a few lines about yourself.
