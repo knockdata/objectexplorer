@@ -4,6 +4,37 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.46  —  2026-11-25
+### What's new
+- Record a Demo: the app's window with your camera round over it and your voice, saved as an .mp4 with its title page
+- Font Size for the whole app: Small, Medium, Large and Extra Large, or ⌘+ and ⌘−
+- Every table preview shows each column's summary, and Arrow, Avro and ORC files get a preview as a Parquet file does
+
+### All changes
+- Record a Demo in the palette records the window with your camera and microphone, asks its title once stopped, and opens the clip on a cover and its title page
+- the app's font size kept as you chose it, and View's Zoom In, Zoom Out and Actual Size
+- a table tile is drawn by the Table view itself, with each column's summary and the whole row count
+- a column's summary sums up the whole column, and the rows the other columns' filters keep
+- a number column lines up on its decimal points
+- a table column's divider lies over the next column's border
+- personal data (PII) is masked with one master key kept in the keychain, and a token's word is read off its column's name
+- each window has its own Translate, Explain, agent conversation and side bars, and what comes from outside opens in the window used last
+- Open in New Window on a Browser tab, a bookmark and an activity icon
+- the Browser is faster: blocking lists ready 3 seconds after the start, a hidden page unloaded only after 30 minutes, and an unloaded tab comes back where it was
+- blocking never stops a page's own requests, and one press on the shield turns it off for the site
+- a schematic's lit LED lights its symbol alone, and a time line across every part shows its values at that moment
+- Cmd click on a circuit part opens its value slider, Cmd drag changes it, and Escape closes it
+- an electronics drawing zooms out no further than its whole sheet
+- Ask's default prompt is a sentence, with toggles for what the agent may use
+- Chinese text in the Editor is measured, so the caret and a selection stand where they should
+- the scroll bars are drawn over the content, round at both ends, and touch their box's edge
+- a press on a scroll bar's rail pages towards it
+- the palette's and quick open's selected row is shaded
+- a folder's listing no longer waits behind a page's settings, and the tree's spinner shows only past 300 ms
+- the pane divider takes no room and is easier to take
+- the video player's volume slider stays open while dragged, and full screen fills the window's own layer
+- six or more pages of the app open in one browser at once
+
 ## v0.9.45  —  2026-11-23
 ### What's new
 - Packet captures (.pcap, .pcapng) open as sessions: each lookup and connection told step by step, with what went wrong
