@@ -13,12 +13,12 @@ next: false
 ## Business Development Partner
 
 ObjectExplorer opens any file in any location. 
-* Files types: CAD drawings, circuit boards, 3D models, databases, archives and more than a thousand other formats, 
+* File types: CAD drawings, circuit boards, 3D models, databases, archives and more than a thousand other formats
 * Location: local folder, ftp/sftp/ftps, S3, GCS, Azure, Google Drive, OneDrive
 
-It is specialized on exploring/consuming resource, avoid context switch and maximize your productivity. Example like
+It is made for exploring and using files without switching to another tool, so you get more done. For example:
 * Get full columns summary and filter without even leaving the table
-* Translate any word inplace without even leaving the place
+* Translate any word in place
 * Explain a concept in any of those files
 
 ### What you do
@@ -35,7 +35,7 @@ Each partner has a personal referral link, so every customer you bring is counte
 
 ### Who we are looking for
 
-- You believe that ObjectExplorer is great product.
+- You believe that ObjectExplorer is a great product.
 - You explain clearly and honestly what a product does.
 - You work on your own, anywhere in the world.
 
