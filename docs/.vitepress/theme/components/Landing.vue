@@ -5,6 +5,7 @@ import { readVisitor } from "../composables/visitor.js"
 import { useLanguage, wantedLanguage } from "../language/language.js"
 import AppSection from "./AppSection.vue"
 import DownloadBlock from "./DownloadBlock.vue"
+import LandingFeatures from "./LandingFeatures.vue"
 import LandingHero from "./LandingHero.vue"
 import LandingNav from "./LandingNav.vue"
 import StoryGrid from "./StoryGrid.vue"
@@ -44,6 +45,7 @@ onMounted(function () {
 				<LandingHero :pinned="appQuery !== ''" :app-link="appLink" />
 				<AppSection v-if="appQuery" :query="appQuery" />
 				<StoryGrid />
+				<LandingFeatures />
 				<DownloadBlock />
 			</main>
 			<SiteFooter />

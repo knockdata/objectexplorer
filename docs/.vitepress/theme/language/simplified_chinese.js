@@ -48,6 +48,27 @@ export default {
 	"Read": "阅读",
 	"Play": "播放",
 
+	// what you get
+	"What You Get": "你能得到什么",
+	"Every storage in one tree": "所有存储，一棵树里看",
+	"S3, Google Cloud Storage, Azure Blob, OneLake, Google Drive, Dropbox, OneDrive, Box, FTP and SFTP servers and your own disks": "S3、Google Cloud Storage、Azure Blob、OneLake、Google Drive、Dropbox、OneDrive、Box、FTP 和 SFTP 服务器，以及你自己的硬盘",
+	"More than 1000 kinds of file": "超过 1000 种文件格式",
+	"Parquet and lake tables, AutoCAD drawings and 3D models, DICOM scans, ebooks, packet captures: each opens as itself": "Parquet 与数据湖表、AutoCAD 图纸与 3D 模型、DICOM 影像、电子书、抓包文件：每种都按它本来的样子打开",
+	"Query any table": "任何表格，直接查询",
+	"SQL on a CSV, a Parquet file or a whole folder, with every column summed up": "对 CSV、Parquet 文件或整个文件夹运行 SQL，每一列自动汇总",
+	"Notebooks that run": "能运行的笔记本",
+	"Python, JavaScript, TypeScript and Java cells, run and saved as a Jupyter notebook": "Python、JavaScript、TypeScript 和 Java 单元格，运行并保存为 Jupyter 笔记本",
+	"Circuits that run": "能运行的电路",
+	"A KiCad schematic simulated live on its drawing: each part's voltage and current, the LEDs lit": "KiCad 原理图在图纸上实时仿真：每个元件的电压和电流，LED 亮起",
+	"Models that explain": "会解释的模型",
+	"LightGBM, XGBoost, Core ML and Keras models as their trees and layers; a tree model predicts and says why": "LightGBM、XGBoost、Core ML 和 Keras 模型展开为树和层；树模型给出预测并说明原因",
+	"Read and present": "阅读与演示",
+	"Notes in every ebook and PDF; slides on a second display, with the next slide and your notes on the laptop": "每本电子书和 PDF 都能做笔记；幻灯片投到第二块屏幕，笔记本上显示下一页和你的备注",
+	"A shell and a browser beside your files": "文件旁边就有终端和浏览器",
+	"A shell in a pane, and a Browser that blocks ads and trackers and keeps your passwords": "窗格里的终端，以及能拦截广告和跟踪器、保管密码的浏览器",
+	"Agents that never see your secrets": "智能体看不到你的机密",
+	"Ask Claude, Codex, Gemini or Copilot about a file; personal data is masked before the agent reads it": "就文件向 Claude、Codex、Gemini 或 Copilot 提问；智能体读取之前，个人信息已被遮盖",
+
 	// the download
 	"Download ObjectExplorer": "下载 ObjectExplorer",
 	"ObjectExplorer is a desktop app. Open this link on your computer to install it.": "ObjectExplorer 是桌面应用，请在电脑上打开此链接安装。",
