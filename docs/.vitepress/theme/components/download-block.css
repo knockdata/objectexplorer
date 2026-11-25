@@ -186,9 +186,13 @@ html[data-platform="windows"] .download-platform-windows .download-here {
 	padding: 3px 9px;
 }
 
-html[data-platform="linux"] .download .download-platform-linux li:first-child .download-package:first-of-type,
-html[data-platform="mac"] .download .download-platform-mac li:first-child .download-package:first-of-type,
-html[data-platform="windows"] .download .download-platform-windows li:first-child .download-package:first-of-type {
+/* the first package of the visitor's own architecture (html[data-architecture], config.js) */
+html[data-platform="linux"][data-architecture="arm"] .download .download-platform-linux .download-architecture-arm .download-package:first-of-type,
+html[data-platform="linux"][data-architecture="x86"] .download .download-platform-linux .download-architecture-x86 .download-package:first-of-type,
+html[data-platform="mac"][data-architecture="arm"] .download .download-platform-mac .download-architecture-arm .download-package:first-of-type,
+html[data-platform="mac"][data-architecture="x86"] .download .download-platform-mac .download-architecture-x86 .download-package:first-of-type,
+html[data-platform="windows"][data-architecture="arm"] .download .download-platform-windows .download-architecture-arm .download-package:first-of-type,
+html[data-platform="windows"][data-architecture="x86"] .download .download-platform-windows .download-architecture-x86 .download-package:first-of-type {
 	background: var(--brand);
 	border-color: var(--brand);
 	color: var(--brand-text);

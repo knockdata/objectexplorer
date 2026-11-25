@@ -83,6 +83,19 @@ const platformScript = `(function () {
 		platform = "linux";
 	}
 	document.documentElement.dataset.platform = platform;
+	// Which processor, for the package the download card lights up. Every Mac browser says "Intel Mac
+	// OS X" in its user agent, an Apple silicon one too, so the agent cannot tell; until something
+	// better answers, a Mac is taken for Apple silicon and every other computer for x64. Chrome and
+	// Edge answer through userAgentData ("x86" or "arm") a moment later; Safari and Firefox keep the
+	// guess.
+	document.documentElement.dataset.architecture = platform === "mac" ? "arm" : "x86";
+	if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+		navigator.userAgentData.getHighEntropyValues(["architecture"]).then(function (answer) {
+			if (answer.architecture === "x86" || answer.architecture === "arm") {
+				document.documentElement.dataset.architecture = answer.architecture;
+			}
+		}, function () {});
+	}
 })()`
 
 // A story's page title is its question and its subtitle together: the question says what the page

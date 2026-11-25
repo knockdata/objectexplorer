@@ -20,8 +20,9 @@ export const downloadSources = [
 	{ id: "direct", name: "Direct", title: "Download through our own server, for where GitHub cannot be reached" },
 ]
 
-// One row per architecture, and one link per file in it. The first file of the first row is the
-// one the landing page lights up for a visitor on that platform.
+// One row per architecture, and one link per file in it. The first file of the row whose
+// architecture is the visitor's (html[data-architecture], written by the head script in config.js:
+// "arm" or "x86") is the one the landing page lights up for a visitor on that platform.
 export const downloadPlatforms = [
 	{
 		id: "mac",
@@ -30,6 +31,7 @@ export const downloadPlatforms = [
 		downloads: [
 			{
 				label: "Apple silicon",
+				architecture: "arm",
 				files: [
 					{ target: "mac-arm64.dmg", extension: ".dmg" },
 					{ target: "mac-arm64.tar.gz", extension: ".tar.gz" },
@@ -37,6 +39,7 @@ export const downloadPlatforms = [
 			},
 			{
 				label: "Intel",
+				architecture: "x86",
 				files: [
 					{ target: "mac-x64.dmg", extension: ".dmg" },
 					{ target: "mac-x64.tar.gz", extension: ".tar.gz" },
@@ -51,6 +54,7 @@ export const downloadPlatforms = [
 		downloads: [
 			{
 				label: "x64 / AMD64",
+				architecture: "x86",
 				files: [
 					{ target: "windows-x64.msix", extension: ".msix" },
 					{ target: "windows-x64.zip", extension: ".zip" },
@@ -58,6 +62,7 @@ export const downloadPlatforms = [
 			},
 			{
 				label: "ARM64",
+				architecture: "arm",
 				files: [
 					{ target: "windows-arm64.msix", extension: ".msix" },
 					{ target: "windows-arm64.zip", extension: ".zip" },
@@ -70,8 +75,8 @@ export const downloadPlatforms = [
 		name: "Linux",
 		note: "Unzip to your own folder",
 		downloads: [
-			{ label: "x64 / AMD64", files: [{ target: "linux-x64.tar.gz", extension: ".tar.gz" }] },
-			{ label: "ARM64", files: [{ target: "linux-arm64.tar.gz", extension: ".tar.gz" }] },
+			{ label: "x64 / AMD64", architecture: "x86", files: [{ target: "linux-x64.tar.gz", extension: ".tar.gz" }] },
+			{ label: "ARM64", architecture: "arm", files: [{ target: "linux-arm64.tar.gz", extension: ".tar.gz" }] },
 		],
 	},
 ]

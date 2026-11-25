@@ -123,7 +123,7 @@ async function copyCommand(text) {
 			<div v-for="platform in downloadPlatforms" :key="platform.id" class="download-platform" :class="`download-platform-${platform.id}`">
 				<h3>{{ platform.name }}<span class="download-here">{{ translate("Your system") }}</span></h3>
 				<ul>
-					<li v-for="download in platform.downloads" :key="download.label" class="download-architecture">
+					<li v-for="download in platform.downloads" :key="download.label" class="download-architecture" :class="`download-architecture-${download.architecture}`">
 						<span class="download-architecture-name">{{ translate(download.label) }}</span>
 						<!-- target: VitePress's router takes a link of this site for one of its pages when it does
 						     not know the extension (.dmg, .msix, .appinstaller) and shows its 404; a link with a
