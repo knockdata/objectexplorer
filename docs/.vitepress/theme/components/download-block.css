@@ -89,7 +89,7 @@
 .download-platforms {
 	display: grid;
 	gap: 18px;
-	grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .download-platform {
@@ -112,10 +112,14 @@
 	display: none;
 }
 
+/* One grid for the card's rows (each row a subgrid of it), so a column of packages lines up from row
+   to row: the architecture's name takes what is left, the packages 96px each. When the card is
+   narrow, the packages narrow together down to their own text, and the name wraps; neither ever
+   leaves the card (1125-14: "Apple silicon" stood outside the macOS card at a 900px window). */
 .download-platform ul {
-	display: flex;
-	flex-direction: column;
+	display: grid;
 	gap: 6px;
+	grid-template-columns: minmax(min-content, 1fr) repeat(var(--package-columns), minmax(min-content, 96px));
 	list-style: none;
 	margin: 0;
 	margin-bottom: 25px;
@@ -124,31 +128,25 @@
 
 .download-architecture {
 	align-items: center;
-	display: flex;
-	gap: 6px;
-	justify-content: flex-end;
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
 }
 
-/* pushes the packages to the right edge, where .app is as wide as .appinstaller */
 .download-architecture-name {
 	color: var(--chalk-2);
 	font-size: 15px;
-	margin-right: auto;
 }
 
-/* every package box is one width and never shrinks, so a column of them lines up and a label stays
-   inside its box; the architecture's name wraps instead when the card is narrow */
 .download .download-package {
 	border: 1px solid var(--rule);
 	border-radius: 6px;
 	color: var(--chalk-2);
-	flex-shrink: 0;
 	font-family: var(--mono);
 	font-size: 12.5px;
 	padding: 6px 8px;
 	text-align: center;
 	white-space: nowrap;
-	width: 96px;
 }
 
 .download .download-package:hover,

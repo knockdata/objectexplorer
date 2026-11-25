@@ -49,6 +49,11 @@ function source() {
 	}
 }
 
+// the most packages a row of the card has: its grid's package columns
+function packageColumns(platform) {
+	return Math.max(...platform.downloads.map(download => download.files.length))
+}
+
 function choose(id) {
 	chosen.value = id
 }
@@ -122,7 +127,7 @@ async function copyCommand(text) {
 		<div class="download-platforms desktop-only">
 			<div v-for="platform in downloadPlatforms" :key="platform.id" class="download-platform" :class="`download-platform-${platform.id}`">
 				<h3>{{ platform.name }}<span class="download-here">{{ translate("Your system") }}</span></h3>
-				<ul>
+				<ul :style="{ '--package-columns': packageColumns(platform) }">
 					<li v-for="download in platform.downloads" :key="download.label" class="download-architecture" :class="`download-architecture-${download.architecture}`">
 						<span class="download-architecture-name">{{ translate(download.label) }}</span>
 						<!-- target: VitePress's router takes a link of this site for one of its pages when it does
