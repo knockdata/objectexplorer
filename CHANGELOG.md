@@ -4,6 +4,25 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.47  —  2026-11-26
+### What's new
+- Simulate a schematic where it is: ▷ Simulate shows when every part can run, and Check points out wiring mistakes
+- Many more parts simulate (Zener diodes, MOSFETs, op-amps, regulators, buck and boost converters, battery chargers), and PADS schematics run too
+- Five new ring sounds for calls, picked in Settings → Calls
+
+### All changes
+- a circuit of more than 10 parts shows a part's voltage and current when you click it
+- a simulation stays small in memory, and Stop frees it at once
+- a schematic offers Simulate only when every part has a model and something powers it
+- a recorded call shows you and the other person as two circles; a click turns the other camera off and keeps the voice
+- a call coming in brings the window to the front
+- the command palette, New Window and Settings keys work while a Browser page has the keys
+- panes and side bars sit on whole pixels and counters keep their width, so nothing shimmers while an agent thinks
+- a table's column summary counts a column that mixes numbers and text correctly
+- a language added in QLingo shows its words once translated, or says why not, with Retry
+- a book's page follows your finger as it turns, and turns over or falls back when you let go; the cover alone opens flat
+- a book's page never cuts a line in half
+
 ## v0.9.46  —  2026-11-26
 ### What's new
 - Record a Demo: the app's window with your camera round over it and your voice, saved as an .mp4 with its title page
