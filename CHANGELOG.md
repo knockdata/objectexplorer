@@ -4,13 +4,26 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
-## v0.9.46  —  2026-11-25
+## v0.9.46  —  2026-11-26
 ### What's new
 - Record a Demo: the app's window with your camera round over it and your voice, saved as an .mp4 with its title page
 - Font Size for the whole app: Small, Medium, Large and Extra Large, or ⌘+ and ⌘−
 - Every table preview shows each column's summary, and Arrow, Avro and ORC files get a preview as a Parquet file does
+- Paste a screenshot into a Markdown file: it is saved beside the file and linked where you type
 
 ### All changes
+- a picture pasted into a Markdown file's text is saved beside it as a .png and linked at the caret
+- typing in the editor shows the caret after each letter at once, and redraws only the line typed in
+- in the browser, menus open at the pointer and a click places the caret where it lands, at every font size
+- a text selection stays in the side bar, pane or slide list where it began
+- Share the Screen in a call works in the Mac app, and Present takes over without a question
+- Call Rockie no longer asks what the call is about
+- no question at the start about telling objectexplorer.com which version runs: the choice is in Settings › Check for Updates
+- the command palette names each command's category, with a check beside the choice in use
+- Cmd+L in a Browser page goes to the address field, and a new Browser tab's address field takes what is typed
+- a pane's divider line is no longer hidden by a web page beside it
+- a row's number stays readable over the cells scrolling under it
+- Translate lists the agent's models at once, and the prompts in Ask, Explain and Translate show as formatted text
 - Record a Demo in the palette records the window with your camera and microphone, asks its title once stopped, and opens the clip on a cover and its title page
 - the app's font size kept as you chose it, and View's Zoom In, Zoom Out and Actual Size
 - a table tile is drawn by the Table view itself, with each column's summary and the whole row count
