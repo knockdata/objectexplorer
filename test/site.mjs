@@ -55,6 +55,9 @@ const youtubeFilms = new Map()
 const appFrames = new Map()
 // page url → the HTTP status its document answered with
 const pageStatus = new Map()
+// the pages open while this machine's network changed (net::ERR_NETWORK_CHANGED): their requests failed for
+// that, not for the site (1126-7: the release's check failed so while its VMs brought their network up)
+const networkChanged = new Set()
 
 function report(kind, page, what, detail) {
 	issues.push({ kind, page, what, detail })
@@ -288,6 +291,8 @@ async function visit(address) {
 			pageStatus.set(address, message.params.response.status)
 		} else if (message.method === "Network.responseReceived" && message.params.response.status >= 400) {
 			errors.push(`request ${message.params.response.status}: ${message.params.response.url}`)
+		} else if (message.method === "Network.loadingFailed" && message.params.errorText === "net::ERR_NETWORK_CHANGED") {
+			networkChanged.add(address)
 		} else if (message.method === "Network.loadingFailed" && !message.params.canceled && message.params.errorText !== "net::ERR_ABORTED") {
 			errors.push(`request failed (${message.params.errorText}): ${requests.get(message.params.requestId) ?? message.params.requestId}`)
 		}
@@ -577,6 +582,9 @@ async function main() {
 		await browser.stop()
 	}
 	console.log(`== ${visited.size} pages opened`)
+	if (networkChanged.size > 0) {
+		console.log(`  (unsure: this machine's network changed while ${networkChanged.size} pages were open, their failed requests not counted: ${[...networkChanged].join(" ")})`)
+	}
 	await checkLinks(visited)
 	await checkFilms()
 
