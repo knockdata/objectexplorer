@@ -4,7 +4,7 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
-## v0.9.47  —  2026-11-26
+## v0.9.47  —  2026-11-27
 ### What's new
 - Simulate a schematic where it is: ▷ Simulate shows when every part can run, and Check points out wiring mistakes
 - Many more parts simulate (Zener diodes, MOSFETs, op-amps, regulators, buck and boost converters, battery chargers), and PADS schematics run too
