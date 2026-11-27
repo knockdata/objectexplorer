@@ -13,6 +13,11 @@
 //                 within PAGE_SECONDS, or whose item does not open ("Cannot read this file"): the address
 //                 names a key the app stopped on, or an item no longer in its demo (foldone 1115-8)
 //
+// Each page, and each framed app, has PAGE_LIMIT_SECONDS (120) in all: one that has not finished by
+// then is an error naming the step it was on, its tab closed, and the run goes on (/story/view-a-file held the
+// v0.9.47 release's check 45 minutes). A dialog a page opens (alert, confirm, leave this page?) is an
+// error and answered at once: Chrome answers nothing else on the page while one is open.
+//
 // The pages: the sitemap's, and every page of the site a visited page links to (the app, /app/, is
 // opened but not crawled further). Links to other sites are checked once each; EXTERNAL=0 leaves them out.
 // The report goes to build/test/report.txt (and report.json), one line an issue, grouped by kind; the exit
@@ -27,6 +32,7 @@ const checkExternal = process.env.EXTERNAL !== "0"
 const tabs = Number(process.env.TABS ?? 4)
 const playSeconds = Number(process.env.PLAY_SECONDS ?? 10)
 const pageSeconds = Number(process.env.PAGE_SECONDS ?? 30)
+const pageLimitSeconds = Number(process.env.PAGE_LIMIT_SECONDS ?? 120)
 const debugPort = Number(process.env.DEBUG_PORT ?? 9333)
 const reportFolder = "build/test"
 // our two sites: a page of one never names the other
@@ -124,6 +130,14 @@ async function startBrowser() {
 			}
 		}
 		if (ready) {
+			// stopped from outside (tools/test-release.sh stops a part that stalls): Chrome with it, or it
+			// stays, holding the debugging port the next run asks (the v0.9.47 release's stayed)
+			for (const signal of ["SIGTERM", "SIGINT", "SIGHUP"]) {
+				process.once(signal, function () {
+					child.kill()
+					process.exit(1)
+				})
+			}
 			// the profile removed once Chrome is gone: it writes there until it exits
 			async function stop() {
 				const exited = new Promise((resolve) => child.once("exit", resolve))
@@ -168,8 +182,19 @@ async function openTab() {
 	const waiting = new Map()
 	const listeners = new Set()
 	let nextId = 1
+	// the tab closed or Chrome gone: what waits for an answer is told, instead of waiting for ever
+	socket.addEventListener("close", function () {
+		for (const { reject, method } of waiting.values()) {
+			reject(new Error(`${method}: the tab's connection closed`))
+		}
+		waiting.clear()
+	})
 	socket.addEventListener("message", function (event) {
 		const message = JSON.parse(event.data)
+		if (message.method === "Page.javascriptDialogOpening") {
+			// while a dialog is open the page answers nothing (Runtime.evaluate waits for ever)
+			send("Page.handleJavaScriptDialog", { accept: true }).catch(() => {})
+		}
 		if (message.id && waiting.has(message.id)) {
 			const { resolve, reject, method } = waiting.get(message.id)
 			waiting.delete(message.id)
@@ -204,7 +229,38 @@ async function openTab() {
 	await send("Runtime.enable")
 	await send("Network.enable")
 	await send("Log.enable")
-	return { send, evaluate, listeners, close: () => fetch(`http://127.0.0.1:${debugPort}/json/close/${target.id}`) }
+	async function close() {
+		try {
+			await fetch(`http://127.0.0.1:${debugPort}/json/close/${target.id}`, { signal: AbortSignal.timeout(10000) })
+		} catch (error) {
+			console.log(`  (a tab did not close: ${error.message})`)
+		}
+		socket.close()
+	}
+	return { send, evaluate, listeners, close }
+}
+
+// a page's work given pageLimitSeconds in all: past it the page is said with the step it was on
+// (work sets state.step as it goes, and state.tab once its tab is open), its tab closed, and null
+// returned; state.abandoned tells the work to say nothing more
+async function withinLimit(kind, page, what, work) {
+	const state = { step: "opening its tab", tab: null, abandoned: false }
+	let timer = null
+	const limit = new Promise((resolve) => {
+		timer = setTimeout(() => resolve(state), pageLimitSeconds * 1000)
+	})
+	const outcome = await Promise.race([work(state), limit])
+	clearTimeout(timer)
+	if (outcome === state) {
+		state.abandoned = true
+		report(kind, page, what, `not done in ${pageLimitSeconds} s: stopped while ${state.step}`)
+		if (state.tab) {
+			await state.tab.close()
+		}
+		return null
+	} else {
+		return outcome
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -273,8 +329,21 @@ function playMedia(seconds) {
 	})()`
 }
 
-async function visit(address) {
+function visit(address) {
+	return withinLimit("error", address, "the page", (state) => visitWithin(address, state))
+}
+
+async function visitWithin(address, state) {
 	const tab = await openTab()
+	state.tab = tab
+	if (state.abandoned) {
+		await tab.close()
+	}
+	function say(kind, page, what, detail) {
+		if (!state.abandoned) {
+			report(kind, page, what, detail)
+		}
+	}
 	const errors = []
 	const requests = new Map()
 	tab.listeners.add(function (message) {
@@ -285,6 +354,8 @@ async function visit(address) {
 			errors.push(`exception: ${details.exception?.description?.split("\n")[0] ?? details.text}`)
 		} else if (message.method === "Log.entryAdded" && message.params.entry.level === "error" && message.params.entry.source !== "network") {
 			errors.push(`${message.params.entry.source}: ${message.params.entry.text}`)
+		} else if (message.method === "Page.javascriptDialogOpening") {
+			errors.push(`dialog (${message.params.type}): ${message.params.message}`)
 		} else if (message.method === "Network.requestWillBeSent") {
 			requests.set(message.params.requestId, message.params.request.url)
 		} else if (message.method === "Network.responseReceived" && message.params.type === "Document" && pageKey(message.params.response.url) === address && !pageStatus.has(address)) {
@@ -300,25 +371,30 @@ async function visit(address) {
 	let content = null
 	try {
 		const loaded = new Promise((resolve) => tab.listeners.add((message) => message.method === "Page.loadEventFired" && resolve()))
+		state.step = "navigating to it"
 		const navigation = await tab.send("Page.navigate", { url: address })
 		if (navigation.errorText) {
-			report("dead link", address, address, navigation.errorText)
+			say("dead link", address, address, navigation.errorText)
 		} else {
+			state.step = "waiting for its load event"
 			await Promise.race([loaded, wait(pageSeconds * 1000)])
 			// the app and the components fill in after load
 			await wait(2000)
+			state.step = "reading its links"
 			content = await tab.evaluate(readPage)
 			if (content.notFound) {
-				report("dead link", address, address, "the site's not-found page")
+				say("dead link", address, address, "the site's not-found page")
 			}
 			// a link to /download/… with no target or download attribute: VitePress's router takes it for
 			// a page of the site when it does not know the extension (.dmg, .msix) and shows its 404
 			for (const link of await tab.evaluate(routedDownloads)) {
-				report("dead link", address, link, "a download link VitePress takes for a page: give it target=\"_self\"")
+				say("dead link", address, link, "a download link VitePress takes for a page: give it target=\"_self\"")
 			}
+			state.step = "pressing its films' Play"
 			const pressed = await tab.evaluate(pressPlay)
 			if (pressed > 0) {
 				await wait(3000)
+				state.step = "reading its YouTube frames"
 				for (const frame of await tab.evaluate(youtubeFrames)) {
 					const film = new URL(frame).pathname.split("/").pop()
 					if (!youtubeFilms.has(film)) {
@@ -327,19 +403,23 @@ async function visit(address) {
 					youtubeFilms.get(film).add(address)
 				}
 			}
+			state.step = "playing its videos"
 			for (const result of await tab.evaluate(playMedia(playSeconds))) {
 				if (result.outcome !== "started") {
-					report("cannot play", address, result.source, result.outcome)
+					say("cannot play", address, result.source, result.outcome)
 				}
 			}
 		}
 	} catch (error) {
-		report("error", address, "the test itself", error.message)
+		say("error", address, "the test itself", error.message)
 	}
 	for (const error of new Set(errors)) {
-		report("error", address, error)
+		say("error", address, error)
 	}
-	await tab.close()
+	if (!state.abandoned) {
+		state.step = "closing its tab"
+		await tab.close()
+	}
 	return content
 }
 
@@ -396,8 +476,14 @@ async function checkLinks(visited) {
 		}
 		byHost.get(host).push(entry)
 	}
+	// a line every 50 links, so a long check (GitHub's 429s waited out) is not taken for a hang
+	let checked = 0
 	async function checkHost(entries) {
 		for (const [address, link] of entries) {
+			checked += 1
+			if (checked % 50 === 0) {
+				console.log(`== ${checked} of ${pending.length} links checked`)
+			}
 			let result = await status(checkedAddress(address))
 			let attempt = 1
 			while (result.code === 429 && attempt < 4) {
@@ -485,8 +571,21 @@ const readApp = `(() => ({
 
 // a frame drew nothing (the app stopped before drawing) or opened its item with an error; its
 // console lines said with it, since the app's own reason is there (objectexplorer: not an argument …)
-async function checkAppFrame(frame, pages) {
+function checkAppFrame(frame, pages) {
+	return withinLimit("blank app", [...pages][0], frame, (state) => checkAppFrameWithin(frame, pages, state))
+}
+
+async function checkAppFrameWithin(frame, pages, state) {
 	const tab = await openTab()
+	state.tab = tab
+	if (state.abandoned) {
+		await tab.close()
+	}
+	function say(kind, page, what, detail) {
+		if (!state.abandoned) {
+			report(kind, page, what, detail)
+		}
+	}
 	const lines = []
 	tab.listeners.add(function (message) {
 		if (message.method === "Runtime.consoleAPICalled" && message.params.args.some((argument) => String(argument.value ?? "").startsWith("objectexplorer:"))) {
@@ -495,7 +594,9 @@ async function checkAppFrame(frame, pages) {
 	})
 	const page = [...pages][0]
 	try {
+		state.step = "navigating to it"
 		await tab.send("Page.navigate", { url: frame })
+		state.step = "waiting for it to draw"
 		let shown = { text: 0, unreadable: [] }
 		const until = Date.now() + pageSeconds * 1000
 		while (shown.text === 0 && Date.now() < until) {
@@ -506,23 +607,30 @@ async function checkAppFrame(frame, pages) {
 		await wait(3000)
 		shown = await tab.evaluate(readApp)
 		if (shown.text === 0) {
-			report("blank app", page, frame, lines.join("; ") || `nothing drawn in ${pageSeconds} s`)
+			say("blank app", page, frame, lines.join("; ") || `nothing drawn in ${pageSeconds} s`)
 		} else if (shown.unreadable.length > 0) {
-			report("blank app", page, frame, shown.unreadable.join("; "))
+			say("blank app", page, frame, shown.unreadable.join("; "))
 		}
 	} catch (error) {
-		report("blank app", page, frame, error.message)
+		say("blank app", page, frame, error.message)
 	}
-	await tab.close()
+	if (!state.abandoned) {
+		await tab.close()
+	}
 }
 
 async function checkAppFrames() {
 	console.log(`== ${appFrames.size} framed apps`)
 	const entries = [...appFrames.entries()]
+	let checked = 0
 	async function worker() {
 		while (entries.length > 0) {
 			const [frame, pages] = entries.shift()
 			await checkAppFrame(frame, pages)
+			checked += 1
+			if (checked % 20 === 0) {
+				console.log(`== ${checked} framed apps opened, ${entries.length} to go`)
+			}
 		}
 	}
 	await Promise.all(Array.from({ length: tabs }, worker))
