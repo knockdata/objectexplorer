@@ -28,7 +28,7 @@ export default {
 
 	// the hero
 	"Can't open the file?": "打不开文件？",
-	"Try ObjectExplorer": "试试 ObjectExplorer",
+	"Just use ObjectExplorer": "就用ObjectExplorer",
 	"Fed up with the cumbersome cloud console and its many tabs? Just use ObjectExplorer: one click opens any file at any location": "一个应用，一站式浏览、查询任何格式的文件。无论在 S3、GCS、Azure Blob、Drive、FTP，还是本地硬盘，都一样。无需在多个应用间来回切换，一键即开。",
 	"Google Drive, Dropbox, OneDrive and Box need a sign-in app of your own for now.": "Google Drive、Dropbox、OneDrive 和 Box 目前需要你自己的登录应用。",
 	"Worried an agent reads your secrets? Download ObjectExplorer: we remove PII before an agent reads it": "担心 AI 智能体读到你的机密？下载 ObjectExplorer：在智能体读取之前，我们先移除个人信息。",

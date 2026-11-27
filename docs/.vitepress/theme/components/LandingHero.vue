@@ -16,7 +16,7 @@ const { translate } = useLanguage()
 		<div class="landing-hero-copy">
 			<h1 class="rock">
 				<span style="font-weight: bold">{{ translate("Can't open the file?") }}</span>
-				<span class="landing-hero-sub">{{ translate("Try ObjectExplorer") }}</span>
+				<span class="landing-hero-sub">{{ translate("Just use ObjectExplorer") }}</span>
 			</h1>
 			<!-- the one drawn mark on the page: a squeegee stroke, echoing the wipe -->
 			<svg class="landing-hero-stroke" viewBox="0 0 340 16" fill="none" aria-hidden="true">
