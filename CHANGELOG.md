@@ -4,6 +4,21 @@ What changed in each version. Every build is on the
 [releases page](https://github.com/knockdata/objectexplorer/releases); the download links on
 [objectexplorer.com](https://objectexplorer.com/#download) always fetch the newest one.
 
+## v0.9.48  —  2026-11-27
+### What's new
+- Convert a circuit board to KiCad, Eagle, IPC-2581, Specctra and every other board format it reads as text
+- Every circuit board shows in KiCad's colours and drawing order, whichever program made it
+- A zip inside a zip opens in the tree like a folder
+
+### All changes
+- right-click a link in a deck or Markdown page to copy it or open it in your browser
+- when you call someone, you hear it ring until they answer, and it stops once they pick up
+- answering a call in one window stops the ring in every other window
+- a call shares only the file each pane shows, instead of asking file after file
+- a hint that needs a setting carries a button that takes you there
+- a book's first page turns as a plain flip, and its spine appears once the page lands
+- a new slogan on the empty view and the site
+
 ## v0.9.47  —  2026-11-27
 ### What's new
 - Simulate a schematic where it is: ▷ Simulate shows when every part can run, and Check points out wiring mistakes
